@@ -28,50 +28,10 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { cn } from '@/lib/utils';
+import { fetchErrorLogs } from '@/lib/api/admin';
+import type { ErrorLog } from '@/lib/api/admin';
 
-// Mock error data structure (replace with actual API call)
-interface ErrorLog {
-  id: string;
-  timestamp: string;
-  level: 'error' | 'warning' | 'info';
-  message: string;
-  source: string;
-  stack?: string;
-  userId?: string;
-  organizationId?: string;
-  metadata?: Record<string, unknown>;
-}
-
-// Mock data for demonstration
-const mockErrors: ErrorLog[] = [
-  {
-    id: '1',
-    timestamp: new Date(Date.now() - 5 * 60 * 1000).toISOString(),
-    level: 'error',
-    message: 'Database connection timeout',
-    source: 'database',
-    stack: 'Error: Connection timeout\n  at Database.connect (db.ts:45)\n  at async main (index.ts:12)',
-    metadata: { query: 'SELECT * FROM users', duration: 30000 },
-  },
-  {
-    id: '2',
-    timestamp: new Date(Date.now() - 15 * 60 * 1000).toISOString(),
-    level: 'warning',
-    message: 'High memory usage detected',
-    source: 'system',
-    metadata: { usage: '85%', threshold: '80%' },
-  },
-  {
-    id: '3',
-    timestamp: new Date(Date.now() - 30 * 60 * 1000).toISOString(),
-    level: 'error',
-    message: 'Failed to send email notification',
-    source: 'email-queue',
-    stack: 'Error: SMTP connection refused\n  at Mailer.send (mailer.ts:23)',
-    userId: 'user_123',
-    organizationId: 'org_456',
-  },
-];
+// Mock data removed - using real API
 
 // Level badge colors
 const levelColors = {
@@ -89,30 +49,41 @@ const levelIcons = {
 
 export default function ErrorLogsPage() {
   // State
-  const [errors, setErrors] = useState<ErrorLog[]>(mockErrors);
+  const [errors, setErrors] = useState<ErrorLog[]>([]);
+  const [total, setTotal] = useState(0);
+  const [isLoading, setIsLoading] = useState(true);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [levelFilter, setLevelFilter] = useState<string>('all');
   const [sourceFilter, setSourceFilter] = useState<string>('all');
+  const [page, setPage] = useState(1);
+  const limit = 20;
 
-  // Fetch errors (mock implementation)
+  // Fetch errors from real API
   const loadErrors = useCallback(
     async (silent = false) => {
+      if (!silent) setIsLoading(true);
       setIsRefreshing(silent);
 
       try {
-        // In production, replace with actual API call:
-        // const response = await fetchErrorLogs({ level: levelFilter, source: sourceFilter });
-        await new Promise((resolve) => setTimeout(resolve, 500));
-        setErrors(mockErrors);
+        const response = await fetchErrorLogs({
+          level: levelFilter !== 'all' ? levelFilter : undefined,
+          source: sourceFilter !== 'all' ? sourceFilter : undefined,
+          search: searchQuery || undefined,
+          page,
+          limit,
+        });
+        setErrors(response.logs || []);
+        setTotal(response.total || 0);
       } catch (error) {
         console.error('Error fetching error logs:', error);
         toast.error('Failed to load error logs');
       } finally {
+        setIsLoading(false);
         setIsRefreshing(false);
       }
     },
-    [levelFilter, sourceFilter]
+    [levelFilter, sourceFilter, searchQuery, page]
   );
 
   useEffect(() => {
@@ -125,23 +96,13 @@ export default function ErrorLogsPage() {
   // Handlers
   const handleRefresh = () => loadErrors(true);
 
-  // Filter errors
-  const filteredErrors = errors.filter((error) => {
-    const matchesSearch =
-      searchQuery === '' ||
-      error.message.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      error.source.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesLevel = levelFilter === 'all' || error.level === levelFilter;
-    const matchesSource = sourceFilter === 'all' || error.source === sourceFilter;
-    return matchesSearch && matchesLevel && matchesSource;
-  });
+  // Stats (from loaded errors)
+  const errorCount = errors.filter((e) => e.level === 'error').length;
+  const warningCount = errors.filter((e) => e.level === 'warning').length;
+  const totalPages = Math.ceil(total / limit);
 
-  // Get unique sources
-  const sources = Array.from(new Set(errors.map((e) => e.source)));
-
-  // Stats
-  const errorCount = filteredErrors.filter((e) => e.level === 'error').length;
-  const warningCount = filteredErrors.filter((e) => e.level === 'warning').length;
+  // Static source options (can be expanded based on backend values)
+  const sources = ['api', 'web', 'system', 'queue', 'database'];
 
   return (
     <div className="space-y-6">
@@ -257,7 +218,7 @@ export default function ErrorLogsPage() {
         <div className="flex items-center gap-2">
           <div className="h-2 w-2 rounded-full bg-neutral-500" />
           <span className="text-neutral-400">
-            <span className="font-medium text-neutral-200">{filteredErrors.length}</span> total
+            <span className="font-medium text-neutral-200">{errors.length}</span> total
           </span>
         </div>
       </motion.div>
@@ -271,7 +232,7 @@ export default function ErrorLogsPage() {
       >
         <h2 className="mb-4 text-lg font-semibold text-white">Recent Errors</h2>
 
-        {filteredErrors.length === 0 ? (
+        {errors.length === 0 ? (
           <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-white/10 bg-white/[0.02] py-12 text-center">
             <Filter className="mb-3 h-8 w-8 text-neutral-600" />
             <p className="text-sm text-neutral-400">No errors match your filters</p>
@@ -279,7 +240,7 @@ export default function ErrorLogsPage() {
         ) : (
           <div className="space-y-3">
             <AnimatePresence mode="popLayout">
-              {filteredErrors.map((error, index) => {
+              {errors.map((error, index) => {
                 const Icon = levelIcons[error.level];
                 return (
                   <motion.div

@@ -451,6 +451,36 @@ export const admin_audit_log = pgTable(
 );
 
 // ============================================================================
+// ERROR_LOGS TABLE (Platform-wide error logging)
+// ============================================================================
+export const error_logs = pgTable(
+  'error_logs',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    level: varchar('level', { length: 20 }).notNull(), // error, warning, info
+    message: text('message').notNull(),
+    source: varchar('source', { length: 50 }).notNull(), // api, web, system, queue, database
+    stack: text('stack'), // Stack trace (optional)
+    user_id: text('user_id'), // User who triggered the error (optional)
+    organization_id: text('organization_id'), // Organization context (optional)
+    request_id: varchar('request_id', { length: 100 }), // Request ID for tracing
+    http_method: varchar('http_method', { length: 10 }), // GET, POST, etc.
+    http_path: text('http_path'), // Request path
+    http_status: integer('http_status'), // HTTP status code
+    metadata: jsonb('metadata'), // Additional context (user agent, IP, etc.)
+    created_at: timestamp('created_at', { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+  },
+  (table) => ({
+    level_idx: index('error_logs_level_idx').on(table.level),
+    source_idx: index('error_logs_source_idx').on(table.source),
+    created_at_idx: index('error_logs_created_at_idx').on(table.created_at),
+    org_idx: index('error_logs_org_idx').on(table.organization_id),
+  })
+);
+
+// ============================================================================
 // INSPECTOR_TOKENS TABLE
 // ============================================================================
 export const inspector_tokens = pgTable(

@@ -209,6 +209,29 @@ export interface AuditLogsResponse {
   limit: number;
 }
 
+export interface ErrorLog {
+  id: string;
+  timestamp: string;
+  level: 'error' | 'warning' | 'info';
+  message: string;
+  source: string;
+  stack?: string;
+  userId?: string;
+  organizationId?: string;
+  requestId?: string;
+  httpMethod?: string;
+  httpPath?: string;
+  httpStatus?: number;
+  metadata?: Record<string, unknown>;
+}
+
+export interface ErrorLogsResponse {
+  logs: ErrorLog[];
+  total: number;
+  page: number;
+  limit: number;
+}
+
 export interface AnalyticsData {
   userGrowth: {
     date: string;
@@ -293,6 +316,24 @@ export async function deleteTenant(tenantId: string, confirmation: string): Prom
   return handleResponse<{ success: boolean }>(response);
 }
 
+export async function updateTenant(
+  tenantId: string,
+  updates: {
+    name?: string;
+    logo?: string;
+    subscriptionTier?: 'free' | 'starter' | 'pro' | 'enterprise';
+  }
+): Promise<{ success: boolean; organization: Partial<Tenant> }> {
+  const url = `${API_URL}/api/admin/tenants/${tenantId}`;
+  const response = await fetch(url, {
+    method: 'PATCH',
+    credentials: 'include',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(updates),
+  });
+  return handleResponse<{ success: boolean; organization: Partial<Tenant> }>(response);
+}
+
 // ============================================================================
 // USERS API
 // ============================================================================
@@ -354,6 +395,25 @@ export async function revokeAdmin(userId: string): Promise<{ success: boolean }>
     credentials: 'include',
   });
   return handleResponse<{ success: boolean }>(response);
+}
+
+export async function updateUser(
+  userId: string,
+  updates: {
+    name?: string;
+    email?: string;
+    role?: 'admin' | null;
+    emailVerified?: boolean;
+  }
+): Promise<{ success: boolean; user: Partial<AdminUser> }> {
+  const url = `${API_URL}/api/admin/users/${userId}`;
+  const response = await fetch(url, {
+    method: 'PATCH',
+    credentials: 'include',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(updates),
+  });
+  return handleResponse<{ success: boolean; user: Partial<AdminUser> }>(response);
 }
 
 // ============================================================================
@@ -459,6 +519,33 @@ export async function fetchAuditLogs(params?: {
   const url = `${API_URL}/api/admin/audit?${searchParams.toString()}`;
   const response = await fetch(url, { credentials: 'include' });
   return handleResponse<AuditLogsResponse>(response);
+}
+
+// ============================================================================
+// ERROR LOGS API
+// ============================================================================
+
+export async function fetchErrorLogs(params?: {
+  level?: string;
+  source?: string;
+  search?: string;
+  startDate?: string;
+  endDate?: string;
+  page?: number;
+  limit?: number;
+}): Promise<ErrorLogsResponse> {
+  const searchParams = new URLSearchParams();
+  if (params?.level) searchParams.append('level', params.level);
+  if (params?.source) searchParams.append('source', params.source);
+  if (params?.search) searchParams.append('search', params.search);
+  if (params?.startDate) searchParams.append('startDate', params.startDate);
+  if (params?.endDate) searchParams.append('endDate', params.endDate);
+  if (params?.page) searchParams.append('page', params.page.toString());
+  if (params?.limit) searchParams.append('limit', params.limit.toString());
+
+  const url = `${API_URL}/api/admin/errors?${searchParams.toString()}`;
+  const response = await fetch(url, { credentials: 'include' });
+  return handleResponse<ErrorLogsResponse>(response);
 }
 
 // ============================================================================

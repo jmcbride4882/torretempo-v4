@@ -19,6 +19,7 @@ import {
   Building2,
   UserMinus,
   UserPlus,
+  Edit,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -52,6 +53,7 @@ import {
   unbanUser,
   grantAdmin,
   revokeAdmin,
+  updateUser,
 } from '@/lib/api/admin';
 import type { AdminUser } from '@/lib/api/admin';
 
@@ -73,6 +75,16 @@ export default function UsersPage() {
     user: AdminUser;
   } | null>(null);
   const [isActionLoading, setIsActionLoading] = useState(false);
+
+  // Edit modal state
+  const [editModal, setEditModal] = useState<AdminUser | null>(null);
+  const [editForm, setEditForm] = useState({
+    name: '',
+    email: '',
+    role: null as 'admin' | null,
+    emailVerified: false,
+  });
+  const [isEditLoading, setIsEditLoading] = useState(false);
 
   // Fetch users
   const loadUsers = useCallback(
@@ -143,6 +155,48 @@ export default function UsersPage() {
     } finally {
       setIsActionLoading(false);
     }
+  };
+
+  const handleEdit = async () => {
+    if (!editModal) return;
+
+    // Validate form
+    if (!editForm.name.trim()) {
+      toast.error('User name is required');
+      return;
+    }
+    if (!editForm.email.trim()) {
+      toast.error('Email is required');
+      return;
+    }
+
+    setIsEditLoading(true);
+    try {
+      await updateUser(editModal.id, {
+        name: editForm.name.trim(),
+        email: editForm.email.trim(),
+        role: editForm.role,
+        emailVerified: editForm.emailVerified,
+      });
+      toast.success(`${editForm.name} has been updated`);
+      setEditModal(null);
+      loadUsers(true);
+    } catch (error) {
+      console.error('Error updating user:', error);
+      toast.error('Failed to update user');
+    } finally {
+      setIsEditLoading(false);
+    }
+  };
+
+  const openEditModal = (user: AdminUser) => {
+    setEditForm({
+      name: user.name,
+      email: user.email,
+      role: user.isAdmin ? 'admin' : null,
+      emailVerified: user.emailVerified,
+    });
+    setEditModal(user);
   };
 
   // Stats
@@ -311,6 +365,7 @@ export default function UsersPage() {
                   key={user.id}
                   user={user}
                   index={index}
+                  onEdit={() => openEditModal(user)}
                   onBan={() => setConfirmModal({ type: 'ban', user })}
                   onUnban={() => setConfirmModal({ type: 'unban', user })}
                   onGrantAdmin={() => setConfirmModal({ type: 'grant-admin', user })}
@@ -411,6 +466,107 @@ export default function UsersPage() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {/* Edit Modal */}
+      <Dialog open={!!editModal} onOpenChange={() => setEditModal(null)}>
+        <DialogContent className="sm:max-w-[500px]">
+          <DialogHeader>
+            <DialogTitle>Edit User</DialogTitle>
+            <DialogDescription>
+              Update user details, role, and email verification status
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="space-y-4 py-4">
+            {/* Name field */}
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-neutral-300">
+                Name
+              </label>
+              <Input
+                value={editForm.name}
+                onChange={(e) => setEditForm({ ...editForm, name: e.target.value })}
+                placeholder="Enter user name"
+                className="glass-card border-white/10 text-white"
+                autoFocus
+              />
+            </div>
+
+            {/* Email field */}
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-neutral-300">
+                Email
+              </label>
+              <Input
+                type="email"
+                value={editForm.email}
+                onChange={(e) => setEditForm({ ...editForm, email: e.target.value })}
+                placeholder="user@example.com"
+                className="glass-card border-white/10 text-white"
+              />
+            </div>
+
+            {/* Role field */}
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-neutral-300">
+                Platform Role
+              </label>
+              <Select
+                value={editForm.role || 'user'}
+                onValueChange={(value) =>
+                  setEditForm({ ...editForm, role: value === 'admin' ? 'admin' : null })
+                }
+              >
+                <SelectTrigger className="glass-card border-white/10 text-white">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent className="glass-card border-white/10">
+                  <SelectItem value="user" className="text-neutral-200">Regular User</SelectItem>
+                  <SelectItem value="admin" className="text-neutral-200">Platform Admin</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            {/* Email Verified toggle */}
+            <div className="flex items-center justify-between rounded-lg border border-white/10 bg-white/5 p-3">
+              <div className="space-y-0.5">
+                <label className="text-sm font-medium text-neutral-300">
+                  Email Verified
+                </label>
+                <p className="text-xs text-neutral-500">
+                  Manually verify user's email address
+                </p>
+              </div>
+              <Button
+                type="button"
+                variant={editForm.emailVerified ? 'default' : 'outline'}
+                size="sm"
+                onClick={() => setEditForm({ ...editForm, emailVerified: !editForm.emailVerified })}
+                className={editForm.emailVerified ? 'bg-emerald-600 hover:bg-emerald-500' : ''}
+              >
+                {editForm.emailVerified ? 'Verified' : 'Unverified'}
+              </Button>
+            </div>
+          </div>
+          
+          <DialogFooter>
+            <Button
+              variant="ghost"
+              onClick={() => setEditModal(null)}
+              disabled={isEditLoading}
+            >
+              Cancel
+            </Button>
+            <Button
+              onClick={handleEdit}
+              disabled={isEditLoading || !editForm.name.trim() || !editForm.email.trim()}
+              className="bg-blue-600 hover:bg-blue-500"
+            >
+              {isEditLoading ? 'Saving...' : 'Save Changes'}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
@@ -419,13 +575,14 @@ export default function UsersPage() {
 interface UserCardProps {
   user: AdminUser;
   index: number;
+  onEdit: () => void;
   onBan: () => void;
   onUnban: () => void;
   onGrantAdmin: () => void;
   onRevokeAdmin: () => void;
 }
 
-function UserCard({ user, index, onBan, onUnban, onGrantAdmin, onRevokeAdmin }: UserCardProps) {
+function UserCard({ user, index, onEdit, onBan, onUnban, onGrantAdmin, onRevokeAdmin }: UserCardProps) {
   return (
     <motion.div
       layout
@@ -478,6 +635,11 @@ function UserCard({ user, index, onBan, onUnban, onGrantAdmin, onRevokeAdmin }: 
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="glass-card border-white/10">
+              <DropdownMenuItem onClick={onEdit} className="gap-2 text-blue-400">
+                <Edit className="h-4 w-4" />
+                Edit
+              </DropdownMenuItem>
+              <DropdownMenuSeparator className="bg-white/10" />
               {user.isAdmin ? (
                 <DropdownMenuItem onClick={onRevokeAdmin} className="gap-2 text-amber-400">
                   <ShieldOff className="h-4 w-4" />

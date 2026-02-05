@@ -18,6 +18,7 @@ import {
   MoreVertical,
   ExternalLink,
   Crown,
+  Edit,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -50,6 +51,7 @@ import {
   suspendTenant,
   unsuspendTenant,
   deleteTenant,
+  updateTenant,
 } from '@/lib/api/admin';
 import type { Tenant } from '@/lib/api/admin';
 
@@ -88,6 +90,15 @@ export default function TenantsPage() {
   } | null>(null);
   const [isActionLoading, setIsActionLoading] = useState(false);
   const [deleteConfirmation, setDeleteConfirmation] = useState('');
+
+  // Edit modal state
+  const [editModal, setEditModal] = useState<Tenant | null>(null);
+  const [editForm, setEditForm] = useState({
+    name: '',
+    logo: '',
+    subscriptionTier: 'starter' as 'free' | 'starter' | 'pro' | 'enterprise',
+  });
+  const [isEditLoading, setIsEditLoading] = useState(false);
 
   // Fetch tenants
   const loadTenants = useCallback(
@@ -160,6 +171,42 @@ export default function TenantsPage() {
     } finally {
       setIsActionLoading(false);
     }
+  };
+
+  const handleEdit = async () => {
+    if (!editModal) return;
+
+    // Validate form
+    if (!editForm.name.trim()) {
+      toast.error('Organization name is required');
+      return;
+    }
+
+    setIsEditLoading(true);
+    try {
+      await updateTenant(editModal.id, {
+        name: editForm.name.trim(),
+        logo: editForm.logo.trim() || undefined,
+        subscriptionTier: editForm.subscriptionTier,
+      });
+      toast.success(`${editForm.name} has been updated`);
+      setEditModal(null);
+      loadTenants(true);
+    } catch (error) {
+      console.error('Error updating tenant:', error);
+      toast.error('Failed to update tenant');
+    } finally {
+      setIsEditLoading(false);
+    }
+  };
+
+  const openEditModal = (tenant: Tenant) => {
+    setEditForm({
+      name: tenant.name,
+      logo: tenant.logo || '',
+      subscriptionTier: tenant.subscriptionTier,
+    });
+    setEditModal(tenant);
   };
 
   // Stats
@@ -322,6 +369,7 @@ export default function TenantsPage() {
                   key={tenant.id}
                   tenant={tenant}
                   index={index}
+                  onEdit={() => openEditModal(tenant)}
                   onSuspend={() => setConfirmModal({ type: 'suspend', tenant })}
                   onUnsuspend={() => setConfirmModal({ type: 'unsuspend', tenant })}
                   onDelete={() => setConfirmModal({ type: 'delete', tenant })}
@@ -434,6 +482,87 @@ export default function TenantsPage() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {/* Edit Modal */}
+      <Dialog open={!!editModal} onOpenChange={() => setEditModal(null)}>
+        <DialogContent className="sm:max-w-[500px]">
+          <DialogHeader>
+            <DialogTitle>Edit Organization</DialogTitle>
+            <DialogDescription>
+              Update organization details and subscription tier
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="space-y-4 py-4">
+            {/* Name field */}
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-neutral-300">
+                Organization Name
+              </label>
+              <Input
+                value={editForm.name}
+                onChange={(e) => setEditForm({ ...editForm, name: e.target.value })}
+                placeholder="Enter organization name"
+                className="glass-card border-white/10 text-white"
+                autoFocus
+              />
+            </div>
+
+            {/* Logo field */}
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-neutral-300">
+                Logo URL <span className="text-neutral-500">(optional)</span>
+              </label>
+              <Input
+                value={editForm.logo}
+                onChange={(e) => setEditForm({ ...editForm, logo: e.target.value })}
+                placeholder="https://example.com/logo.png"
+                className="glass-card border-white/10 text-white"
+              />
+            </div>
+
+            {/* Subscription tier field */}
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-neutral-300">
+                Subscription Tier
+              </label>
+              <Select
+                value={editForm.subscriptionTier}
+                onValueChange={(value: 'free' | 'starter' | 'pro' | 'enterprise') =>
+                  setEditForm({ ...editForm, subscriptionTier: value })
+                }
+              >
+                <SelectTrigger className="glass-card border-white/10 text-white">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent className="glass-card border-white/10">
+                  <SelectItem value="free" className="text-neutral-200">Free</SelectItem>
+                  <SelectItem value="starter" className="text-neutral-200">Starter</SelectItem>
+                  <SelectItem value="pro" className="text-neutral-200">Pro</SelectItem>
+                  <SelectItem value="enterprise" className="text-neutral-200">Enterprise</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+          
+          <DialogFooter>
+            <Button
+              variant="ghost"
+              onClick={() => setEditModal(null)}
+              disabled={isEditLoading}
+            >
+              Cancel
+            </Button>
+            <Button
+              onClick={handleEdit}
+              disabled={isEditLoading || !editForm.name.trim()}
+              className="bg-blue-600 hover:bg-blue-500"
+            >
+              {isEditLoading ? 'Saving...' : 'Save Changes'}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
@@ -442,12 +571,13 @@ export default function TenantsPage() {
 interface TenantCardProps {
   tenant: Tenant;
   index: number;
+  onEdit: () => void;
   onSuspend: () => void;
   onUnsuspend: () => void;
   onDelete: () => void;
 }
 
-function TenantCard({ tenant, index, onSuspend, onUnsuspend, onDelete }: TenantCardProps) {
+function TenantCard({ tenant, index, onEdit, onSuspend, onUnsuspend, onDelete }: TenantCardProps) {
   const isSuspended = tenant.subscriptionStatus === 'suspended';
 
   return (
@@ -494,6 +624,10 @@ function TenantCard({ tenant, index, onSuspend, onUnsuspend, onDelete }: TenantC
               <DropdownMenuItem className="gap-2 text-neutral-200">
                 <ExternalLink className="h-4 w-4" />
                 View Details
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={onEdit} className="gap-2 text-blue-400">
+                <Edit className="h-4 w-4" />
+                Edit
               </DropdownMenuItem>
               <DropdownMenuSeparator className="bg-white/10" />
               {isSuspended ? (

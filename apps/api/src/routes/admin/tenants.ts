@@ -305,6 +305,148 @@ router.get(
 );
 
 /**
+ * PATCH /api/admin/tenants/:id
+ * Update organization details
+ * 
+ * Params:
+ * - id: string - Organization ID
+ * 
+ * Body:
+ * - name: string (optional) - Organization name
+ * - logo: string (optional) - Logo URL
+ * - subscriptionTier: 'free' | 'starter' | 'pro' | 'enterprise' (optional) - Subscription tier
+ * 
+ * Returns:
+ * - Success message with updated organization details
+ */
+router.patch(
+  '/:id',
+  requireAdmin,
+  async (req: Request, res: Response) => {
+    try {
+      const actor = req.user;
+
+      if (!actor) {
+        return res.status(401).json({ error: 'Unauthorized: No user found' });
+      }
+
+      const organizationId = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id;
+
+      if (!organizationId) {
+        return res.status(400).json({ error: 'Organization ID is required' });
+      }
+
+      const { name, logo, subscriptionTier } = req.body;
+
+      // Verify organization exists
+      const orgResult = await db
+        .select({
+          id: organization.id,
+          name: organization.name,
+          slug: organization.slug,
+        })
+        .from(organization)
+        .where(eq(organization.id, organizationId))
+        .limit(1);
+
+      if (orgResult.length === 0) {
+        return res.status(404).json({ error: 'Organization not found' });
+      }
+
+      const org = orgResult[0]!;
+
+      // Build update object (only include provided fields)
+      const updates: Partial<typeof organization.$inferInsert> = {};
+      
+      if (name !== undefined && name.trim() !== '') {
+        updates.name = name.trim();
+      }
+      
+      if (logo !== undefined) {
+        updates.logo = logo.trim() || null;
+      }
+
+      // Update organization if there are changes
+      if (Object.keys(updates).length > 0) {
+        await db
+          .update(organization)
+          .set(updates)
+          .where(eq(organization.id, organizationId));
+      }
+
+      // Update subscription tier if provided
+      if (subscriptionTier && ['free', 'starter', 'pro', 'enterprise'].includes(subscriptionTier)) {
+        // Map frontend tier names to database tier names
+        const tierMap: Record<string, string> = {
+          'free': 'free',
+          'starter': 'starter',
+          'pro': 'professional',
+          'enterprise': 'enterprise',
+        };
+        const dbTier = tierMap[subscriptionTier] || 'starter';
+
+        // Check if subscription exists
+        const subscriptionResult = await db
+          .select()
+          .from(subscription_details)
+          .where(eq(subscription_details.organization_id, organizationId))
+          .limit(1);
+
+        if (subscriptionResult.length > 0) {
+          // Update existing subscription
+          await db
+            .update(subscription_details)
+            .set({ tier: dbTier })
+            .where(eq(subscription_details.organization_id, organizationId));
+        } else {
+          // Create new subscription
+          await db.insert(subscription_details).values({
+            organization_id: organizationId,
+            tier: dbTier,
+            seat_count: 10, // Default seat count
+            trial_ends_at: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000), // 14 days trial
+          });
+        }
+      }
+
+      // Log admin action
+      await logAdminAction({
+        adminId: actor.id,
+        action: 'tenant.update',
+        targetType: 'organization',
+        targetId: organizationId,
+        details: {
+          organization_name: org.name,
+          slug: org.slug,
+          updates: {
+            ...updates,
+            ...(subscriptionTier ? { subscriptionTier } : {}),
+          },
+        },
+        ip: req.ip || req.socket.remoteAddress || 'unknown',
+      });
+
+      res.json({
+        message: 'Organization updated successfully',
+        organization: {
+          id: org.id,
+          name: updates.name || org.name,
+          slug: org.slug,
+          logo: updates.logo !== undefined ? updates.logo : null,
+          subscriptionTier: subscriptionTier || null,
+        },
+      });
+    } catch (error) {
+      console.error('Error updating tenant:', error);
+      res.status(500).json({
+        error: 'Failed to update tenant',
+        details: error instanceof Error ? error.message : 'Unknown error',
+      });
+    }
+  }
+);
+
+/**
  * POST /api/admin/tenants/:id/suspend
  * Suspend organization (marks as inactive, prevents login)
  * 

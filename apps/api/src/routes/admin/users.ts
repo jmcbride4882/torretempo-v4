@@ -252,6 +252,147 @@ router.get(
 );
 
 /**
+ * PATCH /api/admin/users/:id
+ * Update user details
+ * 
+ * Params:
+ * - id: string - User ID
+ * 
+ * Body:
+ * - name: string (optional) - User name
+ * - email: string (optional) - User email
+ * - role: 'admin' | null (optional) - Platform role
+ * - emailVerified: boolean (optional) - Email verified status
+ * 
+ * Returns:
+ * - Success message with updated user details
+ */
+router.patch(
+  '/:id',
+  requireAdmin,
+  async (req: Request, res: Response) => {
+    try {
+      const actor = req.user;
+
+      if (!actor) {
+        return res.status(401).json({ error: 'Unauthorized: No user found' });
+      }
+
+      const userId = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id;
+
+      if (!userId) {
+        return res.status(400).json({ error: 'User ID is required' });
+      }
+
+      const { name, email, role, emailVerified } = req.body;
+
+      // Verify user exists
+      const userResult = await db
+        .select({
+          id: user.id,
+          name: user.name,
+          email: user.email,
+          role: user.role,
+        })
+        .from(user)
+        .where(eq(user.id, userId))
+        .limit(1);
+
+      if (userResult.length === 0) {
+        return res.status(404).json({ error: 'User not found' });
+      }
+
+      const existingUser = userResult[0]!;
+
+      // Prevent admin from removing their own admin role
+      if (userId === actor.id && role === null && existingUser.role === 'admin') {
+        return res.status(400).json({ 
+          error: 'Cannot revoke your own admin role',
+        });
+      }
+
+      // Build update object (only include provided fields)
+      const updates: Partial<typeof user.$inferInsert> = {};
+      
+      if (name !== undefined && name.trim() !== '') {
+        updates.name = name.trim();
+      }
+      
+      if (email !== undefined && email.trim() !== '') {
+        // Validate email format
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email.trim())) {
+          return res.status(400).json({ error: 'Invalid email format' });
+        }
+
+        // Check if email is already taken by another user
+        const existingEmailUser = await db
+          .select({ id: user.id })
+          .from(user)
+          .where(and(eq(user.email, email.trim()), sql`${user.id} != ${userId}`))
+          .limit(1);
+
+        if (existingEmailUser.length > 0) {
+          return res.status(400).json({ error: 'Email already in use by another user' });
+        }
+
+        updates.email = email.trim();
+      }
+      
+      if (role !== undefined) {
+        updates.role = role === 'admin' ? 'admin' : null;
+      }
+
+      if (emailVerified !== undefined) {
+        updates.emailVerified = Boolean(emailVerified);
+      }
+
+      // Always update updatedAt
+      updates.updatedAt = new Date();
+
+      // Update user if there are changes
+      if (Object.keys(updates).length > 1) { // > 1 because updatedAt is always included
+        await db
+          .update(user)
+          .set(updates)
+          .where(eq(user.id, userId));
+      }
+
+      // Log admin action
+      await logAdminAction({
+        adminId: actor.id,
+        action: 'user.update',
+        targetType: 'user',
+        targetId: userId,
+        details: {
+          user_name: existingUser.name,
+          user_email: existingUser.email,
+          updates,
+        },
+        ip: req.ip || req.socket.remoteAddress || 'unknown',
+      });
+
+      res.json({
+        message: 'User updated successfully',
+        user: {
+          id: existingUser.id,
+          name: updates.name || existingUser.name,
+          email: updates.email || existingUser.email,
+          role: updates.role !== undefined ? updates.role : existingUser.role,
+          emailVerified: updates.emailVerified !== undefined ? updates.emailVerified : undefined,
+        },
+      });
+    } catch (error) {
+      console.error('Error updating user:', error);
+      res.status(500).json({
+        error: 'Failed to update user',
+        details: error instanceof Error ? error.message : 'Unknown error',
+      });
+    }
+  }
+);
+
+/**
  * POST /api/admin/users/:id/ban
  * Ban a user (sets banned=true, banReason, banExpires)
  * 
