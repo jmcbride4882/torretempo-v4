@@ -50,13 +50,13 @@ const levelIcons = {
 export default function ErrorLogsPage() {
   // State
   const [errors, setErrors] = useState<ErrorLog[]>([]);
-  const [total, setTotal] = useState(0);
-  const [isLoading, setIsLoading] = useState(true);
+  const [, setTotal] = useState(0); // TODO: Display total count in UI
+  const [_isLoading, setIsLoading] = useState(true); // TODO: Add loading skeleton UI
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [levelFilter, setLevelFilter] = useState<string>('all');
   const [sourceFilter, setSourceFilter] = useState<string>('all');
-  const [page, setPage] = useState(1);
+  const [page] = useState(1); // TODO: Add pagination UI
   const limit = 20;
 
   // Fetch errors from real API
@@ -99,7 +99,7 @@ export default function ErrorLogsPage() {
   // Stats (from loaded errors)
   const errorCount = errors.filter((e) => e.level === 'error').length;
   const warningCount = errors.filter((e) => e.level === 'warning').length;
-  const totalPages = Math.ceil(total / limit);
+  // TODO: Add pagination controls using: Math.ceil(total / limit)
 
   // Static source options (can be expanded based on backend values)
   const sources = ['api', 'web', 'system', 'queue', 'database'];
