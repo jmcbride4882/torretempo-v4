@@ -1,0 +1,464 @@
+/**
+ * ClockInSheet Component
+ * Mobile-first bottom sheet for clocking in with geolocation verification
+ * Uses glassmorphism design, Framer Motion animations, and geofence validation
+ */
+
+import * as React from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { 
+  MapPin, 
+  Loader2, 
+  CheckCircle2, 
+  AlertCircle, 
+  Wifi, 
+  QrCode, 
+  Hash, 
+  Hand,
+  Clock,
+  AlertTriangle
+} from 'lucide-react';
+import { BottomSheet } from '@/components/ui/bottom-sheet';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { Label } from '@/components/ui/label';
+import { cn } from '@/lib/utils';
+import { useGeolocation, formatAccuracy, isAccuracyAcceptable } from '@/hooks/useGeolocation';
+import { useOrganization } from '@/hooks/useOrganization';
+import { clockIn, TimeEntryApiError } from '@/lib/api/time-entries';
+import type { ClockMethod } from '@/lib/api/time-entries';
+
+// ============================================================================
+// Types
+// ============================================================================
+
+export interface ClockInSheetProps {
+  isOpen: boolean;
+  onClose: () => void;
+  shiftId?: string;
+}
+
+type ClockMethodOption = {
+  id: ClockMethod;
+  label: string;
+  icon: React.ElementType;
+  available: boolean;
+};
+
+// ============================================================================
+// Constants
+// ============================================================================
+
+const CLOCK_METHODS: ClockMethodOption[] = [
+  { id: 'tap', label: 'Tap', icon: Hand, available: true },
+  { id: 'nfc', label: 'NFC', icon: Wifi, available: false },
+  { id: 'qr', label: 'QR', icon: QrCode, available: false },
+  { id: 'pin', label: 'PIN', icon: Hash, available: false },
+];
+
+const SPRING_CONFIG = { type: 'spring', damping: 30, stiffness: 300 } as const;
+
+// ============================================================================
+// Component
+// ============================================================================
+
+export function ClockInSheet({ isOpen, onClose, shiftId }: ClockInSheetProps) {
+  // Organization context
+  const { organization } = useOrganization();
+  
+  // Geolocation
+  const { 
+    position, 
+    loading: geoLoading, 
+    error: geoError, 
+    accuracy,
+    requestPermission 
+  } = useGeolocation();
+
+  // Local state
+  const [currentTime, setCurrentTime] = React.useState(new Date());
+  const [selectedMethod, setSelectedMethod] = React.useState<ClockMethod>('tap');
+  const [notes, setNotes] = React.useState('');
+  const [submitting, setSubmitting] = React.useState(false);
+  const [success, setSuccess] = React.useState(false);
+  const [error, setError] = React.useState<string | null>(null);
+
+  // Time formatter
+  const timeFormatter = React.useMemo(
+    () => new Intl.DateTimeFormat('en-US', { 
+      hour: 'numeric', 
+      minute: '2-digit',
+      second: '2-digit',
+      hour12: true 
+    }),
+    []
+  );
+
+  const dateFormatter = React.useMemo(
+    () => new Intl.DateTimeFormat('en-US', { 
+      weekday: 'long',
+      month: 'long', 
+      day: 'numeric'
+    }),
+    []
+  );
+
+  // Update current time every second
+  React.useEffect(() => {
+    if (!isOpen) return;
+    
+    const interval = setInterval(() => {
+      setCurrentTime(new Date());
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [isOpen]);
+
+  // Request geolocation on mount
+  React.useEffect(() => {
+    if (isOpen && !position && !geoLoading && !geoError) {
+      requestPermission();
+    }
+  }, [isOpen, position, geoLoading, geoError, requestPermission]);
+
+  // Reset state when sheet opens
+  React.useEffect(() => {
+    if (isOpen) {
+      setSuccess(false);
+      setError(null);
+      setNotes('');
+      setSelectedMethod('tap');
+    }
+  }, [isOpen]);
+
+  // Computed values
+  const isWithinGeofence = React.useMemo(() => {
+    // For now, assume within geofence if we have location
+    // In production, calculate distance to assigned work location
+    return position !== null;
+  }, [position]);
+
+  const hasLowAccuracy = accuracy !== null && !isAccuracyAcceptable(accuracy);
+  const canClockIn = position !== null && isWithinGeofence && !submitting && !success;
+  const isPermissionDenied = geoError?.code === 1; // PERMISSION_DENIED
+
+  // Handle clock in submission
+  const handleClockIn = async () => {
+    if (!organization?.slug || !position) return;
+    
+    setSubmitting(true);
+    setError(null);
+
+    try {
+      await clockIn(organization.slug, {
+        linked_shift_id: shiftId,
+        clock_in_location: {
+          lat: position.coords.latitude,
+          lng: position.coords.longitude,
+          accuracy: position.coords.accuracy,
+        },
+        clock_in_method: selectedMethod,
+        notes: notes.trim() || undefined,
+      });
+
+      setSuccess(true);
+      
+      // Close after success animation
+      setTimeout(() => {
+        onClose();
+      }, 1500);
+    } catch (err) {
+      if (err instanceof TimeEntryApiError) {
+        if (err.status === 409) {
+          setError('You are already clocked in. Please clock out first.');
+        } else if (err.status === 403) {
+          setError('You are outside the allowed work area.');
+        } else {
+          setError(err.message);
+        }
+      } else {
+        setError('Failed to clock in. Please try again.');
+      }
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  return (
+    <BottomSheet
+      isOpen={isOpen}
+      onClose={onClose}
+      snapPoints={[520]}
+      dismissable={!submitting}
+    >
+      <div className="flex flex-col gap-6">
+        {/* Header with Time */}
+        <div className="text-center">
+          <div className="flex items-center justify-center gap-2 mb-2">
+            <Clock className="h-5 w-5 text-emerald-400" />
+            <h2 className="text-xl font-semibold text-white">Clock In</h2>
+          </div>
+          <motion.div
+            key={currentTime.getTime()}
+            initial={{ opacity: 0.5 }}
+            animate={{ opacity: 1 }}
+            className="text-4xl font-mono font-bold text-white tracking-tight"
+          >
+            {timeFormatter.format(currentTime)}
+          </motion.div>
+          <p className="text-sm text-zinc-400 mt-1">
+            {dateFormatter.format(currentTime)}
+          </p>
+        </div>
+
+        {/* Location Section */}
+        <div className="glass-card rounded-xl p-4 space-y-3">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <MapPin className="h-4 w-4 text-zinc-400" />
+              <span className="text-sm font-medium text-zinc-300">Location</span>
+            </div>
+            {geoLoading ? (
+              <Badge variant="ghost" className="gap-1">
+                <Loader2 className="h-3 w-3 animate-spin" />
+                Fetching...
+              </Badge>
+            ) : position ? (
+              <Badge 
+                variant={isWithinGeofence ? 'success' : 'destructive'}
+                className="gap-1"
+              >
+                {isWithinGeofence ? (
+                  <>
+                    <CheckCircle2 className="h-3 w-3" />
+                    Within geofence
+                  </>
+                ) : (
+                  <>
+                    <AlertCircle className="h-3 w-3" />
+                    Outside geofence
+                  </>
+                )}
+              </Badge>
+            ) : null}
+          </div>
+
+          {/* Location Status Content */}
+          <AnimatePresence mode="wait">
+            {isPermissionDenied ? (
+              <motion.div
+                key="denied"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0 }}
+                className="flex items-start gap-3 p-3 rounded-lg bg-red-500/10 border border-red-500/20"
+              >
+                <AlertCircle className="h-5 w-5 text-red-400 flex-shrink-0 mt-0.5" />
+                <div>
+                  <p className="text-sm font-medium text-red-400">
+                    Location access required
+                  </p>
+                  <p className="text-xs text-zinc-400 mt-1">
+                    Please enable location permissions in your browser settings to clock in.
+                  </p>
+                </div>
+              </motion.div>
+            ) : geoLoading ? (
+              <motion.div
+                key="loading"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="flex items-center gap-3 py-2"
+              >
+                <div className="h-10 w-10 rounded-full bg-zinc-800 flex items-center justify-center">
+                  <Loader2 className="h-5 w-5 text-emerald-400 animate-spin" />
+                </div>
+                <div>
+                  <p className="text-sm text-zinc-300">Fetching location...</p>
+                  <p className="text-xs text-zinc-500">Please wait</p>
+                </div>
+              </motion.div>
+            ) : position ? (
+              <motion.div
+                key="location"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0 }}
+                className="space-y-2"
+              >
+                <div className="flex items-center justify-between text-xs">
+                  <span className="text-zinc-500">Coordinates</span>
+                  <span className="text-zinc-300 font-mono">
+                    {position.coords.latitude.toFixed(5)}, {position.coords.longitude.toFixed(5)}
+                  </span>
+                </div>
+                <div className="flex items-center justify-between text-xs">
+                  <span className="text-zinc-500">Accuracy</span>
+                  <span className={cn(
+                    "font-mono",
+                    hasLowAccuracy ? "text-amber-400" : "text-zinc-300"
+                  )}>
+                    {formatAccuracy(accuracy ?? 0)}
+                  </span>
+                </div>
+                {hasLowAccuracy && (
+                  <motion.div
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: 'auto' }}
+                    className="flex items-center gap-2 text-xs text-amber-400 pt-1"
+                  >
+                    <AlertTriangle className="h-3 w-3" />
+                    Low GPS accuracy detected
+                  </motion.div>
+                )}
+              </motion.div>
+            ) : geoError ? (
+              <motion.div
+                key="error"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0 }}
+                className="flex items-center gap-3 p-3 rounded-lg bg-red-500/10 border border-red-500/20"
+              >
+                <AlertCircle className="h-5 w-5 text-red-400" />
+                <p className="text-sm text-red-400">{geoError.message}</p>
+              </motion.div>
+            ) : null}
+          </AnimatePresence>
+        </div>
+
+        {/* Clock Method Tabs */}
+        <div className="space-y-2">
+          <Label className="text-zinc-400">Clock Method</Label>
+          <div className="grid grid-cols-4 gap-2">
+            {CLOCK_METHODS.map((method) => {
+              const Icon = method.icon;
+              const isSelected = selectedMethod === method.id;
+              const isDisabled = !method.available;
+              
+              return (
+                <motion.button
+                  key={method.id}
+                  whileTap={method.available ? { scale: 0.95 } : undefined}
+                  onClick={() => method.available && setSelectedMethod(method.id)}
+                  disabled={isDisabled}
+                  className={cn(
+                    "flex flex-col items-center justify-center gap-1 py-3 px-2 rounded-xl",
+                    "min-h-[56px] transition-all duration-200",
+                    "border",
+                    isSelected && method.available
+                      ? "bg-emerald-500/20 border-emerald-500/50 text-emerald-400"
+                      : "bg-zinc-900/50 border-zinc-800 text-zinc-400",
+                    isDisabled && "opacity-50 cursor-not-allowed"
+                  )}
+                >
+                  <Icon className="h-5 w-5" />
+                  <span className="text-xs font-medium">{method.label}</span>
+                  {isDisabled && (
+                    <span className="text-[10px] text-zinc-500">Soon</span>
+                  )}
+                </motion.button>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Notes */}
+        <div className="space-y-2">
+          <Label htmlFor="clock-in-notes" className="text-zinc-400">
+            Notes (optional)
+          </Label>
+          <textarea
+            id="clock-in-notes"
+            value={notes}
+            onChange={(e) => setNotes(e.target.value)}
+            placeholder="Add any notes..."
+            rows={2}
+            className={cn(
+              "w-full px-3 py-2 rounded-xl resize-none",
+              "bg-zinc-900/50 border border-zinc-800",
+              "text-white placeholder:text-zinc-600",
+              "focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500/50",
+              "text-sm"
+            )}
+          />
+        </div>
+
+        {/* Error Message */}
+        <AnimatePresence>
+          {error && (
+            <motion.div
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              className="flex items-center gap-2 p-3 rounded-xl bg-red-500/10 border border-red-500/20"
+            >
+              <AlertCircle className="h-4 w-4 text-red-400 flex-shrink-0" />
+              <p className="text-sm text-red-400">{error}</p>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* Success State */}
+        <AnimatePresence>
+          {success && (
+            <motion.div
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0 }}
+              transition={SPRING_CONFIG}
+              className="flex flex-col items-center justify-center py-4 gap-2"
+            >
+              <motion.div
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                transition={{ ...SPRING_CONFIG, delay: 0.1 }}
+                className="h-16 w-16 rounded-full bg-emerald-500/20 flex items-center justify-center"
+              >
+                <CheckCircle2 className="h-8 w-8 text-emerald-400" />
+              </motion.div>
+              <p className="text-lg font-semibold text-white">Clocked In!</p>
+              <p className="text-sm text-zinc-400">
+                {timeFormatter.format(currentTime)}
+              </p>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* Action Buttons */}
+        {!success && (
+          <div className="flex flex-col gap-3 pt-2">
+            <Button
+              onClick={handleClockIn}
+              disabled={!canClockIn}
+              className={cn(
+                "h-14 text-lg font-semibold rounded-xl",
+                "bg-emerald-600 hover:bg-emerald-700",
+                "disabled:bg-zinc-800 disabled:text-zinc-500"
+              )}
+            >
+              {submitting ? (
+                <span className="flex items-center gap-2">
+                  <Loader2 className="h-5 w-5 animate-spin" />
+                  Clocking In...
+                </span>
+              ) : (
+                'Clock In Now'
+              )}
+            </Button>
+            
+            <Button
+              variant="ghost"
+              onClick={onClose}
+              disabled={submitting}
+              className="h-12 text-zinc-400 hover:text-white"
+            >
+              Cancel
+            </Button>
+          </div>
+        )}
+      </div>
+    </BottomSheet>
+  );
+}

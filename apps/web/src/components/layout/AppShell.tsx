@@ -20,6 +20,7 @@ import {
 import RosterPage from '@/pages/Roster';
 import OpenShiftsPage from '@/pages/OpenShifts';
 import SwapsPage from '@/pages/Swaps';
+import TimeEntryList from '@/pages/TimeClock/TimeEntryList';
 
 // Placeholder pages - these will be built in Phase 2
 function DashboardPage() {
@@ -145,15 +146,7 @@ export default function AppShell() {
                 <Route path="dashboard" element={<DashboardPage />} />
                 <Route path="roster" element={<RosterPage />} />
                 <Route path="open-shifts" element={<OpenShiftsPage />} />
-                <Route
-                  path="clock"
-                  element={
-                    <PlaceholderPage
-                      title="Time Clock"
-                      description="Clock in and out, view your time entries, and track hours."
-                    />
-                  }
-                />
+                <Route path="clock" element={<TimeEntryList />} />
                 <Route path="swaps" element={<SwapsPage />} />
                 <Route
                   path="reports"
