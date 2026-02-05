@@ -26,7 +26,10 @@ export const user = pgTable('user', {
   image: text('image'),
   createdAt: timestamp('createdAt').notNull(),
   updatedAt: timestamp('updatedAt').notNull(),
-  role: text('role'), // Added for Better Auth admin plugin
+  role: text('role'), // Better Auth admin plugin
+  banned: boolean('banned'), // Better Auth admin plugin
+  banReason: text('banReason'), // Better Auth admin plugin
+  banExpires: timestamp('banExpires'), // Better Auth admin plugin
 });
 
 export const session = pgTable('session', {
