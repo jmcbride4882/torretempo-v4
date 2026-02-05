@@ -18,6 +18,12 @@ import membersRouter from './routes/members.js';
 import inspectorRouter from './routes/inspector.js';
 import reportsRouter from './routes/reports.js';
 import inspectorTokensRouter from './routes/admin/inspector-tokens.js';
+import systemRouter from './routes/admin/system.js';
+import tenantsRouter from './routes/admin/tenants.js';
+import usersRouter from './routes/admin/users.js';
+import subscriptionsRouter from './routes/admin/subscriptions.js';
+import auditRouter from './routes/admin/audit.js';
+import analyticsRouter from './routes/admin/analytics.js';
 import 'dotenv/config';
 import './workers/email.worker.js';
 
@@ -57,7 +63,15 @@ app.get('/api/health', (_req: Request, res: Response) => {
   res.json({ status: 'ok', version: '4.0.0', ts: Date.now() });
 });
 
-// Admin routes
+// Admin routes (platform-level)
+app.use('/api/admin/system', systemRouter);
+app.use('/api/admin/users', usersRouter);
+app.use('/api/admin/tenants', tenantsRouter);
+app.use('/api/admin/subscriptions', subscriptionsRouter);
+app.use('/api/admin/audit', auditRouter);
+app.use('/api/admin/analytics', analyticsRouter);
+
+// Admin routes (tenant-specific)
 app.use('/api/admin/:slug/inspector-tokens', tenantMiddleware, inspectorTokensRouter);
 
 // Admin routes (placeholder for other admin endpoints)

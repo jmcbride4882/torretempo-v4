@@ -25,6 +25,15 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 
+// Admin page imports
+import TenantsPage from './TenantsPage';
+import UsersPage from './UsersPage';
+import SubscriptionsPage from './SubscriptionsPage';
+import SystemPage from './SystemPage';
+import InspectorTokensPage from './InspectorTokensPage';
+import AuditPage from './AuditPage';
+import AnalyticsPage from './AnalyticsPage';
+
 // Admin nav items
 const adminNavItems = [
   { icon: Building2, label: 'Tenants', path: 'tenants' },
@@ -36,28 +45,7 @@ const adminNavItems = [
   { icon: BarChart3, label: 'Analytics', path: 'analytics' },
 ];
 
-// Placeholder page component
-function AdminPlaceholder({ title, description }: { title: string; description: string }) {
-  return (
-    <div className="flex flex-col items-center justify-center min-h-[60vh] text-center px-4">
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="space-y-4"
-      >
-        <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-amber-600/20">
-          <Shield className="h-8 w-8 text-amber-400" />
-        </div>
-        <h1 className="text-2xl font-bold text-white">{title}</h1>
-        <p className="max-w-md text-neutral-400">{description}</p>
-        <div className="flex items-center justify-center gap-2 text-sm text-neutral-500">
-          <span className="h-2 w-2 animate-pulse rounded-full bg-amber-500" />
-          Admin Feature - Phase 2+
-        </div>
-      </motion.div>
-    </div>
-  );
-}
+
 
 // Admin Sidebar
 function AdminSidebar() {
@@ -244,69 +232,13 @@ export default function AdminLayout() {
           <AnimatePresence mode="wait">
             <motion.div {...pageTransition}>
               <Routes>
-                <Route
-                  path="tenants"
-                  element={
-                    <AdminPlaceholder
-                      title="Tenants"
-                      description="Manage all organizations, view their subscription status, and access tenant settings."
-                    />
-                  }
-                />
-                <Route
-                  path="users"
-                  element={
-                    <AdminPlaceholder
-                      title="Users"
-                      description="View and manage all users across the platform. Grant admin access and manage permissions."
-                    />
-                  }
-                />
-                <Route
-                  path="subscriptions"
-                  element={
-                    <AdminPlaceholder
-                      title="Subscriptions"
-                      description="Manage billing plans, view revenue metrics, and handle subscription changes."
-                    />
-                  }
-                />
-                <Route
-                  path="system"
-                  element={
-                    <AdminPlaceholder
-                      title="System"
-                      description="System health monitoring, configuration, and maintenance tools."
-                    />
-                  }
-                />
-                <Route
-                  path="inspector-tokens"
-                  element={
-                    <AdminPlaceholder
-                      title="Inspector Tokens"
-                      description="Generate and manage inspector authentication tokens for external integrations."
-                    />
-                  }
-                />
-                <Route
-                  path="audit"
-                  element={
-                    <AdminPlaceholder
-                      title="Audit Log"
-                      description="View all administrative actions and system events for compliance and debugging."
-                    />
-                  }
-                />
-                <Route
-                  path="analytics"
-                  element={
-                    <AdminPlaceholder
-                      title="Analytics"
-                      description="Platform-wide analytics, usage metrics, and growth insights."
-                    />
-                  }
-                />
+                <Route path="tenants" element={<TenantsPage />} />
+                <Route path="users" element={<UsersPage />} />
+                <Route path="subscriptions" element={<SubscriptionsPage />} />
+                <Route path="system" element={<SystemPage />} />
+                <Route path="inspector-tokens" element={<InspectorTokensPage />} />
+                <Route path="audit" element={<AuditPage />} />
+                <Route path="analytics" element={<AnalyticsPage />} />
                 <Route path="*" element={<Navigate to="tenants" replace />} />
               </Routes>
             </motion.div>
