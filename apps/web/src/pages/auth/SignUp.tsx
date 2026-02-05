@@ -33,7 +33,7 @@ export default function SignUp() {
       }
 
       toast.success('Account created successfully!');
-      navigate('/');
+      navigate('/dashboard');
     } catch (error) {
       toast.error('An unexpected error occurred');
     } finally {
@@ -65,13 +65,13 @@ export default function SignUp() {
           <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary-600 shadow-lg shadow-primary-600/30">
             <Clock className="h-6 w-6 text-white" />
           </div>
-          <span className="text-2xl font-bold text-white">Torre Tempo</span>
+          <span className="text-2xl font-bold text-white">LSLT Workforce</span>
         </motion.div>
 
         <Card className="border-white/5 bg-neutral-900/70 backdrop-blur-xl">
           <CardHeader className="text-center">
             <CardTitle className="text-2xl">Create your account</CardTitle>
-            <CardDescription>Get started with Torre Tempo today</CardDescription>
+            <CardDescription>Get started with LSLT Workforce today</CardDescription>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-4">

@@ -15,7 +15,7 @@ export default function SignIn() {
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
-  const from = (location.state as { from?: { pathname: string } })?.from?.pathname || '/';
+  const from = (location.state as { from?: { pathname: string } })?.from?.pathname || '/dashboard';
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -72,7 +72,7 @@ export default function SignIn() {
           <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary-600 shadow-lg shadow-primary-600/30">
             <Clock className="h-6 w-6 text-white" />
           </div>
-          <span className="text-2xl font-bold text-white">Torre Tempo</span>
+          <span className="text-2xl font-bold text-white">LSLT Workforce</span>
         </motion.div>
 
         <Card className="border-white/5 bg-neutral-900/70 backdrop-blur-xl">
