@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate, useLocation, Link } from 'react-router-dom';
+import { useLocation, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { toast } from 'sonner';
 import { Mail, Lock, ArrowRight, Clock } from 'lucide-react';
@@ -10,7 +10,6 @@ import { Label } from '@/components/ui/label';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@/components/ui/card';
 
 export default function SignIn() {
-  const navigate = useNavigate();
   const location = useLocation();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -35,8 +34,13 @@ export default function SignIn() {
 
       toast.success('Welcome back!');
       
-      // Redirect to root - OnboardingRedirect will handle routing based on org status
-      navigate(from);
+      // Wait for session to be established before navigating
+      // This prevents the "double login" issue where ProtectedRoute
+      // redirects back to sign-in before session is recognized
+      await new Promise(resolve => setTimeout(resolve, 300));
+      
+      // Force a full page reload to ensure session is loaded
+      window.location.href = from;
     } catch (error) {
       toast.error('An unexpected error occurred');
     } finally {
