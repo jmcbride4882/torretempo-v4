@@ -90,17 +90,14 @@ const levelIcons = {
 export default function ErrorLogsPage() {
   // State
   const [errors, setErrors] = useState<ErrorLog[]>(mockErrors);
-  const [isLoading, setIsLoading] = useState(false);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [levelFilter, setLevelFilter] = useState<string>('all');
   const [sourceFilter, setSourceFilter] = useState<string>('all');
-  const [selectedError, setSelectedError] = useState<ErrorLog | null>(null);
 
   // Fetch errors (mock implementation)
   const loadErrors = useCallback(
     async (silent = false) => {
-      if (!silent) setIsLoading(true);
       setIsRefreshing(silent);
 
       try {
@@ -113,7 +110,6 @@ export default function ErrorLogsPage() {
         console.error('Error fetching error logs:', error);
         toast.error('Failed to load error logs');
       } finally {
-        setIsLoading(false);
         setIsRefreshing(false);
       }
     },
@@ -294,8 +290,7 @@ export default function ErrorLogsPage() {
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, scale: 0.95 }}
                     transition={{ delay: index * 0.05 }}
-                    onClick={() => setSelectedError(error)}
-                    className="cursor-pointer rounded-xl border border-white/10 bg-white/5 p-4 transition-all hover:border-white/20 hover:bg-white/[0.07]"
+                    className="rounded-xl border border-white/10 bg-white/5 p-4"
                   >
                     <div className="mb-3 flex items-start justify-between gap-4">
                       <div className="flex items-center gap-3">
