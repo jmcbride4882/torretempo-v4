@@ -9,6 +9,7 @@ import { requireAdmin } from './middleware/requireAdmin.js';
 import { inspectorAuth } from './middleware/inspectorAuth.js';
 import { testConnection } from './db/index.js';
 import shiftsRouter from './routes/shifts.js';
+import locationsRouter from './routes/locations.js';
 import 'dotenv/config';
 
 const app = express();
@@ -58,6 +59,7 @@ app.use('/api/inspector/v1/*', inspectorAuth, (_req: Request, res: Response) => 
 });
 
 // Tenant routes
+app.use('/api/v1/org/:slug/locations', tenantMiddleware, locationsRouter);
 app.use('/api/v1/org/:slug/shifts', tenantMiddleware, shiftsRouter);
 
 // 404 handler
