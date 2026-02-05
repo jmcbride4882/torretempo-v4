@@ -82,7 +82,7 @@ export function OrganizationCard({ organization, onSelect, isLoading, index = 0 
 
               {/* Organization details */}
               <div className="min-w-0 flex-1">
-                <h3 className="truncate text-lg font-semibold text-white transition-colors group-hover:text-primary-400">
+                <h3 className="line-clamp-2 text-lg font-semibold text-white transition-colors group-hover:text-primary-400 break-words">
                   {organization.name}
                 </h3>
                 <p className="mt-0.5 text-sm text-neutral-500">
