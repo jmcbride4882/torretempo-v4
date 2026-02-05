@@ -63,6 +63,11 @@ const SPRING_CONFIG = { type: 'spring', damping: 30, stiffness: 300 } as const;
 // ============================================================================
 
 export function ClockInSheet({ isOpen, onClose, shiftId }: ClockInSheetProps) {
+  // Debug logging
+  React.useEffect(() => {
+    console.log('🔵 ClockInSheet render - isOpen:', isOpen);
+  }, [isOpen]);
+
   // Organization context
   const { organization } = useOrganization();
   
