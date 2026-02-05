@@ -33,7 +33,7 @@ export default function SignUp() {
       }
 
       toast.success('Account created successfully!');
-      navigate('/onboarding/create');
+      navigate('/');
     } catch (error) {
       toast.error('An unexpected error occurred');
     } finally {

@@ -154,7 +154,7 @@ export const skills = pgTable(
 export const member_skills = pgTable(
   'member_skills',
   {
-    member_id: uuid('member_id').notNull(),
+    member_id: text('member_id').notNull(),
     skill_id: uuid('skill_id').notNull(),
   },
   (table) => ({
@@ -171,7 +171,7 @@ export const availability = pgTable(
   {
     id: uuid('id').primaryKey().defaultRandom(),
     organization_id: text('organization_id').notNull(),
-    user_id: uuid('user_id').notNull(),
+    user_id: text('user_id').notNull(),
     day_of_week: smallint('day_of_week').notNull(), // 0-6 (Sunday-Saturday)
     start_time: varchar('start_time', { length: 5 }).notNull(), // HH:MM
     end_time: varchar('end_time', { length: 5 }).notNull(), // HH:MM
@@ -194,7 +194,7 @@ export const shifts = pgTable(
   {
     id: uuid('id').primaryKey().defaultRandom(),
     organization_id: text('organization_id').notNull(),
-    user_id: uuid('user_id'), // nullable - shift can be unassigned
+    user_id: text('user_id'), // nullable - shift can be unassigned
     location_id: uuid('location_id').notNull(),
     start_time: timestamp('start_time', { withTimezone: true }).notNull(),
     end_time: timestamp('end_time', { withTimezone: true }).notNull(),
@@ -203,7 +203,7 @@ export const shifts = pgTable(
     notes: text('notes'),
     color: varchar('color', { length: 7 }), // hex color
     required_skill_id: uuid('required_skill_id'), // nullable
-    created_by: uuid('created_by').notNull(),
+    created_by: text('created_by').notNull(),
     published_at: timestamp('published_at', { withTimezone: true }),
     acknowledged_at: timestamp('acknowledged_at', { withTimezone: true }),
     created_at: timestamp('created_at', { withTimezone: true })
@@ -229,12 +229,12 @@ export const swap_requests = pgTable(
   {
     id: uuid('id').primaryKey().defaultRandom(),
     organization_id: text('organization_id').notNull(),
-    requester_id: uuid('requester_id').notNull(),
+    requester_id: text('requester_id').notNull(),
     offered_shift_id: uuid('offered_shift_id').notNull(),
-    recipient_id: uuid('recipient_id'), // nullable - can be open request
+    recipient_id: text('recipient_id'), // nullable - can be open request
     desired_shift_id: uuid('desired_shift_id'), // nullable - can be open request
     status: varchar('status', { length: 30 }).notNull().default('pending_peer'), // pending_peer, pending_manager, approved, rejected, completed
-    manager_id: uuid('manager_id'), // nullable
+    manager_id: text('manager_id'), // nullable
     resolved_at: timestamp('resolved_at', { withTimezone: true }),
     reason: text('reason'),
     created_at: timestamp('created_at', { withTimezone: true })
@@ -256,7 +256,7 @@ export const notifications = pgTable(
   {
     id: uuid('id').primaryKey().defaultRandom(),
     organization_id: text('organization_id').notNull(),
-    user_id: uuid('user_id').notNull(),
+    user_id: text('user_id').notNull(),
     type: varchar('type', { length: 50 }).notNull(),
     title: text('title').notNull(),
     message: text('message').notNull(),
@@ -281,7 +281,7 @@ export const time_entries = pgTable(
   {
     id: uuid('id').primaryKey().defaultRandom(),
     organization_id: text('organization_id').notNull(),
-    user_id: uuid('user_id').notNull(),
+    user_id: text('user_id').notNull(),
     linked_shift_id: uuid('linked_shift_id'), // nullable
     entry_date: timestamp('entry_date', { withTimezone: true }).notNull(),
     clock_in: timestamp('clock_in', { withTimezone: true }).notNull(),
@@ -343,8 +343,8 @@ export const correction_requests = pgTable(
     id: uuid('id').primaryKey().defaultRandom(),
     organization_id: text('organization_id').notNull(),
     time_entry_id: uuid('time_entry_id').notNull(),
-    requested_by: uuid('requested_by').notNull(),
-    reviewed_by: uuid('reviewed_by'), // nullable
+    requested_by: text('requested_by').notNull(),
+    reviewed_by: text('reviewed_by'), // nullable
     original_data: jsonb('original_data').notNull(),
     requested_data: jsonb('requested_data').notNull(),
     reason: text('reason').notNull(),
@@ -369,7 +369,7 @@ export const monthly_summaries = pgTable(
   {
     id: uuid('id').primaryKey().defaultRandom(),
     organization_id: text('organization_id').notNull(),
-    user_id: uuid('user_id').notNull(),
+    user_id: text('user_id').notNull(),
     year: smallint('year').notNull(),
     month: smallint('month').notNull(), // 1-12
     total_hours: numeric('total_hours', { precision: 8, scale: 2 }).notNull(),
@@ -403,7 +403,7 @@ export const audit_log = pgTable(
   {
     id: uuid('id').primaryKey().defaultRandom(),
     organization_id: text('organization_id').notNull(),
-    actor_id: uuid('actor_id').notNull(),
+    actor_id: text('actor_id').notNull(),
     action: varchar('action', { length: 50 }).notNull(), // create, read, update, delete
     entity_type: varchar('entity_type', { length: 50 }).notNull(), // shift, timeEntry, etc.
     entity_id: uuid('entity_id'), // nullable
@@ -432,7 +432,7 @@ export const admin_audit_log = pgTable(
   'admin_audit_log',
   {
     id: uuid('id').primaryKey().defaultRandom(),
-    admin_id: uuid('admin_id').notNull(),
+    admin_id: text('admin_id').notNull(),
     action: varchar('action', { length: 50 }).notNull(), // create, read, update, delete, suspend, etc.
     target_type: varchar('target_type', { length: 50 }), // organization, user, etc.
     target_id: text('target_id'), // nullable
@@ -458,7 +458,7 @@ export const inspector_tokens = pgTable(
     id: uuid('id').primaryKey().defaultRandom(),
     organization_id: text('organization_id').notNull(),
     token_hash: varchar('token_hash', { length: 64 }).notNull(),
-    issued_by: uuid('issued_by').notNull(),
+    issued_by: text('issued_by').notNull(),
     issued_to: varchar('issued_to', { length: 255 }), // nullable - can be issued to email
     expires_at: timestamp('expires_at', { withTimezone: true }).notNull(),
     revoked_at: timestamp('revoked_at', { withTimezone: true }),

@@ -1,5 +1,5 @@
 import { Router, Request, Response } from 'express';
-import { and, eq, or, inArray, desc, ne } from 'drizzle-orm';
+import { and, eq, or, inArray, desc, ne, sql } from 'drizzle-orm';
 import { db } from '../db/index.js';
 import { shifts, swap_requests, member } from '../db/schema.js';
 import { requireRole } from '../middleware/requireRole.js';
@@ -173,6 +173,46 @@ router.get('/pending', async (req: Request, res: Response) => {
   } catch (error) {
     console.error('Error fetching pending swaps:', error);
     res.status(500).json({ error: 'Failed to fetch pending swaps' });
+  }
+});
+
+// GET /api/v1/org/:slug/swaps/pending-count - Get count of swaps pending my action
+router.get('/pending-count', async (req: Request, res: Response) => {
+  try {
+    const actor = getActor(req, res);
+    if (!actor) {
+      return;
+    }
+
+    const organizationId = req.organizationId!;
+    const pendingConditions: any[] = [];
+
+    pendingConditions.push(
+      and(
+        eq(swap_requests.status, 'pending_peer'),
+        eq(swap_requests.recipient_id, actor.id)
+      )
+    );
+
+    if (MANAGER_ROLES.includes(actor.role)) {
+      pendingConditions.push(eq(swap_requests.status, 'pending_manager'));
+    }
+
+    if (pendingConditions.length === 0) {
+      res.json({ count: 0 });
+      return;
+    }
+
+    const result = await db
+      .select({ count: sql<number>`count(*)` })
+      .from(swap_requests)
+      .where(and(eq(swap_requests.organization_id, organizationId), or(...pendingConditions)));
+
+    const count = Number(result[0]?.count || 0);
+    res.json({ count });
+  } catch (error) {
+    console.error('Error fetching pending swap count:', error);
+    res.status(500).json({ error: 'Failed to fetch pending swap count' });
   }
 });
 

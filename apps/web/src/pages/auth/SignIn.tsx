@@ -16,7 +16,7 @@ export default function SignIn() {
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
-  const from = (location.state as { from?: { pathname: string } })?.from?.pathname || '/onboarding/create';
+  const from = (location.state as { from?: { pathname: string } })?.from?.pathname || '/';
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -35,13 +35,8 @@ export default function SignIn() {
 
       toast.success('Welcome back!');
       
-      // Check for active organization
-      const orgResult = await authClient.organization.getFullOrganization();
-      if (orgResult.data) {
-        navigate(`/t/${orgResult.data.slug}/dashboard`);
-      } else {
-        navigate(from);
-      }
+      // Redirect to root - OnboardingRedirect will handle routing based on org status
+      navigate(from);
     } catch (error) {
       toast.error('An unexpected error occurred');
     } finally {
