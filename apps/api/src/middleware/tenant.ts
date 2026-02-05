@@ -2,7 +2,7 @@ import { Request, Response, NextFunction, RequestHandler } from 'express';
 import { auth } from '../lib/auth.js';
 import { db } from '../db/index.js';
 import { fromNodeHeaders } from 'better-auth/node';
-import { eq, and } from 'drizzle-orm';
+import { eq, and, sql } from 'drizzle-orm';
 import { organization, member } from '../db/schema.js';
 
 /**
@@ -72,8 +72,8 @@ export const tenantMiddleware: RequestHandler = async (
       return;
     }
 
-    // Set LOCAL app.organization_id for RLS policies
-    await db.execute(`SET LOCAL app.organization_id = '${organizationId}'`);
+    // Set app.organization_id for RLS policies (session-scoped)
+    await db.execute(sql.raw(`SET app.organization_id = '${organizationId}'`));
 
     // Attach session and organizationId to request
     req.session = session;

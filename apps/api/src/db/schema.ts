@@ -114,7 +114,7 @@ export const locations = pgTable(
   'locations',
   {
     id: uuid('id').primaryKey().defaultRandom(),
-    organization_id: uuid('organization_id').notNull(),
+    organization_id: text('organization_id').notNull(),
     name: varchar('name', { length: 255 }).notNull(),
     address: text('address'),
     lat: numeric('lat', { precision: 10, scale: 8 }),
@@ -136,7 +136,7 @@ export const skills = pgTable(
   'skills',
   {
     id: uuid('id').primaryKey().defaultRandom(),
-    organization_id: uuid('organization_id').notNull(),
+    organization_id: text('organization_id').notNull(),
     name: varchar('name', { length: 255 }).notNull(),
     color: varchar('color', { length: 7 }), // hex color
     created_at: timestamp('created_at', { withTimezone: true })
@@ -170,7 +170,7 @@ export const availability = pgTable(
   'availability',
   {
     id: uuid('id').primaryKey().defaultRandom(),
-    organization_id: uuid('organization_id').notNull(),
+    organization_id: text('organization_id').notNull(),
     user_id: uuid('user_id').notNull(),
     day_of_week: smallint('day_of_week').notNull(), // 0-6 (Sunday-Saturday)
     start_time: varchar('start_time', { length: 5 }).notNull(), // HH:MM
@@ -193,7 +193,7 @@ export const shifts = pgTable(
   'shifts',
   {
     id: uuid('id').primaryKey().defaultRandom(),
-    organization_id: uuid('organization_id').notNull(),
+    organization_id: text('organization_id').notNull(),
     user_id: uuid('user_id'), // nullable - shift can be unassigned
     location_id: uuid('location_id').notNull(),
     start_time: timestamp('start_time', { withTimezone: true }).notNull(),
@@ -228,7 +228,7 @@ export const swap_requests = pgTable(
   'swap_requests',
   {
     id: uuid('id').primaryKey().defaultRandom(),
-    organization_id: uuid('organization_id').notNull(),
+    organization_id: text('organization_id').notNull(),
     requester_id: uuid('requester_id').notNull(),
     offered_shift_id: uuid('offered_shift_id').notNull(),
     recipient_id: uuid('recipient_id'), // nullable - can be open request
@@ -255,7 +255,7 @@ export const time_entries = pgTable(
   'time_entries',
   {
     id: uuid('id').primaryKey().defaultRandom(),
-    organization_id: uuid('organization_id').notNull(),
+    organization_id: text('organization_id').notNull(),
     user_id: uuid('user_id').notNull(),
     linked_shift_id: uuid('linked_shift_id'), // nullable
     entry_date: timestamp('entry_date', { withTimezone: true }).notNull(),
@@ -294,7 +294,7 @@ export const break_entries = pgTable(
   'break_entries',
   {
     id: uuid('id').primaryKey().defaultRandom(),
-    organization_id: uuid('organization_id').notNull(),
+    organization_id: text('organization_id').notNull(),
     time_entry_id: uuid('time_entry_id').notNull(),
     break_start: timestamp('break_start', { withTimezone: true }).notNull(),
     break_end: timestamp('break_end', { withTimezone: true }),
@@ -316,7 +316,7 @@ export const correction_requests = pgTable(
   'correction_requests',
   {
     id: uuid('id').primaryKey().defaultRandom(),
-    organization_id: uuid('organization_id').notNull(),
+    organization_id: text('organization_id').notNull(),
     time_entry_id: uuid('time_entry_id').notNull(),
     requested_by: uuid('requested_by').notNull(),
     reviewed_by: uuid('reviewed_by'), // nullable
@@ -343,7 +343,7 @@ export const monthly_summaries = pgTable(
   'monthly_summaries',
   {
     id: uuid('id').primaryKey().defaultRandom(),
-    organization_id: uuid('organization_id').notNull(),
+    organization_id: text('organization_id').notNull(),
     user_id: uuid('user_id').notNull(),
     year: smallint('year').notNull(),
     month: smallint('month').notNull(), // 1-12
@@ -377,7 +377,7 @@ export const audit_log = pgTable(
   'audit_log',
   {
     id: uuid('id').primaryKey().defaultRandom(),
-    organization_id: uuid('organization_id').notNull(),
+    organization_id: text('organization_id').notNull(),
     actor_id: uuid('actor_id').notNull(),
     action: varchar('action', { length: 50 }).notNull(), // create, read, update, delete
     entity_type: varchar('entity_type', { length: 50 }).notNull(), // shift, timeEntry, etc.
@@ -431,7 +431,7 @@ export const inspector_tokens = pgTable(
   'inspector_tokens',
   {
     id: uuid('id').primaryKey().defaultRandom(),
-    organization_id: uuid('organization_id').notNull(),
+    organization_id: text('organization_id').notNull(),
     token_hash: varchar('token_hash', { length: 64 }).notNull(),
     issued_by: uuid('issued_by').notNull(),
     issued_to: varchar('issued_to', { length: 255 }), // nullable - can be issued to email
@@ -455,7 +455,7 @@ export const subscription_details = pgTable(
   'subscription_details',
   {
     id: uuid('id').primaryKey().defaultRandom(),
-    organization_id: uuid('organization_id').notNull().unique(),
+    organization_id: text('organization_id').notNull().unique(),
     tier: varchar('tier', { length: 20 }).notNull().default('starter'), // starter, professional, enterprise
     seat_count: integer('seat_count').default(0),
     stripe_customer_id: varchar('stripe_customer_id', { length: 255 }),
