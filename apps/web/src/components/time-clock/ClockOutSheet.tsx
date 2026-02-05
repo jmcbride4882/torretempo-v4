@@ -26,6 +26,7 @@ import { cn } from '@/lib/utils';
 import { useGeolocation, formatAccuracy } from '@/hooks/useGeolocation';
 import { useOrganization } from '@/hooks/useOrganization';
 import { useHaptic } from '@/hooks/useHaptic';
+import { useOfflineQueue } from '@/hooks/useOfflineQueue';
 import { clockOut, fetchBreaks, TimeEntryApiError } from '@/lib/api/time-entries';
 import type { TimeEntry, BreakEntry } from '@/lib/api/time-entries';
 
@@ -89,6 +90,9 @@ export function ClockOutSheet({ isOpen, onClose, activeEntry }: ClockOutSheetPro
 
   // Haptic feedback
   const haptic = useHaptic();
+
+  // Offline queue
+  const { isOnline, enqueue: enqueueAction } = useOfflineQueue();
 
   // Local state
   const [currentTime, setCurrentTime] = React.useState(new Date());
@@ -190,16 +194,35 @@ export function ClockOutSheet({ isOpen, onClose, activeEntry }: ClockOutSheetPro
     setSubmitting(true);
     setError(null);
 
+    const clockOutData = {
+      entryId: activeEntry.id,
+      clock_out_location: {
+        lat: position.coords.latitude,
+        lng: position.coords.longitude,
+        accuracy: position.coords.accuracy,
+      },
+      clock_out_method: 'tap' as const,
+      notes: notes.trim() || undefined,
+    };
+
     try {
-      await clockOut(organization.slug, activeEntry.id, {
-        clock_out_location: {
-          lat: position.coords.latitude,
-          lng: position.coords.longitude,
-          accuracy: position.coords.accuracy,
-        },
-        clock_out_method: 'tap',
-        notes: notes.trim() || undefined,
-      });
+      if (!isOnline) {
+        // Queue action for offline processing
+        await enqueueAction('clock-out', organization.slug, clockOutData);
+        
+        setSuccess(true);
+        haptic.success();
+        
+        // Close after success animation
+        setTimeout(() => {
+          onClose();
+        }, 1500);
+        
+        return;
+      }
+
+      // Online - process immediately
+      await clockOut(organization.slug, activeEntry.id, clockOutData);
 
       setSuccess(true);
       

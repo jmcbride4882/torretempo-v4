@@ -28,6 +28,7 @@ import { useOrganization } from '@/hooks/useOrganization';
 import { useNFC } from '@/hooks/useNFC';
 import { useQRScanner } from '@/hooks/useQRScanner';
 import { useHaptic } from '@/hooks/useHaptic';
+import { useOfflineQueue } from '@/hooks/useOfflineQueue';
 import { PINInput } from '@/components/time-clock/PINInput';
 import { clockIn, TimeEntryApiError } from '@/lib/api/time-entries';
 import type { ClockMethod } from '@/lib/api/time-entries';
@@ -102,6 +103,9 @@ export function ClockInSheet({ isOpen, onClose, shiftId }: ClockInSheetProps) {
 
   // Haptic feedback
   const haptic = useHaptic();
+
+  // Offline queue
+  const { isOnline, enqueue: enqueueAction } = useOfflineQueue();
 
   // Local state
   const [currentTime, setCurrentTime] = React.useState(new Date());
@@ -226,17 +230,35 @@ export function ClockInSheet({ isOpen, onClose, shiftId }: ClockInSheetProps) {
     setSubmitting(true);
     setError(null);
 
+    const clockInData = {
+      linked_shift_id: shiftId,
+      clock_in_location: {
+        lat: position.coords.latitude,
+        lng: position.coords.longitude,
+        accuracy: position.coords.accuracy,
+      },
+      clock_in_method: selectedMethod,
+      notes: notes.trim() || undefined,
+    };
+
     try {
-      await clockIn(organization.slug, {
-        linked_shift_id: shiftId,
-        clock_in_location: {
-          lat: position.coords.latitude,
-          lng: position.coords.longitude,
-          accuracy: position.coords.accuracy,
-        },
-        clock_in_method: selectedMethod,
-        notes: notes.trim() || undefined,
-      });
+      if (!isOnline) {
+        // Queue action for offline processing
+        await enqueueAction('clock-in', organization.slug, clockInData);
+        
+        setSuccess(true);
+        haptic.success();
+        
+        // Show offline message
+        setTimeout(() => {
+          onClose();
+        }, 1500);
+        
+        return;
+      }
+
+      // Online - process immediately
+      await clockIn(organization.slug, clockInData);
 
       setSuccess(true);
       
