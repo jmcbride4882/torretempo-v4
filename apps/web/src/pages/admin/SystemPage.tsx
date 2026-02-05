@@ -186,7 +186,7 @@ export default function SystemPage() {
           status="connected"
           metrics={[
             { label: 'Uptime', value: formatUptime(health?.uptime || 0) },
-            { label: 'Version', value: health?.version || 'Unknown' },
+            { label: 'Status', value: health?.status || 'Unknown' },
           ]}
           color="violet"
           delay={0}
@@ -199,7 +199,7 @@ export default function SystemPage() {
           status={health?.database.status || 'disconnected'}
           metrics={[
             { label: 'Status', value: health?.database.status === 'connected' ? 'Connected' : 'Disconnected' },
-            { label: 'Latency', value: formatLatency(health?.database.latency || 0) },
+            { label: 'Response Time', value: formatLatency(health?.database.responseTime || 0) },
           ]}
           color="blue"
           delay={0.05}
@@ -214,10 +214,10 @@ export default function SystemPage() {
             { 
               label: 'Memory', 
               value: health?.redis.memory 
-                ? `${health.redis.memory.used}MB / ${health.redis.memory.peak}MB`
+                ? `${Math.round(health.redis.memory.used / 1024 / 1024)}MB / ${Math.round(health.redis.memory.peak / 1024 / 1024)}MB`
                 : 'N/A' 
             },
-            { label: 'Latency', value: formatLatency(health?.redis.latency || 0) },
+            { label: 'Ping', value: formatLatency(health?.redis.ping || 0) },
           ]}
           color="red"
           delay={0.1}
@@ -255,7 +255,7 @@ export default function SystemPage() {
               <thead>
                 <tr className="border-b border-white/10">
                   <th className="pb-3 text-left text-xs font-medium uppercase tracking-wider text-neutral-500">Queue</th>
-                  <th className="pb-3 text-right text-xs font-medium uppercase tracking-wider text-neutral-500">Waiting</th>
+                  <th className="pb-3 text-right text-xs font-medium uppercase tracking-wider text-neutral-500">Pending</th>
                   <th className="pb-3 text-right text-xs font-medium uppercase tracking-wider text-neutral-500">Active</th>
                   <th className="pb-3 text-right text-xs font-medium uppercase tracking-wider text-neutral-500">Completed</th>
                   <th className="pb-3 text-right text-xs font-medium uppercase tracking-wider text-neutral-500">Delayed</th>
@@ -272,7 +272,7 @@ export default function SystemPage() {
                     className="border-b border-white/5"
                   >
                     <td className="py-3 font-medium text-white">{queue.name}</td>
-                    <td className="py-3 text-right text-neutral-300">{queue.waiting}</td>
+                    <td className="py-3 text-right text-neutral-300">{queue.pending}</td>
                     <td className="py-3 text-right">
                       <span className={cn(queue.active > 0 ? 'text-blue-400' : 'text-neutral-400')}>
                         {queue.active}

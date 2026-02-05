@@ -108,36 +108,40 @@ export interface SubscriptionMetrics {
 }
 
 export interface SystemHealth {
-  status: 'healthy' | 'degraded' | 'down';
+  status: 'healthy' | 'degraded' | 'unhealthy';
+  timestamp: string;
   uptime: number;
-  version: string;
   database: {
     status: 'connected' | 'disconnected';
-    latency: number;
+    responseTime: number;
+    connectionCount: number;
   };
   redis: {
     status: 'connected' | 'disconnected';
-    latency: number;
+    ping: number;
     memory: {
       used: number;
       peak: number;
     };
   };
   queues: {
-    name: string;
-    waiting: number;
+    name: 'email' | 'pdf' | 'notification' | 'compliance' | 'monthly' | 'backup';
+    pending: number;
     active: number;
     completed: number;
     failed: number;
     delayed: number;
+    paused: number;
   }[];
   failedJobs: {
-    id: string;
-    queue: string;
-    name: string;
-    failedReason: string;
-    failedAt: string;
-    data: Record<string, unknown>;
+    queueName: string;
+    failedCount: number;
+    oldestFailedAt: string | null;
+    recentErrors: {
+      jobId: string;
+      error: string;
+      failedAt: string;
+    }[];
   }[];
 }
 
