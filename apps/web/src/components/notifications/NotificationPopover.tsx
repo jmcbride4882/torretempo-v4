@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate, useParams } from 'react-router-dom';
 import { BellOff, CheckCheck, ChevronRight, Loader2 } from 'lucide-react';
@@ -29,9 +29,10 @@ export function NotificationPopover({
   const [isLoading, setIsLoading] = useState(true);
   const [isMarkingAll, setIsMarkingAll] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const hasLoadedRef = useRef(false);
 
-  const loadNotifications = useCallback(async () => {
-    if (!slug) return;
+  const loadNotifications = async () => {
+    if (!slug || hasLoadedRef.current) return;
 
     try {
       setIsLoading(true);
@@ -42,17 +43,20 @@ export function NotificationPopover({
       // Update unread count
       const unreadCount = data.notifications.filter((n) => !n.read).length;
       onUnreadCountChange?.(unreadCount);
+      hasLoadedRef.current = true;
     } catch (err) {
       setError('Failed to load notifications');
       console.error('Error loading notifications:', err);
+      hasLoadedRef.current = true; // Stop retrying on error
     } finally {
       setIsLoading(false);
     }
-  }, [slug, onUnreadCountChange]);
+  };
 
   useEffect(() => {
     loadNotifications();
-  }, [loadNotifications]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // Only load once on mount
 
   const handleNotificationClick = async (notification: Notification) => {
     if (!slug) return;
@@ -91,7 +95,8 @@ export function NotificationPopover({
     try {
       await markAllAsRead(slug);
     } catch (err) {
-      // Revert on error
+      // Revert on error - reload notifications
+      hasLoadedRef.current = false;
       await loadNotifications();
       console.error('Error marking all as read:', err);
     } finally {
@@ -174,7 +179,10 @@ export function NotificationPopover({
                 <Button
                   variant="ghost"
                   size="sm"
-                  onClick={loadNotifications}
+                  onClick={() => {
+                    hasLoadedRef.current = false;
+                    loadNotifications();
+                  }}
                   className="text-xs"
                 >
                   Try again
