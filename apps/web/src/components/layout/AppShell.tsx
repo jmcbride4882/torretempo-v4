@@ -149,6 +149,15 @@ export default function AppShell() {
                 <Route path="clock" element={<TimeEntryList />} />
                 <Route path="swaps" element={<SwapsPage />} />
                 <Route
+                  path="notifications"
+                  element={
+                    <PlaceholderPage
+                      title="Notifications"
+                      description="View all your notifications and alerts."
+                    />
+                  }
+                />
+                <Route
                   path="reports"
                   element={
                     <PlaceholderPage
@@ -166,7 +175,7 @@ export default function AppShell() {
                     />
                   }
                 />
-                <Route path="*" element={<Navigate to="dashboard" replace />} />
+                <Route path="*" element={<Navigate to={`/t/${slug}/dashboard`} replace />} />
               </Routes>
             </motion.div>
           </AnimatePresence>
