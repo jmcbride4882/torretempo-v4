@@ -1,5 +1,5 @@
 import { createHash } from 'crypto';
-import { db } from '../db';
+import { db } from '../db/index.js';
 import { audit_log } from '../db/schema';
 import { eq, desc } from 'drizzle-orm';
 

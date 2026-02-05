@@ -1,7 +1,7 @@
 import { betterAuth } from 'better-auth';
 import { drizzleAdapter } from 'better-auth/adapters/drizzle';
 import { admin } from 'better-auth/plugins';
-import { db } from '../db';
+import { db } from '../db/index.js';
 import 'dotenv/config';
 
 const baseURL = process.env.AUTH_BASE_URL || 'http://localhost:3000';

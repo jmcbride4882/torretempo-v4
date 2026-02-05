@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction, RequestHandler } from 'express';
 import { createHash } from 'crypto';
-import { db } from '../db';
+import { db } from '../db/index.js';
 import { inspector_tokens } from '../db/schema';
 import { eq } from 'drizzle-orm';
 import { logAdminAction } from '../services/adminAudit.service';

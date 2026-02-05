@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction, RequestHandler } from 'express';
 import { auth } from '../lib/auth';
-import { db } from '../db';
+import { db } from '../db/index.js';
 import { fromNodeHeaders } from 'better-auth/node';
 
 /**

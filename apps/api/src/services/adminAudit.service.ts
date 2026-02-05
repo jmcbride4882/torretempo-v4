@@ -1,4 +1,4 @@
-import { db } from '../db';
+import { db } from '../db/index.js';
 import { admin_audit_log } from '../db/schema';
 
 interface LogAdminActionParams {
