@@ -1,6 +1,6 @@
 import { Routes, Route, Navigate, useParams } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Menu, Clock } from 'lucide-react';
+import { Menu, Clock, Shield } from 'lucide-react';
 import { Sidebar } from './Sidebar';
 import { BottomTabs } from './BottomTabs';
 import { NotificationBell } from '@/components/notifications/NotificationBell';
@@ -129,11 +129,27 @@ export default function AppShell() {
                 <DropdownMenuContent align="end" className="w-56">
                   <DropdownMenuLabel>
                     <div className="flex flex-col">
-                      <span className="text-white">{user?.name}</span>
+                      <div className="flex items-center gap-2">
+                        <span className="text-white">{user?.name}</span>
+                        {(user as any)?.role === 'admin' && (
+                          <span className="rounded bg-amber-600/20 px-1.5 py-0.5 text-[10px] font-semibold uppercase text-amber-400">
+                            Admin
+                          </span>
+                        )}
+                      </div>
                       <span className="text-xs font-normal text-neutral-400">{user?.email}</span>
                     </div>
                   </DropdownMenuLabel>
                   <DropdownMenuSeparator />
+                  {(user as any)?.role === 'admin' && (
+                    <>
+                      <DropdownMenuItem onClick={() => window.location.href = '/admin'}>
+                        <Shield className="mr-2 h-4 w-4 text-amber-400" />
+                        <span>Admin Panel</span>
+                      </DropdownMenuItem>
+                      <DropdownMenuSeparator />
+                    </>
+                  )}
                   <DropdownMenuItem onClick={() => window.location.href = `/t/${slug}/settings`}>
                     Settings
                   </DropdownMenuItem>
