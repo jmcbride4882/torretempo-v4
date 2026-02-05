@@ -2,7 +2,7 @@ import { Router, Request, Response } from 'express';
 import { and, eq, desc, like, sql, or, inArray } from 'drizzle-orm';
 
 import { db } from '../../db/index.js';
-import { organization, member, subscription_details, user } from '../../db/schema.js';
+import { organization, member, invitation, subscription_details, user } from '../../db/schema.js';
 import { requireAdmin } from '../../middleware/requireAdmin.js';
 import { logAdminAction } from '../../services/adminAudit.service.js';
 
@@ -569,7 +569,24 @@ router.delete(
 
       const memberCount = memberCountResult[0]?.count || 0;
 
-      // Delete organization (cascade will handle related records)
+      // Cascade delete related records manually (Better Auth tables don't have ON DELETE CASCADE)
+      
+      // 1. Delete all invitations
+      await db
+        .delete(invitation)
+        .where(eq(invitation.organizationId, organizationId));
+
+      // 2. Delete all members
+      await db
+        .delete(member)
+        .where(eq(member.organizationId, organizationId));
+
+      // 3. Delete subscription details (if any)
+      await db
+        .delete(subscription_details)
+        .where(eq(subscription_details.organization_id, organizationId));
+
+      // 4. Finally delete the organization
       await db.delete(organization).where(eq(organization.id, organizationId));
 
       // Log admin action
