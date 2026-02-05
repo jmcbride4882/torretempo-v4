@@ -69,7 +69,16 @@ CREATE POLICY tenant_isolation ON swap_requests
   USING (organization_id::text = current_setting('app.organization_id', true));
 
 -- ============================================================================
--- 7. TIME_ENTRIES TABLE
+-- 7. NOTIFICATIONS TABLE
+-- ============================================================================
+ALTER TABLE notifications ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY tenant_isolation ON notifications
+  FOR ALL
+  USING (organization_id::text = current_setting('app.organization_id', true));
+
+-- ============================================================================
+-- 8. TIME_ENTRIES TABLE
 -- ============================================================================
 ALTER TABLE time_entries ENABLE ROW LEVEL SECURITY;
 
@@ -78,7 +87,7 @@ CREATE POLICY tenant_isolation ON time_entries
   USING (organization_id::text = current_setting('app.organization_id', true));
 
 -- ============================================================================
--- 8. BREAK_ENTRIES TABLE
+-- 9. BREAK_ENTRIES TABLE
 -- ============================================================================
 ALTER TABLE break_entries ENABLE ROW LEVEL SECURITY;
 
@@ -87,7 +96,7 @@ CREATE POLICY tenant_isolation ON break_entries
   USING (organization_id::text = current_setting('app.organization_id', true));
 
 -- ============================================================================
--- 9. CORRECTION_REQUESTS TABLE
+-- 10. CORRECTION_REQUESTS TABLE
 -- ============================================================================
 ALTER TABLE correction_requests ENABLE ROW LEVEL SECURITY;
 
@@ -96,7 +105,7 @@ CREATE POLICY tenant_isolation ON correction_requests
   USING (organization_id::text = current_setting('app.organization_id', true));
 
 -- ============================================================================
--- 10. MONTHLY_SUMMARIES TABLE
+-- 11. MONTHLY_SUMMARIES TABLE
 -- ============================================================================
 ALTER TABLE monthly_summaries ENABLE ROW LEVEL SECURITY;
 
@@ -105,7 +114,7 @@ CREATE POLICY tenant_isolation ON monthly_summaries
   USING (organization_id::text = current_setting('app.organization_id', true));
 
 -- ============================================================================
--- 11. AUDIT_LOG TABLE (Business audit trail)
+-- 12. AUDIT_LOG TABLE (Business audit trail)
 -- ============================================================================
 ALTER TABLE audit_log ENABLE ROW LEVEL SECURITY;
 
@@ -117,7 +126,7 @@ CREATE POLICY tenant_isolation ON audit_log
 REVOKE UPDATE, DELETE ON audit_log FROM PUBLIC;
 
 -- ============================================================================
--- 12. SUBSCRIPTION_DETAILS TABLE
+-- 13. SUBSCRIPTION_DETAILS TABLE
 -- ============================================================================
 ALTER TABLE subscription_details ENABLE ROW LEVEL SECURITY;
 
@@ -126,7 +135,16 @@ CREATE POLICY tenant_isolation ON subscription_details
   USING (organization_id::text = current_setting('app.organization_id', true));
 
 -- ============================================================================
--- 13. ADMIN_AUDIT_LOG TABLE (Admin audit trail)
+-- 14. NOTIFICATIONS TABLE
+-- ============================================================================
+ALTER TABLE notifications ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY tenant_isolation ON notifications
+  FOR ALL
+  USING (organization_id = current_setting('app.organization_id', true));
+
+-- ============================================================================
+-- 15. ADMIN_AUDIT_LOG TABLE (Admin audit trail)
 -- ============================================================================
 ALTER TABLE admin_audit_log ENABLE ROW LEVEL SECURITY;
 

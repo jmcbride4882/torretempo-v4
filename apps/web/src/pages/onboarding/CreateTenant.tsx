@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { toast } from 'sonner';
-import { Building2, Link as LinkIcon, ArrowRight, Sparkles, Clock } from 'lucide-react';
+import { Building2, Link as LinkIcon, ArrowRight, Sparkles, Clock, ArrowLeft } from 'lucide-react';
 import { useOrganization } from '@/hooks/useOrganization';
 import { useAuth } from '@/hooks/useAuth';
 import { Button } from '@/components/ui/button';
@@ -20,13 +20,32 @@ function generateSlug(name: string): string {
 
 export default function CreateTenant() {
   const navigate = useNavigate();
+  const location = useLocation();
   const { user } = useAuth();
-  const { createOrganization, setActiveOrganization } = useOrganization();
+  const { createOrganization, setActiveOrganization, listUserOrganizations } = useOrganization();
   
   const [name, setName] = useState('');
   const [slug, setSlug] = useState('');
   const [slugEdited, setSlugEdited] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [hasExistingOrgs, setHasExistingOrgs] = useState(false);
+  
+  // Check if user has existing organizations (to show back button)
+  useEffect(() => {
+    const checkExistingOrgs = async () => {
+      try {
+        const orgs = await listUserOrganizations();
+        setHasExistingOrgs(orgs.length > 0);
+      } catch {
+        // Silent fail - just won't show back button
+      }
+    };
+    checkExistingOrgs();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+  
+  // Check if came from selection page via state
+  const cameFromSelection = location.state?.fromSelection || hasExistingOrgs;
 
   // Auto-generate slug from name
   useEffect(() => {
@@ -83,6 +102,24 @@ export default function CreateTenant() {
         <div className="absolute left-1/4 top-0 h-[600px] w-[600px] rounded-full bg-primary-600/10 blur-[120px]" />
         <div className="absolute -right-1/4 bottom-0 h-[400px] w-[400px] rounded-full bg-primary-600/5 blur-[80px]" />
       </div>
+
+      {/* Back button - only show if user has existing organizations */}
+      {cameFromSelection && (
+        <motion.div
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          className="absolute left-6 top-6 z-10"
+        >
+          <Button
+            variant="ghost"
+            onClick={() => navigate('/onboarding/select')}
+            className="gap-2 text-neutral-400 hover:bg-white/5 hover:text-white"
+          >
+            <ArrowLeft className="h-4 w-4" />
+            Back to Organizations
+          </Button>
+        </motion.div>
+      )}
 
       <motion.div
         initial={{ opacity: 0, y: 20 }}

@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Cambio de turno completado</title>
+  </head>
+  <body
+    style="margin:0; padding:0; background-color:#0b1120; font-family:'Inter','Segoe UI',Arial,sans-serif;"
+  >
+    <div style="display:none; max-height:0; overflow:hidden; opacity:0;">
+      El cambio de turno ha sido completado.
+    </div>
+    <table
+      width="100%"
+      cellpadding="0"
+      cellspacing="0"
+      style="background: radial-gradient(circle at top, #0f766e 0%, #0b1120 55%); padding: 32px 16px;"
+    >
+      <tr>
+        <td align="center">
+          <table
+            width="100%"
+            cellpadding="0"
+            cellspacing="0"
+            style="max-width: 640px; background: rgba(15,23,42,0.92); border-radius: 24px; border: 1px solid rgba(148,163,184,0.25); box-shadow: 0 30px 60px rgba(15,23,42,0.45);"
+          >
+            <tr>
+              <td style="padding: 0;">
+                <div
+                  style="height: 4px; background: linear-gradient(90deg, #14b8a6, #06b6d4, #22d3ee); border-radius: 24px 24px 0 0;"
+                ></div>
+              </td>
+            </tr>
+            <tr>
+              <td style="padding: 28px 28px 20px;">
+                <table width="100%" cellpadding="0" cellspacing="0">
+                  <tr>
+                    <td
+                      style="font-size: 12px; letter-spacing: 2px; text-transform: uppercase; color: #94a3b8;"
+                    >
+                      {{organizationName}}
+                    </td>
+                    <td align="right" style="font-size: 12px; color: #94a3b8;">Solicitud #{{swapId}}</td>
+                  </tr>
+                </table>
+                <h1 style="margin: 18px 0 8px; font-size: 24px; color: #f8fafc;">Cambio de turno completado</h1>
+                <p style="margin: 0 0 16px; color: #cbd5f5; font-size: 15px;">Shift swap completed</p>
+                <p style="margin: 0 0 12px; color: #e2e8f0; font-size: 15px;">Hola {{userName}},</p>
+                <p style="margin: 0 0 12px; color: #e2e8f0; font-size: 15px;">
+                  El cambio de turno se ha completado y los turnos ya están actualizados en el sistema.
+                </p>
+                <p style="margin: 0 0 20px; color: #94a3b8; font-size: 14px;">
+                  The swap is complete and shifts have been updated in the system.
+                </p>
+                <div
+                  style="background: rgba(15,23,42,0.7); border: 1px solid rgba(148,163,184,0.25); border-radius: 16px; padding: 16px;"
+                >
+                  <p style="margin: 0 0 12px; color: #e2e8f0; font-size: 14px;">
+                    <strong style="color: #f8fafc;">Resumen / Summary:</strong> {{message}}
+                  </p>
+                  <table width="100%" cellpadding="0" cellspacing="0" style="color:#e2e8f0; font-size: 14px;">
+                    <tr>
+                      <td style="padding: 6px 0;">
+                        <strong style="color:#f8fafc;">Solicitante / Requester:</strong> {{requesterName}}
+                      </td>
+                    </tr>
+                    <tr>
+                      <td style="padding: 6px 0;">
+                        <strong style="color:#f8fafc;">Compañero/a / Peer:</strong> {{recipientName}}
+                      </td>
+                    </tr>
+                    <tr>
+                      <td style="padding: 6px 0;">
+                        <strong style="color:#f8fafc;">Turno ofrecido:</strong>
+                        {{offeredShiftDate}} · {{offeredShiftTime}} · {{offeredShiftLocation}}
+                      </td>
+                    </tr>
+                    <tr>
+                      <td style="padding: 6px 0;">
+                        <strong style="color:#f8fafc;">Turno deseado:</strong>
+                        {{desiredShiftDate}} · {{desiredShiftTime}} · {{desiredShiftLocation}}
+                      </td>
+                    </tr>
+                    <tr>
+                      <td style="padding: 6px 0;">
+                        <strong style="color:#f8fafc;">Motivo / Reason:</strong> {{reason}}
+                      </td>
+                    </tr>
+                  </table>
+                </div>
+                <div style="margin-top: 20px;">
+                  <a
+                    href="{{swapLink}}"
+                    style="display:inline-block; background: #14b8a6; color: #0b1120; text-decoration: none; padding: 12px 18px; border-radius: 12px; font-weight: 700;"
+                    >{{actionLabel}}</a>
+                </div>
+                <p style="margin: 20px 0 0; color: #94a3b8; font-size: 12px;">
+                  Este aviso se emite para trazabilidad y cumplimiento del derecho a la desconexión digital. No se
+                  requiere respuesta inmediata fuera de tu jornada.
+                </p>
+                <p style="margin: 8px 0 0; color: #64748b; font-size: 12px;">
+                  This notice supports compliance with the right to disconnect. No immediate response is required
+                  outside your scheduled hours.
+                </p>
+              </td>
+            </tr>
+            <tr>
+              <td style="padding: 0 28px 24px; color: #64748b; font-size: 12px;">
+                Torre Tempo · {{organizationName}} · Soporte: {{supportEmail}}
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+  </body>
+</html>

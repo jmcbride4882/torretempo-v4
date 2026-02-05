@@ -248,6 +248,31 @@ export const swap_requests = pgTable(
   })
 );
 
+// ==========================================================================
+// NOTIFICATIONS TABLE
+// ==========================================================================
+export const notifications = pgTable(
+  'notifications',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    organization_id: text('organization_id').notNull(),
+    user_id: uuid('user_id').notNull(),
+    type: varchar('type', { length: 50 }).notNull(),
+    title: text('title').notNull(),
+    message: text('message').notNull(),
+    link: text('link'),
+    read: boolean('read').notNull().default(false),
+    created_at: timestamp('created_at', { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+  },
+  (table) => ({
+    org_idx: index('notifications_org_idx').on(table.organization_id),
+    user_idx: index('notifications_user_idx').on(table.user_id),
+    read_idx: index('notifications_read_idx').on(table.read),
+  })
+);
+
 // ============================================================================
 // TIME_ENTRIES TABLE
 // ============================================================================

@@ -1,8 +1,9 @@
 import { Routes, Route, Navigate, useParams } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Menu, Bell, Clock } from 'lucide-react';
+import { Menu, Clock } from 'lucide-react';
 import { Sidebar } from './Sidebar';
 import { BottomTabs } from './BottomTabs';
+import { NotificationBell } from '@/components/notifications/NotificationBell';
 import { useAuth } from '@/hooks/useAuth';
 import { useOrganization } from '@/hooks/useOrganization';
 import { Button } from '@/components/ui/button';
@@ -18,6 +19,7 @@ import {
 // Roster page
 import RosterPage from '@/pages/Roster';
 import OpenShiftsPage from '@/pages/OpenShifts';
+import SwapsPage from '@/pages/Swaps';
 
 // Placeholder pages - these will be built in Phase 2
 function DashboardPage() {
@@ -100,10 +102,7 @@ export default function AppShell() {
             {/* Right side actions */}
             <div className="flex items-center gap-2">
               {/* Notifications */}
-              <Button variant="ghost" size="icon" className="relative">
-                <Bell className="h-5 w-5" />
-                <span className="absolute right-1.5 top-1.5 h-2 w-2 rounded-full bg-primary-500" />
-              </Button>
+              <NotificationBell />
 
               {/* User menu */}
               <DropdownMenu>
@@ -155,15 +154,7 @@ export default function AppShell() {
                     />
                   }
                 />
-                <Route
-                  path="swaps"
-                  element={
-                    <PlaceholderPage
-                      title="Shift Swaps"
-                      description="Request and manage shift swaps with your teammates."
-                    />
-                  }
-                />
+                <Route path="swaps" element={<SwapsPage />} />
                 <Route
                   path="reports"
                   element={

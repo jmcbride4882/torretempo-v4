@@ -10,7 +10,10 @@ import { inspectorAuth } from './middleware/inspectorAuth.js';
 import { testConnection } from './db/index.js';
 import shiftsRouter from './routes/shifts.js';
 import locationsRouter from './routes/locations.js';
+import swapsRouter from './routes/swaps.js';
+import notificationsRouter from './routes/notifications.js';
 import 'dotenv/config';
+import './workers/email.worker.js';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -61,6 +64,8 @@ app.use('/api/inspector/v1/*', inspectorAuth, (_req: Request, res: Response) => 
 // Tenant routes
 app.use('/api/v1/org/:slug/locations', tenantMiddleware, locationsRouter);
 app.use('/api/v1/org/:slug/shifts', tenantMiddleware, shiftsRouter);
+app.use('/api/v1/org/:slug/swaps', tenantMiddleware, swapsRouter);
+app.use('/api/v1/org/:slug/notifications', tenantMiddleware, notificationsRouter);
 
 // 404 handler
 app.use((_req: Request, res: Response) => {

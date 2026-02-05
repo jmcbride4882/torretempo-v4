@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react';
 import { NavLink, useParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import {
@@ -13,6 +14,7 @@ import {
 import { cn } from '@/lib/utils';
 import { useAuth } from '@/hooks/useAuth';
 import { useOrganization } from '@/hooks/useOrganization';
+import { fetchPendingSwapsCount } from '@/lib/api/swaps';
 
 const navItems = [
   { icon: LayoutDashboard, label: 'Dashboard', path: 'dashboard' },
@@ -28,6 +30,23 @@ export function Sidebar() {
   const { slug } = useParams<{ slug: string }>();
   const { user, signOut } = useAuth();
   const { organization } = useOrganization();
+  const [pendingSwapsCount, setPendingSwapsCount] = useState(0);
+
+  // Fetch pending swaps count
+  useEffect(() => {
+    if (!slug) return;
+    
+    const fetchCount = async () => {
+      const count = await fetchPendingSwapsCount(slug);
+      setPendingSwapsCount(count);
+    };
+    
+    fetchCount();
+    
+    // Refresh count every 30 seconds
+    const interval = setInterval(fetchCount, 30000);
+    return () => clearInterval(interval);
+  }, [slug]);
 
   return (
     <motion.aside
@@ -77,6 +96,16 @@ export function Sidebar() {
                     )}
                   />
                   <span className="flex-1">{item.label}</span>
+                  {/* Pending swaps badge */}
+                  {item.path === 'swaps' && pendingSwapsCount > 0 && (
+                    <motion.span
+                      initial={{ scale: 0 }}
+                      animate={{ scale: 1 }}
+                      className="flex h-5 min-w-[20px] items-center justify-center rounded-full bg-primary-500 px-1.5 text-[10px] font-bold text-white"
+                    >
+                      {pendingSwapsCount > 99 ? '99+' : pendingSwapsCount}
+                    </motion.span>
+                  )}
                   {isActive && (
                     <motion.div
                       layoutId="sidebar-indicator"

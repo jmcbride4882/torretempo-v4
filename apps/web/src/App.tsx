@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AnimatePresence } from 'framer-motion';
 import { ProtectedRoute } from '@/components/layout/ProtectedRoute';
 import { AdminRoute } from '@/components/layout/AdminRoute';
+import { OnboardingRedirect } from '@/components/layout/OnboardingRedirect';
 
 // Auth pages
 import SignIn from '@/pages/auth/SignIn';
@@ -9,6 +10,7 @@ import SignUp from '@/pages/auth/SignUp';
 
 // Onboarding pages
 import CreateTenant from '@/pages/onboarding/CreateTenant';
+import SelectOrganization from '@/pages/onboarding/SelectOrganization';
 
 // Tenant pages
 import AppShell from '@/components/layout/AppShell';
@@ -28,6 +30,7 @@ function App() {
           {/* Protected routes */}
           <Route element={<ProtectedRoute />}>
             {/* Onboarding */}
+            <Route path="/onboarding/select" element={<SelectOrganization />} />
             <Route path="/onboarding/create" element={<CreateTenant />} />
 
             {/* Tenant routes */}
@@ -39,8 +42,12 @@ function App() {
             <Route path="/admin/*" element={<AdminLayout />} />
           </Route>
 
-          {/* Redirects */}
-          <Route path="/" element={<Navigate to="/auth/signin" replace />} />
+          {/* Smart redirect based on organization status */}
+          <Route element={<ProtectedRoute />}>
+            <Route path="/" element={<OnboardingRedirect />} />
+          </Route>
+
+          {/* Fallback redirects */}
           <Route path="*" element={<Navigate to="/auth/signin" replace />} />
         </Routes>
       </AnimatePresence>
