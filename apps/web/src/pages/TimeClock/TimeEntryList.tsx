@@ -146,6 +146,12 @@ function getDateRange(filter: DateFilter): { start: string; end: string } {
 }
 
 function groupEntriesByDate(entries: TimeEntry[]): GroupedEntries[] {
+  // Defensive check - handle undefined/null entries
+  if (!Array.isArray(entries)) {
+    console.error('groupEntriesByDate received non-array:', entries);
+    return [];
+  }
+
   const groups: Record<string, TimeEntry[]> = {};
 
   entries.forEach((entry) => {
@@ -734,7 +740,8 @@ export default function TimeEntryList() {
         }
 
         const response = await fetchTimeEntries(orgSlug, filters);
-        setEntries(response.entries);
+        // Defensive check - ensure entries is an array
+        setEntries(Array.isArray(response?.entries) ? response.entries : []);
       } catch (err) {
         setError('Failed to load time entries. Please try again.');
       } finally {

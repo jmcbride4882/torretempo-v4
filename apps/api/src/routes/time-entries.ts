@@ -61,8 +61,10 @@ router.get('/', async (req: Request, res: Response) => {
       .offset(offset);
 
     res.json({
-      timeEntries: result,
-      pagination: { limit, offset, total: result.length },
+      entries: result,
+      total: result.length,
+      limit,
+      offset,
     });
   } catch (error) {
     console.error('Error fetching time entries:', error);
@@ -93,10 +95,10 @@ router.get('/active', async (req: Request, res: Response) => {
       .limit(1);
 
     if (result.length === 0) {
-      return res.json({ timeEntry: null });
+      return res.status(404).json({ error: 'No active time entry found' });
     }
 
-    res.json({ timeEntry: result[0] });
+    res.json({ entry: result[0] });
   } catch (error) {
     console.error('Error fetching active time entry:', error);
     res.status(500).json({ error: 'Failed to fetch active time entry' });
@@ -131,7 +133,7 @@ router.get('/:id', async (req: Request, res: Response) => {
       return res.status(403).json({ error: 'Access denied' });
     }
 
-    res.json({ timeEntry: entry });
+    res.json({ entry });
   } catch (error) {
     console.error('Error fetching time entry:', error);
     res.status(500).json({ error: 'Failed to fetch time entry' });
@@ -274,7 +276,7 @@ router.post('/', requireRole(['employee', 'manager', 'tenantAdmin', 'owner']), a
       newData: created[0],
     });
 
-    res.status(201).json({ timeEntry: created[0] });
+    res.status(201).json({ entry: created[0] });
   } catch (error) {
     console.error('Error clocking in:', error);
     res.status(500).json({ error: 'Failed to clock in' });
@@ -432,7 +434,7 @@ router.put(
         newData: updated[0],
       });
 
-      res.json({ timeEntry: updated[0] });
+    res.json({ entry: updated[0] });
     } catch (error) {
       console.error('Error verifying time entry:', error);
       res.status(500).json({ error: 'Failed to verify time entry' });

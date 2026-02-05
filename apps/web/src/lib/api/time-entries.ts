@@ -154,7 +154,17 @@ async function handleResponse<T>(response: Response): Promise<T> {
       data
     );
   }
-  return response.json();
+  
+  try {
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    throw new TimeEntryApiError(
+      'Failed to parse API response',
+      500,
+      { originalError: error }
+    );
+  }
 }
 
 // ============================================================================
@@ -186,7 +196,25 @@ export async function fetchTimeEntries(
     credentials: 'include',
   });
 
-  return handleResponse<TimeEntriesResponse>(response);
+  const data = await handleResponse<TimeEntriesResponse>(response);
+  
+  // Validate response structure
+  if (!data || typeof data !== 'object') {
+    throw new TimeEntryApiError('Invalid API response: not an object', 500, { data });
+  }
+  
+  if (!Array.isArray(data.entries)) {
+    console.error('fetchTimeEntries: entries is not an array', data);
+    // Return a valid structure with empty entries
+    return {
+      entries: [],
+      total: 0,
+      limit: filters?.limit ?? 50,
+      offset: filters?.offset ?? 0,
+    };
+  }
+  
+  return data;
 }
 
 /**
