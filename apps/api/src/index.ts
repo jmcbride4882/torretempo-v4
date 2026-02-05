@@ -15,6 +15,7 @@ import notificationsRouter from './routes/notifications.js';
 import timeEntriesRouter from './routes/time-entries.js';
 import breaksRouter from './routes/breaks.js';
 import correctionsRouter from './routes/corrections.js';
+import membersRouter from './routes/members.js';
 import 'dotenv/config';
 import './workers/email.worker.js';
 
@@ -72,6 +73,7 @@ app.use('/api/v1/org/:slug/notifications', tenantMiddleware, notificationsRouter
 app.use('/api/v1/org/:slug/time-entries', tenantMiddleware, timeEntriesRouter);
 app.use('/api/v1/org/:slug/time-entries', tenantMiddleware, breaksRouter);
 app.use('/api/v1/org/:slug/corrections', tenantMiddleware, correctionsRouter);
+app.use('/api/v1/org/:slug/members', tenantMiddleware, membersRouter);
 
 // 404 handler
 app.use((_req: Request, res: Response) => {

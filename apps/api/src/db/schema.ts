@@ -91,6 +91,7 @@ export const member = pgTable('member', {
     .references(() => user.id),
   role: text('role').notNull(),
   createdAt: timestamp('createdAt').notNull(),
+  clock_in_pin: text('clock_in_pin'), // Hashed 4-digit PIN for clock-in authentication
 });
 
 export const invitation = pgTable('invitation', {

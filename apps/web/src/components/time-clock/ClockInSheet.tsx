@@ -27,6 +27,7 @@ import { useGeolocation, formatAccuracy, isAccuracyAcceptable } from '@/hooks/us
 import { useOrganization } from '@/hooks/useOrganization';
 import { useNFC } from '@/hooks/useNFC';
 import { useQRScanner } from '@/hooks/useQRScanner';
+import { PINInput } from '@/components/time-clock/PINInput';
 import { clockIn, TimeEntryApiError } from '@/lib/api/time-entries';
 import type { ClockMethod } from '@/lib/api/time-entries';
 
@@ -54,8 +55,8 @@ type ClockMethodOption = {
 const CLOCK_METHODS: ClockMethodOption[] = [
   { id: 'tap', label: 'Tap', icon: Hand, available: true },
   { id: 'nfc', label: 'NFC', icon: Wifi, available: true },
-  { id: 'qr', label: 'QR', icon: QrCode, available: true }, // Now enabled
-  { id: 'pin', label: 'PIN', icon: Hash, available: false },
+  { id: 'qr', label: 'QR', icon: QrCode, available: true },
+  { id: 'pin', label: 'PIN', icon: Hash, available: true }, // Now enabled
 ];
 
 const SPRING_CONFIG = { type: 'spring', damping: 30, stiffness: 300 } as const;
@@ -102,6 +103,8 @@ export function ClockInSheet({ isOpen, onClose, shiftId }: ClockInSheetProps) {
   const [currentTime, setCurrentTime] = React.useState(new Date());
   const [selectedMethod, setSelectedMethod] = React.useState<ClockMethod>('tap');
   const [notes, setNotes] = React.useState('');
+  const [pin, setPin] = React.useState('');
+  const [pinError, setPinError] = React.useState(false);
   const [submitting, setSubmitting] = React.useState(false);
   const [success, setSuccess] = React.useState(false);
   const [error, setError] = React.useState<string | null>(null);
@@ -150,6 +153,8 @@ export function ClockInSheet({ isOpen, onClose, shiftId }: ClockInSheetProps) {
       setSuccess(false);
       setError(null);
       setNotes('');
+      setPin('');
+      setPinError(false);
       setSelectedMethod('tap');
       clearQRScan();
     } else {
@@ -182,7 +187,15 @@ export function ClockInSheet({ isOpen, onClose, shiftId }: ClockInSheetProps) {
   }, [position]);
 
   const hasLowAccuracy = accuracy !== null && !isAccuracyAcceptable(accuracy);
-  const canClockIn = position !== null && isWithinGeofence && !submitting && !success;
+  
+  // For PIN method, also require PIN to be entered
+  const canClockIn = React.useMemo(() => {
+    if (submitting || success) return false;
+    if (!position || !isWithinGeofence) return false;
+    if (selectedMethod === 'pin' && pin.length !== 4) return false;
+    return true;
+  }, [position, isWithinGeofence, submitting, success, selectedMethod, pin]);
+  
   const isPermissionDenied = geoError?.code === 1; // PERMISSION_DENIED
 
   // Handle clock in submission
@@ -510,6 +523,42 @@ export function ClockInSheet({ isOpen, onClose, shiftId }: ClockInSheetProps) {
                 </div>
               </div>
             ) : null}
+          </motion.div>
+        )}
+
+        {/* PIN Input Section (shown when PIN method is selected) */}
+        {selectedMethod === 'pin' && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: 'auto' }}
+            exit={{ opacity: 0, height: 0 }}
+            className="glass-card rounded-xl p-4 space-y-4"
+          >
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Hash className="h-4 w-4 text-zinc-400" />
+                <span className="text-sm font-medium text-zinc-300">Enter PIN</span>
+              </div>
+            </div>
+
+            <div className="space-y-3">
+              <p className="text-xs text-center text-zinc-400">
+                Enter your 4-digit clock-in PIN
+              </p>
+              <PINInput
+                value={pin}
+                onChange={(value) => {
+                  setPin(value);
+                  setPinError(false);
+                }}
+                onComplete={(completedPin) => {
+                  // PIN verification will happen on clock-in submission
+                  console.log('PIN entered:', completedPin);
+                }}
+                error={pinError}
+                autoFocus
+              />
+            </div>
           </motion.div>
         )}
 
