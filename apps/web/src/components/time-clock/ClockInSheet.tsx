@@ -26,6 +26,7 @@ import { cn } from '@/lib/utils';
 import { useGeolocation, formatAccuracy, isAccuracyAcceptable } from '@/hooks/useGeolocation';
 import { useOrganization } from '@/hooks/useOrganization';
 import { useNFC } from '@/hooks/useNFC';
+import { useQRScanner } from '@/hooks/useQRScanner';
 import { clockIn, TimeEntryApiError } from '@/lib/api/time-entries';
 import type { ClockMethod } from '@/lib/api/time-entries';
 
@@ -52,8 +53,8 @@ type ClockMethodOption = {
 
 const CLOCK_METHODS: ClockMethodOption[] = [
   { id: 'tap', label: 'Tap', icon: Hand, available: true },
-  { id: 'nfc', label: 'NFC', icon: Wifi, available: true }, // Now enabled
-  { id: 'qr', label: 'QR', icon: QrCode, available: false },
+  { id: 'nfc', label: 'NFC', icon: Wifi, available: true },
+  { id: 'qr', label: 'QR', icon: QrCode, available: true }, // Now enabled
   { id: 'pin', label: 'PIN', icon: Hash, available: false },
 ];
 
@@ -85,6 +86,17 @@ export function ClockInSheet({ isOpen, onClose, shiftId }: ClockInSheetProps) {
     startScan: startNFCScan,
     stopScan: stopNFCScan,
   } = useNFC();
+
+  // QR Scanner
+  const {
+    isScanning: qrScanning,
+    isSupported: qrSupported,
+    error: qrError,
+    scanData: qrData,
+    startScan: startQRScan,
+    stopScan: stopQRScan,
+    clearScan: clearQRScan,
+  } = useQRScanner({ fps: 10, qrbox: 250 });
 
   // Local state
   const [currentTime, setCurrentTime] = React.useState(new Date());
@@ -139,11 +151,13 @@ export function ClockInSheet({ isOpen, onClose, shiftId }: ClockInSheetProps) {
       setError(null);
       setNotes('');
       setSelectedMethod('tap');
+      clearQRScan();
     } else {
-      // Stop NFC scanning when sheet closes
+      // Stop scanning when sheet closes
       stopNFCScan();
+      stopQRScan();
     }
-  }, [isOpen, stopNFCScan]);
+  }, [isOpen, stopNFCScan, stopQRScan, clearQRScan]);
 
   // Start NFC scan when NFC method is selected
   React.useEffect(() => {
@@ -151,6 +165,14 @@ export function ClockInSheet({ isOpen, onClose, shiftId }: ClockInSheetProps) {
       startNFCScan();
     }
   }, [isOpen, selectedMethod, nfcSupported, nfcScanning, nfcData, startNFCScan]);
+
+  // Start QR scan when QR method is selected
+  React.useEffect(() => {
+    if (isOpen && selectedMethod === 'qr' && qrSupported && !qrScanning && !qrData) {
+      // Start scanning with the preview element ID
+      startQRScan('qr-reader-preview');
+    }
+  }, [isOpen, selectedMethod, qrSupported, qrScanning, qrData, startQRScan]);
 
   // Computed values
   const isWithinGeofence = React.useMemo(() => {
@@ -414,6 +436,76 @@ export function ClockInSheet({ isOpen, onClose, shiftId }: ClockInSheetProps) {
                   <p className="text-sm font-medium text-amber-400">NFC Not Supported</p>
                   <p className="text-xs text-zinc-400 mt-1">
                     Your browser or device doesn't support NFC. Try using Chrome on Android.
+                  </p>
+                </div>
+              </div>
+            ) : null}
+          </motion.div>
+        )}
+
+        {/* QR Scanner Section (shown when QR method is selected) */}
+        {selectedMethod === 'qr' && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: 'auto' }}
+            exit={{ opacity: 0, height: 0 }}
+            className="glass-card rounded-xl p-4 space-y-3"
+          >
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <QrCode className="h-4 w-4 text-zinc-400" />
+                <span className="text-sm font-medium text-zinc-300">QR Code</span>
+              </div>
+              {qrScanning ? (
+                <Badge variant="ghost" className="gap-1">
+                  <Loader2 className="h-3 w-3 animate-spin" />
+                  Scanning...
+                </Badge>
+              ) : qrData ? (
+                <Badge variant="default" className="gap-1 bg-emerald-500/20 text-emerald-400">
+                  <CheckCircle2 className="h-3 w-3" />
+                  Code Scanned
+                </Badge>
+              ) : null}
+            </div>
+
+            {qrError ? (
+              <div className="flex items-start gap-3 p-3 rounded-lg bg-red-500/10 border border-red-500/20">
+                <AlertCircle className="h-5 w-5 text-red-400 flex-shrink-0 mt-0.5" />
+                <div>
+                  <p className="text-sm font-medium text-red-400">QR Scanner Error</p>
+                  <p className="text-xs text-zinc-400 mt-1">{qrError}</p>
+                </div>
+              </div>
+            ) : qrScanning ? (
+              <div className="space-y-3">
+                {/* Camera preview container */}
+                <div 
+                  id="qr-reader-preview" 
+                  className="w-full aspect-square rounded-lg overflow-hidden bg-black"
+                />
+                <p className="text-sm text-center text-zinc-400">
+                  Point camera at QR code
+                </p>
+              </div>
+            ) : qrData ? (
+              <div className="space-y-2">
+                <div className="flex items-center justify-between text-xs">
+                  <span className="text-zinc-500">Location</span>
+                  <span className="text-zinc-300">{qrData.locationName || 'Unknown'}</span>
+                </div>
+                <div className="flex items-center justify-between text-xs">
+                  <span className="text-zinc-500">Location ID</span>
+                  <span className="text-zinc-300 font-mono">{qrData.locationId}</span>
+                </div>
+              </div>
+            ) : !qrSupported ? (
+              <div className="flex items-start gap-3 p-3 rounded-lg bg-amber-500/10 border border-amber-500/20">
+                <AlertTriangle className="h-5 w-5 text-amber-400 flex-shrink-0 mt-0.5" />
+                <div>
+                  <p className="text-sm font-medium text-amber-400">Camera Not Available</p>
+                  <p className="text-xs text-zinc-400 mt-1">
+                    Camera access is not available on this device or browser.
                   </p>
                 </div>
               </div>

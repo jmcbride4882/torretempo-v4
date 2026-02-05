@@ -1,6 +1,7 @@
 // @ts-nocheck - TODO: Fix Drizzle type assertions
 import { Router, Request, Response } from 'express';
 import { eq, and } from 'drizzle-orm';
+import QRCode from 'qrcode';
 import { db } from '../db/index.js';
 import { locations } from '../db/schema.js';
 
@@ -168,6 +169,57 @@ router.delete('/:id', async (req: Request, res: Response) => {
   } catch (error) {
     console.error('Error deleting location:', error);
     res.status(500).json({ message: 'Failed to delete location' });
+  }
+});
+
+/**
+ * GET /api/v1/org/:slug/locations/:id/qr
+ * Generate QR code for location clock-in
+ * Returns base64 PNG image of QR code
+ */
+router.get('/:id/qr', async (req: Request, res: Response) => {
+  try {
+    const organizationId = req.organizationId!;
+    const id = req.params.id as string;
+
+    // Verify location exists and belongs to organization
+    const [location] = await db
+      .select()
+      .from(locations)
+      .where(and(eq(locations.id, id), eq(locations.organization_id, organizationId)))
+      .limit(1);
+
+    if (!location) {
+      return res.status(404).json({ message: 'Location not found' });
+    }
+
+    // Generate QR code payload: JSON with location ID and timestamp
+    const qrPayload = JSON.stringify({
+      type: 'torretempo-location',
+      locationId: id,
+      locationName: location.name,
+      generatedAt: new Date().toISOString(),
+    });
+
+    // Generate QR code as base64 PNG
+    const qrCodeDataUrl = await QRCode.toDataURL(qrPayload, {
+      errorCorrectionLevel: 'M',
+      width: 512,
+      margin: 2,
+      color: {
+        dark: '#000000',
+        light: '#FFFFFF',
+      },
+    });
+
+    res.json({
+      locationId: id,
+      locationName: location.name,
+      qrCode: qrCodeDataUrl, // data:image/png;base64,...
+    });
+  } catch (error) {
+    console.error('Error generating QR code:', error);
+    res.status(500).json({ message: 'Failed to generate QR code' });
   }
 });
 
