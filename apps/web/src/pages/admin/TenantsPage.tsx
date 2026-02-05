@@ -87,6 +87,7 @@ export default function TenantsPage() {
     tenant: Tenant;
   } | null>(null);
   const [isActionLoading, setIsActionLoading] = useState(false);
+  const [deleteConfirmation, setDeleteConfirmation] = useState('');
 
   // Fetch tenants
   const loadTenants = useCallback(
@@ -104,7 +105,6 @@ export default function TenantsPage() {
         });
         setTenants(response.tenants || []);
         setTotal(response.total || 0);
-        if (silent) toast.success('Tenants refreshed');
       } catch (error) {
         console.error('Error fetching tenants:', error);
         toast.error('Failed to load tenants');
@@ -129,6 +129,12 @@ export default function TenantsPage() {
   const handleAction = async () => {
     if (!confirmModal) return;
 
+    // Validate delete confirmation
+    if (confirmModal.type === 'delete' && deleteConfirmation !== confirmModal.tenant.slug) {
+      toast.error('Confirmation slug does not match');
+      return;
+    }
+
     setIsActionLoading(true);
     try {
       switch (confirmModal.type) {
@@ -141,11 +147,12 @@ export default function TenantsPage() {
           toast.success(`${confirmModal.tenant.name} has been reactivated`);
           break;
         case 'delete':
-          await deleteTenant(confirmModal.tenant.id);
+          await deleteTenant(confirmModal.tenant.id, deleteConfirmation);
           toast.success(`${confirmModal.tenant.name} has been deleted`);
           break;
       }
       setConfirmModal(null);
+      setDeleteConfirmation('');
       loadTenants(true);
     } catch (error) {
       console.error('Error performing action:', error);
@@ -359,7 +366,10 @@ export default function TenantsPage() {
       )}
 
       {/* Confirmation Modal */}
-      <Dialog open={!!confirmModal} onOpenChange={() => setConfirmModal(null)}>
+      <Dialog open={!!confirmModal} onOpenChange={() => {
+        setConfirmModal(null);
+        setDeleteConfirmation('');
+      }}>
         <DialogContent>
           <DialogHeader>
             <DialogTitle>
@@ -388,6 +398,23 @@ export default function TenantsPage() {
               )}
             </DialogDescription>
           </DialogHeader>
+          
+          {/* Delete confirmation input */}
+          {confirmModal?.type === 'delete' && (
+            <div className="space-y-2">
+              <label className="text-sm text-neutral-300">
+                Type <code className="rounded bg-neutral-800 px-1.5 py-0.5 text-amber-400">{confirmModal.tenant.slug}</code> to confirm:
+              </label>
+              <Input
+                value={deleteConfirmation}
+                onChange={(e) => setDeleteConfirmation(e.target.value)}
+                placeholder={confirmModal.tenant.slug}
+                className="glass-card border-white/10 text-white"
+                autoFocus
+              />
+            </div>
+          )}
+          
           <DialogFooter>
             <Button
               variant="ghost"
@@ -399,7 +426,7 @@ export default function TenantsPage() {
             <Button
               variant={confirmModal?.type === 'delete' ? 'destructive' : 'default'}
               onClick={handleAction}
-              disabled={isActionLoading}
+              disabled={isActionLoading || (confirmModal?.type === 'delete' && deleteConfirmation !== confirmModal?.tenant.slug)}
               className={confirmModal?.type === 'unsuspend' ? 'bg-emerald-600 hover:bg-emerald-500' : ''}
             >
               {isActionLoading ? 'Processing...' : confirmModal?.type === 'delete' ? 'Delete' : confirmModal?.type === 'suspend' ? 'Suspend' : 'Reactivate'}

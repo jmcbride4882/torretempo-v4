@@ -105,7 +105,6 @@ export default function ErrorLogsPage() {
         // const response = await fetchErrorLogs({ level: levelFilter, source: sourceFilter });
         await new Promise((resolve) => setTimeout(resolve, 500));
         setErrors(mockErrors);
-        if (silent) toast.success('Errors refreshed');
       } catch (error) {
         console.error('Error fetching error logs:', error);
         toast.error('Failed to load error logs');

@@ -407,6 +407,101 @@ router.post(
 );
 
 /**
+ * POST /api/admin/tenants/:id/unsuspend
+ * Unsuspend organization (reactivate, restore access)
+ * 
+ * Params:
+ * - id: string - Organization ID
+ * 
+ * Returns:
+ * - Success message with unsuspended organization details
+ */
+router.post(
+  '/:id/unsuspend',
+  requireAdmin,
+  async (req: Request, res: Response) => {
+    try {
+      const actor = req.user;
+
+      if (!actor) {
+        return res.status(401).json({ error: 'Unauthorized: No user found' });
+      }
+
+      const organizationId = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id;
+
+      if (!organizationId) {
+        return res.status(400).json({ error: 'Organization ID is required' });
+      }
+
+      // Verify organization exists
+      const orgResult = await db
+        .select({
+          id: organization.id,
+          name: organization.name,
+          slug: organization.slug,
+          metadata: organization.metadata,
+        })
+        .from(organization)
+        .where(eq(organization.id, organizationId))
+        .limit(1);
+
+      if (orgResult.length === 0) {
+        return res.status(404).json({ error: 'Organization not found' });
+      }
+
+      const org = orgResult[0]!;
+      const existingMetadata = org.metadata ? JSON.parse(org.metadata) : {};
+
+      // Update metadata to remove suspension info
+      const updatedMetadata = {
+        ...existingMetadata,
+        suspended: false,
+        unsuspended_at: new Date().toISOString(),
+        unsuspended_by: actor.id,
+      };
+
+      // Update organization
+      await db
+        .update(organization)
+        .set({
+          metadata: JSON.stringify(updatedMetadata),
+        })
+        .where(eq(organization.id, organizationId));
+
+      // Log admin action
+      await logAdminAction({
+        adminId: actor.id,
+        action: 'tenant.unsuspend',
+        targetType: 'organization',
+        targetId: organizationId,
+        details: {
+          organization_name: org.name,
+          slug: org.slug,
+        },
+        ip: req.ip || req.socket.remoteAddress || 'unknown',
+      });
+
+      res.json({
+        message: 'Organization unsuspended successfully',
+        organization: {
+          id: org.id,
+          name: org.name,
+          slug: org.slug,
+          unsuspended_at: updatedMetadata.unsuspended_at,
+          unsuspended_by: actor.id,
+        },
+      });
+    } catch (error) {
+      console.error('Error unsuspending tenant:', error);
+      res.status(500).json({
+        error: 'Failed to unsuspend tenant',
+        details: error instanceof Error ? error.message : 'Unknown error',
+      });
+    }
+  }
+);
+
+/**
  * DELETE /api/admin/tenants/:id
  * Delete organization with cascade confirmation
  * 

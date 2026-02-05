@@ -85,7 +85,6 @@ export default function SystemPage() {
     try {
       const data = await fetchSystemHealth();
       setHealth(data);
-      if (silent) toast.success('System health refreshed');
     } catch (error) {
       console.error('Error fetching system health:', error);
       toast.error('Failed to load system health');

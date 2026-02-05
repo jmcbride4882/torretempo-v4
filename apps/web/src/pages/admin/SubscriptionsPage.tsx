@@ -56,7 +56,6 @@ export default function SubscriptionsPage() {
     try {
       const data = await fetchSubscriptionMetrics();
       setMetrics(data);
-      if (silent) toast.success('Metrics refreshed');
     } catch (error) {
       console.error('Error fetching subscription metrics:', error);
       toast.error('Failed to load subscription metrics');

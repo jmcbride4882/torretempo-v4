@@ -91,7 +91,6 @@ export default function UsersPage() {
         });
         setUsers(response.users || []);
         setTotal(response.total || 0);
-        if (silent) toast.success('Users refreshed');
       } catch (error) {
         console.error('Error fetching users:', error);
         toast.error('Failed to load users');

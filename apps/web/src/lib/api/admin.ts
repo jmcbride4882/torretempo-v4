@@ -282,11 +282,13 @@ export async function unsuspendTenant(tenantId: string): Promise<{ success: bool
   return handleResponse<{ success: boolean }>(response);
 }
 
-export async function deleteTenant(tenantId: string): Promise<{ success: boolean }> {
+export async function deleteTenant(tenantId: string, confirmation: string): Promise<{ success: boolean }> {
   const url = `${API_URL}/api/admin/tenants/${tenantId}`;
   const response = await fetch(url, {
     method: 'DELETE',
     credentials: 'include',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ confirmation }),
   });
   return handleResponse<{ success: boolean }>(response);
 }
