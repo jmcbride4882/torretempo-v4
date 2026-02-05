@@ -8,7 +8,6 @@ import { tenantMiddleware } from './middleware/tenant.js';
 import { requireAdmin } from './middleware/requireAdmin.js';
 import { inspectorAuth } from './middleware/inspectorAuth.js';
 import { testConnection } from './db/index.js';
-import './types/express.js';
 import 'dotenv/config';
 
 const app = express();
