@@ -8,6 +8,7 @@ import {
   BarChart3,
   Settings,
   LogOut,
+  Store,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useAuth } from '@/hooks/useAuth';
@@ -16,6 +17,7 @@ import { useOrganization } from '@/hooks/useOrganization';
 const navItems = [
   { icon: LayoutDashboard, label: 'Dashboard', path: 'dashboard' },
   { icon: Users, label: 'Roster', path: 'roster' },
+  { icon: Store, label: 'Open Shifts', path: 'open-shifts' },
   { icon: Clock, label: 'Clock', path: 'clock' },
   { icon: ArrowLeftRight, label: 'Swaps', path: 'swaps' },
   { icon: BarChart3, label: 'Reports', path: 'reports' },

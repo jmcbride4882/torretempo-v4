@@ -1,0 +1,143 @@
+import { motion, AnimatePresence } from 'framer-motion';
+import { MapPin, Check, ChevronDown, Building2 } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+  DropdownMenuSeparator,
+} from '@/components/ui/dropdown-menu';
+import { cn } from '@/lib/utils';
+import type { Location } from '@/types/roster';
+
+interface LocationFilterProps {
+  locations: Location[];
+  selectedLocationId: string | null;
+  onLocationChange: (locationId: string | null) => void;
+  isLoading?: boolean;
+}
+
+export function LocationFilter({
+  locations,
+  selectedLocationId,
+  onLocationChange,
+  isLoading = false,
+}: LocationFilterProps) {
+  const selectedLocation = locations.find((l) => l.id === selectedLocationId);
+  
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button
+          variant="ghost"
+          disabled={isLoading}
+          className={cn(
+            'h-9 gap-2 rounded-lg border px-3 text-sm font-medium transition-all',
+            selectedLocationId
+              ? 'border-primary-500/30 bg-primary-500/10 text-primary-300 hover:bg-primary-500/20'
+              : 'border-white/5 bg-white/5 text-neutral-300 hover:bg-white/10 hover:text-white'
+          )}
+        >
+          <MapPin className="h-4 w-4" />
+          <span className="max-w-[150px] truncate">
+            {isLoading ? 'Loading...' : selectedLocation?.name || 'All locations'}
+          </span>
+          <ChevronDown className="h-3.5 w-3.5 opacity-50" />
+        </Button>
+      </DropdownMenuTrigger>
+      
+      <DropdownMenuContent
+        align="start"
+        className="w-56 overflow-hidden rounded-xl border border-white/10 bg-neutral-900/95 p-1 backdrop-blur-xl"
+      >
+        <AnimatePresence mode="popLayout">
+          {/* All locations option */}
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.15 }}
+          >
+            <DropdownMenuItem
+              onClick={() => onLocationChange(null)}
+              className={cn(
+                'flex cursor-pointer items-center gap-2 rounded-lg px-3 py-2 text-sm transition-colors',
+                !selectedLocationId
+                  ? 'bg-primary-500/10 text-primary-300'
+                  : 'text-neutral-300 hover:bg-white/5 hover:text-white'
+              )}
+            >
+              <Building2 className="h-4 w-4" />
+              <span className="flex-1">All locations</span>
+              {!selectedLocationId && (
+                <motion.div
+                  initial={{ scale: 0 }}
+                  animate={{ scale: 1 }}
+                  className="flex h-4 w-4 items-center justify-center rounded-full bg-primary-500"
+                >
+                  <Check className="h-3 w-3 text-white" />
+                </motion.div>
+              )}
+            </DropdownMenuItem>
+          </motion.div>
+          
+          {locations.length > 0 && (
+            <DropdownMenuSeparator className="my-1 bg-white/5" />
+          )}
+          
+          {/* Location list */}
+          {locations.map((location, index) => (
+            <motion.div
+              key={location.id}
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.15, delay: index * 0.03 }}
+            >
+              <DropdownMenuItem
+                onClick={() => onLocationChange(location.id)}
+                className={cn(
+                  'flex cursor-pointer items-center gap-2 rounded-lg px-3 py-2 text-sm transition-colors',
+                  selectedLocationId === location.id
+                    ? 'bg-primary-500/10 text-primary-300'
+                    : 'text-neutral-300 hover:bg-white/5 hover:text-white'
+                )}
+              >
+                <MapPin className="h-4 w-4 text-neutral-500" />
+                <div className="flex-1 overflow-hidden">
+                  <p className="truncate font-medium">{location.name}</p>
+                  {location.address && (
+                    <p className="truncate text-xs text-neutral-500">{location.address}</p>
+                  )}
+                </div>
+                {selectedLocationId === location.id && (
+                  <motion.div
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
+                    className="flex h-4 w-4 items-center justify-center rounded-full bg-primary-500"
+                  >
+                    <Check className="h-3 w-3 text-white" />
+                  </motion.div>
+                )}
+              </DropdownMenuItem>
+            </motion.div>
+          ))}
+          
+          {/* Empty state */}
+          {locations.length === 0 && !isLoading && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="px-3 py-4 text-center"
+            >
+              <MapPin className="mx-auto h-8 w-8 text-neutral-600" />
+              <p className="mt-2 text-sm text-neutral-400">No locations found</p>
+              <p className="text-xs text-neutral-500">Add locations in settings</p>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
+}
+
+export default LocationFilter;

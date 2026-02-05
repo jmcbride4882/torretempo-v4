@@ -15,6 +15,10 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 
+// Roster page
+import RosterPage from '@/pages/Roster';
+import OpenShiftsPage from '@/pages/OpenShifts';
+
 // Placeholder pages - these will be built in Phase 2
 function DashboardPage() {
   return (
@@ -140,15 +144,8 @@ export default function AppShell() {
             <motion.div {...pageTransition} className="p-4 lg:p-6">
               <Routes>
                 <Route path="dashboard" element={<DashboardPage />} />
-                <Route
-                  path="roster"
-                  element={
-                    <PlaceholderPage
-                      title="Roster"
-                      description="Manage your team roster, assign shifts, and view availability."
-                    />
-                  }
-                />
+                <Route path="roster" element={<RosterPage />} />
+                <Route path="open-shifts" element={<OpenShiftsPage />} />
                 <Route
                   path="clock"
                   element={
