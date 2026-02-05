@@ -5,7 +5,9 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import { EmailJob, redisConnection } from '../lib/queue.js';
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+// Only initialize Resend if API key is provided
+const resendApiKey = process.env.RESEND_API_KEY || '';
+const resend = resendApiKey ? new Resend(resendApiKey) : null;
 const fromAddress = process.env.RESEND_FROM || 'Torre Tempo <no-reply@lsltgroup.es>';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -47,8 +49,9 @@ const emailWorker = new Worker<EmailJob>(
   async (job) => {
     const { to, subject, template, data } = job.data;
 
-    if (!process.env.RESEND_API_KEY) {
-      throw new Error('RESEND_API_KEY is not configured');
+    if (!resend) {
+      console.warn(`⚠️  RESEND_API_KEY not configured - skipping email to ${to} (${subject})`);
+      return; // Skip email sending but don't fail the job
     }
 
     const templateHtml = await loadTemplate(template);
