@@ -211,7 +211,12 @@ export default function SystemPage() {
           label="Redis"
           status={health?.redis.status || 'disconnected'}
           metrics={[
-            { label: 'Memory', value: health?.redis.memory || 'N/A' },
+            { 
+              label: 'Memory', 
+              value: health?.redis.memory 
+                ? `${health.redis.memory.used}MB / ${health.redis.memory.peak}MB`
+                : 'N/A' 
+            },
             { label: 'Latency', value: formatLatency(health?.redis.latency || 0) },
           ]}
           color="red"

@@ -118,7 +118,10 @@ export interface SystemHealth {
   redis: {
     status: 'connected' | 'disconnected';
     latency: number;
-    memory: string;
+    memory: {
+      used: number;
+      peak: number;
+    };
   };
   queues: {
     name: string;

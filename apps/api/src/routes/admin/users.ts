@@ -1,5 +1,5 @@
 import { Router, Request, Response } from 'express';
-import { and, eq, desc, like, or, sql } from 'drizzle-orm';
+import { and, eq, desc, like, or, sql, inArray } from 'drizzle-orm';
 import { db } from '../../db/index.js';
 import { user, member, organization } from '../../db/schema.js';
 import { requireAdmin } from '../../middleware/requireAdmin.js';
@@ -104,17 +104,19 @@ router.get(
 
       // Get organization memberships for each user
       const userIds = users.map(u => u.id);
-      const memberships = await db
-        .select({
-          userId: member.userId,
-          orgId: organization.id,
-          orgName: organization.name,
-          orgSlug: organization.slug,
-          role: member.role,
-        })
-        .from(member)
-        .innerJoin(organization, eq(member.organizationId, organization.id))
-        .where(sql`${member.userId} = ANY(${userIds})`);
+      const memberships = userIds.length > 0
+        ? await db
+            .select({
+              userId: member.userId,
+              orgId: organization.id,
+              orgName: organization.name,
+              orgSlug: organization.slug,
+              role: member.role,
+            })
+            .from(member)
+            .innerJoin(organization, eq(member.organizationId, organization.id))
+            .where(inArray(member.userId, userIds))
+        : [];
 
       // Build response with organizations (filter out orgs with null slugs)
       const usersWithOrgs = users.map(u => {
