@@ -1,0 +1,30 @@
+name: Deploy to Production
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    name: Deploy to lsltgroup.es
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: time.lsltgroup.es
+          username: root
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            cd /root/torretempo-v4
+            git pull origin main
+            docker-compose -f docker-compose.prod.yml up -d --build web
+            docker-compose -f docker-compose.prod.yml ps
+            
+      - name: Verify Deployment
+        run: |
+          sleep 10
+          curl -f https://time.lsltgroup.es/api/health || exit 1
