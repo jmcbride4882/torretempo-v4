@@ -1,9 +1,9 @@
 import { Request, Response, NextFunction, RequestHandler } from 'express';
 import { createHash } from 'crypto';
 import { db } from '../db/index.js';
-import { inspector_tokens } from '../db/schema';
+import { inspector_tokens } from '../db/schema.js';
 import { eq } from 'drizzle-orm';
-import { logAdminAction } from '../services/adminAudit.service';
+import { logAdminAction } from '../services/adminAudit.service.js';
 
 /**
  * Inspector Auth Middleware (T11)

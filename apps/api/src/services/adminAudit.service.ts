@@ -1,5 +1,5 @@
 import { db } from '../db/index.js';
-import { admin_audit_log } from '../db/schema';
+import { admin_audit_log } from '../db/schema.js';
 
 interface LogAdminActionParams {
   adminId: string;

@@ -1,5 +1,5 @@
 import { Request } from 'express';
-import { Session } from '../lib/auth';
+import { Session } from '../lib/auth.js';
 
 declare global {
   namespace Express {
