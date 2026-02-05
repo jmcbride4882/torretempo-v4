@@ -8,6 +8,26 @@ import { member } from '../db/schema.js';
 const router = Router();
 
 /**
+ * GET /api/v1/org/:slug/members
+ * List all members in the organization
+ */
+router.get('/', async (req: Request, res: Response) => {
+  try {
+    const organizationId = req.organizationId!;
+
+    const members = await db
+      .select()
+      .from(member)
+      .where(eq(member.organizationId, organizationId));
+
+    res.json({ members });
+  } catch (error) {
+    console.error('Error fetching members:', error);
+    res.status(500).json({ error: 'Failed to fetch members' });
+  }
+});
+
+/**
  * POST /api/v1/org/:slug/members/:memberId/pin
  * Set or update the clock-in PIN for a member
  * Body: { pin: string } (4-digit numeric string)
