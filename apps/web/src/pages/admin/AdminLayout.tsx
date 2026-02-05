@@ -72,7 +72,7 @@ function AdminSidebar() {
 
       {/* Navigation */}
       <nav className="flex-1 space-y-1 overflow-y-auto p-3 scrollbar-thin">
-        {adminNavItems.map((item, index) => (
+        {adminNavItems.filter(Boolean).map((item, index) => (
           <motion.div
             key={item.path}
             initial={{ opacity: 0, x: -10 }}
