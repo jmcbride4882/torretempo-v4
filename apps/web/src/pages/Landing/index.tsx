@@ -72,14 +72,14 @@ const MODULES: Module[] = [
   {
     icon: Clock,
     title: 'Tempo',
-    description: 'Control de presencia con cumplimiento automático de descansos mínimos (12h), jornadas máximas (9h) y límites semanales (40h)',
+    description: 'Control de presencia con cumplimiento automático. Perfecto para restaurantes, hoteles y bares.',
     highlights: ['Tap móvil', 'NFC Badge', 'QR Code', 'PIN', 'Geofencing', 'Alertas automáticas'],
     minTier: 'starter',
   },
   {
     icon: Calendar,
     title: 'Rota',
-    description: 'Planificación visual que previene incumplimientos antes de publicar turnos',
+    description: 'Planificación visual de turnos. Optimizado para servicios de hostelería (desayunos, comidas, cenas).',
     highlights: ['Drag & drop', 'Validación ITSS', 'Turnos abiertos', 'Alertas de conflicto'],
     minTier: 'pro',
   },
@@ -100,7 +100,7 @@ const MODULES: Module[] = [
   {
     icon: MapPin,
     title: 'Multi-Site Ops',
-    description: 'Gestión centralizada multi-sede con informes consolidados y permisos granulares',
+    description: 'Gestión centralizada para grupos hoteleros y cadenas de restaurantes.',
     highlights: ['Multi-ubicación', 'Informes consolidados', 'Permisos por sede', 'Dashboard ejecutivo'],
     minTier: 'business',
   },
@@ -194,14 +194,14 @@ const TESTIMONIALS: Testimonial[] = [
     quote: 'Antes perdíamos horas cada mes preparando informes para la gestoría. Ahora exportamos directamente en su formato y nos centramos en lo que importa: el equipo.',
     author: 'Carlos Ruiz',
     role: 'Gerente de Operaciones',
-    company: 'Retail Express España',
+    company: 'Cadena Hotelera Costa del Sol',
     avatar: 'CR',
   },
   {
     quote: 'La función offline es clave para nuestros técnicos de campo. Fichan aunque no haya cobertura y se sincroniza automáticamente. Cumplimiento garantizado, sin excusas.',
     author: 'Ana Martínez',
     role: 'CEO',
-    company: 'Servicios Técnicos del Norte',
+    company: 'Grupo Restauración Mediterráneo',
     avatar: 'AM',
   },
 ];
@@ -217,7 +217,7 @@ const FAQS: FAQ[] = [
   },
   {
     question: '¿Funciona sin conexión a internet?',
-    answer: 'Sí, la aplicación es una PWA diseñada para funcionar offline. Los fichajes se almacenan localmente con marca temporal y se sincronizan automáticamente cuando vuelve la conexión. Ideal para obras, almacenes o zonas con cobertura irregular.',
+    answer: 'Sí, Torre Tempo es una PWA (Progressive Web App) diseñada para funcionar offline. Ideal para restaurantes y hoteles donde la cobertura puede ser irregular. Los fichajes se almacenan localmente y se sincronizan automáticamente cuando vuelve la conexión.',
   },
   {
     question: '¿Qué es la cadena de auditoría SHA-256?',
@@ -281,9 +281,12 @@ function Navbar() {
           {/* Logo */}
           <Link to="/" className="flex items-center gap-2">
             <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-emerald-500 shadow-lg shadow-emerald-500/20">
-              <Shield className="h-5 w-5 text-white" />
+              <Clock className="h-5 w-5 text-white" />
             </div>
-            <span className="text-lg font-bold text-white">LSLT Workforce</span>
+            <div className="flex flex-col">
+              <span className="text-lg font-bold text-white leading-none">Torre Tempo</span>
+              <span className="text-[10px] text-neutral-400 leading-none">by LSLT Apps</span>
+            </div>
           </Link>
 
           {/* Desktop Navigation */}
@@ -407,7 +410,7 @@ function HeroSection() {
             className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-emerald-500/10 border border-emerald-500/20 mb-8"
           >
             <Shield className="h-4 w-4 text-emerald-400" />
-            <span className="text-sm text-emerald-400 font-medium">ITSS-Ready | GDPR Compliant</span>
+            <span className="text-sm text-emerald-400 font-medium">Inspector-Ready | ITSS Compliant</span>
           </motion.div>
 
           {/* Main Heading */}
@@ -417,10 +420,10 @@ function HeroSection() {
             transition={{ duration: 0.6, delay: 0.1 }}
             className="text-4xl sm:text-5xl lg:text-7xl font-bold text-white leading-tight tracking-tight"
           >
-            Cumplimiento Laboral
+            El Sistema de Registro Horario
             <br />
             <span className="bg-gradient-to-r from-emerald-400 via-emerald-300 to-teal-400 bg-clip-text text-transparent">
-              Sin Esfuerzo
+              que los Inspectores Aman
             </span>
           </motion.h1>
 
@@ -431,9 +434,9 @@ function HeroSection() {
             transition={{ duration: 0.6, delay: 0.2 }}
             className="mt-6 text-lg sm:text-xl text-neutral-400 max-w-3xl mx-auto leading-relaxed"
           >
-            Fichaje, planificación y exportación de nóminas en un solo sistema modular.
+            Cumplimiento legal sencillo para hostelería en España.
             <br className="hidden sm:block" />
-            Inspector-ready • ITSS compliant • Integración gestoría
+            Registro automático • PWA móvil-first • Auditoría inmutable
           </motion.p>
 
           {/* Feature Pills */}
@@ -932,10 +935,10 @@ function CTASection() {
           transition={{ duration: 0.5 }}
         >
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-6">
-            ¿Listo para cumplir sin esfuerzo?
+            ¿Listo para simplificar tu registro horario?
           </h2>
           <p className="text-lg text-neutral-400 mb-8 max-w-2xl mx-auto">
-            Únete a cientos de empresas españolas que ya superan inspecciones ITSS sin preocupaciones.
+            Únete a restaurantes, hoteles y bares que ya confían en Torre Tempo para su cumplimiento legal.
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <Button
@@ -967,12 +970,15 @@ function Footer() {
           <div className="col-span-2 md:col-span-1">
             <Link to="/" className="flex items-center gap-2 mb-4">
               <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-emerald-500">
-                <Shield className="h-5 w-5 text-white" />
+                <Clock className="h-5 w-5 text-white" />
               </div>
-              <span className="text-lg font-bold text-white">LSLT Workforce</span>
+              <div className="flex flex-col">
+                <span className="text-lg font-bold text-white leading-none">Torre Tempo</span>
+                <span className="text-[10px] text-neutral-400 leading-none">by LSLT Apps</span>
+              </div>
             </Link>
             <p className="text-sm text-neutral-400 mb-6">
-              Suite de cumplimiento laboral para empresas españolas.
+              El sistema de registro horario que los inspectores aman.
             </p>
             {/* Social Links */}
             <div className="flex items-center gap-4">
@@ -1005,10 +1011,18 @@ function Footer() {
           ))}
         </div>
 
+        {/* Legal Entity Notice */}
+        <div className="mt-12 pt-8 border-t border-white/5">
+          <p className="text-xs text-neutral-500 text-center">
+            Torre Tempo es un producto de <span className="text-neutral-400">LSLT Apps</span>,
+            <br className="sm:hidden" /> una división de <span className="text-neutral-400">Lakeside La Torre (Murcia) Group SL</span>.
+          </p>
+        </div>
+
         {/* Bottom Bar */}
-        <div className="mt-16 pt-8 border-t border-white/5 flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div className="mt-8 pt-8 border-t border-white/5 flex flex-col sm:flex-row items-center justify-between gap-4">
           <p className="text-sm text-neutral-500">
-            © 2026 LSLT Group. Todos los derechos reservados.
+            © 2026 LSLT Apps. Todos los derechos reservados.
           </p>
           <div className="flex items-center gap-6">
             <a href="#" className="text-sm text-neutral-500 hover:text-white transition-colors">

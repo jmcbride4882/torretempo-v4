@@ -1,7 +1,7 @@
 import { Router, Request, Response } from 'express';
 import { and, eq, desc, gte, lte, sql } from 'drizzle-orm';
 import { db } from '../db/index.js';
-import { monthly_summaries, time_entries } from '../db/schema.js';
+import { monthly_summaries, time_entries, user } from '../db/schema.js';
 import { requireRole } from '../middleware/requireRole.js';
 import { logAudit } from '../services/audit.service.js';
 import { pdfQueue } from '../lib/queue.js';
@@ -139,14 +139,42 @@ router.get('/', requireRole(['employee', 'manager', 'tenantAdmin', 'owner']), as
 
     const total = Number(countResult[0]?.count || 0);
 
-    // Get paginated results
-    const reports = await db
-      .select()
+    // Get paginated results with user information
+    const results = await db
+      .select({
+        id: monthly_summaries.id,
+        organizationId: monthly_summaries.organization_id,
+        userId: monthly_summaries.user_id,
+        userName: user.name,
+        userEmail: user.email,
+        year: monthly_summaries.year,
+        month: monthly_summaries.month,
+        totalHours: monthly_summaries.total_hours,
+        totalDays: monthly_summaries.total_days,
+        overtimeHours: monthly_summaries.overtime_hours,
+        pdfUrl: monthly_summaries.pdf_url,
+        generatedAt: monthly_summaries.generated_at,
+        deliveredAt: monthly_summaries.delivered_at,
+        deliveryMethod: monthly_summaries.delivery_method,
+        createdAt: monthly_summaries.created_at,
+      })
       .from(monthly_summaries)
+      .leftJoin(user, eq(monthly_summaries.user_id, user.id))
       .where(and(...conditions))
       .orderBy(desc(monthly_summaries.year), desc(monthly_summaries.month))
       .limit(limit)
       .offset(offset);
+
+    // Transform to include status and format correctly
+    const reports = results.map((r) => ({
+      ...r,
+      totalHours: Number(r.totalHours),
+      overtimeHours: Number(r.overtimeHours),
+      status: r.deliveredAt ? 'delivered' : r.generatedAt ? 'ready' : r.pdfUrl ? 'generating' : 'pending',
+      generatedAt: r.generatedAt?.toISOString(),
+      deliveredAt: r.deliveredAt?.toISOString(),
+      createdAt: r.createdAt.toISOString(),
+    }));
 
     res.json({
       reports,
