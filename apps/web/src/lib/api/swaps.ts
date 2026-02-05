@@ -71,7 +71,7 @@ export async function fetchSwaps(
  * Fetch swaps created by the current user
  */
 export async function fetchMySwaps(orgSlug: string): Promise<SwapsResponse> {
-  const url = `${API_URL}/api/v1/org/${orgSlug}/swaps/my-requests`;
+  const url = `${API_URL}/api/v1/org/${orgSlug}/swaps/mine`;
   
   const response = await fetch(url, {
     credentials: 'include',
@@ -84,7 +84,7 @@ export async function fetchMySwaps(orgSlug: string): Promise<SwapsResponse> {
  * Fetch swaps pending for the current user to respond to
  */
 export async function fetchPendingSwaps(orgSlug: string): Promise<SwapsResponse> {
-  const url = `${API_URL}/api/v1/org/${orgSlug}/swaps/pending-for-me`;
+  const url = `${API_URL}/api/v1/org/${orgSlug}/swaps/pending`;
   
   const response = await fetch(url, {
     credentials: 'include',
@@ -137,13 +137,13 @@ export async function respondToPeer(
   action: PeerAction,
   reason?: string
 ): Promise<SwapResponse> {
-  const url = `${API_URL}/api/v1/org/${orgSlug}/swaps/${swapId}/peer-response`;
+  const url = `${API_URL}/api/v1/org/${orgSlug}/swaps/${swapId}/respond-peer`;
   
   const response = await fetch(url, {
-    method: 'POST',
+    method: 'PUT',
     credentials: 'include',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ action, reason }),
+    body: JSON.stringify({ decision: action, reason }),
   });
 
   return handleResponse<SwapResponse>(response);
@@ -158,13 +158,13 @@ export async function respondAsManager(
   action: ManagerAction,
   reason?: string
 ): Promise<SwapResponse> {
-  const url = `${API_URL}/api/v1/org/${orgSlug}/swaps/${swapId}/manager-response`;
+  const url = `${API_URL}/api/v1/org/${orgSlug}/swaps/${swapId}/respond-manager`;
   
   const response = await fetch(url, {
-    method: 'POST',
+    method: 'PUT',
     credentials: 'include',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ action, reason }),
+    body: JSON.stringify({ decision: action, reason }),
   });
 
   return handleResponse<SwapResponse>(response);
@@ -181,10 +181,10 @@ export async function claimOpenSwap(
   const url = `${API_URL}/api/v1/org/${orgSlug}/swaps/${swapId}/claim`;
   
   const response = await fetch(url, {
-    method: 'POST',
+    method: 'PUT',
     credentials: 'include',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ shift_to_offer: shiftToOffer }),
+    body: JSON.stringify({ desired_shift_id: shiftToOffer }),
   });
 
   return handleResponse<SwapResponse>(response);
@@ -201,7 +201,7 @@ export async function cancelSwap(
   const url = `${API_URL}/api/v1/org/${orgSlug}/swaps/${swapId}/cancel`;
   
   const response = await fetch(url, {
-    method: 'POST',
+    method: 'PUT',
     credentials: 'include',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ reason }),
