@@ -27,6 +27,7 @@ import { useGeolocation, formatAccuracy, isAccuracyAcceptable } from '@/hooks/us
 import { useOrganization } from '@/hooks/useOrganization';
 import { useNFC } from '@/hooks/useNFC';
 import { useQRScanner } from '@/hooks/useQRScanner';
+import { useHaptic } from '@/hooks/useHaptic';
 import { PINInput } from '@/components/time-clock/PINInput';
 import { clockIn, TimeEntryApiError } from '@/lib/api/time-entries';
 import type { ClockMethod } from '@/lib/api/time-entries';
@@ -98,6 +99,9 @@ export function ClockInSheet({ isOpen, onClose, shiftId }: ClockInSheetProps) {
     stopScan: stopQRScan,
     clearScan: clearQRScan,
   } = useQRScanner({ fps: 10, qrbox: 250 });
+
+  // Haptic feedback
+  const haptic = useHaptic();
 
   // Local state
   const [currentTime, setCurrentTime] = React.useState(new Date());
@@ -179,6 +183,20 @@ export function ClockInSheet({ isOpen, onClose, shiftId }: ClockInSheetProps) {
     }
   }, [isOpen, selectedMethod, qrSupported, qrScanning, qrData, startQRScan]);
 
+  // Haptic feedback when QR code is successfully scanned
+  React.useEffect(() => {
+    if (qrData) {
+      haptic.success();
+    }
+  }, [qrData, haptic]);
+
+  // Haptic feedback when NFC tag is successfully read
+  React.useEffect(() => {
+    if (nfcData) {
+      haptic.success();
+    }
+  }, [nfcData, haptic]);
+
   // Computed values
   const isWithinGeofence = React.useMemo(() => {
     // For now, assume within geofence if we have location
@@ -202,6 +220,9 @@ export function ClockInSheet({ isOpen, onClose, shiftId }: ClockInSheetProps) {
   const handleClockIn = async () => {
     if (!organization?.slug || !position) return;
     
+    // Light haptic feedback on button press
+    haptic.light();
+    
     setSubmitting(true);
     setError(null);
 
@@ -219,11 +240,17 @@ export function ClockInSheet({ isOpen, onClose, shiftId }: ClockInSheetProps) {
 
       setSuccess(true);
       
+      // Success haptic feedback (two short pulses)
+      haptic.success();
+      
       // Close after success animation
       setTimeout(() => {
         onClose();
       }, 1500);
     } catch (err) {
+      // Error haptic feedback (three quick pulses)
+      haptic.error();
+      
       if (err instanceof TimeEntryApiError) {
         if (err.status === 409) {
           setError('You are already clocked in. Please clock out first.');
@@ -575,7 +602,12 @@ export function ClockInSheet({ isOpen, onClose, shiftId }: ClockInSheetProps) {
                 <motion.button
                   key={method.id}
                   whileTap={method.available ? { scale: 0.95 } : undefined}
-                  onClick={() => method.available && setSelectedMethod(method.id)}
+                  onClick={() => {
+                    if (method.available) {
+                      haptic.light();
+                      setSelectedMethod(method.id);
+                    }
+                  }}
                   disabled={isDisabled}
                   className={cn(
                     "flex flex-col items-center justify-center gap-1 py-3 px-2 rounded-xl",

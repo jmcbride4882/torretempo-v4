@@ -25,6 +25,7 @@ import { Label } from '@/components/ui/label';
 import { cn } from '@/lib/utils';
 import { useGeolocation, formatAccuracy } from '@/hooks/useGeolocation';
 import { useOrganization } from '@/hooks/useOrganization';
+import { useHaptic } from '@/hooks/useHaptic';
 import { clockOut, fetchBreaks, TimeEntryApiError } from '@/lib/api/time-entries';
 import type { TimeEntry, BreakEntry } from '@/lib/api/time-entries';
 
@@ -85,6 +86,9 @@ export function ClockOutSheet({ isOpen, onClose, activeEntry }: ClockOutSheetPro
     loading: geoLoading, 
     requestPermission 
   } = useGeolocation();
+
+  // Haptic feedback
+  const haptic = useHaptic();
 
   // Local state
   const [currentTime, setCurrentTime] = React.useState(new Date());
@@ -180,6 +184,9 @@ export function ClockOutSheet({ isOpen, onClose, activeEntry }: ClockOutSheetPro
   const handleClockOut = async () => {
     if (!organization?.slug || !activeEntry || !position) return;
     
+    // Light haptic feedback on button press
+    haptic.light();
+    
     setSubmitting(true);
     setError(null);
 
@@ -196,11 +203,17 @@ export function ClockOutSheet({ isOpen, onClose, activeEntry }: ClockOutSheetPro
 
       setSuccess(true);
       
+      // Success haptic feedback (two short pulses)
+      haptic.success();
+      
       // Close after success animation
       setTimeout(() => {
         onClose();
       }, 1500);
     } catch (err) {
+      // Error haptic feedback (three quick pulses)
+      haptic.error();
+      
       if (err instanceof TimeEntryApiError) {
         setError(err.message);
       } else {
