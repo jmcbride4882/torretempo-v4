@@ -1,0 +1,285 @@
+/**
+ * PayrollBreakdown Component
+ * Displays compensation details in a styled table
+ * Glassmorphism styling with right-aligned numbers
+ */
+
+import { motion } from 'framer-motion';
+import {
+  Clock,
+  DollarSign,
+  TrendingUp,
+  Receipt,
+  Minus,
+  Wallet,
+  Calculator,
+} from 'lucide-react';
+import { cn } from '@/lib/utils';
+import type { PayrollReport } from '@/types/reports';
+
+interface PayrollBreakdownProps {
+  report: PayrollReport;
+  className?: string;
+}
+
+// Format currency
+function formatCurrency(amount: number): string {
+  return new Intl.NumberFormat('es-ES', {
+    style: 'currency',
+    currency: 'EUR',
+  }).format(amount);
+}
+
+// Format hours
+function formatHours(hours: number): string {
+  const h = Math.floor(hours);
+  const m = Math.round((hours - h) * 60);
+  if (m === 0) return `${h}h`;
+  return `${h}h ${m}m`;
+}
+
+// Table row component
+function TableRow({
+  label,
+  hours,
+  amount,
+  rate,
+  icon: Icon,
+  variant = 'default',
+  className,
+}: {
+  label: string;
+  hours?: number;
+  amount: number;
+  rate?: number;
+  icon?: typeof Clock;
+  variant?: 'default' | 'highlight' | 'deduction' | 'total';
+  className?: string;
+}) {
+  const rowStyles = {
+    default: 'text-neutral-300',
+    highlight: 'text-amber-300 bg-amber-500/5',
+    deduction: 'text-red-300',
+    total: 'text-white font-semibold text-lg border-t border-white/10 pt-3 mt-1',
+  };
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, x: -10 }}
+      animate={{ opacity: 1, x: 0 }}
+      className={cn(
+        'flex items-center justify-between py-2.5',
+        rowStyles[variant],
+        className
+      )}
+    >
+      <div className="flex items-center gap-2.5">
+        {Icon && (
+          <div
+            className={cn(
+              'flex h-8 w-8 items-center justify-center rounded-lg',
+              variant === 'highlight' && 'bg-amber-500/20',
+              variant === 'deduction' && 'bg-red-500/20',
+              variant === 'total' && 'bg-primary-500/20',
+              variant === 'default' && 'bg-white/5'
+            )}
+          >
+            <Icon
+              className={cn(
+                'h-4 w-4',
+                variant === 'highlight' && 'text-amber-400',
+                variant === 'deduction' && 'text-red-400',
+                variant === 'total' && 'text-primary-400',
+                variant === 'default' && 'text-neutral-400'
+              )}
+            />
+          </div>
+        )}
+        <div>
+          <p className="text-sm">{label}</p>
+          {rate && (
+            <p className="text-xs text-neutral-500">
+              @ {formatCurrency(rate)}/hr
+            </p>
+          )}
+        </div>
+      </div>
+      <div className="flex items-center gap-4 text-right">
+        {hours !== undefined && (
+          <span className="min-w-[60px] font-mono text-sm text-neutral-400">
+            {formatHours(hours)}
+          </span>
+        )}
+        <span
+          className={cn(
+            'min-w-[100px] font-mono',
+            variant === 'deduction' && 'text-red-400',
+            variant === 'total' && 'text-emerald-400'
+          )}
+        >
+          {variant === 'deduction' && amount > 0 ? '-' : ''}
+          {formatCurrency(amount)}
+        </span>
+      </div>
+    </motion.div>
+  );
+}
+
+// Section header
+function SectionHeader({ title, icon: Icon }: { title: string; icon: typeof Calculator }) {
+  return (
+    <div className="mb-3 flex items-center gap-2 border-b border-white/5 pb-2">
+      <Icon className="h-4 w-4 text-neutral-500" />
+      <h4 className="text-xs font-medium uppercase tracking-wider text-neutral-500">{title}</h4>
+    </div>
+  );
+}
+
+export function PayrollBreakdown({ report, className }: PayrollBreakdownProps) {
+  const { compensation, deductions, netPay, employee } = report;
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      className={cn('space-y-6', className)}
+    >
+      {/* Employee info header */}
+      <div className="rounded-xl border border-white/10 bg-white/5 p-4 backdrop-blur-lg">
+        <div className="flex items-center gap-3">
+          <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-primary-600/20 to-violet-600/20">
+            <span className="text-lg font-bold text-primary-400">
+              {employee.name.charAt(0).toUpperCase()}
+            </span>
+          </div>
+          <div>
+            <h3 className="font-semibold text-white">{employee.name}</h3>
+            <p className="text-sm text-neutral-400">{employee.email}</p>
+            <p className="text-xs text-neutral-500 capitalize">{employee.role}</p>
+          </div>
+        </div>
+      </div>
+
+      {/* Earnings section */}
+      <div className="rounded-xl border border-white/10 bg-white/5 p-4 backdrop-blur-lg">
+        <SectionHeader title="Earnings" icon={DollarSign} />
+
+        <div className="space-y-1">
+          <TableRow
+            label="Regular Hours"
+            hours={compensation.baseHours}
+            amount={compensation.basePay}
+            rate={compensation.baseRate}
+            icon={Clock}
+          />
+
+          {compensation.overtimeHours > 0 && (
+            <TableRow
+              label="Overtime Hours"
+              hours={compensation.overtimeHours}
+              amount={compensation.overtimePay}
+              rate={compensation.overtimeRate}
+              icon={TrendingUp}
+              variant="highlight"
+            />
+          )}
+
+          <TableRow
+            label="Gross Pay"
+            amount={compensation.totalGrossPay}
+            icon={Wallet}
+            className="mt-2 border-t border-white/5 pt-3"
+          />
+        </div>
+      </div>
+
+      {/* Deductions section */}
+      <div className="rounded-xl border border-white/10 bg-white/5 p-4 backdrop-blur-lg">
+        <SectionHeader title="Deductions" icon={Minus} />
+
+        <div className="space-y-1">
+          <TableRow
+            label="Social Security"
+            amount={deductions.socialSecurity}
+            icon={Receipt}
+            variant="deduction"
+          />
+
+          <TableRow
+            label="Income Tax (IRPF)"
+            amount={deductions.incomeTax}
+            icon={Receipt}
+            variant="deduction"
+          />
+
+          {deductions.otherDeductions > 0 && (
+            <TableRow
+              label="Other Deductions"
+              amount={deductions.otherDeductions}
+              icon={Receipt}
+              variant="deduction"
+            />
+          )}
+
+          <TableRow
+            label="Total Deductions"
+            amount={deductions.totalDeductions}
+            icon={Minus}
+            variant="deduction"
+            className="mt-2 border-t border-white/5 pt-3 font-medium"
+          />
+        </div>
+      </div>
+
+      {/* Net Pay section */}
+      <motion.div
+        initial={{ opacity: 0, scale: 0.95 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ delay: 0.2 }}
+        className="rounded-xl border border-emerald-500/30 bg-gradient-to-br from-emerald-500/10 to-emerald-500/5 p-5 backdrop-blur-lg"
+      >
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-emerald-500/20">
+              <Calculator className="h-6 w-6 text-emerald-400" />
+            </div>
+            <div>
+              <p className="text-sm font-medium text-neutral-300">Net Pay</p>
+              <p className="text-xs text-neutral-500">Take-home amount</p>
+            </div>
+          </div>
+          <div className="text-right">
+            <p className="text-2xl font-bold text-emerald-400">{formatCurrency(netPay)}</p>
+            <p className="text-xs text-neutral-500">
+              {((netPay / compensation.totalGrossPay) * 100).toFixed(1)}% of gross
+            </p>
+          </div>
+        </div>
+      </motion.div>
+
+      {/* Summary cards */}
+      <div className="grid grid-cols-3 gap-3">
+        <div className="rounded-xl border border-white/5 bg-white/5 p-3 text-center">
+          <p className="text-xs text-neutral-500">Total Hours</p>
+          <p className="text-lg font-bold text-white">
+            {formatHours(compensation.baseHours + compensation.overtimeHours)}
+          </p>
+        </div>
+        <div className="rounded-xl border border-white/5 bg-white/5 p-3 text-center">
+          <p className="text-xs text-neutral-500">Overtime</p>
+          <p className="text-lg font-bold text-amber-400">
+            {formatHours(compensation.overtimeHours)}
+          </p>
+        </div>
+        <div className="rounded-xl border border-white/5 bg-white/5 p-3 text-center">
+          <p className="text-xs text-neutral-500">Deduction Rate</p>
+          <p className="text-lg font-bold text-red-400">
+            {((deductions.totalDeductions / compensation.totalGrossPay) * 100).toFixed(1)}%
+          </p>
+        </div>
+      </div>
+    </motion.div>
+  );
+}
+
+export default PayrollBreakdown;

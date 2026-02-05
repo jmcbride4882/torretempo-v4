@@ -1,0 +1,601 @@
+import { randomUUID } from 'crypto';
+import { and, eq, gte, lte } from 'drizzle-orm';
+import { db } from '../db/index.js';
+import { audit_log, member, shifts, time_entries, user } from '../db/schema.js';
+import { validateShiftCompliance } from '../middleware/compliance.js';
+import type {
+  ComplianceReport,
+  ComplianceViolation,
+  MonthlyReport,
+  PayrollReport,
+  VarianceDiscrepancy,
+  VarianceReport,
+} from '../types/report-types.js';
+
+interface ShiftHoursSource {
+  id: string;
+  start_time: Date;
+  end_time: Date;
+  break_minutes: number | null;
+}
+
+interface TimeEntryHoursSource {
+  id: string;
+  entry_date: Date;
+  clock_in: Date;
+  clock_out: Date | null;
+  break_minutes: number | null;
+  total_minutes: number | null;
+  linked_shift_id: string | null;
+}
+
+const STANDARD_WEEKLY_HOURS = 40;
+const MAX_DAILY_HOURS = 9;
+const MIN_REST_HOURS = 12;
+const OVERTIME_MULTIPLIER = 1.5;
+const DEFAULT_DEDUCTION_RATE = 0.2;
+const DEDUCTION_SOCIAL_SECURITY_RATE = 0.1;
+const DEDUCTION_INCOME_TAX_RATE = 0.08;
+const DEDUCTION_OTHER_RATE = 0.02;
+
+function getHoursBetween(start: Date, end: Date): number {
+  return (end.getTime() - start.getTime()) / (1000 * 60 * 60);
+}
+
+function getDateKey(date: Date): string {
+  return date.toISOString().slice(0, 10);
+}
+
+function getWeekStart(date: Date): Date {
+  const weekStart = new Date(date);
+  const dayOfWeek = weekStart.getDay();
+  const diff = weekStart.getDate() - dayOfWeek + (dayOfWeek === 0 ? -6 : 1);
+  weekStart.setDate(diff);
+  weekStart.setHours(0, 0, 0, 0);
+  return weekStart;
+}
+
+function getWeekKey(date: Date): string {
+  return getWeekStart(date).toISOString().slice(0, 10);
+}
+
+function normalizeRange(startDate: Date, endDate: Date): { start: Date; end: Date } {
+  const start = new Date(startDate);
+  const end = new Date(endDate);
+  if (Number.isNaN(start.getTime()) || Number.isNaN(end.getTime())) {
+    throw new Error('Invalid date range');
+  }
+  if (
+    end.getHours() === 0 &&
+    end.getMinutes() === 0 &&
+    end.getSeconds() === 0 &&
+    end.getMilliseconds() === 0
+  ) {
+    end.setHours(23, 59, 59, 999);
+  }
+  return { start, end };
+}
+
+function getMonthRange(year: number, month: number): { start: Date; end: Date } {
+  const start = new Date(Date.UTC(year, month - 1, 1, 0, 0, 0, 0));
+  const end = new Date(Date.UTC(year, month, 0, 23, 59, 59, 999));
+  return { start, end };
+}
+
+function getShiftHours(shift: ShiftHoursSource): number {
+  const breakMinutes = shift.break_minutes ?? 0;
+  return Math.max(0, getHoursBetween(shift.start_time, shift.end_time) - breakMinutes / 60);
+}
+
+function getTimeEntryHours(entry: TimeEntryHoursSource): number {
+  if (typeof entry.total_minutes === 'number') {
+    return Math.max(0, entry.total_minutes / 60);
+  }
+  if (!entry.clock_out) {
+    return 0;
+  }
+  const breakMinutes = entry.break_minutes ?? 0;
+  return Math.max(0, getHoursBetween(entry.clock_in, entry.clock_out) - breakMinutes / 60);
+}
+
+function parseViolationHours(message: string): number | null {
+  const match = message.match(/([0-9]+(?:\.[0-9]+)?)/);
+  if (!match) {
+    return null;
+  }
+  const value = Number.parseFloat(match[1]);
+  return Number.isNaN(value) ? null : value;
+}
+
+/**
+ * Generate a monthly summary report for a user.
+ */
+export async function generateMonthlyReport(
+  organizationId: string,
+  userId: string,
+  year: number,
+  month: number
+): Promise<MonthlyReport> {
+  try {
+    const { start, end } = getMonthRange(year, month);
+    const entries = await db
+      .select({
+        entry_date: time_entries.entry_date,
+        total_minutes: time_entries.total_minutes,
+      })
+      .from(time_entries)
+      .where(
+        and(
+          eq(time_entries.organization_id, organizationId),
+          eq(time_entries.user_id, userId),
+          gte(time_entries.entry_date, start),
+          lte(time_entries.entry_date, end)
+        )
+      );
+
+    let totalMinutes = 0;
+    const daySet = new Set<string>();
+    const weeklyTotals = new Map<string, number>();
+
+    for (const entry of entries) {
+      const minutes = entry.total_minutes ?? 0;
+      totalMinutes += minutes;
+      daySet.add(getDateKey(entry.entry_date));
+
+      const hours = minutes / 60;
+      const weekKey = getWeekKey(entry.entry_date);
+      weeklyTotals.set(weekKey, (weeklyTotals.get(weekKey) ?? 0) + hours);
+    }
+
+    let overtimeHours = 0;
+    for (const weekHours of weeklyTotals.values()) {
+      if (weekHours > STANDARD_WEEKLY_HOURS) {
+        overtimeHours += weekHours - STANDARD_WEEKLY_HOURS;
+      }
+    }
+
+    const createdAt = new Date();
+
+    return {
+      id: randomUUID(),
+      organizationId,
+      userId,
+      year,
+      month,
+      totalHours: totalMinutes / 60,
+      totalDays: daySet.size,
+      overtimeHours,
+      createdAt,
+      generatedAt: createdAt,
+    };
+  } catch (error) {
+    console.error('Error generating monthly report:', error);
+    throw error;
+  }
+}
+
+/**
+ * Generate a variance report comparing scheduled vs actual hours.
+ */
+export async function generateVarianceReport(
+  organizationId: string,
+  userId: string,
+  startDate: Date,
+  endDate: Date
+): Promise<VarianceReport> {
+  try {
+    const { start, end } = normalizeRange(startDate, endDate);
+
+    const scheduledShifts = await db
+      .select({
+        id: shifts.id,
+        start_time: shifts.start_time,
+        end_time: shifts.end_time,
+        break_minutes: shifts.break_minutes,
+      })
+      .from(shifts)
+      .where(
+        and(
+          eq(shifts.organization_id, organizationId),
+          eq(shifts.user_id, userId),
+          gte(shifts.start_time, start),
+          lte(shifts.start_time, end)
+        )
+      );
+
+    const actualEntries = await db
+      .select({
+        id: time_entries.id,
+        entry_date: time_entries.entry_date,
+        clock_in: time_entries.clock_in,
+        clock_out: time_entries.clock_out,
+        break_minutes: time_entries.break_minutes,
+        total_minutes: time_entries.total_minutes,
+        linked_shift_id: time_entries.linked_shift_id,
+      })
+      .from(time_entries)
+      .where(
+        and(
+          eq(time_entries.organization_id, organizationId),
+          eq(time_entries.user_id, userId),
+          gte(time_entries.entry_date, start),
+          lte(time_entries.entry_date, end)
+        )
+      );
+
+    const scheduledDaySet = new Set<string>();
+    const actualDaySet = new Set<string>();
+    let scheduledTotalHours = 0;
+    let actualTotalHours = 0;
+
+    const linkedEntryMap = new Map<string, TimeEntryHoursSource>();
+    for (const entry of actualEntries) {
+      const hours = getTimeEntryHours(entry);
+      actualTotalHours += hours;
+      actualDaySet.add(getDateKey(entry.entry_date));
+      if (entry.linked_shift_id) {
+        linkedEntryMap.set(entry.linked_shift_id, entry);
+      }
+    }
+
+    const discrepancies: VarianceDiscrepancy[] = [];
+
+    for (const shift of scheduledShifts) {
+      const scheduledHours = getShiftHours(shift);
+      scheduledTotalHours += scheduledHours;
+      scheduledDaySet.add(getDateKey(shift.start_time));
+
+      const linkedEntry = linkedEntryMap.get(shift.id);
+      if (!linkedEntry) {
+        discrepancies.push({
+          date: shift.start_time,
+          shiftId: shift.id,
+          scheduledHours,
+          actualHours: 0,
+          difference: -scheduledHours,
+          reason: 'no clock-in',
+        });
+        continue;
+      }
+
+      const actualHours = getTimeEntryHours(linkedEntry);
+      const difference = actualHours - scheduledHours;
+      if (Math.abs(difference) > 0.01) {
+        discrepancies.push({
+          date: shift.start_time,
+          shiftId: shift.id,
+          timeEntryId: linkedEntry.id,
+          scheduledHours,
+          actualHours,
+          difference,
+          reason: difference > 0 ? 'unscheduled overtime' : 'early departure',
+        });
+      }
+    }
+
+    for (const entry of actualEntries) {
+      if (!entry.linked_shift_id) {
+        const actualHours = getTimeEntryHours(entry);
+        discrepancies.push({
+          date: entry.entry_date,
+          timeEntryId: entry.id,
+          scheduledHours: 0,
+          actualHours,
+          difference: actualHours,
+          reason: 'unscheduled overtime',
+        });
+      }
+    }
+
+    const hoursDifference = actualTotalHours - scheduledTotalHours;
+    const percentageVariance =
+      scheduledTotalHours === 0 ? 0 : (hoursDifference / scheduledTotalHours) * 100;
+
+    return {
+      id: randomUUID(),
+      organizationId,
+      userId,
+      reportPeriod: { startDate: start, endDate: end },
+      scheduled: {
+        totalHours: scheduledTotalHours,
+        totalDays: scheduledDaySet.size,
+        shiftCount: scheduledShifts.length,
+      },
+      actual: {
+        totalHours: actualTotalHours,
+        totalDays: actualDaySet.size,
+        timeEntryCount: actualEntries.length,
+      },
+      variance: {
+        hoursDifference,
+        daysDifference: actualDaySet.size - scheduledDaySet.size,
+        percentageVariance,
+      },
+      discrepancies,
+      generatedAt: new Date(),
+    };
+  } catch (error) {
+    console.error('Error generating variance report:', error);
+    throw error;
+  }
+}
+
+/**
+ * Generate payroll report with base/overtime and deductions.
+ */
+export async function generatePayrollReport(
+  organizationId: string,
+  userId: string,
+  startDate: Date,
+  endDate: Date,
+  hourlyRate: number
+): Promise<PayrollReport> {
+  try {
+    const { start, end } = normalizeRange(startDate, endDate);
+
+    const entries = await db
+      .select({
+        id: time_entries.id,
+        entry_date: time_entries.entry_date,
+        clock_in: time_entries.clock_in,
+        clock_out: time_entries.clock_out,
+        break_minutes: time_entries.break_minutes,
+        total_minutes: time_entries.total_minutes,
+        linked_shift_id: time_entries.linked_shift_id,
+      })
+      .from(time_entries)
+      .where(
+        and(
+          eq(time_entries.organization_id, organizationId),
+          eq(time_entries.user_id, userId),
+          gte(time_entries.entry_date, start),
+          lte(time_entries.entry_date, end)
+        )
+      );
+
+    const weeklyTotals = new Map<string, number>();
+    for (const entry of entries) {
+      const hours = getTimeEntryHours(entry);
+      const weekKey = getWeekKey(entry.entry_date);
+      weeklyTotals.set(weekKey, (weeklyTotals.get(weekKey) ?? 0) + hours);
+    }
+
+    let baseHours = 0;
+    let overtimeHours = 0;
+    for (const weekHours of weeklyTotals.values()) {
+      if (weekHours > STANDARD_WEEKLY_HOURS) {
+        baseHours += STANDARD_WEEKLY_HOURS;
+        overtimeHours += weekHours - STANDARD_WEEKLY_HOURS;
+      } else {
+        baseHours += weekHours;
+      }
+    }
+
+    const userResult = await db
+      .select({
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+      })
+      .from(user)
+      .where(eq(user.id, userId))
+      .limit(1);
+
+    if (userResult.length === 0) {
+      throw new Error('User not found for payroll report');
+    }
+
+    const memberResult = await db
+      .select({ role: member.role })
+      .from(member)
+      .where(and(eq(member.userId, userId), eq(member.organizationId, organizationId)))
+      .limit(1);
+
+    const employeeRole = memberResult[0]?.role ?? userResult[0]!.role ?? 'employee';
+
+    const baseRate = hourlyRate;
+    const overtimeRate = hourlyRate * OVERTIME_MULTIPLIER;
+    const basePay = baseHours * baseRate;
+    const overtimePay = overtimeHours * overtimeRate;
+    const totalGrossPay = basePay + overtimePay;
+
+    const totalDeductions = totalGrossPay * DEFAULT_DEDUCTION_RATE;
+    const socialSecurity = totalGrossPay * DEDUCTION_SOCIAL_SECURITY_RATE;
+    const incomeTax = totalGrossPay * DEDUCTION_INCOME_TAX_RATE;
+    const otherDeductions = totalGrossPay * DEDUCTION_OTHER_RATE;
+
+    return {
+      id: randomUUID(),
+      organizationId,
+      userId,
+      reportPeriod: { startDate: start, endDate: end },
+      employee: {
+        id: userResult[0]!.id,
+        name: userResult[0]!.name,
+        email: userResult[0]!.email,
+        role: employeeRole,
+      },
+      compensation: {
+        baseHours,
+        baseRate,
+        basePay,
+        overtimeHours,
+        overtimeRate,
+        overtimePay,
+        totalGrossPay,
+      },
+      deductions: {
+        socialSecurity,
+        incomeTax,
+        otherDeductions,
+        totalDeductions,
+      },
+      netPay: totalGrossPay - totalDeductions,
+      generatedAt: new Date(),
+    };
+  } catch (error) {
+    console.error('Error generating payroll report:', error);
+    throw error;
+  }
+}
+
+/**
+ * Generate compliance report and aggregate violations for a user.
+ */
+export async function generateComplianceReport(
+  organizationId: string,
+  userId: string,
+  startDate: Date,
+  endDate: Date
+): Promise<ComplianceReport> {
+  try {
+    const { start, end } = normalizeRange(startDate, endDate);
+
+    const shiftRows = await db
+      .select({
+        id: shifts.id,
+        start_time: shifts.start_time,
+        end_time: shifts.end_time,
+        break_minutes: shifts.break_minutes,
+      })
+      .from(shifts)
+      .where(
+        and(
+          eq(shifts.organization_id, organizationId),
+          eq(shifts.user_id, userId),
+          gte(shifts.start_time, start),
+          lte(shifts.start_time, end)
+        )
+      );
+
+    const violations: ComplianceViolation[] = [];
+    const dailyTotals = new Map<string, number>();
+    const weeklyTotals = new Map<string, number>();
+
+    for (const shift of shiftRows) {
+      const shiftHours = getShiftHours(shift);
+      const dayKey = getDateKey(shift.start_time);
+      dailyTotals.set(dayKey, (dailyTotals.get(dayKey) ?? 0) + shiftHours);
+      const weekKey = getWeekKey(shift.start_time);
+      weeklyTotals.set(weekKey, (weeklyTotals.get(weekKey) ?? 0) + shiftHours);
+
+      const shiftViolations = await validateShiftCompliance(
+        userId,
+        organizationId,
+        shift.start_time,
+        shift.end_time,
+        shift.break_minutes ?? 0,
+        shift.id
+      );
+
+      for (const violation of shiftViolations) {
+        const actualValue = parseViolationHours(violation.message) ?? 0;
+        const violationType =
+          violation.type === '12h_rest'
+            ? 'rest_period'
+            : violation.type === 'daily_limit'
+            ? 'daily_limit'
+            : 'weekly_limit';
+        const limitValue =
+          violationType === 'rest_period'
+            ? MIN_REST_HOURS
+            : violationType === 'daily_limit'
+            ? MAX_DAILY_HOURS
+            : STANDARD_WEEKLY_HOURS;
+
+        violations.push({
+          id: randomUUID(),
+          userId,
+          violationType,
+          severity: violation.severity === 'error' ? 'critical' : 'warning',
+          description: violation.message,
+          affectedDate: shift.start_time,
+          details: {
+            actualValue,
+            limitValue,
+            excess: Math.max(0, actualValue - limitValue),
+          },
+          correctionStatus: 'pending',
+          createdAt: new Date(),
+        });
+      }
+    }
+
+    const auditEntries = await db
+      .select({ id: audit_log.id })
+      .from(audit_log)
+      .where(
+        and(
+          eq(audit_log.organization_id, organizationId),
+          eq(audit_log.actor_id, userId),
+          gte(audit_log.created_at, start),
+          lte(audit_log.created_at, end)
+        )
+      );
+
+    const dailyValues = Array.from(dailyTotals.values());
+    const weeklyValues = Array.from(weeklyTotals.values());
+    const totalDailyHours = dailyValues.reduce((sum, value) => sum + value, 0);
+    const totalWeeklyHours = weeklyValues.reduce((sum, value) => sum + value, 0);
+    const avgDailyHours = dailyValues.length > 0 ? totalDailyHours / dailyValues.length : 0;
+    const avgWeeklyHours = weeklyValues.length > 0 ? totalWeeklyHours / weeklyValues.length : 0;
+    const maxDailyHours = dailyValues.length > 0 ? Math.max(...dailyValues) : 0;
+    const maxWeeklyHours = weeklyValues.length > 0 ? Math.max(...weeklyValues) : 0;
+
+    const restPeriodViolations = violations.filter((v) => v.violationType === 'rest_period').length;
+    const dailyLimitViolations = dailyValues.filter((value) => value > MAX_DAILY_HOURS).length;
+    const weeklyLimitViolations = weeklyValues.filter((value) => value > STANDARD_WEEKLY_HOURS).length;
+
+    const totalChecks = shiftRows.length * 3;
+    const totalViolations = violations.length;
+    const complianceScore =
+      totalChecks === 0
+        ? 100
+        : Math.max(0, Math.round(((totalChecks - totalViolations) / totalChecks) * 100));
+
+    const recommendations: string[] = [];
+    if (restPeriodViolations > 0) {
+      recommendations.push('Increase rest periods between shifts to at least 12 hours.');
+    }
+    if (dailyLimitViolations > 0) {
+      recommendations.push('Reduce daily scheduled hours to stay within 9-hour limits.');
+    }
+    if (weeklyLimitViolations > 0) {
+      recommendations.push('Rebalance weekly schedules to remain under 40 hours.');
+    }
+    if (recommendations.length === 0) {
+      recommendations.push('Maintain current scheduling practices to preserve compliance.');
+    }
+    if (auditEntries.length === 0) {
+      recommendations.push('No audit log activity detected; ensure changes are properly logged.');
+    }
+
+    return {
+      id: randomUUID(),
+      organizationId,
+      reportPeriod: { startDate: start, endDate: end },
+      summary: {
+        totalEmployees: 1,
+        employeesWithViolations: totalViolations > 0 ? 1 : 0,
+        totalViolations,
+        complianceScore,
+      },
+      violations,
+      metrics: {
+        avgDailyHours,
+        avgWeeklyHours,
+        maxDailyHours,
+        maxWeeklyHours,
+        restPeriodViolations,
+        dailyLimitViolations,
+        weeklyLimitViolations,
+      },
+      recommendations,
+      generatedAt: new Date(),
+    };
+  } catch (error) {
+    console.error('Error generating compliance report:', error);
+    throw error;
+  }
+}

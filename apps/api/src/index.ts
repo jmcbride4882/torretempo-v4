@@ -6,7 +6,6 @@ import { toNodeHandler } from 'better-auth/node';
 import { auth } from './lib/auth.js';
 import { tenantMiddleware } from './middleware/tenant.js';
 import { requireAdmin } from './middleware/requireAdmin.js';
-import { inspectorAuth } from './middleware/inspectorAuth.js';
 import { testConnection } from './db/index.js';
 import shiftsRouter from './routes/shifts.js';
 import locationsRouter from './routes/locations.js';
@@ -16,6 +15,9 @@ import timeEntriesRouter from './routes/time-entries.js';
 import breaksRouter from './routes/breaks.js';
 import correctionsRouter from './routes/corrections.js';
 import membersRouter from './routes/members.js';
+import inspectorRouter from './routes/inspector.js';
+import reportsRouter from './routes/reports.js';
+import inspectorTokensRouter from './routes/admin/inspector-tokens.js';
 import 'dotenv/config';
 import './workers/email.worker.js';
 
@@ -55,15 +57,16 @@ app.get('/api/health', (_req: Request, res: Response) => {
   res.json({ status: 'ok', version: '4.0.0', ts: Date.now() });
 });
 
-// Admin routes (placeholder)
+// Admin routes
+app.use('/api/admin/:slug/inspector-tokens', tenantMiddleware, inspectorTokensRouter);
+
+// Admin routes (placeholder for other admin endpoints)
 app.use('/api/admin/*', requireAdmin, (_req: Request, res: Response) => {
   res.json({ message: 'Admin routes active' });
 });
 
-// Inspector routes (placeholder)
-app.use('/api/inspector/v1/*', inspectorAuth, (_req: Request, res: Response) => {
-  res.json({ message: 'Inspector routes active' });
-});
+// Inspector routes (read-only for ITSS labor inspectors)
+app.use('/api/inspector/v1', inspectorRouter);
 
 // Tenant routes
 app.use('/api/v1/org/:slug/locations', tenantMiddleware, locationsRouter);
@@ -74,6 +77,7 @@ app.use('/api/v1/org/:slug/time-entries', tenantMiddleware, timeEntriesRouter);
 app.use('/api/v1/org/:slug/time-entries', tenantMiddleware, breaksRouter);
 app.use('/api/v1/org/:slug/corrections', tenantMiddleware, correctionsRouter);
 app.use('/api/v1/org/:slug/members', tenantMiddleware, membersRouter);
+app.use('/api/v1/org/:slug/reports', tenantMiddleware, reportsRouter);
 
 // 404 handler
 app.use((_req: Request, res: Response) => {

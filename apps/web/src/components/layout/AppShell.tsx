@@ -23,6 +23,11 @@ import OpenShiftsPage from '@/pages/OpenShifts';
 import SwapsPage from '@/pages/Swaps';
 import TimeEntryList from '@/pages/TimeClock/TimeEntryList';
 
+// Reports pages
+import ReportsPage from '@/pages/Reports';
+import ReportDetailPage from '@/pages/Reports/ReportDetail';
+import GenerateReportPage from '@/pages/Reports/GenerateReport';
+
 // Placeholder pages - these will be built in Phase 2
 function DashboardPage() {
   return (
@@ -161,15 +166,9 @@ export default function AppShell() {
                     />
                   }
                 />
-                <Route
-                  path="reports"
-                  element={
-                    <PlaceholderPage
-                      title="Reports"
-                      description="View time tracking reports, analytics, and exports."
-                    />
-                  }
-                />
+                <Route path="reports" element={<ReportsPage />} />
+                <Route path="reports/:id" element={<ReportDetailPage />} />
+                <Route path="reports/generate" element={<GenerateReportPage />} />
                 <Route
                   path="settings"
                   element={
