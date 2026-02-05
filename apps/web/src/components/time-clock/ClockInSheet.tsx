@@ -600,9 +600,9 @@ export function ClockInSheet({ isOpen, onClose, shiftId }: ClockInSheetProps) {
                   setPin(value);
                   setPinError(false);
                 }}
-                onComplete={(completedPin) => {
+                onComplete={(_completedPin) => {
                   // PIN verification will happen on clock-in submission
-                  console.log('PIN entered:', completedPin);
+                  // Security: Do not log PINs
                 }}
                 error={pinError}
                 autoFocus
