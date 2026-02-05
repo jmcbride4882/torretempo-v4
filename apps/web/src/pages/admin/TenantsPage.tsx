@@ -118,6 +118,9 @@ export default function TenantsPage() {
 
   useEffect(() => {
     loadTenants();
+    // Auto-refresh every 10 seconds for live data
+    const interval = setInterval(() => loadTenants(true), 10000);
+    return () => clearInterval(interval);
   }, [loadTenants]);
 
   // Handlers
@@ -171,7 +174,9 @@ export default function TenantsPage() {
           </div>
           <div>
             <h1 className="text-xl font-bold text-white sm:text-2xl">Tenants</h1>
-            <p className="text-sm text-neutral-400">Manage all organizations on the platform</p>
+            <p className="text-sm text-neutral-400">
+              Live monitoring • Updates every 10 seconds
+            </p>
           </div>
         </div>
 

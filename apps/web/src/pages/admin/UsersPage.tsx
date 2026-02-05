@@ -105,6 +105,9 @@ export default function UsersPage() {
 
   useEffect(() => {
     loadUsers();
+    // Auto-refresh every 10 seconds for live data
+    const interval = setInterval(() => loadUsers(true), 10000);
+    return () => clearInterval(interval);
   }, [loadUsers]);
 
   // Handlers
@@ -163,7 +166,9 @@ export default function UsersPage() {
           </div>
           <div>
             <h1 className="text-xl font-bold text-white sm:text-2xl">Users</h1>
-            <p className="text-sm text-neutral-400">Manage all users across the platform</p>
+            <p className="text-sm text-neutral-400">
+              Live monitoring • Updates every 10 seconds
+            </p>
           </div>
         </div>
 

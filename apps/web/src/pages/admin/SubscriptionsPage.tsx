@@ -68,6 +68,9 @@ export default function SubscriptionsPage() {
 
   useEffect(() => {
     loadMetrics();
+    // Auto-refresh every 10 seconds for live data
+    const interval = setInterval(() => loadMetrics(true), 10000);
+    return () => clearInterval(interval);
   }, [loadMetrics]);
 
   // Handlers
@@ -91,7 +94,9 @@ export default function SubscriptionsPage() {
           </div>
           <div>
             <h1 className="text-xl font-bold text-white sm:text-2xl">Subscriptions</h1>
-            <p className="text-sm text-neutral-400">Revenue metrics and subscription overview</p>
+            <p className="text-sm text-neutral-400">
+              Live monitoring • Updates every 10 seconds
+            </p>
           </div>
         </div>
 
