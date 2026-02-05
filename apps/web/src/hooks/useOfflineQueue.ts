@@ -11,6 +11,11 @@ import {
   processQueue,
   type QueuedAction,
 } from '@/lib/offline-queue';
+import {
+  registerBackgroundSync,
+  setupBackgroundSyncListener,
+  isBackgroundSyncSupported,
+} from '@/lib/background-sync';
 
 export interface QueueStats {
   total: number;
@@ -60,12 +65,17 @@ export function useOfflineQueue(): UseOfflineQueueReturn {
   }, []);
 
   /**
-   * Handle online/offline events
+   * Handle online/offline events and background sync
    */
   useEffect(() => {
     const handleOnline = async () => {
       console.log('[useOfflineQueue] Device is online');
       setIsOnline(true);
+
+      // Register background sync if supported
+      if (isBackgroundSyncSupported()) {
+        await registerBackgroundSync('offline-queue-sync');
+      }
 
       // Auto-process queue when coming online
       if (!isProcessing) {
@@ -81,8 +91,19 @@ export function useOfflineQueue(): UseOfflineQueueReturn {
     window.addEventListener('online', handleOnline);
     window.addEventListener('offline', handleOffline);
 
+    // Setup background sync listener
+    setupBackgroundSyncListener((tag, success) => {
+      console.log('[useOfflineQueue] Background sync completed:', tag, success);
+      refreshStats();
+    });
+
     // Initial stats load
     refreshStats();
+
+    // Register background sync on mount if online
+    if (navigator.onLine && isBackgroundSyncSupported()) {
+      registerBackgroundSync('offline-queue-sync');
+    }
 
     return () => {
       window.removeEventListener('online', handleOnline);
@@ -101,6 +122,12 @@ export function useOfflineQueue(): UseOfflineQueueReturn {
     ): Promise<string> => {
       const actionId = await enqueueAction(type, organizationSlug, data);
       await refreshStats();
+      
+      // Register background sync to process queue when online
+      if (isBackgroundSyncSupported()) {
+        await registerBackgroundSync('offline-queue-sync');
+      }
+      
       return actionId;
     },
     [refreshStats]

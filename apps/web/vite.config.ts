@@ -17,6 +17,33 @@ export default defineConfig({
         background_color: '#0a0a0a',
         display: 'standalone',
       },
+      workbox: {
+        // Add background sync for offline queue processing
+        runtimeCaching: [
+          {
+            urlPattern: /^https:\/\/time\.lsltgroup\.es\/api\/.*/i,
+            handler: 'NetworkFirst',
+            options: {
+              cacheName: 'api-cache',
+              networkTimeoutSeconds: 10,
+              expiration: {
+                maxEntries: 50,
+                maxAgeSeconds: 5 * 60, // 5 minutes
+              },
+              cacheableResponse: {
+                statuses: [0, 200],
+              },
+            },
+          },
+        ],
+        // Enable background sync support
+        skipWaiting: true,
+        clientsClaim: true,
+      },
+      // Enable Background Sync API
+      devOptions: {
+        enabled: true,
+      },
     }),
   ],
   resolve: {
