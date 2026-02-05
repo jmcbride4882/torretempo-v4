@@ -1,4 +1,4 @@
-import express, { Request, Response, NextFunction } from 'express';
+import express, { Request, Response } from 'express';
 import helmet from 'helmet';
 import cors from 'cors';
 import rateLimit from 'express-rate-limit';
@@ -6,6 +6,7 @@ import { toNodeHandler } from 'better-auth/node';
 import { auth } from './lib/auth.js';
 import { tenantMiddleware } from './middleware/tenant.js';
 import { requireAdmin } from './middleware/requireAdmin.js';
+import { errorLogger } from './middleware/errorLogger.js';
 import { testConnection } from './db/index.js';
 import shiftsRouter from './routes/shifts.js';
 import locationsRouter from './routes/locations.js';
@@ -64,6 +65,11 @@ app.get('/api/health', (_req: Request, res: Response) => {
   res.json({ status: 'ok', version: '4.0.0', ts: Date.now() });
 });
 
+// Test error endpoint (only for testing error logging)
+app.get('/api/test-error', (_req: Request, _res: Response) => {
+  throw new Error('This is a test error for error logging verification');
+});
+
 // Admin routes (platform-level)
 app.use('/api/admin/system', systemRouter);
 app.use('/api/admin/users', usersRouter);
@@ -100,11 +106,8 @@ app.use((_req: Request, res: Response) => {
   res.status(404).json({ error: 'Not found' });
 });
 
-// Error handler (4 parameters required for Express error handling)
-app.use((err: Error, _req: Request, res: Response, _next: NextFunction) => {
-  console.error(err.stack);
-  res.status(500).json({ error: 'Internal server error' });
-});
+// Error handler with database logging (MUST be last)
+app.use(errorLogger);
 
 // Start server
 async function start() {

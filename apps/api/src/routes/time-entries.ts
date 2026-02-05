@@ -5,6 +5,7 @@ import { time_entries, shifts, locations } from '../db/schema.js';
 import { requireRole } from '../middleware/requireRole.js';
 import { logAudit } from '../services/audit.service.js';
 import { validateGeofence, isValidCoordinates } from '../services/geofencing.service.js';
+import { logWarning } from '../services/errorLog.service.js';
 
 const router = Router();
 
@@ -179,6 +180,18 @@ router.post('/', requireRole(['employee', 'manager', 'tenantAdmin', 'owner']), a
       .limit(1);
 
     if (activeEntry.length > 0) {
+      // Log warning for duplicate clock-in attempt
+      await logWarning(
+        `Duplicate clock-in attempt: User ${actor.id} tried to clock in while already active`,
+        'api',
+        {
+          userId: actor.id,
+          organizationId,
+          activeEntryId: activeEntry[0]!.id,
+          attemptedMethod: clock_in_method,
+        }
+      );
+      
       return res.status(409).json({
         error: 'User already has an active time entry. Please clock out first.',
         activeEntry: activeEntry[0],
@@ -239,6 +252,20 @@ router.post('/', requireRole(['employee', 'manager', 'tenantAdmin', 'owner']), a
             );
 
             if (!validation.valid) {
+              // Log warning for geofence violation
+              await logWarning(
+                `Geofence violation: User ${actor.id} attempted clock-in ${validation.distance?.toFixed(0)}m outside boundary`,
+                'api',
+                {
+                  userId: actor.id,
+                  organizationId,
+                  locationId: location.id,
+                  distance: validation.distance,
+                  geofenceRadius: location.geofence_radius,
+                  attemptedLocation: clock_in_location,
+                }
+              );
+              
               return res.status(403).json({
                 error: 'Outside geofence boundary',
                 geofence: validation,
