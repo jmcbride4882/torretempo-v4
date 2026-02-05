@@ -4,6 +4,7 @@ import { Menu, Clock } from 'lucide-react';
 import { Sidebar } from './Sidebar';
 import { BottomTabs } from './BottomTabs';
 import { NotificationBell } from '@/components/notifications/NotificationBell';
+import { OfflineIndicator } from '@/components/ui/offline-indicator';
 import { useAuth } from '@/hooks/useAuth';
 import { useOrganization } from '@/hooks/useOrganization';
 import { Button } from '@/components/ui/button';
@@ -78,6 +79,9 @@ export default function AppShell() {
     <div className="min-h-screen bg-neutral-950">
       {/* Desktop sidebar */}
       <Sidebar />
+
+      {/* Offline indicator */}
+      <OfflineIndicator />
 
       {/* Main content area */}
       <div className="lg:pl-64">
