@@ -5,6 +5,8 @@ import { monthly_summaries, time_entries } from '../db/schema.js';
 import { requireRole } from '../middleware/requireRole.js';
 import { logAudit } from '../services/audit.service.js';
 import { pdfQueue } from '../lib/queue.js';
+import { checkModuleAccess } from '../services/subscription.service.js';
+import { generatePayrollCSV } from '../services/payrollExport.service.js';
 
 const router = Router();
 
@@ -474,6 +476,75 @@ router.get('/monthly/:year/:month', requireRole(['employee', 'manager', 'tenantA
   } catch (error) {
     console.error('Error fetching monthly summary:', error);
     res.status(500).json({ error: 'Failed to fetch monthly summary' });
+  }
+});
+
+// ============================================================================
+// POST /api/v1/org/:slug/reports/payroll-export - Export payroll CSV for gestoría
+// ============================================================================
+router.post('/payroll-export', requireRole(['tenantAdmin', 'owner']), async (req: Request, res: Response) => {
+  try {
+    const actor = getActor(req, res);
+    if (!actor) {
+      return;
+    }
+
+    const organizationId = req.organizationId!;
+    const { month, year } = req.body;
+
+    // Validate required fields
+    if (!month || !year) {
+      return res.status(400).json({ error: 'month and year are required' });
+    }
+
+    // Validate month range
+    const monthNum = parseInt(month as string, 10);
+    const yearNum = parseInt(year as string, 10);
+
+    if (isNaN(monthNum) || monthNum < 1 || monthNum > 12) {
+      return res.status(400).json({ error: 'month must be between 1 and 12' });
+    }
+
+    if (isNaN(yearNum) || yearNum < 2000 || yearNum > 2100) {
+      return res.status(400).json({ error: 'year must be a valid year' });
+    }
+
+    // Check tier entitlement (Pro+)
+    const hasAccess = await checkModuleAccess(organizationId, 'payrollExport');
+    if (!hasAccess) {
+      return res.status(403).json({
+        message: 'Payroll Export requires Pro plan or higher',
+        upgradeUrl: '/billing/upgrade',
+      });
+    }
+
+    // Generate CSV
+    const csv = await generatePayrollCSV(organizationId, monthNum, yearNum);
+
+    // Log audit entry
+    await logAudit({
+      orgId: organizationId,
+      actorId: actor.id,
+      action: 'report.payroll_export',
+      entityType: 'monthly_summaries',
+      newData: { month: monthNum, year: yearNum, format: 'a3nom' },
+    });
+
+    // Return CSV file with proper headers
+    res.setHeader('Content-Type', 'text/csv; charset=utf-8');
+    res.setHeader('Content-Disposition', `attachment; filename="payroll_${yearNum}_${String(monthNum).padStart(2, '0')}.csv"`);
+    res.send(csv);
+  } catch (error) {
+    console.error('Error generating payroll export:', error);
+    
+    // Handle specific errors
+    if (error instanceof Error) {
+      if (error.message.includes('Month must be') || error.message.includes('Invalid year')) {
+        return res.status(400).json({ error: error.message });
+      }
+    }
+    
+    res.status(500).json({ error: 'Failed to generate payroll export' });
   }
 });
 

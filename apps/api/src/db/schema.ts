@@ -488,6 +488,11 @@ export const subscription_details = pgTable(
     gocardless_customer_id: varchar('gocardless_customer_id', { length: 255 }),
     gocardless_mandate_id: varchar('gocardless_mandate_id', { length: 255 }),
     trial_ends_at: timestamp('trial_ends_at', { withTimezone: true }),
+    plan_id: uuid('plan_id').references(() => subscription_plans.id),
+    plan_price_cents: integer('plan_price_cents'),
+    plan_employee_limit: integer('plan_employee_limit'),
+    grandfathered_plan_code: varchar('grandfathered_plan_code', { length: 20 }),
+    current_employee_count: integer('current_employee_count').default(0),
     created_at: timestamp('created_at', { withTimezone: true })
       .notNull()
       .defaultNow(),
@@ -497,5 +502,34 @@ export const subscription_details = pgTable(
   },
   (table) => ({
     org_idx: index('subscription_details_org_idx').on(table.organization_id),
+  })
+);
+
+// ============================================================================
+// SUBSCRIPTION_PLANS TABLE
+// ============================================================================
+export const subscription_plans = pgTable(
+  'subscription_plans',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    code: varchar('code', { length: 20 }).notNull().unique(),
+    name: varchar('name', { length: 100 }).notNull(),
+    description: text('description'),
+    price_cents: integer('price_cents').notNull(),
+    currency: varchar('currency', { length: 3 }).notNull().default('EUR'),
+    billing_period: varchar('billing_period', { length: 20 }).notNull().default('monthly'),
+    employee_limit: integer('employee_limit'), // NULL = unlimited
+    included_modules: jsonb('included_modules').notNull().default('{}'),
+    is_active: boolean('is_active').notNull().default(true),
+    created_at: timestamp('created_at', { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+    updated_at: timestamp('updated_at', { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+  },
+  (table) => ({
+    code_idx: index('subscription_plans_code_idx').on(table.code),
+    active_idx: index('subscription_plans_active_idx').on(table.is_active),
   })
 );

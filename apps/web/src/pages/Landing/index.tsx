@@ -9,7 +9,6 @@ import {
   ShieldCheck,
   FileText,
   Calendar,
-  ArrowLeftRight,
   Key,
   Check,
   ChevronDown,
@@ -32,11 +31,12 @@ import { cn } from '@/lib/utils';
 // TYPES
 // ============================================================================
 
-interface Feature {
+interface Module {
   icon: React.ElementType;
   title: string;
   description: string;
   highlights: string[];
+  minTier: 'starter' | 'pro' | 'business' | 'enterprise';
 }
 
 interface PricingTier {
@@ -44,7 +44,9 @@ interface PricingTier {
   price: string;
   period: string;
   description: string;
+  employeeLimit: string;
   features: string[];
+  modules: string[];
   highlighted?: boolean;
   cta: string;
 }
@@ -66,114 +68,137 @@ interface FAQ {
 // DATA
 // ============================================================================
 
-const FEATURES: Feature[] = [
+const MODULES: Module[] = [
   {
     icon: Clock,
-    title: 'Reloj de Fichar',
-    description: 'Cuatro métodos de fichaje con verificación geográfica integrada',
-    highlights: ['Tap en móvil', 'NFC Badge', 'Código QR', 'PIN numérico', 'Geofencing GPS'],
-  },
-  {
-    icon: ShieldCheck,
-    title: 'Cumplimiento ITSS',
-    description: 'Automatización total de la normativa laboral española',
-    highlights: ['12h descanso mínimo', '9h jornada máxima', '40h semanales', 'Alertas automáticas'],
-  },
-  {
-    icon: FileText,
-    title: 'Informes Automáticos',
-    description: 'Documentación lista para inspección en cualquier momento',
-    highlights: ['PDFs mensuales', 'Análisis de varianza', 'Exportación nóminas', 'Cumplimiento legal'],
+    title: 'Tempo',
+    description: 'Control de presencia con cumplimiento automático de descansos mínimos (12h), jornadas máximas (9h) y límites semanales (40h)',
+    highlights: ['Tap móvil', 'NFC Badge', 'QR Code', 'PIN', 'Geofencing', 'Alertas automáticas'],
+    minTier: 'starter',
   },
   {
     icon: Calendar,
-    title: 'Gestión de Turnos',
-    description: 'Planificación visual con marketplace de turnos abiertos',
-    highlights: ['Drag & drop', 'Turnos abiertos', 'Auto-asignación', 'Vista semanal/mensual'],
+    title: 'Rota',
+    description: 'Planificación visual que previene incumplimientos antes de publicar turnos',
+    highlights: ['Drag & drop', 'Validación ITSS', 'Turnos abiertos', 'Alertas de conflicto'],
+    minTier: 'pro',
   },
   {
-    icon: ArrowLeftRight,
-    title: 'Intercambios P2P',
-    description: 'Sistema de cambios entre empleados con aprobación dual',
-    highlights: ['Solicitud peer-to-peer', 'Aprobación compañero', 'Validación manager', 'Historial completo'],
+    icon: FileText,
+    title: 'Payroll Export',
+    description: 'Exportación directa a tu gestoría en formato CSV/XML compatible',
+    highlights: ['CSV/XML', 'A3/Sage/Nominaplus', 'Resumen mensual', 'Sincronización automática'],
+    minTier: 'pro',
+  },
+  {
+    icon: ShieldCheck,
+    title: 'Inspector Pack',
+    description: 'API de solo lectura + cadena de auditoría SHA-256 inmutable para inspecciones ITSS',
+    highlights: ['Token temporal', 'Solo lectura', 'SHA-256 hash chain', 'Certificado digital'],
+    minTier: 'starter',
+  },
+  {
+    icon: MapPin,
+    title: 'Multi-Site Ops',
+    description: 'Gestión centralizada multi-sede con informes consolidados y permisos granulares',
+    highlights: ['Multi-ubicación', 'Informes consolidados', 'Permisos por sede', 'Dashboard ejecutivo'],
+    minTier: 'business',
   },
   {
     icon: Key,
-    title: 'API Inspector',
-    description: 'Acceso de solo lectura para inspectores de trabajo ITSS',
-    highlights: ['Token temporal', 'Solo lectura', 'Auditoría SHA-256', 'Cadena inmutable'],
+    title: 'HR Lite',
+    description: 'Expedientes digitales con firma electrónica y onboarding guiado para nuevos empleados',
+    highlights: ['Expedientes digitales', 'Firma electrónica', 'Onboarding guiado', 'Documentos RGPD'],
+    minTier: 'enterprise',
   },
 ];
 
 const PRICING_TIERS: PricingTier[] = [
   {
     name: 'Starter',
-    price: '10',
-    period: '/usuario/mes',
-    description: 'Perfecto para pequeños equipos que empiezan',
+    price: '19',
+    period: '/mes',
+    description: 'Cumplimiento básico para microempresas',
+    employeeLimit: 'Hasta 10 empleados',
     features: [
-      'Hasta 5 usuarios',
-      'Reloj de fichar (tap + PIN)',
-      'Informes básicos',
+      'Control de presencia completo',
+      'Cumplimiento automático ITSS',
+      'API Inspector incluida',
+      'App móvil PWA offline',
       'Soporte por email',
-      'App móvil PWA',
     ],
+    modules: ['Tempo', 'Inspector Pack'],
     cta: 'Empezar Gratis',
   },
   {
-    name: 'Professional',
-    price: '8',
-    period: '/usuario/mes',
-    description: 'Todo lo que necesitas para cumplir con la ITSS',
+    name: 'Pro',
+    price: '49',
+    period: '/mes',
+    description: 'Planificación y nóminas para pymes',
+    employeeLimit: 'Hasta 25 empleados',
     features: [
-      'Usuarios ilimitados',
-      'Todos los métodos de fichaje',
-      'Cumplimiento ITSS completo',
-      'API Inspector incluida',
-      'Informes avanzados',
-      'Gestión de turnos',
-      'Intercambios P2P',
+      'Todo en Starter',
+      'Planificación de turnos visual',
+      'Exportación directa a gestoría',
+      'Validación pre-publicación',
       'Soporte prioritario',
     ],
+    modules: ['Tempo', 'Rota', 'Payroll Export', 'Inspector Pack'],
     highlighted: true,
     cta: 'Probar 14 días gratis',
   },
   {
-    name: 'Enterprise',
-    price: 'Personalizado',
-    period: '',
-    description: 'Para organizaciones con necesidades específicas',
+    name: 'Business',
+    price: '99',
+    period: '/mes',
+    description: 'Multi-sede con control centralizado',
+    employeeLimit: 'Hasta 75 empleados',
     features: [
-      'Todo en Professional',
-      'White-label personalizado',
-      'Integración SSO/SAML',
-      'API completa',
-      'SLA garantizado 99.9%',
-      'Soporte dedicado 24/7',
-      'Implementación guiada',
-      'Formación presencial',
+      'Todo en Pro',
+      'Gestión multi-ubicación',
+      'Informes consolidados',
+      'Dashboard ejecutivo',
+      'Soporte telefónico',
     ],
+    modules: ['Tempo', 'Rota', 'Payroll Export', 'Inspector Pack', 'Multi-Site Ops'],
+    cta: 'Probar 14 días gratis',
+  },
+  {
+    name: 'Enterprise',
+    price: '249',
+    period: '+/mes',
+    description: 'Solución completa para grandes organizaciones',
+    employeeLimit: 'Empleados ilimitados',
+    features: [
+      'Todo en Business',
+      'Expedientes digitales HR',
+      'Firma electrónica integrada',
+      'Onboarding automatizado',
+      'SLA 99.9% garantizado',
+      'Soporte dedicado 24/7',
+    ],
+    modules: ['Tempo', 'Rota', 'Payroll Export', 'Inspector Pack', 'Multi-Site Ops', 'HR Lite'],
     cta: 'Contactar Ventas',
   },
 ];
 
 const TESTIMONIALS: Testimonial[] = [
   {
-    quote: 'Desde que implementamos Torre Tempo, las inspecciones de trabajo son un trámite. Tenemos todo documentado y accesible en segundos. El inspector quedó impresionado.',
+    quote: 'Desde que implementamos el sistema, las inspecciones de trabajo son un trámite. Tenemos todo documentado y accesible en segundos. El inspector quedó impresionado con la cadena de auditoría.',
     author: 'María García',
     role: 'Directora de RRHH',
     company: 'Hostelería Mediterránea SL',
     avatar: 'MG',
   },
   {
-    quote: 'Antes perdíamos horas cada mes preparando informes. Ahora se generan automáticamente y puedo centrarme en lo que importa: mi equipo.',
+    quote: 'Antes perdíamos horas cada mes preparando informes para la gestoría. Ahora exportamos directamente en su formato y nos centramos en lo que importa: el equipo.',
     author: 'Carlos Ruiz',
     role: 'Gerente de Operaciones',
     company: 'Retail Express España',
     avatar: 'CR',
   },
   {
-    quote: 'La función offline es increíble. Nuestros empleados fichan aunque no haya cobertura y se sincroniza automáticamente. Cero errores, cero excusas.',
+    quote: 'La función offline es clave para nuestros técnicos de campo. Fichan aunque no haya cobertura y se sincroniza automáticamente. Cumplimiento garantizado, sin excusas.',
     author: 'Ana Martínez',
     role: 'CEO',
     company: 'Servicios Técnicos del Norte',
@@ -183,28 +208,28 @@ const TESTIMONIALS: Testimonial[] = [
 
 const FAQS: FAQ[] = [
   {
-    question: '¿Qué es el cumplimiento ITSS?',
-    answer: 'La ITSS (Inspección de Trabajo y Seguridad Social) exige que las empresas españolas registren la jornada laboral de sus empleados. Torre Tempo automatiza este cumplimiento verificando descansos mínimos de 12 horas, jornadas máximas de 9 horas y límites semanales de 40 horas, generando alertas cuando hay riesgo de incumplimiento.',
+    question: '¿Qué requisitos exige la ITSS a las empresas?',
+    answer: 'La Inspección de Trabajo exige registro de jornada con descansos mínimos de 12 horas entre turnos, jornadas máximas de 9 horas y límites semanales de 40 horas. Nuestro sistema verifica automáticamente estos requisitos y genera alertas antes de que ocurra cualquier incumplimiento.',
   },
   {
-    question: '¿Cómo funciona el reloj de fichar?',
-    answer: 'Ofrecemos cuatro métodos de fichaje: tap en móvil (un solo toque), badge NFC (aproximar tarjeta), código QR (escanear con cámara) y PIN numérico (código personal). Todos incluyen verificación geográfica opcional para confirmar que el empleado está en el lugar de trabajo.',
+    question: '¿Cómo funciona el módulo Tempo?',
+    answer: 'Tempo ofrece cuatro métodos de fichaje: tap en móvil, badge NFC, código QR y PIN numérico. Todos incluyen verificación geográfica opcional y validación automática de cumplimiento. Los fichajes quedan registrados con marca temporal inmutable.',
   },
   {
-    question: '¿Puedo usar Torre Tempo sin conexión?',
-    answer: 'Sí, Torre Tempo es una PWA (Progressive Web App) diseñada para funcionar offline. Los fichajes se almacenan localmente y se sincronizan automáticamente cuando vuelve la conexión. Ideal para lugares con cobertura irregular.',
+    question: '¿Funciona sin conexión a internet?',
+    answer: 'Sí, la aplicación es una PWA diseñada para funcionar offline. Los fichajes se almacenan localmente con marca temporal y se sincronizan automáticamente cuando vuelve la conexión. Ideal para obras, almacenes o zonas con cobertura irregular.',
   },
   {
-    question: '¿Los datos están seguros?',
-    answer: 'Absolutamente. Utilizamos cifrado SHA-256 con cadena de hash inmutable para el registro de auditoría. Los datos se almacenan con Row-Level Security (RLS) en PostgreSQL, cumpliendo con GDPR. Cada registro es verificable e inalterable.',
+    question: '¿Qué es la cadena de auditoría SHA-256?',
+    answer: 'Cada registro genera un hash criptográfico que enlaza con el anterior, creando una cadena inmutable. Si alguien intenta modificar un registro, la cadena se rompe y es detectable. Es el mismo principio que usa blockchain, adaptado para cumplimiento laboral.',
   },
   {
-    question: '¿Cuánto tiempo tarda la implementación?',
-    answer: 'La mayoría de empresas están operativas en menos de 24 horas. El proceso incluye: crear cuenta, invitar empleados, configurar ubicaciones y empezar a fichar. Ofrecemos formación gratuita por videollamada para planes Professional y Enterprise.',
+    question: '¿Cómo se integra con mi gestoría?',
+    answer: 'El módulo Payroll Export genera archivos CSV/XML compatibles con A3, Sage, Nominaplus y otros sistemas de gestión de nóminas. Tu gestoría puede importar directamente los datos sin requerir entrada manual.',
   },
   {
-    question: '¿Ofrecen soporte en español?',
-    answer: 'Por supuesto. Somos una empresa española y todo nuestro equipo de soporte habla español nativo. Atendemos por email, chat y teléfono (planes Professional y Enterprise). Nuestro tiempo medio de respuesta es inferior a 2 horas.',
+    question: '¿Qué incluye el Inspector Pack?',
+    answer: 'Incluye acceso API de solo lectura para inspectores ITSS con tokens temporales, cadena de auditoría SHA-256 verificable y certificados digitales de cada registro. Todo lo que un inspector necesita para validar el cumplimiento de tu empresa.',
   },
 ];
 
@@ -256,9 +281,9 @@ function Navbar() {
           {/* Logo */}
           <Link to="/" className="flex items-center gap-2">
             <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-emerald-500 shadow-lg shadow-emerald-500/20">
-              <Clock className="h-5 w-5 text-white" />
+              <Shield className="h-5 w-5 text-white" />
             </div>
-            <span className="text-lg font-bold text-white">Torre Tempo</span>
+            <span className="text-lg font-bold text-white">LSLT Workforce</span>
           </Link>
 
           {/* Desktop Navigation */}
@@ -392,10 +417,10 @@ function HeroSection() {
             transition={{ duration: 0.6, delay: 0.1 }}
             className="text-4xl sm:text-5xl lg:text-7xl font-bold text-white leading-tight tracking-tight"
           >
-            El Sistema de Gestión
+            Cumplimiento Laboral
             <br />
             <span className="bg-gradient-to-r from-emerald-400 via-emerald-300 to-teal-400 bg-clip-text text-transparent">
-              que los Inspectores Aman
+              Sin Esfuerzo
             </span>
           </motion.h1>
 
@@ -406,9 +431,9 @@ function HeroSection() {
             transition={{ duration: 0.6, delay: 0.2 }}
             className="mt-6 text-lg sm:text-xl text-neutral-400 max-w-3xl mx-auto leading-relaxed"
           >
-            Control de presencia móvil-first para empresas españolas.
+            Fichaje, planificación y exportación de nóminas en un solo sistema modular.
             <br className="hidden sm:block" />
-            Cumplimiento automático • PWA offline • Auditoría inmutable SHA-256
+            Inspector-ready • ITSS compliant • Integración gestoría
           </motion.p>
 
           {/* Feature Pills */}
@@ -528,17 +553,17 @@ function FeaturesSection() {
         >
           <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-400 text-sm font-medium mb-4">
             <CheckCircle2 className="h-4 w-4" />
-            Funcionalidades
+            Módulos
           </span>
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-4">
-            Todo lo que necesitas para cumplir
+            Cumplimiento Modular a tu Medida
           </h2>
           <p className="text-lg text-neutral-400 max-w-2xl mx-auto">
-            Desde el fichaje hasta los informes, automatizamos el cumplimiento laboral español
+            Activa solo los módulos que necesitas. Cada uno resuelve un requisito específico de la normativa laboral española.
           </p>
         </motion.div>
 
-        {/* Features Grid */}
+        {/* Modules Grid */}
         <motion.div
           initial="hidden"
           whileInView="visible"
@@ -546,26 +571,39 @@ function FeaturesSection() {
           variants={staggerContainer}
           className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6"
         >
-          {FEATURES.map((feature) => (
+          {MODULES.map((module) => (
             <motion.div
-              key={feature.title}
+              key={module.title}
               variants={fadeInUp}
               transition={{ duration: 0.5 }}
               className="group relative"
             >
               <div className="glass-card p-6 h-full hover:bg-white/10 transition-all duration-300 hover:scale-[1.02] hover:shadow-xl hover:shadow-emerald-500/5">
+                {/* Tier Badge */}
+                <div className="absolute top-4 right-4">
+                  <span className={cn(
+                    'text-[10px] font-medium px-2 py-0.5 rounded-full uppercase tracking-wide',
+                    module.minTier === 'starter' && 'bg-emerald-500/20 text-emerald-400',
+                    module.minTier === 'pro' && 'bg-blue-500/20 text-blue-400',
+                    module.minTier === 'business' && 'bg-amber-500/20 text-amber-400',
+                    module.minTier === 'enterprise' && 'bg-purple-500/20 text-purple-400',
+                  )}>
+                    {module.minTier}+
+                  </span>
+                </div>
+
                 {/* Icon */}
                 <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-emerald-500/10 border border-emerald-500/20 mb-4 group-hover:bg-emerald-500/20 transition-colors">
-                  <feature.icon className="h-6 w-6 text-emerald-400" />
+                  <module.icon className="h-6 w-6 text-emerald-400" />
                 </div>
 
                 {/* Content */}
-                <h3 className="text-xl font-semibold text-white mb-2">{feature.title}</h3>
-                <p className="text-neutral-400 mb-4">{feature.description}</p>
+                <h3 className="text-xl font-semibold text-white mb-2">{module.title}</h3>
+                <p className="text-neutral-400 text-sm mb-4">{module.description}</p>
 
                 {/* Highlights */}
                 <div className="flex flex-wrap gap-2">
-                  {feature.highlights.map((highlight) => (
+                  {module.highlights.map((highlight: string) => (
                     <span
                       key={highlight}
                       className="text-xs px-2 py-1 rounded-md bg-white/5 text-neutral-300 border border-white/5"
@@ -618,7 +656,7 @@ function PricingSection() {
           whileInView="visible"
           viewport={{ once: true, margin: '-50px' }}
           variants={staggerContainer}
-          className="grid md:grid-cols-3 gap-6 lg:gap-8"
+          className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6"
         >
           {PRICING_TIERS.map((tier, index) => (
             <motion.div
@@ -626,7 +664,7 @@ function PricingSection() {
               variants={scaleIn}
               transition={{ duration: 0.5, delay: index * 0.1 }}
               className={cn(
-                'relative rounded-2xl p-6 lg:p-8 transition-all duration-300 hover:scale-105',
+                'relative rounded-2xl p-5 lg:p-6 transition-all duration-300 hover:scale-[1.02]',
                 tier.highlighted
                   ? 'bg-gradient-to-b from-emerald-500/20 to-emerald-500/5 border-2 border-emerald-500/30 shadow-xl shadow-emerald-500/10'
                   : 'glass-card'
@@ -634,35 +672,45 @@ function PricingSection() {
             >
               {/* Popular Badge */}
               {tier.highlighted && (
-                <div className="absolute -top-4 left-1/2 -translate-x-1/2">
-                  <span className="px-4 py-1 rounded-full bg-emerald-500 text-white text-sm font-medium shadow-lg shadow-emerald-500/30">
+                <div className="absolute -top-3 left-1/2 -translate-x-1/2">
+                  <span className="px-3 py-1 rounded-full bg-emerald-500 text-white text-xs font-medium shadow-lg shadow-emerald-500/30">
                     Más Popular
                   </span>
                 </div>
               )}
 
               {/* Tier Info */}
-              <div className="mb-6">
-                <h3 className="text-xl font-semibold text-white mb-2">{tier.name}</h3>
+              <div className="mb-4">
+                <h3 className="text-lg font-semibold text-white mb-1">{tier.name}</h3>
                 <div className="flex items-baseline gap-1">
-                  {tier.price !== 'Personalizado' ? (
-                    <>
-                      <span className="text-4xl font-bold text-white">€{tier.price}</span>
-                      <span className="text-neutral-400">{tier.period}</span>
-                    </>
-                  ) : (
-                    <span className="text-3xl font-bold text-white">{tier.price}</span>
-                  )}
+                  <span className="text-3xl font-bold text-white">€{tier.price}</span>
+                  <span className="text-neutral-400 text-sm">{tier.period}</span>
                 </div>
-                <p className="text-sm text-neutral-400 mt-2">{tier.description}</p>
+                <p className="text-xs text-emerald-400 font-medium mt-1">{tier.employeeLimit}</p>
+                <p className="text-xs text-neutral-500 mt-1">{tier.description}</p>
+              </div>
+
+              {/* Module Badges */}
+              <div className="mb-4">
+                <p className="text-xs text-neutral-500 mb-2">Módulos incluidos:</p>
+                <div className="flex flex-wrap gap-1">
+                  {tier.modules.map((mod) => (
+                    <span
+                      key={mod}
+                      className="text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20"
+                    >
+                      {mod}
+                    </span>
+                  ))}
+                </div>
               </div>
 
               {/* Features List */}
-              <ul className="space-y-3 mb-8">
+              <ul className="space-y-2 mb-6">
                 {tier.features.map((feature) => (
-                  <li key={feature} className="flex items-start gap-3">
-                    <Check className="h-5 w-5 text-emerald-400 shrink-0 mt-0.5" />
-                    <span className="text-neutral-300 text-sm">{feature}</span>
+                  <li key={feature} className="flex items-start gap-2">
+                    <Check className="h-4 w-4 text-emerald-400 shrink-0 mt-0.5" />
+                    <span className="text-neutral-300 text-xs">{feature}</span>
                   </li>
                 ))}
               </ul>
@@ -670,6 +718,7 @@ function PricingSection() {
               {/* CTA Button */}
               <Button
                 asChild
+                size="sm"
                 className={cn(
                   'w-full',
                   tier.highlighted
@@ -724,7 +773,7 @@ function TestimonialsSection() {
             Empresas que confían en nosotros
           </h2>
           <p className="text-lg text-neutral-400 max-w-2xl mx-auto">
-            Descubre por qué cientos de empresas españolas eligen Torre Tempo
+            Descubre por qué cientos de empresas españolas duermen tranquilas ante cualquier inspección
           </p>
         </motion.div>
 
@@ -857,7 +906,7 @@ function FAQSection() {
         >
           <p className="text-neutral-400 mb-4">¿No encuentras lo que buscas?</p>
           <Button variant="outline" asChild>
-            <a href="mailto:soporte@torretempo.es">Contactar Soporte</a>
+            <a href="mailto:soporte@lsltgroup.es">Contactar Soporte</a>
           </Button>
         </motion.div>
       </div>
@@ -886,7 +935,7 @@ function CTASection() {
             ¿Listo para cumplir sin esfuerzo?
           </h2>
           <p className="text-lg text-neutral-400 mb-8 max-w-2xl mx-auto">
-            Únete a cientos de empresas españolas que ya confían en Torre Tempo para su gestión de personal.
+            Únete a cientos de empresas españolas que ya superan inspecciones ITSS sin preocupaciones.
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <Button
@@ -918,12 +967,12 @@ function Footer() {
           <div className="col-span-2 md:col-span-1">
             <Link to="/" className="flex items-center gap-2 mb-4">
               <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-emerald-500">
-                <Clock className="h-5 w-5 text-white" />
+                <Shield className="h-5 w-5 text-white" />
               </div>
-              <span className="text-lg font-bold text-white">Torre Tempo</span>
+              <span className="text-lg font-bold text-white">LSLT Workforce</span>
             </Link>
             <p className="text-sm text-neutral-400 mb-6">
-              El sistema de gestión de personal que los inspectores aman.
+              Suite de cumplimiento laboral para empresas españolas.
             </p>
             {/* Social Links */}
             <div className="flex items-center gap-4">
