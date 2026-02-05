@@ -2,12 +2,11 @@ import { Router, Request, Response } from 'express';
 import { and, eq, desc, like, sql, or, inArray } from 'drizzle-orm';
 
 import { db } from '../../db/index.js';
-import { organization, member, subscription_details } from '../../db/schema.js';
+import { organization, member, subscription_details, user } from '../../db/schema.js';
 import { requireAdmin } from '../../middleware/requireAdmin.js';
 import { logAdminAction } from '../../services/adminAudit.service.js';
 
 import type { 
-  TenantListItem, 
   TenantDetailResponse
 } from '../../types/admin-types.js';
 
@@ -79,6 +78,7 @@ router.get(
           id: organization.id,
           name: organization.name,
           slug: organization.slug,
+          logo: organization.logo,
           createdAt: organization.createdAt,
           metadata: organization.metadata,
         })
@@ -121,33 +121,62 @@ router.get(
         subscriptions.map((sub) => [sub.organizationId, sub])
       );
 
+      // Fetch owners (members with role 'owner') for each organization
+      const owners = orgIds.length > 0
+        ? await db
+          .select({
+            organizationId: member.organizationId,
+            userId: member.userId,
+            userName: user.name,
+            userEmail: user.email,
+          })
+          .from(member)
+          .innerJoin(user, eq(member.userId, user.id))
+          .where(
+            and(
+              inArray(member.organizationId, orgIds),
+              eq(member.role, 'owner')
+            )
+          )
+        : [];
+
+      const ownerMap = new Map(
+        owners.map((o) => [o.organizationId, { id: o.userId, name: o.userName, email: o.userEmail }])
+      );
+
       // Transform to TenantListItem[]
-      const data: TenantListItem[] = orgs.map((org) => {
+      const data = orgs.map((org) => {
         const memberCount = memberCountMap.get(org.id) || 0;
         const subscription = subscriptionMap.get(org.id);
+        const owner = ownerMap.get(org.id);
         const metadata = org.metadata ? JSON.parse(org.metadata) : {};
 
         // Determine status
-        let status: 'active' | 'suspended' | 'trial' = 'active';
+        let status: 'active' | 'suspended' | 'cancelled' | 'past_due' = 'active';
         if (metadata.suspended === true) {
           status = 'suspended';
         } else if (subscription?.trialEndsAt && new Date(subscription.trialEndsAt) > new Date()) {
-          status = 'trial';
+          // Trial is still "active" status
+          status = 'active';
         }
 
         // Ensure subscriptionTier has correct type
         const tier = subscription?.tier || 'starter';
-        const subscriptionTier: 'starter' | 'professional' | 'enterprise' = 
-          tier === 'professional' || tier === 'enterprise' ? tier : 'starter';
+        const subscriptionTier: 'free' | 'starter' | 'pro' | 'enterprise' = 
+          tier === 'professional' ? 'pro' : 
+          tier === 'enterprise' ? 'enterprise' : 
+          tier === 'free' ? 'free' : 'starter';
 
         return {
           id: org.id,
           name: org.name,
           slug: org.slug || '',
-          createdAt: org.createdAt,
+          logo: org.logo,
+          createdAt: org.createdAt.toISOString(),
           memberCount,
           subscriptionTier,
-          status,
+          subscriptionStatus: status,
+          owner,
         };
       });
 

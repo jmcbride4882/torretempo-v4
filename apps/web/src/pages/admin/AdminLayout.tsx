@@ -372,7 +372,7 @@ export default function AdminLayout() {
         </main>
 
         {/* Mobile bottom navigation */}
-        <nav className="glass-footer fixed bottom-0 left-0 right-0 z-30 border-t border-white/5 lg:hidden">
+        <nav className="fixed bottom-0 left-0 right-0 z-30 border-t border-white/5 bg-neutral-950 lg:hidden">
           <div className="grid grid-cols-4 gap-1 p-2">
             {adminNavItems.slice(0, 4).map((item) => {
               const isActive = location.pathname === `/admin/${item.path}`;
