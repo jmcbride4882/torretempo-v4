@@ -92,11 +92,12 @@ export function BottomSheet({
   const sheetHeight = snapPoints[currentSnap] ?? snapPoints[0] ?? 600;
 
   const content = (
-    <AnimatePresence mode="wait">
+    <AnimatePresence>
       {isOpen && (
-        <>
+        <React.Fragment key="bottom-sheet">
           {/* Backdrop */}
           <motion.div
+            key="backdrop"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -108,6 +109,7 @@ export function BottomSheet({
 
           {/* Bottom Sheet */}
           <motion.div
+            key="sheet"
             role="dialog"
             aria-modal="true"
             aria-labelledby={title ? 'bottom-sheet-title' : undefined}
@@ -180,10 +182,15 @@ export function BottomSheet({
             {/* Safe Area (iOS bottom inset) */}
             <div className="pb-safe" />
           </motion.div>
-        </>
+        </React.Fragment>
       )}
     </AnimatePresence>
   );
+
+  // Safety check: only render portal if document.body exists
+  if (typeof document === 'undefined' || !document.body) {
+    return null;
+  }
 
   return createPortal(content, document.body);
 }
