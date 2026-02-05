@@ -115,6 +115,31 @@ export interface FailedJobSummary {
 export interface SystemHealthResponse {
   status: 'healthy' | 'degraded' | 'unhealthy';
   timestamp: Date;
+  system: {
+    hostname: string;
+    platform: string;
+    arch: string;
+    cpus: number;
+    cpuUsage: number; // percentage
+    loadAverage: {
+      '1min': number;
+      '5min': number;
+      '15min': number;
+    };
+    memory: {
+      total: number; // bytes
+      used: number; // bytes
+      free: number; // bytes
+      usagePercent: number;
+    };
+    disk: {
+      total: number; // bytes
+      used: number; // bytes
+      free: number; // bytes
+      usagePercent: number;
+    };
+    uptime: number; // system uptime in seconds
+  };
   redis: {
     status: 'connected' | 'disconnected';
     ping: number; // milliseconds
@@ -130,7 +155,7 @@ export interface SystemHealthResponse {
   };
   queues: QueueMetrics[];
   failedJobs: FailedJobSummary[];
-  uptime: number; // seconds
+  uptime: number; // process uptime in seconds
 }
 
 // ============================================================================

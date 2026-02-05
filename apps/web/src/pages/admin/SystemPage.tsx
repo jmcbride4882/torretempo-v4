@@ -46,6 +46,20 @@ function formatLatency(ms: number): string {
   return `${ms.toFixed(0)}ms`;
 }
 
+// Format bytes
+function formatBytes(bytes: number): string {
+  if (bytes === 0) return '0 B';
+  const k = 1024;
+  const sizes = ['B', 'KB', 'MB', 'GB', 'TB'];
+  const i = Math.floor(Math.log(bytes) / Math.log(k));
+  return `${Math.round(bytes / Math.pow(k, i) * 10) / 10} ${sizes[i]}`;
+}
+
+// Format percentage
+function formatPercent(value: number): string {
+  return `${value.toFixed(1)}%`;
+}
+
 // Status colors
 const statusColors = {
   healthy: 'bg-emerald-500',
@@ -83,8 +97,8 @@ export default function SystemPage() {
 
   useEffect(() => {
     loadHealth();
-    // Auto-refresh every 30 seconds
-    const interval = setInterval(() => loadHealth(true), 30000);
+    // Auto-refresh every 5 seconds for live data
+    const interval = setInterval(() => loadHealth(true), 5000);
     return () => clearInterval(interval);
   }, [loadHealth]);
 
@@ -138,7 +152,9 @@ export default function SystemPage() {
           </div>
           <div>
             <h1 className="text-xl font-bold text-white sm:text-2xl">System Health</h1>
-            <p className="text-sm text-neutral-400">Monitor services and queue status</p>
+            <p className="text-sm text-neutral-400">
+              Live monitoring • Updates every 5 seconds
+            </p>
           </div>
         </div>
 
@@ -173,11 +189,79 @@ export default function SystemPage() {
         </div>
       </motion.div>
 
+      {/* VPS System metrics */}
+      <motion.div
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.05 }}
+        className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4"
+      >
+        {/* CPU Usage */}
+        <ServiceCard
+          icon={Zap}
+          label="CPU Usage"
+          status={health?.system ? 'connected' : 'disconnected'}
+          metrics={[
+            { label: 'Usage', value: formatPercent(health?.system?.cpuUsage || 0), alert: (health?.system?.cpuUsage || 0) > 80 },
+            { label: 'Load (1m)', value: health?.system?.loadAverage['1min'].toFixed(2) || '0' },
+          ]}
+          color="violet"
+          delay={0}
+        />
+
+        {/* Memory Usage */}
+        <ServiceCard
+          icon={HardDrive}
+          label="Memory"
+          status={health?.system ? 'connected' : 'disconnected'}
+          metrics={[
+            { 
+              label: 'Used', 
+              value: health?.system ? `${formatBytes(health.system.memory.used)} / ${formatBytes(health.system.memory.total)}` : 'N/A',
+              alert: (health?.system?.memory.usagePercent || 0) > 85,
+            },
+            { label: 'Usage', value: formatPercent(health?.system?.memory.usagePercent || 0) },
+          ]}
+          color="blue"
+          delay={0.05}
+        />
+
+        {/* Disk Usage */}
+        <ServiceCard
+          icon={Database}
+          label="Disk"
+          status={health?.system ? 'connected' : 'disconnected'}
+          metrics={[
+            { 
+              label: 'Used', 
+              value: health?.system ? `${formatBytes(health.system.disk.used)} / ${formatBytes(health.system.disk.total)}` : 'N/A',
+              alert: (health?.system?.disk.usagePercent || 0) > 85,
+            },
+            { label: 'Usage', value: formatPercent(health?.system?.disk.usagePercent || 0) },
+          ]}
+          color="amber"
+          delay={0.1}
+        />
+
+        {/* System Info */}
+        <ServiceCard
+          icon={Server}
+          label="System"
+          status={health?.system ? 'connected' : 'disconnected'}
+          metrics={[
+            { label: 'Hostname', value: health?.system?.hostname || 'Unknown' },
+            { label: 'Uptime', value: formatUptime(health?.system?.uptime || 0) },
+          ]}
+          color="red"
+          delay={0.15}
+        />
+      </motion.div>
+
       {/* Service status cards */}
       <motion.div
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.1 }}
+        transition={{ delay: 0.2 }}
         className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4"
       >
         {/* API Status */}
@@ -193,7 +277,7 @@ export default function SystemPage() {
           delay={0}
         />
 
-        {/* Database Status */}
+        {/* PostgreSQL Status */}
         <ServiceCard
           icon={Database}
           label="PostgreSQL"
@@ -215,7 +299,7 @@ export default function SystemPage() {
             { 
               label: 'Memory', 
               value: health?.redis.memory 
-                ? `${Math.round(health.redis.memory.used / 1024 / 1024)}MB / ${Math.round(health.redis.memory.peak / 1024 / 1024)}MB`
+                ? `${formatBytes(health.redis.memory.used)} / ${formatBytes(health.redis.memory.peak)}`
                 : 'N/A' 
             },
             { label: 'Ping', value: formatLatency(health?.redis.ping || 0) },
@@ -246,7 +330,7 @@ export default function SystemPage() {
       <motion.div
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.2 }}
+        transition={{ delay: 0.25 }}
         className="glass-card p-6"
       >
         <h2 className="mb-4 text-lg font-semibold text-white">Queue Metrics</h2>
@@ -303,7 +387,7 @@ export default function SystemPage() {
       <motion.div
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.25 }}
+        transition={{ delay: 0.3 }}
         className="glass-card p-6"
       >
         <div className="mb-4 flex items-center justify-between">

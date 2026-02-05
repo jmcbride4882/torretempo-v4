@@ -111,6 +111,31 @@ export interface SystemHealth {
   status: 'healthy' | 'degraded' | 'unhealthy';
   timestamp: string;
   uptime: number;
+  system: {
+    hostname: string;
+    platform: string;
+    arch: string;
+    cpus: number;
+    cpuUsage: number;
+    loadAverage: {
+      '1min': number;
+      '5min': number;
+      '15min': number;
+    };
+    memory: {
+      total: number;
+      used: number;
+      free: number;
+      usagePercent: number;
+    };
+    disk: {
+      total: number;
+      used: number;
+      free: number;
+      usagePercent: number;
+    };
+    uptime: number;
+  };
   database: {
     status: 'connected' | 'disconnected';
     responseTime: number;

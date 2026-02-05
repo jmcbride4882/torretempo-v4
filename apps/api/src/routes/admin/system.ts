@@ -1,4 +1,7 @@
 import { Router, Request, Response } from 'express';
+import * as os from 'os';
+import { exec } from 'child_process';
+import { promisify } from 'util';
 import { queues, redisConnection } from '../../lib/queue.js';
 import { requireAdmin } from '../../middleware/requireAdmin.js';
 import { logAdminAction } from '../../services/adminAudit.service.js';
@@ -7,6 +10,8 @@ import type {
   QueueMetrics, 
   FailedJobSummary 
 } from '../../types/admin-types.js';
+
+const execAsync = promisify(exec);
 
 /**
  * Admin System Health Routes
@@ -19,6 +24,91 @@ import type {
  */
 
 const router = Router();
+
+/**
+ * Helper function to get CPU usage percentage
+ * Calculates CPU usage by sampling CPU times twice with a delay
+ */
+async function getCpuUsage(): Promise<number> {
+  const cpus = os.cpus();
+  
+  // Calculate total CPU time
+  const getTotalTime = (cpu: os.CpuInfo) => {
+    return Object.values(cpu.times).reduce((acc, time) => acc + time, 0);
+  };
+  
+  const getIdleTime = (cpu: os.CpuInfo) => {
+    return cpu.times.idle;
+  };
+  
+  // First sample
+  const startTimes = cpus.map(cpu => ({
+    total: getTotalTime(cpu),
+    idle: getIdleTime(cpu),
+  }));
+  
+  // Wait 100ms
+  await new Promise(resolve => setTimeout(resolve, 100));
+  
+  // Second sample
+  const endCpus = os.cpus();
+  const endTimes = endCpus.map(cpu => ({
+    total: getTotalTime(cpu),
+    idle: getIdleTime(cpu),
+  }));
+  
+  // Calculate average CPU usage across all cores
+  let totalUsage = 0;
+  for (let i = 0; i < cpus.length; i++) {
+    const totalDiff = (endTimes[i]?.total || 0) - (startTimes[i]?.total || 0);
+    const idleDiff = (endTimes[i]?.idle || 0) - (startTimes[i]?.idle || 0);
+    const usage = totalDiff > 0 ? 100 - (100 * idleDiff / totalDiff) : 0;
+    totalUsage += usage;
+  }
+  
+  return Math.round(totalUsage / cpus.length * 10) / 10; // Round to 1 decimal
+}
+
+/**
+ * Helper function to get disk usage
+ * Uses df command on Linux/Mac, wmic on Windows
+ */
+async function getDiskUsage(): Promise<{ total: number; used: number; free: number; usagePercent: number }> {
+  try {
+    if (process.platform === 'win32') {
+      // Windows - use wmic
+      const { stdout } = await execAsync('wmic logicaldisk where "DeviceID=\'C:\'" get Size,FreeSpace /format:value');
+      const freeMatch = stdout.match(/FreeSpace=(\d+)/);
+      const sizeMatch = stdout.match(/Size=(\d+)/);
+      
+      if (freeMatch?.[1] && sizeMatch?.[1]) {
+        const free = parseInt(freeMatch[1], 10);
+        const total = parseInt(sizeMatch[1], 10);
+        const used = total - free;
+        const usagePercent = Math.round((used / total) * 100 * 10) / 10;
+        
+        return { total, used, free, usagePercent };
+      }
+    } else {
+      // Linux/Mac - use df
+      const { stdout } = await execAsync('df -k / | tail -1');
+      const parts = stdout.trim().split(/\s+/);
+      
+      if (parts.length >= 5 && parts[1] && parts[2] && parts[3] && parts[4]) {
+        const total = parseInt(parts[1], 10) * 1024; // Convert KB to bytes
+        const used = parseInt(parts[2], 10) * 1024;
+        const free = parseInt(parts[3], 10) * 1024;
+        const usagePercent = parseFloat(parts[4].replace('%', ''));
+        
+        return { total, used, free, usagePercent };
+      }
+    }
+  } catch (error) {
+    console.error('Error getting disk usage:', error);
+  }
+  
+  return { total: 0, used: 0, free: 0, usagePercent: 0 };
+}
 
 /**
  * GET /api/admin/system/health
@@ -39,6 +129,40 @@ router.get(
       const healthData: Partial<SystemHealthResponse> = {
         timestamp: new Date(),
         uptime: process.uptime(),
+      };
+
+      // Get VPS system metrics
+      const [cpuUsage, diskUsage] = await Promise.all([
+        getCpuUsage(),
+        getDiskUsage(),
+      ]);
+
+      const totalMem = os.totalmem();
+      const freeMem = os.freemem();
+      const usedMem = totalMem - freeMem;
+      const memoryUsagePercent = Math.round((usedMem / totalMem) * 100 * 10) / 10;
+
+      const loadAvg = os.loadavg();
+
+      healthData.system = {
+        hostname: os.hostname(),
+        platform: os.platform(),
+        arch: os.arch(),
+        cpus: os.cpus().length,
+        cpuUsage,
+        loadAverage: {
+          '1min': Math.round((loadAvg[0] || 0) * 100) / 100,
+          '5min': Math.round((loadAvg[1] || 0) * 100) / 100,
+          '15min': Math.round((loadAvg[2] || 0) * 100) / 100,
+        },
+        memory: {
+          total: totalMem,
+          used: usedMem,
+          free: freeMem,
+          usagePercent: memoryUsagePercent,
+        },
+        disk: diskUsage,
+        uptime: os.uptime(),
       };
 
       // Check Redis connection
