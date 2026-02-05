@@ -5,7 +5,6 @@ import { user, member, organization } from '../../db/schema.js';
 import { requireAdmin } from '../../middleware/requireAdmin.js';
 import { logAdminAction } from '../../services/adminAudit.service.js';
 import type { 
-  UserListResponse, 
   UserDetailResponse, 
   BanUserResponse 
 } from '../../types/admin-types.js';
@@ -92,8 +91,10 @@ router.get(
           id: user.id,
           name: user.name,
           email: user.email,
+          emailVerified: user.emailVerified,
           role: user.role,
           banned: user.banned,
+          image: user.image,
           createdAt: user.createdAt,
         })
         .from(user)
@@ -133,16 +134,17 @@ router.get(
         
         return {
           ...u,
+          isAdmin: u.role === 'admin',
           organizations: userOrgs,
         };
       });
 
-      const response: UserListResponse = {
-        data: usersWithOrgs,
+      // Return response (match frontend expectations)
+      const response = {
+        users: usersWithOrgs,
         total,
         limit,
-        offset,
-        pages: Math.ceil(total / limit),
+        page: Math.floor(offset / limit) + 1,
       };
 
       res.json(response);

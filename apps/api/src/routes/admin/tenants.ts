@@ -8,7 +8,6 @@ import { logAdminAction } from '../../services/adminAudit.service.js';
 
 import type { 
   TenantListItem, 
-  TenantListResponse, 
   TenantDetailResponse
 } from '../../types/admin-types.js';
 
@@ -152,16 +151,12 @@ router.get(
         };
       });
 
-      // Calculate total pages
-      const pages = Math.ceil(total / limit);
-
-      // Return paginated response
-      const response: TenantListResponse = {
-        data,
+      // Return paginated response (match frontend expectations)
+      const response = {
+        tenants: data,
         total,
         limit,
-        offset,
-        pages,
+        page: Math.floor(offset / limit) + 1,
       };
 
       res.json(response);
