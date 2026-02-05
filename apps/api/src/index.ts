@@ -12,6 +12,9 @@ import shiftsRouter from './routes/shifts.js';
 import locationsRouter from './routes/locations.js';
 import swapsRouter from './routes/swaps.js';
 import notificationsRouter from './routes/notifications.js';
+import timeEntriesRouter from './routes/time-entries.js';
+import breaksRouter from './routes/breaks.js';
+import correctionsRouter from './routes/corrections.js';
 import 'dotenv/config';
 import './workers/email.worker.js';
 
@@ -66,6 +69,9 @@ app.use('/api/v1/org/:slug/locations', tenantMiddleware, locationsRouter);
 app.use('/api/v1/org/:slug/shifts', tenantMiddleware, shiftsRouter);
 app.use('/api/v1/org/:slug/swaps', tenantMiddleware, swapsRouter);
 app.use('/api/v1/org/:slug/notifications', tenantMiddleware, notificationsRouter);
+app.use('/api/v1/org/:slug/time-entries', tenantMiddleware, timeEntriesRouter);
+app.use('/api/v1/org/:slug/time-entries', tenantMiddleware, breaksRouter);
+app.use('/api/v1/org/:slug/corrections', tenantMiddleware, correctionsRouter);
 
 // 404 handler
 app.use((_req: Request, res: Response) => {
