@@ -4,6 +4,9 @@ import { ProtectedRoute } from '@/components/layout/ProtectedRoute';
 import { AdminRoute } from '@/components/layout/AdminRoute';
 import { OnboardingRedirect } from '@/components/layout/OnboardingRedirect';
 
+// Public pages
+import Landing from '@/pages/Landing';
+
 // Auth pages
 import SignIn from '@/pages/auth/SignIn';
 import SignUp from '@/pages/auth/SignUp';
@@ -23,6 +26,9 @@ function App() {
     <BrowserRouter>
       <AnimatePresence mode="wait">
         <Routes>
+          {/* Public landing page */}
+          <Route path="/" element={<Landing />} />
+
           {/* Public auth routes */}
           <Route path="/auth/signin" element={<SignIn />} />
           <Route path="/auth/signup" element={<SignUp />} />
@@ -44,7 +50,7 @@ function App() {
 
           {/* Smart redirect based on organization status */}
           <Route element={<ProtectedRoute />}>
-            <Route path="/" element={<OnboardingRedirect />} />
+            <Route path="/dashboard" element={<OnboardingRedirect />} />
           </Route>
 
           {/* Fallback redirects */}
