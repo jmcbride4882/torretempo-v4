@@ -123,13 +123,34 @@ router.get('/mine', async (req: Request, res: Response) => {
       conditions.push(inArray(swap_requests.status, statuses));
     }
 
-    const result = await db
+    const results = await db
       .select()
       .from(swap_requests)
       .where(and(...conditions))
       .orderBy(desc(swap_requests.created_at));
 
-    res.json({ swaps: result });
+    // Transform to match frontend types
+    const swaps = results.map((r) => ({
+      id: r.id,
+      organization_id: r.organization_id,
+      offered_shift_id: r.offered_shift_id,
+      desired_shift_id: r.desired_shift_id || null,
+      requester_id: r.requester_id,
+      recipient_id: r.recipient_id || null,
+      manager_id: r.manager_id || null,
+      status: r.status,
+      reason: r.reason || null,
+      rejection_reason: null,
+      rejected_by: null,
+      created_at: r.created_at.toISOString(),
+      updated_at: r.created_at.toISOString(),
+      peer_responded_at: null,
+      manager_responded_at: r.resolved_at?.toISOString() || null,
+      completed_at: r.status === 'completed' ? r.resolved_at?.toISOString() || null : null,
+      expires_at: null,
+    }));
+
+    res.json({ swaps });
   } catch (error) {
     console.error('Error fetching my swaps:', error);
     res.status(500).json({ error: 'Failed to fetch swaps' });
@@ -163,13 +184,34 @@ router.get('/pending', async (req: Request, res: Response) => {
       return;
     }
 
-    const result = await db
+    const results = await db
       .select()
       .from(swap_requests)
       .where(and(eq(swap_requests.organization_id, organizationId), or(...pendingConditions)))
       .orderBy(desc(swap_requests.created_at));
 
-    res.json({ swaps: result });
+    // Transform to match frontend types
+    const swaps = results.map((r) => ({
+      id: r.id,
+      organization_id: r.organization_id,
+      offered_shift_id: r.offered_shift_id,
+      desired_shift_id: r.desired_shift_id || null,
+      requester_id: r.requester_id,
+      recipient_id: r.recipient_id || null,
+      manager_id: r.manager_id || null,
+      status: r.status,
+      reason: r.reason || null,
+      rejection_reason: null, // TODO: Add to schema
+      rejected_by: null, // TODO: Add to schema
+      created_at: r.created_at.toISOString(),
+      updated_at: r.created_at.toISOString(), // Use created_at as fallback
+      peer_responded_at: null, // TODO: Add to schema
+      manager_responded_at: r.resolved_at?.toISOString() || null,
+      completed_at: r.status === 'completed' ? r.resolved_at?.toISOString() || null : null,
+      expires_at: null, // TODO: Add to schema
+    }));
+
+    res.json({ swaps });
   } catch (error) {
     console.error('Error fetching pending swaps:', error);
     res.status(500).json({ error: 'Failed to fetch pending swaps' });
