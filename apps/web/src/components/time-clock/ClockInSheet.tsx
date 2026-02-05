@@ -25,6 +25,7 @@ import { Label } from '@/components/ui/label';
 import { cn } from '@/lib/utils';
 import { useGeolocation, formatAccuracy, isAccuracyAcceptable } from '@/hooks/useGeolocation';
 import { useOrganization } from '@/hooks/useOrganization';
+import { useNFC } from '@/hooks/useNFC';
 import { clockIn, TimeEntryApiError } from '@/lib/api/time-entries';
 import type { ClockMethod } from '@/lib/api/time-entries';
 
@@ -51,7 +52,7 @@ type ClockMethodOption = {
 
 const CLOCK_METHODS: ClockMethodOption[] = [
   { id: 'tap', label: 'Tap', icon: Hand, available: true },
-  { id: 'nfc', label: 'NFC', icon: Wifi, available: false },
+  { id: 'nfc', label: 'NFC', icon: Wifi, available: true }, // Now enabled
   { id: 'qr', label: 'QR', icon: QrCode, available: false },
   { id: 'pin', label: 'PIN', icon: Hash, available: false },
 ];
@@ -74,6 +75,16 @@ export function ClockInSheet({ isOpen, onClose, shiftId }: ClockInSheetProps) {
     accuracy,
     requestPermission 
   } = useGeolocation();
+
+  // NFC
+  const {
+    isScanning: nfcScanning,
+    isSupported: nfcSupported,
+    error: nfcError,
+    lastScan: nfcData,
+    startScan: startNFCScan,
+    stopScan: stopNFCScan,
+  } = useNFC();
 
   // Local state
   const [currentTime, setCurrentTime] = React.useState(new Date());
@@ -128,8 +139,18 @@ export function ClockInSheet({ isOpen, onClose, shiftId }: ClockInSheetProps) {
       setError(null);
       setNotes('');
       setSelectedMethod('tap');
+    } else {
+      // Stop NFC scanning when sheet closes
+      stopNFCScan();
     }
-  }, [isOpen]);
+  }, [isOpen, stopNFCScan]);
+
+  // Start NFC scan when NFC method is selected
+  React.useEffect(() => {
+    if (isOpen && selectedMethod === 'nfc' && nfcSupported && !nfcScanning && !nfcData) {
+      startNFCScan();
+    }
+  }, [isOpen, selectedMethod, nfcSupported, nfcScanning, nfcData, startNFCScan]);
 
   // Computed values
   const isWithinGeofence = React.useMemo(() => {
@@ -327,6 +348,78 @@ export function ClockInSheet({ isOpen, onClose, shiftId }: ClockInSheetProps) {
             ) : null}
           </AnimatePresence>
         </div>
+
+        {/* NFC Status Section (shown when NFC method is selected) */}
+        {selectedMethod === 'nfc' && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: 'auto' }}
+            exit={{ opacity: 0, height: 0 }}
+            className="glass-card rounded-xl p-4 space-y-3"
+          >
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Wifi className="h-4 w-4 text-zinc-400" />
+                <span className="text-sm font-medium text-zinc-300">NFC Tag</span>
+              </div>
+              {nfcScanning ? (
+                <Badge variant="ghost" className="gap-1">
+                  <Loader2 className="h-3 w-3 animate-spin" />
+                  Scanning...
+                </Badge>
+              ) : nfcData ? (
+                <Badge variant="default" className="gap-1 bg-emerald-500/20 text-emerald-400">
+                  <CheckCircle2 className="h-3 w-3" />
+                  Tag Read
+                </Badge>
+              ) : null}
+            </div>
+
+            {nfcError ? (
+              <div className="flex items-start gap-3 p-3 rounded-lg bg-red-500/10 border border-red-500/20">
+                <AlertCircle className="h-5 w-5 text-red-400 flex-shrink-0 mt-0.5" />
+                <div>
+                  <p className="text-sm font-medium text-red-400">NFC Error</p>
+                  <p className="text-xs text-zinc-400 mt-1">{nfcError}</p>
+                </div>
+              </div>
+            ) : nfcScanning ? (
+              <div className="flex flex-col items-center justify-center py-6 gap-3">
+                <motion.div
+                  animate={{ scale: [1, 1.1, 1] }}
+                  transition={{ duration: 1.5, repeat: Infinity }}
+                  className="h-16 w-16 rounded-full bg-primary-500/20 flex items-center justify-center"
+                >
+                  <Wifi className="h-8 w-8 text-primary-400" />
+                </motion.div>
+                <p className="text-sm text-zinc-300">Hold NFC tag near device</p>
+              </div>
+            ) : nfcData ? (
+              <div className="space-y-2">
+                <div className="flex items-center justify-between text-xs">
+                  <span className="text-zinc-500">Serial Number</span>
+                  <span className="text-zinc-300 font-mono">{nfcData.serialNumber.substring(0, 16)}...</span>
+                </div>
+                {nfcData.message && (
+                  <div className="flex items-center justify-between text-xs">
+                    <span className="text-zinc-500">Message</span>
+                    <span className="text-zinc-300">{nfcData.message}</span>
+                  </div>
+                )}
+              </div>
+            ) : !nfcSupported ? (
+              <div className="flex items-start gap-3 p-3 rounded-lg bg-amber-500/10 border border-amber-500/20">
+                <AlertTriangle className="h-5 w-5 text-amber-400 flex-shrink-0 mt-0.5" />
+                <div>
+                  <p className="text-sm font-medium text-amber-400">NFC Not Supported</p>
+                  <p className="text-xs text-zinc-400 mt-1">
+                    Your browser or device doesn't support NFC. Try using Chrome on Android.
+                  </p>
+                </div>
+              </div>
+            ) : null}
+          </motion.div>
+        )}
 
         {/* Clock Method Tabs */}
         <div className="space-y-2">
