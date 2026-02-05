@@ -50,6 +50,7 @@ function formatLatency(ms: number): string {
 const statusColors = {
   healthy: 'bg-emerald-500',
   degraded: 'bg-amber-500',
+  unhealthy: 'bg-red-500',
   down: 'bg-red-500',
   connected: 'bg-emerald-500',
   disconnected: 'bg-red-500',
@@ -232,8 +233,8 @@ export default function SystemPage() {
             { label: 'Active Queues', value: health?.queues?.length?.toString() || '0' },
             {
               label: 'Failed Jobs',
-              value: health?.failedJobs?.length?.toString() || '0',
-              alert: (health?.failedJobs?.length || 0) > 0,
+              value: health?.failedJobs?.reduce((sum, queue) => sum + queue.failedCount, 0).toString() || '0',
+              alert: (health?.failedJobs?.reduce((sum, queue) => sum + queue.failedCount, 0) || 0) > 0,
             },
           ]}
           color="amber"
@@ -309,66 +310,82 @@ export default function SystemPage() {
           <h2 className="text-lg font-semibold text-white">Failed Jobs</h2>
           {health?.failedJobs && health.failedJobs.length > 0 && (
             <Badge className="border border-red-500/30 bg-red-500/20 text-red-300">
-              {health.failedJobs.length} failed
+              {health.failedJobs.reduce((sum, queue) => sum + queue.failedCount, 0)} failed
             </Badge>
           )}
         </div>
 
-        {health?.failedJobs && health.failedJobs.length > 0 ? (
-          <div className="space-y-3">
+        {health?.failedJobs && health.failedJobs.some(q => q.recentErrors.length > 0) ? (
+          <div className="space-y-4">
             <AnimatePresence mode="popLayout">
-              {health.failedJobs.map((job, index) => (
-                <motion.div
-                  key={job.id}
-                  layout
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, scale: 0.95 }}
-                  transition={{ delay: index * 0.05 }}
-                  className="rounded-xl border border-red-500/20 bg-red-500/5 p-4"
-                >
-                  <div className="mb-3 flex items-start justify-between gap-4">
-                    <div className="flex items-center gap-3">
-                      <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-red-500/20">
-                        <XCircle className="h-4 w-4 text-red-400" />
-                      </div>
-                      <div>
-                        <p className="font-medium text-white">{job.name}</p>
-                        <p className="text-sm text-neutral-500">
-                          Queue: {job.queue} • ID: {job.id.slice(0, 8)}...
-                        </p>
-                      </div>
-                    </div>
+              {health.failedJobs.map((queueSummary, queueIndex) => (
+                queueSummary.recentErrors.length > 0 && (
+                  <div key={queueSummary.queueName} className="space-y-3">
+                    {/* Queue header */}
                     <div className="flex items-center gap-2">
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => handleRetryJob(job.queue, job.id)}
-                        disabled={retryingJobs.has(job.id)}
-                        className="gap-1.5 text-emerald-400 hover:bg-emerald-500/10 hover:text-emerald-300"
-                      >
-                        <RotateCcw className={cn('h-3.5 w-3.5', retryingJobs.has(job.id) && 'animate-spin')} />
-                        Retry
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => handleDeleteJob(job.queue, job.id)}
-                        className="gap-1.5 text-red-400 hover:bg-red-500/10 hover:text-red-300"
-                      >
-                        <Trash2 className="h-3.5 w-3.5" />
-                        Delete
-                      </Button>
+                      <div className="h-px flex-1 bg-white/10" />
+                      <p className="text-xs font-medium uppercase tracking-wider text-neutral-500">
+                        {queueSummary.queueName} Queue ({queueSummary.failedCount} failed)
+                      </p>
+                      <div className="h-px flex-1 bg-white/10" />
                     </div>
+                    
+                    {/* Recent errors */}
+                    {queueSummary.recentErrors.map((error, errorIndex) => (
+                      <motion.div
+                        key={`${queueSummary.queueName}-${error.jobId}`}
+                        layout
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, scale: 0.95 }}
+                        transition={{ delay: (queueIndex * 0.1) + (errorIndex * 0.05) }}
+                        className="rounded-xl border border-red-500/20 bg-red-500/5 p-4"
+                      >
+                        <div className="mb-3 flex items-start justify-between gap-4">
+                          <div className="flex items-center gap-3">
+                            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-red-500/20">
+                              <XCircle className="h-4 w-4 text-red-400" />
+                            </div>
+                            <div>
+                              <p className="font-medium text-white">Job ID: {error.jobId.slice(0, 16)}{error.jobId.length > 16 ? '...' : ''}</p>
+                              <p className="text-sm text-neutral-500">
+                                Queue: {queueSummary.queueName}
+                              </p>
+                            </div>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => handleRetryJob(queueSummary.queueName, error.jobId)}
+                              disabled={retryingJobs.has(error.jobId)}
+                              className="gap-1.5 text-emerald-400 hover:bg-emerald-500/10 hover:text-emerald-300"
+                            >
+                              <RotateCcw className={cn('h-3.5 w-3.5', retryingJobs.has(error.jobId) && 'animate-spin')} />
+                              Retry
+                            </Button>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => handleDeleteJob(queueSummary.queueName, error.jobId)}
+                              className="gap-1.5 text-red-400 hover:bg-red-500/10 hover:text-red-300"
+                            >
+                              <Trash2 className="h-3.5 w-3.5" />
+                              Delete
+                            </Button>
+                          </div>
+                        </div>
+                        <div className="rounded-lg bg-black/30 p-3">
+                          <p className="font-mono text-sm text-red-300">{error.error}</p>
+                        </div>
+                        <div className="mt-2 flex items-center gap-1 text-xs text-neutral-500">
+                          <Clock className="h-3 w-3" />
+                          Failed {new Date(error.failedAt).toLocaleString()}
+                        </div>
+                      </motion.div>
+                    ))}
                   </div>
-                  <div className="rounded-lg bg-black/30 p-3">
-                    <p className="font-mono text-sm text-red-300">{job.failedReason}</p>
-                  </div>
-                  <div className="mt-2 flex items-center gap-1 text-xs text-neutral-500">
-                    <Clock className="h-3 w-3" />
-                    Failed {new Date(job.failedAt).toLocaleString()}
-                  </div>
-                </motion.div>
+                )
               ))}
             </AnimatePresence>
           </div>
