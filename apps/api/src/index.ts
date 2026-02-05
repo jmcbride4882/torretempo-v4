@@ -8,6 +8,7 @@ import { tenantMiddleware } from './middleware/tenant.js';
 import { requireAdmin } from './middleware/requireAdmin.js';
 import { inspectorAuth } from './middleware/inspectorAuth.js';
 import { testConnection } from './db/index.js';
+import shiftsRouter from './routes/shifts.js';
 import 'dotenv/config';
 
 const app = express();
@@ -56,10 +57,8 @@ app.use('/api/inspector/v1/*', inspectorAuth, (_req: Request, res: Response) => 
   res.json({ message: 'Inspector routes active' });
 });
 
-// Tenant routes (placeholder)
-app.use('/api/v1/org/:slug/*', tenantMiddleware, (req: Request, res: Response) => {
-  res.json({ message: 'Tenant routes active', org: req.organizationId });
-});
+// Tenant routes
+app.use('/api/v1/org/:slug/shifts', tenantMiddleware, shiftsRouter);
 
 // 404 handler
 app.use((_req: Request, res: Response) => {

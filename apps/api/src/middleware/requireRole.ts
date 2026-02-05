@@ -15,7 +15,7 @@ import { fromNodeHeaders } from 'better-auth/node';
  * app.post('/shifts', requireRole({ shift: ['create'] }), handler)
  */
 export function requireRole(
-  permissions: Record<string, string[]>
+  roles: string[]
 ): RequestHandler {
   return async (
     req: Request,
@@ -47,24 +47,14 @@ export function requireRole(
         return;
       }
 
-      // Check if user has any of the required permissions
-      let hasPermission = false;
-
-      for (const [, ] of Object.entries(permissions)) {
-        // For non-admin users, check if they have the required role
-        // This is a simplified check - in production, you'd use a more sophisticated
-        // permission system (e.g., RBAC, ABAC)
-        if (userRole === 'manager' || userRole === 'supervisor') {
-          hasPermission = true;
-          break;
-        }
-      }
+      // Check if user has any of the required roles
+      let hasPermission = roles.includes(userRole);
 
       // Return 403 if insufficient permissions
       if (!hasPermission) {
         res.status(403).json({
           error: 'Forbidden: Insufficient permissions',
-          required: permissions,
+          required: roles,
         });
         return;
       }
