@@ -812,7 +812,6 @@ export default function TimeEntryList() {
 
   // Handle sheet close
   const handleClockInClose = () => {
-    console.log('🔴 ClockInSheet closed');
     setShowClockIn(false);
     fetchActive();
     fetchEntries(true);
@@ -860,10 +859,7 @@ export default function TimeEntryList() {
           {!activeEntry && (
             <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
               <Button
-                onClick={() => {
-                  console.log('🟢 Clock In button clicked, opening sheet');
-                  setShowClockIn(true);
-                }}
+                onClick={() => setShowClockIn(true)}
                 size="sm"
                 className="gap-1.5 rounded-lg bg-emerald-600 text-white hover:bg-emerald-500"
               >
