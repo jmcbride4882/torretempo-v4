@@ -131,23 +131,29 @@ export const locations = pgTable(
 );
 
 // ============================================================================
-// SKILLS TABLE
+// FEATURE_FLAGS TABLE
 // ============================================================================
-export const skills = pgTable(
-  'skills',
+export const feature_flags = pgTable(
+  'feature_flags',
   {
     id: uuid('id').primaryKey().defaultRandom(),
-    organization_id: text('organization_id').notNull(),
-    name: varchar('name', { length: 255 }).notNull(),
-    color: varchar('color', { length: 7 }), // hex color
+    flag_key: varchar('flag_key', { length: 100 }).notNull().unique(),
+    description: text('description'),
+    enabled_globally: boolean('enabled_globally').notNull().default(false),
+    enabled_for_orgs: text('enabled_for_orgs').array(),
+    disabled_for_orgs: text('disabled_for_orgs').array(),
     created_at: timestamp('created_at', { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+    updated_at: timestamp('updated_at', { withTimezone: true })
       .notNull()
       .defaultNow(),
   },
   (table) => ({
-    org_idx: index('skills_org_idx').on(table.organization_id),
+    flag_key_idx: uniqueIndex('feature_flags_flag_key_idx').on(table.flag_key),
   })
 );
+
 
 // ============================================================================
 // MEMBER_SKILLS JUNCTION TABLE

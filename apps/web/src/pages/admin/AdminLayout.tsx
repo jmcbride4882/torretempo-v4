@@ -15,6 +15,7 @@ import {
   AlertTriangle,
   Menu,
   X,
+  Flag,
 } from 'lucide-react';
 import { useState } from 'react';
 import { cn } from '@/lib/utils';
@@ -38,6 +39,7 @@ import ErrorLogsPage from './ErrorLogsPage';
 import InspectorTokensPage from './InspectorTokensPage';
 import AuditPage from './AuditPage';
 import AnalyticsPage from './AnalyticsPage';
+import FeatureFlagsPage from './FeatureFlagsPage';
 
 // Admin nav items
 const adminNavItems = [
@@ -47,6 +49,7 @@ const adminNavItems = [
   { icon: Server, label: 'System', path: 'system' },
   { icon: AlertTriangle, label: 'Error Logs', path: 'errors' },
   { icon: Key, label: 'Inspector Tokens', path: 'inspector-tokens' },
+  { icon: Flag, label: 'Feature Flags', path: 'feature-flags' },
   { icon: FileText, label: 'Audit', path: 'audit' },
   { icon: BarChart3, label: 'Analytics', path: 'analytics' },
 ];
@@ -363,6 +366,7 @@ export default function AdminLayout() {
                 <Route path="system" element={<SystemPage />} />
                 <Route path="errors" element={<ErrorLogsPage />} />
                 <Route path="inspector-tokens" element={<InspectorTokensPage />} />
+                <Route path="feature-flags" element={<FeatureFlagsPage />} />
                 <Route path="audit" element={<AuditPage />} />
                 <Route path="analytics" element={<AnalyticsPage />} />
                 <Route path="*" element={<Navigate to="tenants" replace />} />

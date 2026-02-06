@@ -262,6 +262,21 @@ export interface AnalyticsData {
   };
 }
 
+export interface FeatureFlag {
+  id: string;
+  flag_key: string;
+  description: string | null;
+  enabled_globally: boolean;
+  enabled_for_orgs: string[] | null;
+  disabled_for_orgs: string[] | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface FeatureFlagsResponse {
+  flags: FeatureFlag[];
+}
+
 // ============================================================================
 // TENANTS API
 // ============================================================================
@@ -610,4 +625,57 @@ export async function fetchAnalytics(params?: {
   const url = `${API_URL}/api/admin/analytics?${searchParams.toString()}`;
   const response = await fetch(url, { credentials: 'include' });
   return handleResponse<AnalyticsData>(response);
+}
+
+// ============================================================================
+// FEATURE FLAGS API
+// ============================================================================
+
+export async function fetchFeatureFlags(): Promise<FeatureFlagsResponse> {
+  const url = `${API_URL}/api/admin/feature-flags`;
+  const response = await fetch(url, { credentials: 'include' });
+  return handleResponse<FeatureFlagsResponse>(response);
+}
+
+export async function createFeatureFlag(data: {
+  flag_key: string;
+  description?: string;
+  enabled_globally?: boolean;
+}): Promise<{ flag: FeatureFlag }> {
+  const url = `${API_URL}/api/admin/feature-flags`;
+  const response = await fetch(url, {
+    method: 'POST',
+    credentials: 'include',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data),
+  });
+  return handleResponse<{ flag: FeatureFlag }>(response);
+}
+
+export async function updateFeatureFlag(
+  flagId: string,
+  updates: {
+    description?: string;
+    enabled_globally?: boolean;
+    enabled_for_orgs?: string[];
+    disabled_for_orgs?: string[];
+  }
+): Promise<{ flag: FeatureFlag }> {
+  const url = `${API_URL}/api/admin/feature-flags/${flagId}`;
+  const response = await fetch(url, {
+    method: 'PATCH',
+    credentials: 'include',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(updates),
+  });
+  return handleResponse<{ flag: FeatureFlag }>(response);
+}
+
+export async function deleteFeatureFlag(flagId: string): Promise<{ message: string }> {
+  const url = `${API_URL}/api/admin/feature-flags/${flagId}`;
+  const response = await fetch(url, {
+    method: 'DELETE',
+    credentials: 'include',
+  });
+  return handleResponse<{ message: string }>(response);
 }
