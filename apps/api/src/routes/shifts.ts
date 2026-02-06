@@ -1,7 +1,7 @@
 import { Router, Request, Response } from 'express';
-import { eq, and, gte, lte, isNull } from 'drizzle-orm';
+import { eq, and, gte, lte, isNull, inArray } from 'drizzle-orm';
 import { db } from '../db/index.js';
-import { shifts, locations } from '../db/schema.js';
+import { shifts, locations, shift_templates } from '../db/schema.js';
 import { requireRole } from '../middleware/requireRole.js';
 import { logAudit } from '../services/audit.service.js';
 import { assignUserToShift, unassignUserFromShift } from '../services/shift.service.js';
@@ -131,14 +131,139 @@ router.post('/', requireRole(['manager', 'tenantAdmin', 'owner']), async (req: R
       newData: newShift[0],
     });
 
-    res.status(201).json({ shift: newShift[0] });
-  } catch (error) {
-    console.error('Error creating shift:', error);
-    res.status(500).json({ error: 'Failed to create shift' });
-  }
-});
+     res.status(201).json({ shift: newShift[0] });
+   } catch (error) {
+     console.error('Error creating shift:', error);
+     res.status(500).json({ error: 'Failed to create shift' });
+   }
+ });
 
-// PUT /api/v1/org/:slug/shifts/:id - Update shift (manager+ only)
+ // POST /api/v1/org/:slug/shifts/from-template - Create shift from template (manager+ only)
+ router.post('/from-template', requireRole(['manager', 'tenantAdmin', 'owner']), async (req: Request, res: Response) => {
+   try {
+     const organizationId = req.organizationId!;
+     const userId = req.user!.id;
+     const {
+       template_id,
+       date, // YYYY-MM-DD format
+       location_id: override_location_id,
+       notes: override_notes,
+     } = req.body;
+
+     // Validate required fields
+     if (!template_id || !date) {
+       return res.status(400).json({
+         error: 'Missing required fields: template_id, date (YYYY-MM-DD)',
+       });
+     }
+
+     // Validate date format (YYYY-MM-DD)
+     const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
+     if (!dateRegex.test(date)) {
+       return res.status(400).json({
+         error: 'Invalid date format. Use YYYY-MM-DD',
+       });
+     }
+
+     // Fetch and validate template
+     const templateResult = await db
+       .select()
+       .from(shift_templates)
+       .where(
+         and(
+           eq(shift_templates.id, template_id as string),
+           eq(shift_templates.organization_id, organizationId),
+           eq(shift_templates.is_active, true)
+         )
+       )
+       .limit(1);
+
+     if (templateResult.length === 0) {
+       return res.status(404).json({
+         error: 'Template not found or is inactive',
+       });
+     }
+
+     const template = templateResult[0]!;
+
+     // Determine location_id (use override or template default)
+     const location_id = override_location_id || template.location_id;
+
+     if (!location_id) {
+       return res.status(400).json({
+         error: 'No location specified. Provide location_id or use template with default location',
+       });
+     }
+
+     // Verify location belongs to organization
+     const locationResult = await db
+       .select()
+       .from(locations)
+       .where(
+         and(
+           eq(locations.id, location_id as string),
+           eq(locations.organization_id, organizationId)
+         )
+       )
+       .limit(1);
+
+     if (locationResult.length === 0) {
+       return res.status(400).json({ error: 'Invalid location_id' });
+     }
+
+     // Convert template times to full timestamps
+     // Parse HH:mm from template and combine with date
+     const [startHour, startMin] = template.start_time.split(':').map(Number);
+     const [endHour, endMin] = template.end_time.split(':').map(Number);
+
+     const startDateTime = new Date(`${date}T${String(startHour).padStart(2, '0')}:${String(startMin).padStart(2, '0')}:00Z`);
+     const endDateTime = new Date(`${date}T${String(endHour).padStart(2, '0')}:${String(endMin).padStart(2, '0')}:00Z`);
+
+     // Validate times
+     if (isNaN(startDateTime.getTime()) || isNaN(endDateTime.getTime())) {
+       return res.status(400).json({
+         error: 'Invalid date or time conversion',
+       });
+     }
+
+     // Create shift from template
+     const newShift = await db
+       .insert(shifts)
+       .values({
+         organization_id: organizationId,
+         location_id: location_id as string,
+         user_id: null,
+         start_time: startDateTime,
+         end_time: endDateTime,
+         break_minutes: template.break_minutes,
+         notes: override_notes || null,
+         color: template.color,
+         status: 'draft',
+         required_skill_id: template.required_skill_id,
+         template_id: template_id as string,
+         created_by: userId,
+         is_published: false,
+       })
+       .returning();
+
+     // Log audit
+     await logAudit({
+       orgId: organizationId,
+       actorId: userId,
+       action: 'shift.create_from_template',
+       entityType: 'shifts',
+       entityId: newShift[0]!.id,
+       newData: newShift[0],
+     });
+
+     res.status(201).json({ shift: newShift[0] });
+   } catch (error) {
+     console.error('Error creating shift from template:', error);
+     res.status(500).json({ error: 'Failed to create shift from template' });
+   }
+ });
+
+ // PUT /api/v1/org/:slug/shifts/:id - Update shift (manager+ only)
 router.put('/:id', requireRole(['manager', 'tenantAdmin', 'owner']), async (req: Request, res: Response) => {
   try {
     const organizationId = req.organizationId!;
@@ -228,7 +353,64 @@ router.delete('/:id', requireRole(['manager', 'tenantAdmin', 'owner']), async (r
   }
 });
 
-// POST /api/v1/org/:slug/shifts/:id/publish - Publish shift (manager+ only)
+
+
+// POST /api/v1/org/:slug/shifts/publish-many - Bulk publish multiple shifts (manager+ only)
+// Must come before /:id routes to avoid being matched as an ID
+router.post('/publish-many', requireRole(['manager', 'tenantAdmin', 'owner']), async (req: Request, res: Response) => {
+  try {
+    const organizationId = req.organizationId!;
+    const userId = req.user!.id;
+    const { shift_ids } = req.body;
+
+    // Validate input
+    if (!Array.isArray(shift_ids) || shift_ids.length === 0) {
+      return res.status(400).json({ error: 'shift_ids must be a non-empty array' });
+    }
+
+    // Fetch all shifts to verify they belong to organization
+    const existingShifts = await db
+      .select()
+      .from(shifts)
+      .where(and(eq(shifts.organization_id, organizationId), inArray(shifts.id, shift_ids)));
+
+    if (existingShifts.length !== shift_ids.length) {
+      return res.status(400).json({ error: 'One or more shifts not found or do not belong to this organization' });
+    }
+
+    // Update all shifts to published
+    const updated = await db
+      .update(shifts)
+      .set({ 
+        is_published: true,
+        published_at: new Date(),
+        updated_at: new Date(),
+      })
+      .where(and(eq(shifts.organization_id, organizationId), inArray(shifts.id, shift_ids)))
+      .returning();
+
+    // Log audit for each shift
+    for (const shift of updated) {
+      const oldData = existingShifts.find(s => s.id === shift.id);
+      await logAudit({
+        orgId: organizationId,
+        actorId: userId,
+        action: 'shift.publish',
+        entityType: 'shifts',
+        entityId: shift.id,
+        oldData,
+        newData: shift,
+      });
+    }
+
+    res.json({ shifts: updated, count: updated.length });
+  } catch (error) {
+    console.error('Error publishing shifts:', error);
+    res.status(500).json({ error: 'Failed to publish shifts' });
+  }
+});
+
+// POST /api/v1/org/:slug/shifts/:id/publish - Publish single shift using is_published flag (manager+ only)
 router.post('/:id/publish', requireRole(['manager', 'tenantAdmin', 'owner']), async (req: Request, res: Response) => {
   try {
     const organizationId = req.organizationId!;
@@ -246,16 +428,13 @@ router.post('/:id/publish', requireRole(['manager', 'tenantAdmin', 'owner']), as
       return res.status(404).json({ error: 'Shift not found' });
     }
 
-    if (existing[0]!.status !== 'draft') {
-      return res.status(400).json({ error: 'Can only publish draft shifts' });
-    }
-
-    // Update shift to published
+    // Update shift to published (set is_published = true, published_at only if not already set)
+    const publishedAt = existing[0]!.published_at || new Date();
     const updated = await db
       .update(shifts)
       .set({ 
-        status: 'published',
-        published_at: new Date(),
+        is_published: true,
+        published_at: publishedAt,
         updated_at: new Date(),
       })
       .where(and(eq(shifts.id, id), eq(shifts.organization_id, organizationId)))
@@ -276,6 +455,52 @@ router.post('/:id/publish', requireRole(['manager', 'tenantAdmin', 'owner']), as
   } catch (error) {
     console.error('Error publishing shift:', error);
     res.status(500).json({ error: 'Failed to publish shift' });
+  }
+});
+
+// POST /api/v1/org/:slug/shifts/:id/unpublish - Unpublish single shift (manager+ only)
+router.post('/:id/unpublish', requireRole(['manager', 'tenantAdmin', 'owner']), async (req: Request, res: Response) => {
+  try {
+    const organizationId = req.organizationId!;
+    const userId = req.user!.id;
+    const id = req.params.id as string;
+
+    // Fetch existing shift
+    const existing = await db
+      .select()
+      .from(shifts)
+      .where(and(eq(shifts.id, id), eq(shifts.organization_id, organizationId)))
+      .limit(1);
+
+    if (existing.length === 0) {
+      return res.status(404).json({ error: 'Shift not found' });
+    }
+
+    // Update shift to unpublished
+    const updated = await db
+      .update(shifts)
+      .set({ 
+        is_published: false,
+        updated_at: new Date(),
+      })
+      .where(and(eq(shifts.id, id), eq(shifts.organization_id, organizationId)))
+      .returning();
+
+    // Log audit
+    await logAudit({
+      orgId: organizationId,
+      actorId: userId,
+      action: 'shift.unpublish',
+      entityType: 'shifts',
+      entityId: id,
+      oldData: existing[0],
+      newData: updated[0],
+    });
+
+    res.json({ shift: updated[0] });
+  } catch (error) {
+    console.error('Error unpublishing shift:', error);
+    res.status(500).json({ error: 'Failed to unpublish shift' });
   }
 });
 

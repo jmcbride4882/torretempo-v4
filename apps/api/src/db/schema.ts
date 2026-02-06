@@ -195,6 +195,37 @@ export const availability = pgTable(
 );
 
 // ============================================================================
+// SHIFT_TEMPLATES TABLE
+// ============================================================================
+export const shift_templates = pgTable(
+  'shift_templates',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    organization_id: text('organization_id').notNull(),
+    name: varchar('name', { length: 100 }).notNull(), // "Morning Shift", "Afternoon Shift", etc.
+    start_time: varchar('start_time', { length: 5 }).notNull(), // HH:mm format (e.g., "08:00")
+    end_time: varchar('end_time', { length: 5 }).notNull(), // HH:mm format (e.g., "16:00")
+    break_minutes: integer('break_minutes').notNull().default(0),
+    location_id: uuid('location_id'), // Default location (nullable)
+    color: varchar('color', { length: 7 }), // hex color
+    required_skill_id: uuid('required_skill_id'), // nullable
+    is_active: boolean('is_active').notNull().default(true), // Soft delete
+    created_by: text('created_by').notNull(),
+    created_at: timestamp('created_at', { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+    updated_at: timestamp('updated_at', { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+  },
+  (table) => ({
+    org_idx: index('shift_templates_org_idx').on(table.organization_id),
+    is_active_idx: index('shift_templates_is_active_idx').on(table.is_active),
+    location_idx: index('shift_templates_location_idx').on(table.location_id),
+  })
+);
+
+// ============================================================================
 // SHIFTS TABLE
 // ============================================================================
 export const shifts = pgTable(
@@ -204,10 +235,12 @@ export const shifts = pgTable(
     organization_id: text('organization_id').notNull(),
     user_id: text('user_id'), // nullable - shift can be unassigned
     location_id: uuid('location_id').notNull(),
+    template_id: uuid('template_id'), // Reference to shift_templates (nullable)
     start_time: timestamp('start_time', { withTimezone: true }).notNull(),
     end_time: timestamp('end_time', { withTimezone: true }).notNull(),
     break_minutes: integer('break_minutes').default(0),
     status: varchar('status', { length: 20 }).notNull().default('draft'), // draft, published, completed, cancelled
+    is_published: boolean('is_published').notNull().default(false), // Draft/publish workflow
     notes: text('notes'),
     color: varchar('color', { length: 7 }), // hex color
     required_skill_id: uuid('required_skill_id'), // nullable
@@ -226,6 +259,8 @@ export const shifts = pgTable(
     user_idx: index('shifts_user_idx').on(table.user_id),
     location_idx: index('shifts_location_idx').on(table.location_id),
     status_idx: index('shifts_status_idx').on(table.status),
+    template_idx: index('shifts_template_idx').on(table.template_id),
+    published_idx: index('shifts_published_idx').on(table.is_published, table.organization_id, table.user_id),
   })
 );
 

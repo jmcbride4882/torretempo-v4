@@ -9,6 +9,7 @@ import { requireAdmin } from './middleware/requireAdmin.js';
 import { errorLogger } from './middleware/errorLogger.js';
 import { testConnection } from './db/index.js';
 import shiftsRouter from './routes/shifts.js';
+import shiftTemplatesRouter from './routes/shift-templates.js';
 import locationsRouter from './routes/locations.js';
 import swapsRouter from './routes/swaps.js';
 import notificationsRouter from './routes/notifications.js';
@@ -111,6 +112,7 @@ app.use('/api/inspector/v1', inspectorRouter);
 // Tenant routes
 app.use('/api/v1/org/:slug/locations', tenantMiddleware, locationsRouter);
 app.use('/api/v1/org/:slug/shifts', tenantMiddleware, shiftsRouter);
+app.use('/api/v1/org/:slug/shift-templates', tenantMiddleware, shiftTemplatesRouter);
 app.use('/api/v1/org/:slug/swaps', tenantMiddleware, swapsRouter);
 app.use('/api/v1/org/:slug/notifications', tenantMiddleware, notificationsRouter);
 app.use('/api/v1/org/:slug/time-entries', tenantMiddleware, timeEntriesRouter);
