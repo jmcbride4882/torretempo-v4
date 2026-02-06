@@ -128,21 +128,10 @@ router.get(
       const activeOrganizations = totalOrganizations; // Placeholder
 
       // Get average members per organization
-      const avgMembersResult = await db
-        .select({
-          avgMembers: sql<number>`AVG(member_count)`,
-        })
-        .from(
-          db
-            .select({
-              organizationId: user.id,
-              memberCount: count(),
-            })
-            .from(user)
-            .groupBy(user.id)
-            .as('org_member_counts')
-        );
-      const averageMembersPerOrg = Number(avgMembersResult[0]?.avgMembers) || 0;
+      // Note: Simplified calculation - just total users / total orgs
+      const averageMembersPerOrg = totalOrganizations > 0 
+        ? Math.round(totalUsers / totalOrganizations) 
+        : 0;
 
       // ====================================================================
       // FEATURE ADOPTION (PLACEHOLDER)

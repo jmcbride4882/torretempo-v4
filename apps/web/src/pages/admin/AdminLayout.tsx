@@ -18,6 +18,7 @@ import {
   Flag,
   Bell,
   Monitor,
+  Settings,
 } from 'lucide-react';
 import { useState } from 'react';
 import { cn } from '@/lib/utils';
@@ -44,6 +45,7 @@ import AnalyticsPage from './AnalyticsPage';
 import FeatureFlagsPage from './FeatureFlagsPage';
 import NotificationsPage from './NotificationsPage';
 import SessionsPage from './SessionsPage';
+import SettingsPage from './SettingsPage';
 
 // Admin nav items
 const adminNavItems = [
@@ -58,6 +60,7 @@ const adminNavItems = [
   { icon: Bell, label: 'Notifications', path: 'notifications' },
   { icon: FileText, label: 'Audit', path: 'audit' },
   { icon: BarChart3, label: 'Analytics', path: 'analytics' },
+  { icon: Settings, label: 'Settings', path: 'settings' },
 ];
 
 
@@ -377,6 +380,7 @@ export default function AdminLayout() {
                 <Route path="notifications" element={<NotificationsPage />} />
                 <Route path="audit" element={<AuditPage />} />
                 <Route path="analytics" element={<AnalyticsPage />} />
+                <Route path="settings" element={<SettingsPage />} />
                 <Route path="*" element={<Navigate to="tenants" replace />} />
               </Routes>
             </motion.div>

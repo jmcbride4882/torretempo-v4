@@ -3,7 +3,7 @@ import { requireAdmin } from '../../middleware/requireAdmin.js';
 import { logAdminAction } from '../../services/adminAudit.service.js';
 import { db } from '../../db/index.js';
 import { session, user } from '../../db/schema.js';
-import { eq, desc, and, gt, inArray } from 'drizzle-orm';
+import { eq, desc, and, gt, inArray, sql } from 'drizzle-orm';
 
 const router = Router();
 
@@ -64,7 +64,7 @@ router.get('/', requireAdmin, async (req: Request, res: Response) => {
 
     // Get total count
     const totalResult = await db
-      .select({ count: db.$count(session.id) })
+      .select({ count: sql<number>`count(*)::int` })
       .from(session)
       .innerJoin(user, eq(session.userId, user.id))
       .where(conditions.length > 0 ? and(...conditions) : undefined);

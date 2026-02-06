@@ -31,6 +31,7 @@ import broadcastsRouter from './routes/admin/broadcasts.js';
 import billingRouter from './routes/admin/billing.js';
 import impersonationRouter from './routes/admin/impersonation.js';
 import sessionsRouter from './routes/admin/sessions.js';
+import settingsRouter from './routes/admin/settings.js';
 import stripeWebhookRouter from './routes/webhooks/stripe.js';
 import 'dotenv/config';
 import './workers/email.worker.js';
@@ -92,6 +93,7 @@ app.use('/api/admin/broadcasts', broadcastsRouter);
 app.use('/api/admin/billing', billingRouter);
 app.use('/api/admin/users', impersonationRouter);
 app.use('/api/admin/sessions', sessionsRouter);
+app.use('/api/admin/settings', settingsRouter);
 
 // Admin routes (tenant-specific)
 app.use('/api/admin/:slug/inspector-tokens', tenantMiddleware, inspectorTokensRouter);

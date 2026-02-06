@@ -805,3 +805,76 @@ export async function revokeSession(sessionId: string): Promise<{ success: boole
   });
   return handleResponse<{ success: boolean }>(response);
 }
+
+// ============================================================================
+// SETTINGS API
+// ============================================================================
+
+export interface SettingsStripe {
+  secretKey: string;
+  publishableKey: string;
+  webhookSecret: string;
+}
+
+export interface SettingsGoCardless {
+  accessToken: string;
+  webhookSecret: string;
+  environment: 'sandbox' | 'live';
+}
+
+export interface SettingsEmail {
+  resendApiKey: string;
+}
+
+export interface SettingsPayment {
+  currency: string;
+}
+
+export interface AdminSettings {
+  stripe: SettingsStripe;
+  gocardless: SettingsGoCardless;
+  email: SettingsEmail;
+  payment: SettingsPayment;
+}
+
+export interface SettingsResponse {
+  settings: AdminSettings;
+}
+
+export interface UpdateSettingsResponse {
+  message: string;
+  changedKeys: string[];
+  requiresRestart: boolean;
+}
+
+export interface RestartServerResponse {
+  message: string;
+}
+
+export async function fetchSettings(): Promise<SettingsResponse> {
+  const url = `${API_URL}/api/admin/settings`;
+  const response = await fetch(url, { credentials: 'include' });
+  return handleResponse<SettingsResponse>(response);
+}
+
+export async function updateSettings(
+  settings: Partial<AdminSettings>
+): Promise<UpdateSettingsResponse> {
+  const url = `${API_URL}/api/admin/settings`;
+  const response = await fetch(url, {
+    method: 'PUT',
+    credentials: 'include',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(settings),
+  });
+  return handleResponse<UpdateSettingsResponse>(response);
+}
+
+export async function restartServer(): Promise<RestartServerResponse> {
+  const url = `${API_URL}/api/admin/settings/restart`;
+  const response = await fetch(url, {
+    method: 'POST',
+    credentials: 'include',
+  });
+  return handleResponse<RestartServerResponse>(response);
+}
