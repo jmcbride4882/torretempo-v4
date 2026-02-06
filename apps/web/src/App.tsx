@@ -10,6 +10,8 @@ import Landing from '@/pages/Landing';
 // Auth pages
 import SignIn from '@/pages/auth/SignIn';
 import SignUp from '@/pages/auth/SignUp';
+import ResetPassword from '@/pages/auth/ResetPassword';
+import VerifyEmail from '@/pages/auth/VerifyEmail';
 
 // Onboarding pages
 import CreateTenant from '@/pages/onboarding/CreateTenant';
@@ -32,6 +34,8 @@ function App() {
           {/* Public auth routes */}
           <Route path="/auth/signin" element={<SignIn />} />
           <Route path="/auth/signup" element={<SignUp />} />
+          <Route path="/auth/reset-password" element={<ResetPassword />} />
+          <Route path="/auth/verify-email" element={<VerifyEmail />} />
 
           {/* Protected routes */}
           <Route element={<ProtectedRoute />}>
