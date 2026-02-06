@@ -1106,7 +1106,7 @@ router.post(
       });
 
       // Queue password reset email
-      const resetLink = `${process.env.BETTER_AUTH_URL || 'http://localhost:3000'}/auth/reset-password?token=${token}`;
+      const resetLink = `${process.env.AUTH_BASE_URL || 'http://localhost:3000'}/auth/reset-password?token=${token}`;
       
       await emailQueue.add('password-reset', {
         to: targetUser!.email,
@@ -1200,7 +1200,7 @@ router.post(
       });
 
       // Queue email verification
-      const verifyLink = `${process.env.BETTER_AUTH_URL || 'http://localhost:3000'}/auth/verify-email?token=${token}`;
+      const verifyLink = `${process.env.AUTH_BASE_URL || 'http://localhost:3000'}/auth/verify-email?token=${token}`;
       
       await emailQueue.add('email-verification', {
         to: targetUser!.email,

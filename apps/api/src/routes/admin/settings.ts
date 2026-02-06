@@ -90,8 +90,8 @@ router.get('/', requireAdmin, async (_req: Request, res: Response) => {
         url: maskKey(process.env.REDIS_URL || ''),
       },
       auth: {
-        url: process.env.BETTER_AUTH_URL || '',
-        secret: maskKey(process.env.BETTER_AUTH_SECRET || ''),
+        url: process.env.AUTH_BASE_URL || '',
+        secret: maskKey(process.env.AUTH_SECRET || ''),
       },
       admin: {
         email: process.env.ADMIN_EMAIL || '',
@@ -244,13 +244,13 @@ router.put('/', requireAdmin, async (req: Request, res: Response) => {
 
     // Update Better Auth settings
     if (updates.auth) {
-      if (updates.auth.url && updates.auth.url !== process.env.BETTER_AUTH_URL) {
-        envVars.set('BETTER_AUTH_URL', updates.auth.url);
-        changedKeys.push('BETTER_AUTH_URL');
+      if (updates.auth.url && updates.auth.url !== process.env.AUTH_BASE_URL) {
+        envVars.set('AUTH_BASE_URL', updates.auth.url);
+        changedKeys.push('AUTH_BASE_URL');
       }
-      if (shouldUpdate(updates.auth.secret, process.env.BETTER_AUTH_SECRET || '')) {
-        envVars.set('BETTER_AUTH_SECRET', updates.auth.secret!);
-        changedKeys.push('BETTER_AUTH_SECRET');
+      if (shouldUpdate(updates.auth.secret, process.env.AUTH_SECRET || '')) {
+        envVars.set('AUTH_SECRET', updates.auth.secret!);
+        changedKeys.push('AUTH_SECRET');
       }
     }
 
