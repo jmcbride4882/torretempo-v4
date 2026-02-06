@@ -807,6 +807,162 @@ export async function revokeSession(sessionId: string): Promise<{ success: boole
 }
 
 // ============================================================================
+// BILLING OPERATIONS API
+// ============================================================================
+
+export interface BillingInvoiceRequest {
+  customer_id: string;
+  amount: number;
+  description: string;
+}
+
+export interface BillingRefundRequest {
+  payment_intent_id: string;
+  amount?: number;
+  reason: 'duplicate' | 'fraudulent' | 'requested_by_customer';
+}
+
+export interface BillingCreditRequest {
+  customer_id: string;
+  amount: number;
+  description: string;
+}
+
+export interface BillingInvoiceResponse {
+  message: string;
+  invoice: Record<string, unknown>;
+}
+
+export interface BillingRefundResponse {
+  message: string;
+  refund: Record<string, unknown>;
+}
+
+export interface BillingCreditResponse {
+  message: string;
+  credit: Record<string, unknown>;
+}
+
+export async function createInvoice(data: BillingInvoiceRequest): Promise<BillingInvoiceResponse> {
+  const url = `${API_URL}/api/admin/billing/invoice`;
+  const response = await fetch(url, {
+    method: 'POST',
+    credentials: 'include',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data),
+  });
+  return handleResponse<BillingInvoiceResponse>(response);
+}
+
+export async function processRefund(data: BillingRefundRequest): Promise<BillingRefundResponse> {
+  const url = `${API_URL}/api/admin/billing/refund`;
+  const response = await fetch(url, {
+    method: 'POST',
+    credentials: 'include',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data),
+  });
+  return handleResponse<BillingRefundResponse>(response);
+}
+
+export async function applyCredit(data: BillingCreditRequest): Promise<BillingCreditResponse> {
+  const url = `${API_URL}/api/admin/billing/credit`;
+  const response = await fetch(url, {
+    method: 'POST',
+    credentials: 'include',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data),
+  });
+  return handleResponse<BillingCreditResponse>(response);
+}
+
+// ============================================================================
+// SUBSCRIPTION PLANS API
+// ============================================================================
+
+export interface SubscriptionPlan {
+  id: string;
+  code: string;
+  name: string;
+  description: string | null;
+  price_cents: number;
+  currency: string;
+  billing_period: 'monthly' | 'annual';
+  employee_limit: number | null;
+  included_modules: Record<string, boolean>;
+  is_active: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface PlansResponse {
+  plans: SubscriptionPlan[];
+}
+
+export interface CreatePlanRequest {
+  code: string;
+  name: string;
+  description?: string;
+  price_cents: number;
+  currency: string;
+  billing_period: 'monthly' | 'annual';
+  employee_limit?: number | null;
+  included_modules?: Record<string, boolean>;
+  is_active?: boolean;
+}
+
+export interface UpdatePlanRequest {
+  name?: string;
+  description?: string | null;
+  price_cents?: number;
+  currency?: string;
+  billing_period?: 'monthly' | 'annual';
+  employee_limit?: number | null;
+  included_modules?: Record<string, boolean>;
+  is_active?: boolean;
+}
+
+export async function fetchPlans(): Promise<PlansResponse> {
+  const url = `${API_URL}/api/admin/plans`;
+  const response = await fetch(url, { credentials: 'include' });
+  return handleResponse<PlansResponse>(response);
+}
+
+export async function createPlan(data: CreatePlanRequest): Promise<{ plan: SubscriptionPlan }> {
+  const url = `${API_URL}/api/admin/plans`;
+  const response = await fetch(url, {
+    method: 'POST',
+    credentials: 'include',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data),
+  });
+  return handleResponse<{ plan: SubscriptionPlan }>(response);
+}
+
+export async function updatePlan(
+  planId: string,
+  updates: UpdatePlanRequest
+): Promise<{ plan: SubscriptionPlan }> {
+  const url = `${API_URL}/api/admin/plans/${planId}`;
+  const response = await fetch(url, {
+    method: 'PUT',
+    credentials: 'include',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(updates),
+  });
+  return handleResponse<{ plan: SubscriptionPlan }>(response);
+}
+
+export async function deactivatePlan(planId: string): Promise<{ message: string }> {
+  const url = `${API_URL}/api/admin/plans/${planId}`;
+  const response = await fetch(url, {
+    method: 'DELETE',
+    credentials: 'include',
+  });
+  return handleResponse<{ message: string }>(response);
+}
+
+// ============================================================================
 // SETTINGS API
 // ============================================================================
 
