@@ -50,8 +50,8 @@ services:
       # Redis
       REDIS_URL: redis://redis:6379
       # Better Auth
-      BETTER_AUTH_URL: ${BETTER_AUTH_URL}
-      BETTER_AUTH_SECRET: ${BETTER_AUTH_SECRET}
+      AUTH_BASE_URL: ${AUTH_BASE_URL}
+      AUTH_SECRET: ${AUTH_SECRET}
       # Admin Seed
       ADMIN_EMAIL: ${ADMIN_EMAIL}
       ADMIN_PASSWORD: ${ADMIN_PASSWORD}
