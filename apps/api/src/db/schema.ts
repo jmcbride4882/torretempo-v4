@@ -43,6 +43,7 @@ export const session = pgTable('session', {
   userId: text('userId')
     .notNull()
     .references(() => user.id),
+  impersonatedBy: text('impersonatedBy'), // Better Auth admin plugin impersonation
 });
 
 export const account = pgTable('account', {

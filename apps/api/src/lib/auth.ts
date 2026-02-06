@@ -20,7 +20,13 @@ export const auth = betterAuth({
     provider: 'pg',
     schema,
   }),
-  plugins: [organization(), admin()],
+  plugins: [
+    organization(),
+    admin({
+      impersonationSessionDuration: 60 * 60, // 1 hour impersonation sessions
+      allowImpersonatingAdmins: false, // Platform admins cannot impersonate other admins
+    }),
+  ],
   emailAndPassword: {
     enabled: true,
     requireEmailVerification: false,

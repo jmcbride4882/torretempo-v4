@@ -29,6 +29,8 @@ import errorsRouter from './routes/admin/errors.js';
 import featureFlagsRouter from './routes/admin/feature-flags.js';
 import broadcastsRouter from './routes/admin/broadcasts.js';
 import billingRouter from './routes/admin/billing.js';
+import impersonationRouter from './routes/admin/impersonation.js';
+import sessionsRouter from './routes/admin/sessions.js';
 import stripeWebhookRouter from './routes/webhooks/stripe.js';
 import 'dotenv/config';
 import './workers/email.worker.js';
@@ -88,6 +90,8 @@ app.use('/api/admin/errors', errorsRouter);
 app.use('/api/admin/feature-flags', featureFlagsRouter);
 app.use('/api/admin/broadcasts', broadcastsRouter);
 app.use('/api/admin/billing', billingRouter);
+app.use('/api/admin/users', impersonationRouter);
+app.use('/api/admin/sessions', sessionsRouter);
 
 // Admin routes (tenant-specific)
 app.use('/api/admin/:slug/inspector-tokens', tenantMiddleware, inspectorTokensRouter);

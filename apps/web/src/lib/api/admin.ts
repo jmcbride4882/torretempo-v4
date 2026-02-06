@@ -277,6 +277,27 @@ export interface FeatureFlagsResponse {
   flags: FeatureFlag[];
 }
 
+export interface AdminSession {
+  id: string;
+  userId: string;
+  userName: string;
+  userEmail: string;
+  userRole: string | null;
+  createdAt: string;
+  updatedAt: string;
+  expiresAt: string;
+  ipAddress: string | null;
+  userAgent: string | null;
+  impersonatedBy: string | null;
+}
+
+export interface SessionsResponse {
+  sessions: AdminSession[];
+  total: number;
+  limit: number;
+  offset: number;
+}
+
 export interface BroadcastMessage {
   id: string;
   admin_id: string;
@@ -753,4 +774,34 @@ export async function deleteBroadcast(broadcastId: string): Promise<{ message: s
     credentials: 'include',
   });
   return handleResponse<{ message: string }>(response);
+}
+
+// ============================================================================
+// SESSIONS API
+// ============================================================================
+
+export async function fetchSessions(params?: {
+  limit?: number;
+  offset?: number;
+  search?: string;
+  includeExpired?: boolean;
+}): Promise<SessionsResponse> {
+  const searchParams = new URLSearchParams();
+  if (params?.limit) searchParams.append('limit', params.limit.toString());
+  if (params?.offset !== undefined) searchParams.append('offset', params.offset.toString());
+  if (params?.search) searchParams.append('search', params.search);
+  if (params?.includeExpired !== undefined) searchParams.append('includeExpired', params.includeExpired.toString());
+
+  const url = `${API_URL}/api/admin/sessions?${searchParams.toString()}`;
+  const response = await fetch(url, { credentials: 'include' });
+  return handleResponse<SessionsResponse>(response);
+}
+
+export async function revokeSession(sessionId: string): Promise<{ success: boolean }> {
+  const url = `${API_URL}/api/admin/sessions/${sessionId}`;
+  const response = await fetch(url, {
+    method: 'DELETE',
+    credentials: 'include',
+  });
+  return handleResponse<{ success: boolean }>(response);
 }

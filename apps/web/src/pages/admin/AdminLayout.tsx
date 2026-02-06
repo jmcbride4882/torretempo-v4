@@ -17,6 +17,7 @@ import {
   X,
   Flag,
   Bell,
+  Monitor,
 } from 'lucide-react';
 import { useState } from 'react';
 import { cn } from '@/lib/utils';
@@ -42,11 +43,13 @@ import AuditPage from './AuditPage';
 import AnalyticsPage from './AnalyticsPage';
 import FeatureFlagsPage from './FeatureFlagsPage';
 import NotificationsPage from './NotificationsPage';
+import SessionsPage from './SessionsPage';
 
 // Admin nav items
 const adminNavItems = [
   { icon: Building2, label: 'Tenants', path: 'tenants' },
   { icon: Users, label: 'Users', path: 'users' },
+  { icon: Monitor, label: 'Sessions', path: 'sessions' },
   { icon: CreditCard, label: 'Subscriptions', path: 'subscriptions' },
   { icon: Server, label: 'System', path: 'system' },
   { icon: AlertTriangle, label: 'Error Logs', path: 'errors' },
@@ -365,6 +368,7 @@ export default function AdminLayout() {
               <Routes>
                 <Route path="tenants" element={<TenantsPage />} />
                 <Route path="users" element={<UsersPage />} />
+                <Route path="sessions" element={<SessionsPage />} />
                 <Route path="subscriptions" element={<SubscriptionsPage />} />
                 <Route path="system" element={<SystemPage />} />
                 <Route path="errors" element={<ErrorLogsPage />} />

@@ -28,6 +28,7 @@ import {
   Trash2,
   AlertTriangle,
   Key,
+  User,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -277,6 +278,42 @@ export default function UsersPage() {
     } catch (error) {
       console.error('Error sending verification email:', error);
       toast.error('Failed to send verification email');
+    }
+  };
+
+  // Impersonation handler
+  const handleImpersonate = async (user: AdminUser) => {
+    if (user.isAdmin) {
+      toast.error('Cannot impersonate other administrators');
+      return;
+    }
+
+    const confirmed = window.confirm(
+      `Are you sure you want to impersonate ${user.name} (${user.email})?\n\nYou will be logged in as this user and can perform actions on their behalf. This action is logged in the audit trail.`
+    );
+
+    if (!confirmed) return;
+
+    try {
+      const response = await fetch(`/api/admin/users/${user.id}/impersonate`, {
+        method: 'POST',
+        credentials: 'include',
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.message || 'Impersonation failed');
+      }
+
+      toast.success(`Now impersonating ${user.name}`);
+      
+      // Redirect to tenant dashboard or refresh to update session
+      setTimeout(() => {
+        window.location.href = '/';
+      }, 1000);
+    } catch (error) {
+      console.error('Error during impersonation:', error);
+      toast.error(error instanceof Error ? error.message : 'Failed to impersonate user');
     }
   };
 
@@ -562,6 +599,7 @@ export default function UsersPage() {
                   onRevokeAdmin={() => setConfirmModal({ type: 'revoke-admin', user })}
                   onSendPasswordReset={() => handleSendPasswordReset(user)}
                   onResendVerification={() => handleResendVerification(user)}
+                  onImpersonate={() => handleImpersonate(user)}
                 />
               ))}
             </AnimatePresence>
@@ -885,9 +923,10 @@ interface UserCardProps {
   onRevokeAdmin: () => void;
   onSendPasswordReset: () => void;
   onResendVerification: () => void;
+  onImpersonate: () => void;
 }
 
-function UserCard({ user, index, isSelected, onToggleSelect, onEdit, onBan, onUnban, onGrantAdmin, onRevokeAdmin, onSendPasswordReset, onResendVerification }: UserCardProps) {
+function UserCard({ user, index, isSelected, onToggleSelect, onEdit, onBan, onUnban, onGrantAdmin, onRevokeAdmin, onSendPasswordReset, onResendVerification, onImpersonate }: UserCardProps) {
   return (
     <motion.div
       layout
@@ -965,6 +1004,15 @@ function UserCard({ user, index, isSelected, onToggleSelect, onEdit, onBan, onUn
                 Edit
               </DropdownMenuItem>
               <DropdownMenuSeparator className="bg-white/10" />
+              {!user.isAdmin && (
+                <>
+                  <DropdownMenuItem onClick={onImpersonate} className="gap-2 text-purple-400">
+                    <User className="h-4 w-4" />
+                    Impersonate User
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator className="bg-white/10" />
+                </>
+              )}
               <DropdownMenuItem onClick={onSendPasswordReset} className="gap-2 text-orange-400">
                 <Key className="h-4 w-4" />
                 Send Password Reset
