@@ -16,6 +16,7 @@ import {
   CheckCircle2,
   MoreVertical,
   Mail,
+  MailCheck,
   Building2,
   UserMinus,
   UserPlus,
@@ -26,6 +27,7 @@ import {
   X,
   Trash2,
   AlertTriangle,
+  Key,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -63,6 +65,8 @@ import {
   updateUser,
   bulkBanUsers,
   bulkDeleteUsers,
+  sendPasswordReset,
+  resendVerificationEmail,
 } from '@/lib/api/admin';
 import type { AdminUser } from '@/lib/api/admin';
 
@@ -248,6 +252,32 @@ export default function UsersPage() {
       emailVerified: user.emailVerified,
     });
     setEditModal(user);
+  };
+
+  // Email action handlers
+  const handleSendPasswordReset = async (user: AdminUser) => {
+    try {
+      await sendPasswordReset(user.id);
+      toast.success(`Password reset email sent to ${user.email}`);
+    } catch (error) {
+      console.error('Error sending password reset:', error);
+      toast.error('Failed to send password reset email');
+    }
+  };
+
+  const handleResendVerification = async (user: AdminUser) => {
+    if (user.emailVerified) {
+      toast.error('Email is already verified');
+      return;
+    }
+    
+    try {
+      await resendVerificationEmail(user.id);
+      toast.success(`Verification email sent to ${user.email}`);
+    } catch (error) {
+      console.error('Error sending verification email:', error);
+      toast.error('Failed to send verification email');
+    }
   };
 
   // Selection helpers
@@ -530,6 +560,8 @@ export default function UsersPage() {
                   onUnban={() => setConfirmModal({ type: 'unban', user })}
                   onGrantAdmin={() => setConfirmModal({ type: 'grant-admin', user })}
                   onRevokeAdmin={() => setConfirmModal({ type: 'revoke-admin', user })}
+                  onSendPasswordReset={() => handleSendPasswordReset(user)}
+                  onResendVerification={() => handleResendVerification(user)}
                 />
               ))}
             </AnimatePresence>
@@ -851,9 +883,11 @@ interface UserCardProps {
   onUnban: () => void;
   onGrantAdmin: () => void;
   onRevokeAdmin: () => void;
+  onSendPasswordReset: () => void;
+  onResendVerification: () => void;
 }
 
-function UserCard({ user, index, isSelected, onToggleSelect, onEdit, onBan, onUnban, onGrantAdmin, onRevokeAdmin }: UserCardProps) {
+function UserCard({ user, index, isSelected, onToggleSelect, onEdit, onBan, onUnban, onGrantAdmin, onRevokeAdmin, onSendPasswordReset, onResendVerification }: UserCardProps) {
   return (
     <motion.div
       layout
@@ -930,6 +964,17 @@ function UserCard({ user, index, isSelected, onToggleSelect, onEdit, onBan, onUn
                 <Edit className="h-4 w-4" />
                 Edit
               </DropdownMenuItem>
+              <DropdownMenuSeparator className="bg-white/10" />
+              <DropdownMenuItem onClick={onSendPasswordReset} className="gap-2 text-orange-400">
+                <Key className="h-4 w-4" />
+                Send Password Reset
+              </DropdownMenuItem>
+              {!user.emailVerified && (
+                <DropdownMenuItem onClick={onResendVerification} className="gap-2 text-cyan-400">
+                  <MailCheck className="h-4 w-4" />
+                  Resend Verification
+                </DropdownMenuItem>
+              )}
               <DropdownMenuSeparator className="bg-white/10" />
               {user.isAdmin ? (
                 <DropdownMenuItem onClick={onRevokeAdmin} className="gap-2 text-amber-400">

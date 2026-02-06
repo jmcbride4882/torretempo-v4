@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Verify Your Email Address</title>
+  </head>
+  <body
+    style="margin:0; padding:0; background-color:#0b1120; font-family:'Inter','Segoe UI',Arial,sans-serif;"
+  >
+    <div style="display:none; max-height:0; overflow:hidden; opacity:0;">
+      Verify your Torre Tempo email address.
+    </div>
+    <table
+      width="100%"
+      cellpadding="0"
+      cellspacing="0"
+      style="background: radial-gradient(circle at top, #1e3a8a 0%, #0b1120 55%); padding: 32px 16px;"
+    >
+      <tr>
+        <td align="center">
+          <table
+            width="100%"
+            cellpadding="0"
+            cellspacing="0"
+            style="max-width: 640px; background: rgba(15,23,42,0.92); border-radius: 24px; border: 1px solid rgba(148,163,184,0.25); box-shadow: 0 30px 60px rgba(15,23,42,0.45);"
+          >
+            <tr>
+              <td style="padding: 0;">
+                <div
+                  style="height: 4px; background: linear-gradient(90deg, #10b981, #059669, #14b8a6); border-radius: 24px 24px 0 0;"
+                ></div>
+              </td>
+            </tr>
+            <tr>
+              <td style="padding: 28px 28px 20px;">
+                <table width="100%" cellpadding="0" cellspacing="0">
+                  <tr>
+                    <td
+                      style="font-size: 12px; letter-spacing: 2px; text-transform: uppercase; color: #94a3b8;"
+                    >
+                      {{appName}}
+                    </td>
+                    <td align="right" style="font-size: 12px; color: #94a3b8;">Verification</td>
+                  </tr>
+                </table>
+                <h1 style="margin: 18px 0 8px; font-size: 24px; color: #f8fafc;">
+                  Verify Your Email Address
+                </h1>
+                <p style="margin: 0 0 16px; color: #cbd5e1; font-size: 15px;">
+                  Verifica tu dirección de correo electrónico
+                </p>
+                <p style="margin: 0 0 12px; color: #e2e8f0; font-size: 15px;">Hello {{userName}},</p>
+                <p style="margin: 0 0 12px; color: #e2e8f0; font-size: 15px;">
+                  An administrator has sent you a verification link for your Torre Tempo account. Click the button below to verify your email address and activate all features.
+                </p>
+                <p style="margin: 0 0 20px; color: #94a3b8; font-size: 14px;">
+                  Un administrador te ha enviado un enlace de verificación. Haz clic en el botón para verificar tu correo y activar todas las funciones.
+                </p>
+                <div
+                  style="background: rgba(15,23,42,0.7); border: 1px solid rgba(148,163,184,0.25); border-radius: 16px; padding: 16px; margin-bottom: 20px;"
+                >
+                  <p style="margin: 0 0 8px; color: #e2e8f0; font-size: 14px;">
+                    <strong style="color: #f8fafc;">Email:</strong> {{userEmail}}
+                  </p>
+                  <p style="margin: 0; color: #e2e8f0; font-size: 14px;">
+                    <strong style="color: #f8fafc;">Sent by:</strong> Admin ({{adminEmail}})
+                  </p>
+                </div>
+                <div style="margin-bottom: 20px;">
+                  <a
+                    href="{{verifyLink}}"
+                    style="display:inline-block; background: #10b981; color: #ffffff; text-decoration: none; padding: 14px 24px; border-radius: 12px; font-weight: 600; font-size: 15px;"
+                    >Verify Email Address</a>
+                </div>
+                <p style="margin: 0 0 8px; color: #94a3b8; font-size: 13px;">
+                  ⚠️ This link expires in <strong>24 hours</strong> for security reasons.
+                </p>
+                <p style="margin: 0 0 20px; color: #94a3b8; font-size: 13px;">
+                  If you didn't expect this email, please contact your administrator.
+                </p>
+                <p style="margin: 20px 0 0; color: #64748b; font-size: 12px;">
+                  Torre Tempo · Email Verification · Support: {{supportEmail}}
+                </p>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+  </body>
+</html>

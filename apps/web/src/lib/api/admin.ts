@@ -679,3 +679,25 @@ export async function deleteFeatureFlag(flagId: string): Promise<{ message: stri
   });
   return handleResponse<{ message: string }>(response);
 }
+
+// ============================================================================
+// EMAIL ACTIONS API
+// ============================================================================
+
+export async function sendPasswordReset(userId: string): Promise<{ message: string; expiresIn: string }> {
+  const url = `${API_URL}/api/admin/users/${userId}/send-password-reset`;
+  const response = await fetch(url, {
+    method: 'POST',
+    credentials: 'include',
+  });
+  return handleResponse<{ message: string; expiresIn: string }>(response);
+}
+
+export async function resendVerificationEmail(userId: string): Promise<{ message: string; expiresIn: string }> {
+  const url = `${API_URL}/api/admin/users/${userId}/resend-verification`;
+  const response = await fetch(url, {
+    method: 'POST',
+    credentials: 'include',
+  });
+  return handleResponse<{ message: string; expiresIn: string }>(response);
+}

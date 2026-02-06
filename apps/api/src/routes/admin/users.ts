@@ -1,9 +1,11 @@
 import { Router, Request, Response } from 'express';
 import { and, eq, desc, like, or, sql, inArray } from 'drizzle-orm';
 import { db } from '../../db/index.js';
-import { user, member, organization } from '../../db/schema.js';
+import { user, member, organization, verification } from '../../db/schema.js';
 import { requireAdmin } from '../../middleware/requireAdmin.js';
 import { logAdminAction } from '../../services/adminAudit.service.js';
+import { emailQueue } from '../../lib/queue.js';
+import crypto from 'crypto';
 import type { 
   UserDetailResponse, 
   BanUserResponse 
@@ -1052,8 +1054,188 @@ router.post(
          error: 'Failed to process bulk delete',
          details: error instanceof Error ? error.message : 'Unknown error'
        });
-     }
-   }
+      }
+    }
+);
+
+/**
+ * POST /api/admin/users/:id/send-password-reset
+ * Send password reset email to user (admin action)
+ * 
+ * Security:
+ * - Requires platform admin role
+ * - Creates verification token with 1 hour expiration
+ * - Logs admin action for audit trail
+ */
+router.post(
+  '/:id/send-password-reset',
+  requireAdmin,
+  async (req: Request, res: Response) => {
+    try {
+      const actor = req.user;
+      if (!actor) {
+        return res.status(401).json({ error: 'Unauthorized' });
+      }
+
+      const userId = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id;
+      if (!userId) {
+        return res.status(400).json({ error: 'User ID is required' });
+      }
+
+      // Get user details
+      const userData = await db.select().from(user).where(eq(user.id, userId)).limit(1);
+      if (userData.length === 0) {
+        return res.status(404).json({ error: 'User not found' });
+      }
+
+      const targetUser = userData[0];
+
+      // Generate password reset token
+      const token = crypto.randomBytes(32).toString('hex');
+      const verificationId = `password_reset_${userId}_${Date.now()}`;
+      const expiresAt = new Date(Date.now() + 60 * 60 * 1000); // 1 hour
+
+      // Store verification token
+      await db.insert(verification).values({
+        id: verificationId,
+        identifier: targetUser!.email,
+        value: token,
+        expiresAt,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      });
+
+      // Queue password reset email
+      const resetLink = `${process.env.BETTER_AUTH_URL || 'http://localhost:3000'}/auth/reset-password?token=${token}`;
+      
+      await emailQueue.add('password-reset', {
+        to: targetUser!.email,
+        subject: 'Password Reset Request - Torre Tempo',
+        template: 'passwordReset.html',
+        data: {
+          userName: targetUser!.name,
+          userEmail: targetUser!.email,
+          adminEmail: actor.email,
+          resetLink,
+        },
+      });
+
+      // Log admin action
+      await logAdminAction({
+        adminId: actor.id,
+        action: 'user.send_password_reset',
+        targetType: 'user',
+        targetId: userId,
+        details: {
+          user_email: targetUser!.email,
+          expires_at: expiresAt.toISOString(),
+        },
+        ip: req.ip || req.socket.remoteAddress || 'unknown',
+      });
+
+      res.json({ 
+        message: 'Password reset email sent successfully',
+        expiresIn: '1 hour',
+      });
+    } catch (error) {
+      console.error('Error sending password reset:', error);
+      res.status(500).json({ error: 'Failed to send password reset email' });
+    }
+  }
+);
+
+/**
+ * POST /api/admin/users/:id/resend-verification
+ * Resend email verification link to user (admin action)
+ * 
+ * Security:
+ * - Requires platform admin role
+ * - Creates verification token with 24 hour expiration
+ * - Logs admin action for audit trail
+ */
+router.post(
+  '/:id/resend-verification',
+  requireAdmin,
+  async (req: Request, res: Response) => {
+    try {
+      const actor = req.user;
+      if (!actor) {
+        return res.status(401).json({ error: 'Unauthorized' });
+      }
+
+      const userId = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id;
+      if (!userId) {
+        return res.status(400).json({ error: 'User ID is required' });
+      }
+
+      // Get user details
+      const userData = await db.select().from(user).where(eq(user.id, userId)).limit(1);
+      if (userData.length === 0) {
+        return res.status(404).json({ error: 'User not found' });
+      }
+
+      const targetUser = userData[0];
+
+      // Check if already verified
+      if (targetUser!.emailVerified) {
+        return res.status(400).json({ 
+          error: 'Email already verified',
+          message: 'This user has already verified their email address',
+        });
+      }
+
+      // Generate verification token
+      const token = crypto.randomBytes(32).toString('hex');
+      const verificationId = `email_verification_${userId}_${Date.now()}`;
+      const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24 hours
+
+      // Store verification token
+      await db.insert(verification).values({
+        id: verificationId,
+        identifier: targetUser!.email,
+        value: token,
+        expiresAt,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      });
+
+      // Queue email verification
+      const verifyLink = `${process.env.BETTER_AUTH_URL || 'http://localhost:3000'}/auth/verify-email?token=${token}`;
+      
+      await emailQueue.add('email-verification', {
+        to: targetUser!.email,
+        subject: 'Verify Your Email Address - Torre Tempo',
+        template: 'emailVerification.html',
+        data: {
+          userName: targetUser!.name,
+          userEmail: targetUser!.email,
+          adminEmail: actor.email,
+          verifyLink,
+        },
+      });
+
+      // Log admin action
+      await logAdminAction({
+        adminId: actor.id,
+        action: 'user.resend_verification',
+        targetType: 'user',
+        targetId: userId,
+        details: {
+          user_email: targetUser!.email,
+          expires_at: expiresAt.toISOString(),
+        },
+        ip: req.ip || req.socket.remoteAddress || 'unknown',
+      });
+
+      res.json({ 
+        message: 'Verification email sent successfully',
+        expiresIn: '24 hours',
+      });
+    } catch (error) {
+      console.error('Error sending verification email:', error);
+      res.status(500).json({ error: 'Failed to send verification email' });
+    }
+  }
 );
 
 export default router;
