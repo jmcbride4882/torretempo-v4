@@ -173,6 +173,138 @@ router.get(
 );
 
 /**
+ * GET /api/admin/audit/export
+ * Export audit log entries matching filters as CSV
+ * 
+ * Query params:
+ * - date_from: ISO date string (optional) - Filter entries from this date
+ * - date_to: ISO date string (optional) - Filter entries to this date
+ * - admin_id: string (optional) - Filter by admin user ID
+ * - action: string (optional) - Filter by action
+ * - target_type: string (optional) - Filter by target type
+ * - target_id: string (optional) - Filter by target ID
+ * 
+ * Returns:
+ * - CSV file with columns: id,action,actorEmail,targetType,targetId,createdAt
+ */
+router.get(
+  '/export',
+  requireAdmin,
+  async (req: Request, res: Response) => {
+    try {
+      const dateFrom = req.query.date_from as string | undefined;
+      const dateTo = req.query.date_to as string | undefined;
+      const adminId = req.query.admin_id as string | undefined;
+      const actionFilter = req.query.action as string | undefined;
+      const targetType = req.query.target_type as string | undefined;
+      const targetId = req.query.target_id as string | undefined;
+
+      // Build where conditions
+      const conditions: any[] = [];
+
+      // Date range filters
+      if (dateFrom) {
+        try {
+          const fromDate = new Date(dateFrom);
+          conditions.push(gte(admin_audit_log.created_at, fromDate));
+        } catch (error) {
+          return res.status(400).json({ 
+            error: 'Invalid date_from format. Use ISO 8601 format (YYYY-MM-DD or YYYY-MM-DDTHH:mm:ss.sssZ)'
+          });
+        }
+      }
+
+      if (dateTo) {
+        try {
+          const toDate = new Date(dateTo);
+          conditions.push(lte(admin_audit_log.created_at, toDate));
+        } catch (error) {
+          return res.status(400).json({ 
+            error: 'Invalid date_to format. Use ISO 8601 format (YYYY-MM-DD or YYYY-MM-DDTHH:mm:ss.sssZ)'
+          });
+        }
+      }
+
+      // Admin filter
+      if (adminId) {
+        conditions.push(eq(admin_audit_log.admin_id, adminId));
+      }
+
+      // Action filter (supports exact match or starts-with pattern)
+      if (actionFilter) {
+        // If action contains wildcard (*), use LIKE
+        if (actionFilter.includes('*')) {
+          const likePattern = actionFilter.replace(/\*/g, '%');
+          conditions.push(like(admin_audit_log.action, likePattern));
+        } else {
+          // Exact match
+          conditions.push(eq(admin_audit_log.action, actionFilter));
+        }
+      }
+
+      // Target type filter
+      if (targetType) {
+        conditions.push(eq(admin_audit_log.target_type, targetType));
+      }
+
+      // Target ID filter
+      if (targetId) {
+        conditions.push(eq(admin_audit_log.target_id, targetId));
+      }
+
+      // Get audit entries with admin details (no pagination)
+      const entries = await db
+        .select({
+          id: admin_audit_log.id,
+          adminId: admin_audit_log.admin_id,
+          adminEmail: user.email,
+          action: admin_audit_log.action,
+          targetType: admin_audit_log.target_type,
+          targetId: admin_audit_log.target_id,
+          createdAt: admin_audit_log.created_at,
+        })
+        .from(admin_audit_log)
+        .leftJoin(user, eq(admin_audit_log.admin_id, user.id))
+        .where(conditions.length > 0 ? and(...conditions) : undefined)
+        .orderBy(desc(admin_audit_log.created_at));
+
+      // Build CSV string manually
+      const csvLines: string[] = [];
+      csvLines.push('id,action,actorEmail,targetType,targetId,createdAt');
+
+      for (const entry of entries) {
+        const escapedAction = `"${(entry.action || '').replace(/"/g, '""')}"`;
+        const escapedEmail = `"${(entry.adminEmail || 'unknown@unknown.com').replace(/"/g, '""')}"`;
+        const targetType = entry.targetType || '';
+        const targetId = entry.targetId || '';
+        const createdAt = entry.createdAt.toISOString();
+
+        csvLines.push(
+          `${entry.id},${escapedAction},${escapedEmail},${targetType},${targetId},${createdAt}`
+        );
+      }
+
+      const csvContent = csvLines.join('\n');
+
+      // Set response headers
+      res.setHeader('Content-Type', 'text/csv; charset=utf-8');
+      res.setHeader(
+        'Content-Disposition',
+        'attachment; filename=audit-export.csv'
+      );
+
+      res.send(csvContent);
+    } catch (error) {
+      console.error('Error exporting audit log:', error);
+      res.status(500).json({
+        error: 'Failed to export audit log',
+        details: error instanceof Error ? error.message : 'Unknown error',
+      });
+    }
+  }
+);
+
+/**
  * GET /api/admin/audit/actions
  * Get list of unique actions from audit log
  * Used to populate action filter dropdown in admin UI

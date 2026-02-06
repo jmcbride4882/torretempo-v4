@@ -200,6 +200,141 @@ router.get(
 );
 
 /**
+ * GET /api/admin/tenants/export
+ * Export all tenants matching filters as CSV
+ * 
+ * Query params:
+ * - search: string (optional) - Search by name or slug
+ * 
+ * Returns:
+ * - CSV file with columns: id,name,slug,memberCount,tier,status,createdAt
+ */
+router.get(
+  '/export',
+  requireAdmin,
+  async (req: Request, res: Response) => {
+    try {
+      const actor = req.user;
+
+      if (!actor) {
+        return res.status(401).json({ error: 'Unauthorized: No user found' });
+      }
+
+      // Parse filter params
+      const search = req.query.search ? String(req.query.search) : '';
+
+      // Build where conditions
+      const conditions: any[] = [];
+
+      if (search) {
+        conditions.push(
+          or(
+            like(organization.name, `%${search}%`),
+            like(organization.slug, `%${search}%`)
+          )
+        );
+      }
+
+      // Query organizations (no pagination)
+      const orgs = await db
+        .select({
+          id: organization.id,
+          name: organization.name,
+          slug: organization.slug,
+          createdAt: organization.createdAt,
+          metadata: organization.metadata,
+        })
+        .from(organization)
+        .where(conditions.length > 0 ? and(...conditions) : undefined)
+        .orderBy(desc(organization.createdAt));
+
+      // Fetch member counts for each organization
+      const orgIds = orgs.map((org) => org.id);
+      const memberCounts = orgIds.length > 0
+        ? await db
+          .select({
+            organizationId: member.organizationId,
+            count: sql<number>`count(*)::int`,
+          })
+          .from(member)
+          .where(inArray(member.organizationId, orgIds))
+          .groupBy(member.organizationId)
+        : [];
+
+      const memberCountMap = new Map(
+        memberCounts.map((mc) => [mc.organizationId, mc.count])
+      );
+
+      // Fetch subscription details for each organization
+      const subscriptions = orgIds.length > 0 
+        ? await db
+          .select({
+            organizationId: subscription_details.organization_id,
+            tier: subscription_details.tier,
+            trialEndsAt: subscription_details.trial_ends_at,
+          })
+          .from(subscription_details)
+          .where(inArray(subscription_details.organization_id, orgIds))
+        : [];
+
+      const subscriptionMap = new Map(
+        subscriptions.map((sub) => [sub.organizationId, sub])
+      );
+
+      // Build CSV string manually
+      const csvLines: string[] = [];
+      csvLines.push('id,name,slug,memberCount,tier,status,createdAt');
+
+      for (const org of orgs) {
+        const memberCount = memberCountMap.get(org.id) || 0;
+        const subscription = subscriptionMap.get(org.id);
+        const metadata = org.metadata ? JSON.parse(org.metadata) : {};
+
+        // Determine status
+        let status: string = 'active';
+        if (metadata.suspended === true) {
+          status = 'suspended';
+        } else if (subscription?.trialEndsAt && new Date(subscription.trialEndsAt) > new Date()) {
+          status = 'active';
+        }
+
+        // Ensure tier has correct type
+        const tier = subscription?.tier || 'starter';
+        const subscriptionTier: string = 
+          tier === 'professional' ? 'pro' : 
+          tier === 'enterprise' ? 'enterprise' : 
+          tier === 'free' ? 'free' : 'starter';
+
+        const escapedName = `"${(org.name || '').replace(/"/g, '""')}"`;
+        const escapedSlug = `"${(org.slug || '').replace(/"/g, '""')}"`;
+        const createdAt = org.createdAt.toISOString();
+
+        csvLines.push(
+          `${org.id},${escapedName},${escapedSlug},${memberCount},${subscriptionTier},${status},${createdAt}`
+        );
+      }
+
+      const csvContent = csvLines.join('\n');
+
+      // Set response headers
+      res.setHeader('Content-Type', 'text/csv; charset=utf-8');
+      res.setHeader(
+        'Content-Disposition',
+        'attachment; filename=tenants-export.csv'
+      );
+
+      res.send(csvContent);
+    } catch (error) {
+      console.error('Error exporting tenants:', error);
+      res.status(500).json({
+        error: 'Failed to export tenants',
+        details: error instanceof Error ? error.message : 'Unknown error',
+      });
+    }
+  }
+);
+
+/**
  * GET /api/admin/tenants/:id
  * View single organization with full details (members, subscription, usage stats)
  * 
@@ -657,113 +792,229 @@ router.post(
  * - Success message with deleted organization details
  */
 router.delete(
-  '/:id',
-  requireAdmin,
-  async (req: Request, res: Response) => {
-    try {
-      const actor = req.user;
+   '/:id',
+   requireAdmin,
+   async (req: Request, res: Response) => {
+     try {
+       const actor = req.user;
 
-      if (!actor) {
-        return res.status(401).json({ error: 'Unauthorized: No user found' });
-      }
+       if (!actor) {
+         return res.status(401).json({ error: 'Unauthorized: No user found' });
+       }
 
-      const organizationId = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id;
+       const organizationId = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id;
 
-      if (!organizationId) {
-        return res.status(400).json({ error: 'Organization ID is required' });
-      }
+       if (!organizationId) {
+         return res.status(400).json({ error: 'Organization ID is required' });
+       }
 
-      const confirmation = typeof req.body.confirmation === 'string' 
-        ? req.body.confirmation 
-        : '';
+       const confirmation = typeof req.body.confirmation === 'string' 
+         ? req.body.confirmation 
+         : '';
 
-      // Verify organization exists
-      const orgResult = await db
-        .select({
-          id: organization.id,
-          name: organization.name,
-          slug: organization.slug,
-        })
-        .from(organization)
-        .where(eq(organization.id, organizationId))
-        .limit(1);
+       // Verify organization exists
+       const orgResult = await db
+         .select({
+           id: organization.id,
+           name: organization.name,
+           slug: organization.slug,
+         })
+         .from(organization)
+         .where(eq(organization.id, organizationId))
+         .limit(1);
 
-      if (orgResult.length === 0) {
-        return res.status(404).json({ error: 'Organization not found' });
-      }
+       if (orgResult.length === 0) {
+         return res.status(404).json({ error: 'Organization not found' });
+       }
 
-      const org = orgResult[0]!;
+       const org = orgResult[0]!;
 
-      // Verify confirmation matches slug
-      if (confirmation !== org.slug) {
-        return res.status(400).json({
-          error: 'Confirmation does not match organization slug',
-          required: org.slug,
-          provided: confirmation,
-        });
-      }
+       // Verify confirmation matches slug
+       if (confirmation !== org.slug) {
+         return res.status(400).json({
+           error: 'Confirmation does not match organization slug',
+           required: org.slug,
+           provided: confirmation,
+         });
+       }
 
-      // Query member count for audit log
-      const memberCountResult = await db
-        .select({ count: sql<number>`count(*)::int` })
-        .from(member)
-        .where(eq(member.organizationId, organizationId));
+       // Query member count for audit log
+       const memberCountResult = await db
+         .select({ count: sql<number>`count(*)::int` })
+         .from(member)
+         .where(eq(member.organizationId, organizationId));
 
-      const memberCount = memberCountResult[0]?.count || 0;
+       const memberCount = memberCountResult[0]?.count || 0;
 
-      // Cascade delete related records manually (Better Auth tables don't have ON DELETE CASCADE)
-      
-      // 1. Delete all invitations
-      await db
-        .delete(invitation)
-        .where(eq(invitation.organizationId, organizationId));
+       // Cascade delete related records manually (Better Auth tables don't have ON DELETE CASCADE)
+       
+       // 1. Delete all invitations
+       await db
+         .delete(invitation)
+         .where(eq(invitation.organizationId, organizationId));
 
-      // 2. Delete all members
-      await db
-        .delete(member)
-        .where(eq(member.organizationId, organizationId));
+       // 2. Delete all members
+       await db
+         .delete(member)
+         .where(eq(member.organizationId, organizationId));
 
-      // 3. Delete subscription details (if any)
-      await db
-        .delete(subscription_details)
-        .where(eq(subscription_details.organization_id, organizationId));
+       // 3. Delete subscription details (if any)
+       await db
+         .delete(subscription_details)
+         .where(eq(subscription_details.organization_id, organizationId));
 
-      // 4. Finally delete the organization
-      await db.delete(organization).where(eq(organization.id, organizationId));
+       // 4. Finally delete the organization
+       await db.delete(organization).where(eq(organization.id, organizationId));
 
-      // Log admin action
-      await logAdminAction({
-        adminId: actor.id,
-        action: 'tenant.delete',
-        targetType: 'organization',
-        targetId: organizationId,
-        details: {
-          organization_name: org.name,
-          slug: org.slug,
-          member_count: memberCount,
-        },
-        ip: req.ip || req.socket.remoteAddress || 'unknown',
-      });
+       // Log admin action
+       await logAdminAction({
+         adminId: actor.id,
+         action: 'tenant.delete',
+         targetType: 'organization',
+         targetId: organizationId,
+         details: {
+           organization_name: org.name,
+           slug: org.slug,
+           member_count: memberCount,
+         },
+         ip: req.ip || req.socket.remoteAddress || 'unknown',
+       });
 
-      res.json({
-        message: 'Organization deleted successfully',
-        organization: {
-          id: org.id,
-          name: org.name,
-          slug: org.slug,
-          member_count: memberCount,
-          deleted_at: new Date().toISOString(),
-          deleted_by: actor.id,
-        },
-      });
-    } catch (error) {
-      console.error('Error deleting tenant:', error);
-      res.status(500).json({
-        error: 'Failed to delete tenant',
-        details: error instanceof Error ? error.message : 'Unknown error',
-      });
-    }
-  }
+       res.json({
+         message: 'Organization deleted successfully',
+         organization: {
+           id: org.id,
+           name: org.name,
+           slug: org.slug,
+           member_count: memberCount,
+           deleted_at: new Date().toISOString(),
+           deleted_by: actor.id,
+         },
+       });
+     } catch (error) {
+       console.error('Error deleting tenant:', error);
+       res.status(500).json({
+         error: 'Failed to delete tenant',
+         details: error instanceof Error ? error.message : 'Unknown error',
+       });
+     }
+   }
+);
+
+/**
+ * POST /api/admin/tenants/bulk-delete
+ * Delete multiple organizations at once
+ * 
+ * Body:
+ * - tenantIds: string[] (required) - Array of organization IDs to delete
+ * 
+ * Returns:
+ * - { success: number, failed: number, errors: string[] } - Bulk operation results
+ */
+router.post(
+   '/bulk-delete',
+   requireAdmin,
+   async (req: Request, res: Response) => {
+     try {
+       const actor = req.user;
+
+       if (!actor) {
+         return res.status(401).json({ error: 'Unauthorized: No user found' });
+       }
+
+       const { tenantIds } = req.body;
+
+       // Validate inputs
+       if (!Array.isArray(tenantIds) || tenantIds.length === 0) {
+         return res.status(400).json({ error: 'tenantIds must be a non-empty array' });
+       }
+
+       const errors: string[] = [];
+       let successCount = 0;
+
+       // Process each tenant
+       for (const organizationId of tenantIds) {
+         try {
+           // Verify organization exists
+           const orgResult = await db
+             .select({
+               id: organization.id,
+               name: organization.name,
+               slug: organization.slug,
+             })
+             .from(organization)
+             .where(eq(organization.id, organizationId))
+             .limit(1);
+
+           if (orgResult.length === 0) {
+             errors.push(`Organization ${organizationId} not found`);
+             continue;
+           }
+
+           const org = orgResult[0]!;
+
+           // Query member count for audit log
+           const memberCountResult = await db
+             .select({ count: sql<number>`count(*)::int` })
+             .from(member)
+             .where(eq(member.organizationId, organizationId));
+
+           const memberCount = memberCountResult[0]?.count || 0;
+
+           // Cascade delete related records manually
+           
+           // 1. Delete all invitations
+           await db
+             .delete(invitation)
+             .where(eq(invitation.organizationId, organizationId));
+
+           // 2. Delete all members
+           await db
+             .delete(member)
+             .where(eq(member.organizationId, organizationId));
+
+           // 3. Delete subscription details (if any)
+           await db
+             .delete(subscription_details)
+             .where(eq(subscription_details.organization_id, organizationId));
+
+           // 4. Finally delete the organization
+           await db.delete(organization).where(eq(organization.id, organizationId));
+
+           // Log admin action
+           await logAdminAction({
+             adminId: actor.id,
+             action: 'tenant.delete',
+             targetType: 'organization',
+             targetId: organizationId,
+             details: {
+               organization_name: org.name,
+               slug: org.slug,
+               member_count: memberCount,
+               bulkOperation: true,
+             },
+             ip: req.ip || req.socket.remoteAddress || 'unknown',
+           });
+
+           successCount++;
+         } catch (err) {
+           errors.push(`Error deleting organization ${organizationId}: ${err instanceof Error ? err.message : 'Unknown error'}`);
+         }
+       }
+
+       res.json({
+         success: successCount,
+         failed: errors.length,
+         errors,
+       });
+     } catch (error) {
+       console.error('Error in bulk delete tenants:', error);
+       res.status(500).json({
+         error: 'Failed to process bulk delete',
+         details: error instanceof Error ? error.message : 'Unknown error',
+       });
+     }
+   }
 );
 
 export default router;

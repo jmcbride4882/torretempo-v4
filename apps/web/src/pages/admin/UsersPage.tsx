@@ -20,6 +20,7 @@ import {
   UserMinus,
   UserPlus,
   Edit,
+  Download,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -47,6 +48,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { cn } from '@/lib/utils';
+import { PaginationControls } from '@/components/ui/pagination-controls';
 import {
   fetchUsers,
   banUser,
@@ -85,6 +87,7 @@ export default function UsersPage() {
     emailVerified: false,
   });
   const [isEditLoading, setIsEditLoading] = useState(false);
+  const [isExporting, setIsExporting] = useState(false);
 
   // Fetch users
   const loadUsers = useCallback(
@@ -123,6 +126,39 @@ export default function UsersPage() {
 
   // Handlers
   const handleRefresh = () => loadUsers(true);
+
+  const handleExport = async () => {
+    setIsExporting(true);
+    try {
+      const params = new URLSearchParams();
+      if (searchQuery) params.set('search', searchQuery);
+      if (roleFilter !== 'all') params.set('role', roleFilter);
+      if (statusFilter === 'banned') params.set('banned', 'true');
+      else if (statusFilter === 'active') params.set('banned', 'false');
+      if (statusFilter === 'admin') params.set('isAdmin', 'true');
+
+      const url = `/api/admin/users/export${params.toString() ? `?${params.toString()}` : ''}`;
+      const response = await fetch(url, { credentials: 'include' });
+
+      if (!response.ok) throw new Error('Export failed');
+
+      const blob = await response.blob();
+      const downloadUrl = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = downloadUrl;
+      a.download = `users-export-${new Date().toISOString().slice(0, 10)}.csv`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(downloadUrl);
+      toast.success('Users exported successfully');
+    } catch (error) {
+      console.error('Error exporting users:', error);
+      toast.error('Failed to export users');
+    } finally {
+      setIsExporting(false);
+    }
+  };
 
   const handleAction = async () => {
     if (!confirmModal) return;
@@ -225,18 +261,32 @@ export default function UsersPage() {
           </div>
         </div>
 
-        <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={handleRefresh}
-            disabled={isRefreshing}
-            className="gap-1.5 rounded-lg border border-white/5 bg-white/5 text-neutral-300 hover:bg-white/10"
-          >
-            <RefreshCw className={cn('h-4 w-4', isRefreshing && 'animate-spin')} />
-            <span className="hidden sm:inline">Refresh</span>
-          </Button>
-        </motion.div>
+        <div className="flex items-center gap-2">
+          <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={handleExport}
+              disabled={isExporting}
+              className="gap-1.5 rounded-lg border border-white/5 bg-white/5 text-neutral-300 hover:bg-white/10"
+            >
+              <Download className={cn('h-4 w-4', isExporting && 'animate-bounce')} />
+              <span className="hidden sm:inline">{isExporting ? 'Exporting...' : 'Export CSV'}</span>
+            </Button>
+          </motion.div>
+          <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={handleRefresh}
+              disabled={isRefreshing}
+              className="gap-1.5 rounded-lg border border-white/5 bg-white/5 text-neutral-300 hover:bg-white/10"
+            >
+              <RefreshCw className={cn('h-4 w-4', isRefreshing && 'animate-spin')} />
+              <span className="hidden sm:inline">Refresh</span>
+            </Button>
+          </motion.div>
+        </div>
       </motion.div>
 
       {/* Filters */}
@@ -378,37 +428,19 @@ export default function UsersPage() {
       </motion.div>
 
       {/* Pagination */}
-      {totalPages > 1 && (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.25 }}
-          className="flex items-center justify-center gap-2"
-        >
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => setPage((p) => Math.max(1, p - 1))}
-            disabled={page === 1}
-            className="text-neutral-400 hover:text-white"
-          >
-            Previous
-          </Button>
-          <span className="text-sm text-neutral-400">
-            Page <span className="font-medium text-white">{page}</span> of{' '}
-            <span className="font-medium text-white">{totalPages}</span>
-          </span>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
-            disabled={page === totalPages}
-            className="text-neutral-400 hover:text-white"
-          >
-            Next
-          </Button>
-        </motion.div>
-      )}
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0.25 }}
+      >
+        <PaginationControls
+          page={page}
+          totalPages={totalPages}
+          total={total}
+          limit={limit}
+          onPageChange={setPage}
+        />
+      </motion.div>
 
       {/* Confirmation Modal */}
       <Dialog open={!!confirmModal} onOpenChange={() => setConfirmModal(null)}>

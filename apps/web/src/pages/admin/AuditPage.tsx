@@ -9,7 +9,6 @@ import { toast } from 'sonner';
 import {
   FileText,
   RefreshCw,
-  Calendar,
   Filter,
   Search,
   User,
@@ -18,9 +17,9 @@ import {
   ChevronDown,
   ChevronUp,
   X,
+  Download,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import {
   Select,
@@ -29,7 +28,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { DateRangePicker } from '@/components/ui/date-range-picker';
 import { cn } from '@/lib/utils';
+import { PaginationControls } from '@/components/ui/pagination-controls';
 import { fetchAuditLogs } from '@/lib/api/admin';
 import type { AuditLogEntry } from '@/lib/api/admin';
 
@@ -87,6 +88,9 @@ export default function AuditPage() {
   const [page, setPage] = useState(1);
   const limit = 20;
 
+  // Export state
+  const [isExporting, setIsExporting] = useState(false);
+
   // Expanded rows
   const [expandedRows, setExpandedRows] = useState<Set<string>>(new Set());
 
@@ -122,6 +126,38 @@ export default function AuditPage() {
 
   // Handlers
   const handleRefresh = () => loadLogs(true);
+
+  const handleExport = async () => {
+    setIsExporting(true);
+    try {
+      const params = new URLSearchParams();
+      if (actionFilter !== 'all') params.set('action', actionFilter);
+      if (targetTypeFilter !== 'all') params.set('targetType', targetTypeFilter);
+      if (startDate) params.set('startDate', startDate);
+      if (endDate) params.set('endDate', endDate);
+
+      const url = `/api/admin/audit/export${params.toString() ? `?${params.toString()}` : ''}`;
+      const response = await fetch(url, { credentials: 'include' });
+
+      if (!response.ok) throw new Error('Export failed');
+
+      const blob = await response.blob();
+      const downloadUrl = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = downloadUrl;
+      a.download = `audit-export-${new Date().toISOString().slice(0, 10)}.csv`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(downloadUrl);
+      toast.success('Audit logs exported successfully');
+    } catch (error) {
+      console.error('Error exporting audit logs:', error);
+      toast.error('Failed to export audit logs');
+    } finally {
+      setIsExporting(false);
+    }
+  };
 
   const toggleRow = (id: string) => {
     setExpandedRows((prev) => {
@@ -186,6 +222,19 @@ export default function AuditPage() {
             <Button
               variant="ghost"
               size="sm"
+              onClick={handleExport}
+              disabled={isExporting}
+              className="gap-1.5 rounded-lg border border-white/5 bg-white/5 text-neutral-300 hover:bg-white/10"
+            >
+              <Download className={cn('h-4 w-4', isExporting && 'animate-bounce')} />
+              <span className="hidden sm:inline">{isExporting ? 'Exporting...' : 'Export CSV'}</span>
+            </Button>
+          </motion.div>
+
+          <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+            <Button
+              variant="ghost"
+              size="sm"
               onClick={handleRefresh}
               disabled={isRefreshing}
               className="gap-1.5 rounded-lg border border-white/5 bg-white/5 text-neutral-300 hover:bg-white/10"
@@ -233,29 +282,13 @@ export default function AuditPage() {
         </Select>
 
         {/* Date range */}
-        <div className="flex items-center gap-2">
-          <div className="relative">
-            <Calendar className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-neutral-500" />
-            <Input
-              type="date"
-              value={startDate}
-              onChange={(e) => { setStartDate(e.target.value); setPage(1); }}
-              className="w-[150px] glass-card border-white/10 pl-9 text-white"
-              placeholder="Start date"
-            />
-          </div>
-          <span className="text-neutral-500">to</span>
-          <div className="relative">
-            <Calendar className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-neutral-500" />
-            <Input
-              type="date"
-              value={endDate}
-              onChange={(e) => { setEndDate(e.target.value); setPage(1); }}
-              className="w-[150px] glass-card border-white/10 pl-9 text-white"
-              placeholder="End date"
-            />
-          </div>
-        </div>
+        <DateRangePicker
+          startDate={startDate}
+          endDate={endDate}
+          onStartDateChange={(v) => { setStartDate(v); setPage(1); }}
+          onEndDateChange={(v) => { setEndDate(v); setPage(1); }}
+          onClear={() => { setStartDate(''); setEndDate(''); setPage(1); }}
+        />
 
         {hasActiveFilters && (
           <Button
@@ -310,25 +343,16 @@ export default function AuditPage() {
                   </SelectContent>
                 </Select>
               </div>
-              <div className="grid grid-cols-2 gap-2">
-                <div>
-                  <label className="mb-1.5 block text-xs font-medium text-neutral-500">Start Date</label>
-                  <Input
-                    type="date"
-                    value={startDate}
-                    onChange={(e) => { setStartDate(e.target.value); setPage(1); }}
-                    className="w-full glass-card border-white/10 text-white"
-                  />
-                </div>
-                <div>
-                  <label className="mb-1.5 block text-xs font-medium text-neutral-500">End Date</label>
-                  <Input
-                    type="date"
-                    value={endDate}
-                    onChange={(e) => { setEndDate(e.target.value); setPage(1); }}
-                    className="w-full glass-card border-white/10 text-white"
-                  />
-                </div>
+              <div>
+                <label className="mb-1.5 block text-xs font-medium text-neutral-500">Date Range</label>
+                <DateRangePicker
+                  startDate={startDate}
+                  endDate={endDate}
+                  onStartDateChange={(v) => { setStartDate(v); setPage(1); }}
+                  onEndDateChange={(v) => { setEndDate(v); setPage(1); }}
+                  onClear={() => { setStartDate(''); setEndDate(''); setPage(1); }}
+                  className="w-full justify-start"
+                />
               </div>
               {hasActiveFilters && (
                 <Button
@@ -513,37 +537,19 @@ export default function AuditPage() {
       </motion.div>
 
       {/* Pagination */}
-      {totalPages > 1 && (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.25 }}
-          className="flex items-center justify-center gap-2"
-        >
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => setPage((p) => Math.max(1, p - 1))}
-            disabled={page === 1}
-            className="text-neutral-400 hover:text-white"
-          >
-            Previous
-          </Button>
-          <span className="text-sm text-neutral-400">
-            Page <span className="font-medium text-white">{page}</span> of{' '}
-            <span className="font-medium text-white">{totalPages}</span>
-          </span>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
-            disabled={page === totalPages}
-            className="text-neutral-400 hover:text-white"
-          >
-            Next
-          </Button>
-        </motion.div>
-      )}
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0.25 }}
+      >
+        <PaginationControls
+          page={page}
+          totalPages={totalPages}
+          total={total}
+          limit={limit}
+          onPageChange={setPage}
+        />
+      </motion.div>
     </div>
   );
 }

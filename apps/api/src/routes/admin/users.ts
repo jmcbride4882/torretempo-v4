@@ -159,6 +159,105 @@ router.get(
 );
 
 /**
+ * GET /api/admin/users/export
+ * Export all users matching filters as CSV
+ * 
+ * Query params:
+ * - search: string (optional) - Search by name or email
+ * - role: 'admin' | 'null' (optional) - Filter by platform role
+ * - banned: 'true' | 'false' (optional) - Filter by banned status
+ * 
+ * Returns:
+ * - CSV file with columns: id,name,email,role,banned,createdAt
+ */
+router.get(
+  '/export',
+  requireAdmin,
+  async (req: Request, res: Response) => {
+    try {
+      // Parse filter params (same as GET /users)
+      const searchQuery = req.query.search as string | undefined;
+      const roleFilter = req.query.role as 'admin' | 'null' | undefined;
+      const bannedFilter = req.query.banned as 'true' | 'false' | undefined;
+
+      // Build WHERE conditions
+      const conditions: any[] = [];
+
+      // Search filter (name or email)
+      if (searchQuery) {
+        conditions.push(
+          or(
+            like(user.name, `%${searchQuery}%`),
+            like(user.email, `%${searchQuery}%`)
+          )
+        );
+      }
+
+      // Role filter
+      if (roleFilter === 'admin') {
+        conditions.push(eq(user.role, 'admin'));
+      } else if (roleFilter === 'null') {
+        conditions.push(sql`${user.role} IS NULL`);
+      }
+
+      // Banned filter
+      if (bannedFilter === 'true') {
+        conditions.push(eq(user.banned, true));
+      } else if (bannedFilter === 'false') {
+        conditions.push(or(eq(user.banned, false), sql`${user.banned} IS NULL`));
+      }
+
+      // Fetch ALL matching users (no pagination)
+      const users = await db
+        .select({
+          id: user.id,
+          name: user.name,
+          email: user.email,
+          role: user.role,
+          banned: user.banned,
+          createdAt: user.createdAt,
+        })
+        .from(user)
+        .where(conditions.length > 0 ? and(...conditions) : undefined)
+        .orderBy(desc(user.createdAt));
+
+      // Build CSV string manually
+      const csvLines: string[] = [];
+      csvLines.push('id,name,email,role,banned,createdAt');
+
+      for (const u of users) {
+        const escapedName = `"${(u.name || '').replace(/"/g, '""')}"`;
+        const escapedEmail = `"${(u.email || '').replace(/"/g, '""')}"`;
+        const role = u.role || '';
+        const banned = u.banned ? 'true' : 'false';
+        const createdAt = u.createdAt.toISOString();
+
+        csvLines.push(
+          `${u.id},${escapedName},${escapedEmail},${role},${banned},${createdAt}`
+        );
+      }
+
+      const csvContent = csvLines.join('\n');
+
+      // Set response headers
+      res.setHeader('Content-Type', 'text/csv; charset=utf-8');
+      res.setHeader(
+        'Content-Disposition',
+        'attachment; filename=users-export.csv'
+      );
+
+      res.send(csvContent);
+    } catch (error) {
+      console.error('Error exporting users:', error);
+      res.status(500).json({
+        error: 'Failed to export users',
+        details: error instanceof Error ? error.message : 'Unknown error',
+      });
+    }
+  }
+);
+
+/**
  * GET /api/admin/users/:id
  * Get detailed user information with organization memberships
  * 
@@ -678,82 +777,283 @@ router.post(
  * - { message: string, userId: string } - Success confirmation
  */
 router.post(
-  '/:id/revoke-admin',
-  requireAdmin,
-  async (req: Request, res: Response) => {
-    try {
-      const actor = req.user!;
-      const userId = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id;
+   '/:id/revoke-admin',
+   requireAdmin,
+   async (req: Request, res: Response) => {
+     try {
+       const actor = req.user!;
+       const userId = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id;
 
-      if (!userId) {
-        return res.status(400).json({ error: 'User ID is required' });
-      }
+       if (!userId) {
+         return res.status(400).json({ error: 'User ID is required' });
+       }
 
-      // Prevent revoking own admin role
-      if (userId === actor.id) {
-        return res.status(403).json({ 
-          error: 'Forbidden: Cannot revoke your own admin role',
-          hint: 'Have another admin revoke your role if needed'
-        });
-      }
+       // Prevent revoking own admin role
+       if (userId === actor.id) {
+         return res.status(403).json({ 
+           error: 'Forbidden: Cannot revoke your own admin role',
+           hint: 'Have another admin revoke your role if needed'
+         });
+       }
 
-      // Get user
-      const users = await db
-        .select()
-        .from(user)
-        .where(eq(user.id, userId))
-        .limit(1);
+       // Get user
+       const users = await db
+         .select()
+         .from(user)
+         .where(eq(user.id, userId))
+         .limit(1);
 
-      if (users.length === 0) {
-        return res.status(404).json({ error: 'User not found' });
-      }
+       if (users.length === 0) {
+         return res.status(404).json({ error: 'User not found' });
+       }
 
-      const userData = users[0]!;
+       const userData = users[0]!;
 
-      // Check if user has admin role
-      if (userData.role !== 'admin') {
-        return res.status(400).json({ 
-          error: 'User does not have admin role',
-          currentRole: userData.role || null
-        });
-      }
+       // Check if user has admin role
+       if (userData.role !== 'admin') {
+         return res.status(400).json({ 
+           error: 'User does not have admin role',
+           currentRole: userData.role || null
+         });
+       }
 
-      // Update user
-      const updated = await db
-        .update(user)
-        .set({ role: null })
-        .where(eq(user.id, userId))
-        .returning();
+       // Update user
+       const updated = await db
+         .update(user)
+         .set({ role: null })
+         .where(eq(user.id, userId))
+         .returning();
 
-      if (updated.length === 0) {
-        return res.status(500).json({ error: 'Failed to revoke admin role' });
-      }
+       if (updated.length === 0) {
+         return res.status(500).json({ error: 'Failed to revoke admin role' });
+       }
 
-      // Log admin action
-      await logAdminAction({
-        adminId: actor.id,
-        action: 'user.revoke_admin',
-        targetType: 'user',
-        targetId: userId,
-        details: {
-          previousRole: 'admin',
-          newRole: null,
-        },
-        ip: req.ip || req.socket.remoteAddress || 'unknown',
-      });
+       // Log admin action
+       await logAdminAction({
+         adminId: actor.id,
+         action: 'user.revoke_admin',
+         targetType: 'user',
+         targetId: userId,
+         details: {
+           previousRole: 'admin',
+           newRole: null,
+         },
+         ip: req.ip || req.socket.remoteAddress || 'unknown',
+       });
 
-      res.json({ 
-        message: 'Admin role revoked successfully',
-        userId,
-      });
-    } catch (error) {
-      console.error('Error revoking admin role:', error);
-      res.status(500).json({ 
-        error: 'Failed to revoke admin role',
-        details: error instanceof Error ? error.message : 'Unknown error'
-      });
-    }
-  }
+       res.json({ 
+         message: 'Admin role revoked successfully',
+         userId,
+       });
+     } catch (error) {
+       console.error('Error revoking admin role:', error);
+       res.status(500).json({ 
+         error: 'Failed to revoke admin role',
+         details: error instanceof Error ? error.message : 'Unknown error'
+       });
+     }
+   }
+);
+
+/**
+ * POST /api/admin/users/bulk-ban
+ * Ban multiple users at once
+ * 
+ * Body:
+ * - userIds: string[] (required) - Array of user IDs to ban
+ * - reason: string (required) - Reason for ban
+ * - expiresInDays: number (optional, default 30) - Ban duration in days
+ * 
+ * Returns:
+ * - { success: number, failed: number, errors: string[] } - Bulk operation results
+ */
+router.post(
+   '/bulk-ban',
+   requireAdmin,
+   async (req: Request, res: Response) => {
+     try {
+       const actor = req.user!;
+       const { userIds, reason, expiresInDays = 30 } = req.body;
+
+       // Validate inputs
+       if (!Array.isArray(userIds) || userIds.length === 0) {
+         return res.status(400).json({ error: 'userIds must be a non-empty array' });
+       }
+
+       if (!reason || typeof reason !== 'string' || reason.trim().length === 0) {
+         return res.status(400).json({ error: 'Ban reason is required' });
+       }
+
+       if (typeof expiresInDays !== 'number' || expiresInDays < 1 || expiresInDays > 365) {
+         return res.status(400).json({ 
+           error: 'Invalid expiresInDays: must be between 1 and 365 days',
+         });
+       }
+
+       // Calculate ban expiration
+       const banExpires = new Date();
+       banExpires.setDate(banExpires.getDate() + expiresInDays);
+
+       const errors: string[] = [];
+       let successCount = 0;
+
+       // Process each user
+       for (const userId of userIds) {
+         try {
+           // Get user
+           const users = await db
+             .select()
+             .from(user)
+             .where(eq(user.id, userId))
+             .limit(1);
+
+           if (users.length === 0) {
+             errors.push(`User ${userId} not found`);
+             continue;
+           }
+
+           const userData = users[0]!;
+
+           // Check if already banned
+           if (userData.banned === true) {
+             errors.push(`User ${userId} is already banned`);
+             continue;
+           }
+
+           // Update user
+           await db
+             .update(user)
+             .set({
+               banned: true,
+               banReason: reason.trim(),
+               banExpires,
+             })
+             .where(eq(user.id, userId));
+
+           // Log admin action
+           await logAdminAction({
+             adminId: actor.id,
+             action: 'user.ban',
+             targetType: 'user',
+             targetId: userId,
+             details: {
+               reason: reason.trim(),
+               expiresInDays,
+               banExpires: banExpires.toISOString(),
+               bulkOperation: true,
+             },
+             ip: req.ip || req.socket.remoteAddress || 'unknown',
+           });
+
+           successCount++;
+         } catch (err) {
+           errors.push(`Error banning user ${userId}: ${err instanceof Error ? err.message : 'Unknown error'}`);
+         }
+       }
+
+       res.json({
+         success: successCount,
+         failed: errors.length,
+         errors,
+       });
+     } catch (error) {
+       console.error('Error in bulk ban:', error);
+       res.status(500).json({ 
+         error: 'Failed to process bulk ban',
+         details: error instanceof Error ? error.message : 'Unknown error'
+       });
+     }
+   }
+);
+
+/**
+ * POST /api/admin/users/bulk-delete
+ * Delete multiple users at once
+ * 
+ * Body:
+ * - userIds: string[] (required) - Array of user IDs to delete
+ * 
+ * Returns:
+ * - { success: number, failed: number, errors: string[] } - Bulk operation results
+ */
+router.post(
+   '/bulk-delete',
+   requireAdmin,
+   async (req: Request, res: Response) => {
+     try {
+       const actor = req.user!;
+       const { userIds } = req.body;
+
+       // Validate inputs
+       if (!Array.isArray(userIds) || userIds.length === 0) {
+         return res.status(400).json({ error: 'userIds must be a non-empty array' });
+       }
+
+       // Prevent deleting own account
+       if (userIds.includes(actor.id)) {
+         return res.status(403).json({ 
+           error: 'Cannot delete your own account in bulk operation',
+         });
+       }
+
+       const errors: string[] = [];
+       let successCount = 0;
+
+       // Process each user
+       for (const userId of userIds) {
+         try {
+           // Get user
+           const users = await db
+             .select()
+             .from(user)
+             .where(eq(user.id, userId))
+             .limit(1);
+
+           if (users.length === 0) {
+             errors.push(`User ${userId} not found`);
+             continue;
+           }
+
+           const userData = users[0]!;
+
+           // Delete user (cascade handled by database)
+           await db
+             .delete(user)
+             .where(eq(user.id, userId));
+
+           // Log admin action
+           await logAdminAction({
+             adminId: actor.id,
+             action: 'user.delete',
+             targetType: 'user',
+             targetId: userId,
+             details: {
+               user_name: userData.name,
+               user_email: userData.email,
+               bulkOperation: true,
+             },
+             ip: req.ip || req.socket.remoteAddress || 'unknown',
+           });
+
+           successCount++;
+         } catch (err) {
+           errors.push(`Error deleting user ${userId}: ${err instanceof Error ? err.message : 'Unknown error'}`);
+         }
+       }
+
+       res.json({
+         success: successCount,
+         failed: errors.length,
+         errors,
+       });
+     } catch (error) {
+       console.error('Error in bulk delete:', error);
+       res.status(500).json({ 
+         error: 'Failed to process bulk delete',
+         details: error instanceof Error ? error.message : 'Unknown error'
+       });
+     }
+   }
 );
 
 export default router;

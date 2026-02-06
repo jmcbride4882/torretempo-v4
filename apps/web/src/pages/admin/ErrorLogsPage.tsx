@@ -16,6 +16,7 @@ import {
   Code,
   Filter,
   Search,
+  X,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -27,7 +28,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { DateRangePicker } from '@/components/ui/date-range-picker';
 import { cn } from '@/lib/utils';
+import { PaginationControls } from '@/components/ui/pagination-controls';
 import { fetchErrorLogs } from '@/lib/api/admin';
 import type { ErrorLog } from '@/lib/api/admin';
 
@@ -50,13 +53,15 @@ const levelIcons = {
 export default function ErrorLogsPage() {
   // State
   const [errors, setErrors] = useState<ErrorLog[]>([]);
-  const [, setTotal] = useState(0); // TODO: Display total count in UI
+  const [total, setTotal] = useState(0);
   const [_isLoading, setIsLoading] = useState(true); // TODO: Add loading skeleton UI
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [levelFilter, setLevelFilter] = useState<string>('all');
   const [sourceFilter, setSourceFilter] = useState<string>('all');
-  const [page] = useState(1); // TODO: Add pagination UI
+  const [startDate, setStartDate] = useState<string>('');
+  const [endDate, setEndDate] = useState<string>('');
+  const [page, setPage] = useState(1);
   const limit = 20;
 
   // Fetch errors from real API
@@ -70,6 +75,8 @@ export default function ErrorLogsPage() {
           level: levelFilter !== 'all' ? levelFilter : undefined,
           source: sourceFilter !== 'all' ? sourceFilter : undefined,
           search: searchQuery || undefined,
+          startDate: startDate || undefined,
+          endDate: endDate || undefined,
           page,
           limit,
         });
@@ -83,7 +90,7 @@ export default function ErrorLogsPage() {
         setIsRefreshing(false);
       }
     },
-    [levelFilter, sourceFilter, searchQuery, page]
+    [levelFilter, sourceFilter, searchQuery, startDate, endDate, page]
   );
 
   useEffect(() => {
@@ -99,7 +106,19 @@ export default function ErrorLogsPage() {
   // Stats (from loaded errors)
   const errorCount = errors.filter((e) => e.level === 'error').length;
   const warningCount = errors.filter((e) => e.level === 'warning').length;
-  // TODO: Add pagination controls using: Math.ceil(total / limit)
+  const totalPages = Math.ceil(total / limit);
+
+  // Active filter detection + clear
+  const hasActiveFilters = levelFilter !== 'all' || sourceFilter !== 'all' || !!startDate || !!endDate || !!searchQuery;
+
+  const clearFilters = () => {
+    setSearchQuery('');
+    setLevelFilter('all');
+    setSourceFilter('all');
+    setStartDate('');
+    setEndDate('');
+    setPage(1);
+  };
 
   // Static source options (can be expanded based on backend values)
   const sources = ['api', 'web', 'system', 'queue', 'database'];
@@ -143,57 +162,82 @@ export default function ErrorLogsPage() {
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.1 }}
-        className="flex flex-col gap-3 sm:flex-row sm:items-center"
+        className="space-y-3"
       >
-        {/* Search */}
-        <div className="relative flex-1 sm:max-w-xs">
-          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-neutral-500" />
-          <Input
-            type="text"
-            placeholder="Search errors..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="glass-card border-white/10 pl-9 text-white placeholder:text-neutral-500 focus:border-red-500"
-          />
-        </div>
+        {/* Row 1: Search + dropdowns */}
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+          {/* Search */}
+          <div className="relative flex-1 sm:max-w-xs">
+            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-neutral-500" />
+            <Input
+              type="text"
+              placeholder="Search errors..."
+              value={searchQuery}
+              onChange={(e) => { setSearchQuery(e.target.value); setPage(1); }}
+              className="glass-card border-white/10 pl-9 text-white placeholder:text-neutral-500 focus:border-red-500"
+            />
+          </div>
 
-        {/* Level filter */}
-        <Select value={levelFilter} onValueChange={setLevelFilter}>
-          <SelectTrigger className="w-[140px] glass-card border-white/10 text-white">
-            <SelectValue placeholder="Level" />
-          </SelectTrigger>
-          <SelectContent className="glass-card border-white/10">
-            <SelectItem value="all" className="text-neutral-200">
-              All Levels
-            </SelectItem>
-            <SelectItem value="error" className="text-neutral-200">
-              Error
-            </SelectItem>
-            <SelectItem value="warning" className="text-neutral-200">
-              Warning
-            </SelectItem>
-            <SelectItem value="info" className="text-neutral-200">
-              Info
-            </SelectItem>
-          </SelectContent>
-        </Select>
-
-        {/* Source filter */}
-        <Select value={sourceFilter} onValueChange={setSourceFilter}>
-          <SelectTrigger className="w-[140px] glass-card border-white/10 text-white">
-            <SelectValue placeholder="Source" />
-          </SelectTrigger>
-          <SelectContent className="glass-card border-white/10">
-            <SelectItem value="all" className="text-neutral-200">
-              All Sources
-            </SelectItem>
-            {sources.map((source) => (
-              <SelectItem key={source} value={source} className="text-neutral-200">
-                {source}
+          {/* Level filter */}
+          <Select value={levelFilter} onValueChange={(v) => { setLevelFilter(v); setPage(1); }}>
+            <SelectTrigger className="w-[140px] glass-card border-white/10 text-white">
+              <SelectValue placeholder="Level" />
+            </SelectTrigger>
+            <SelectContent className="glass-card border-white/10">
+              <SelectItem value="all" className="text-neutral-200">
+                All Levels
               </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+              <SelectItem value="error" className="text-neutral-200">
+                Error
+              </SelectItem>
+              <SelectItem value="warning" className="text-neutral-200">
+                Warning
+              </SelectItem>
+              <SelectItem value="info" className="text-neutral-200">
+                Info
+              </SelectItem>
+            </SelectContent>
+          </Select>
+
+          {/* Source filter */}
+          <Select value={sourceFilter} onValueChange={(v) => { setSourceFilter(v); setPage(1); }}>
+            <SelectTrigger className="w-[140px] glass-card border-white/10 text-white">
+              <SelectValue placeholder="Source" />
+            </SelectTrigger>
+            <SelectContent className="glass-card border-white/10">
+              <SelectItem value="all" className="text-neutral-200">
+                All Sources
+              </SelectItem>
+              {sources.map((source) => (
+                <SelectItem key={source} value={source} className="text-neutral-200">
+                  {source}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+
+          {/* Date range */}
+          <DateRangePicker
+            startDate={startDate}
+            endDate={endDate}
+            onStartDateChange={(v) => { setStartDate(v); setPage(1); }}
+            onEndDateChange={(v) => { setEndDate(v); setPage(1); }}
+            onClear={() => { setStartDate(''); setEndDate(''); setPage(1); }}
+          />
+
+          {/* Clear all filters */}
+          {hasActiveFilters && (
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={clearFilters}
+              className="gap-1 shrink-0 text-neutral-400 hover:text-white"
+            >
+              <X className="h-3.5 w-3.5" />
+              Clear all
+            </Button>
+          )}
+        </div>
       </motion.div>
 
       {/* Stats bar */}
@@ -286,13 +330,28 @@ export default function ErrorLogsPage() {
                           <code>{error.stack.split('\n').slice(0, 2).join('\n')}</code>
                         </pre>
                       </div>
-                    )}
+                     )}
                   </motion.div>
                 );
               })}
             </AnimatePresence>
           </div>
         )}
+      </motion.div>
+
+      {/* Pagination */}
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0.25 }}
+      >
+        <PaginationControls
+          page={page}
+          totalPages={totalPages}
+          total={total}
+          limit={limit}
+          onPageChange={setPage}
+        />
       </motion.div>
     </div>
   );
