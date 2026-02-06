@@ -34,6 +34,27 @@ interface SettingsConfig {
   payment: {
     currency: string;
   };
+  database: {
+    url: string;
+    user: string;
+    password: string;
+    name: string;
+  };
+  redis: {
+    url: string;
+  };
+  auth: {
+    url: string;
+    secret: string;
+  };
+  admin: {
+    email: string;
+    password: string;
+  };
+  frontend: {
+    apiUrl: string;
+    stripePublishableKey: string;
+  };
 }
 
 /**
@@ -58,6 +79,27 @@ router.get('/', requireAdmin, async (_req: Request, res: Response) => {
       },
       payment: {
         currency: process.env.PAYMENT_CURRENCY || 'EUR',
+      },
+      database: {
+        url: maskKey(process.env.DATABASE_URL || ''),
+        user: process.env.POSTGRES_USER || '',
+        password: maskKey(process.env.POSTGRES_PASSWORD || ''),
+        name: process.env.POSTGRES_DB || '',
+      },
+      redis: {
+        url: maskKey(process.env.REDIS_URL || ''),
+      },
+      auth: {
+        url: process.env.BETTER_AUTH_URL || '',
+        secret: maskKey(process.env.BETTER_AUTH_SECRET || ''),
+      },
+      admin: {
+        email: process.env.ADMIN_EMAIL || '',
+        password: maskKey(process.env.ADMIN_PASSWORD || ''),
+      },
+      frontend: {
+        apiUrl: process.env.VITE_API_URL || '',
+        stripePublishableKey: maskKey(process.env.VITE_STRIPE_PUBLISHABLE_KEY || ''),
       },
     };
 
@@ -172,6 +214,68 @@ router.put('/', requireAdmin, async (req: Request, res: Response) => {
     if (updates.payment?.currency && updates.payment.currency !== process.env.PAYMENT_CURRENCY) {
       envVars.set('PAYMENT_CURRENCY', updates.payment.currency);
       changedKeys.push('PAYMENT_CURRENCY');
+    }
+
+    // Update Database settings
+    if (updates.database) {
+      if (shouldUpdate(updates.database.url, process.env.DATABASE_URL || '')) {
+        envVars.set('DATABASE_URL', updates.database.url!);
+        changedKeys.push('DATABASE_URL');
+      }
+      if (updates.database.user && updates.database.user !== process.env.POSTGRES_USER) {
+        envVars.set('POSTGRES_USER', updates.database.user);
+        changedKeys.push('POSTGRES_USER');
+      }
+      if (shouldUpdate(updates.database.password, process.env.POSTGRES_PASSWORD || '')) {
+        envVars.set('POSTGRES_PASSWORD', updates.database.password!);
+        changedKeys.push('POSTGRES_PASSWORD');
+      }
+      if (updates.database.name && updates.database.name !== process.env.POSTGRES_DB) {
+        envVars.set('POSTGRES_DB', updates.database.name);
+        changedKeys.push('POSTGRES_DB');
+      }
+    }
+
+    // Update Redis settings
+    if (shouldUpdate(updates.redis?.url, process.env.REDIS_URL || '')) {
+      envVars.set('REDIS_URL', updates.redis!.url!);
+      changedKeys.push('REDIS_URL');
+    }
+
+    // Update Better Auth settings
+    if (updates.auth) {
+      if (updates.auth.url && updates.auth.url !== process.env.BETTER_AUTH_URL) {
+        envVars.set('BETTER_AUTH_URL', updates.auth.url);
+        changedKeys.push('BETTER_AUTH_URL');
+      }
+      if (shouldUpdate(updates.auth.secret, process.env.BETTER_AUTH_SECRET || '')) {
+        envVars.set('BETTER_AUTH_SECRET', updates.auth.secret!);
+        changedKeys.push('BETTER_AUTH_SECRET');
+      }
+    }
+
+    // Update Admin credentials
+    if (updates.admin) {
+      if (updates.admin.email && updates.admin.email !== process.env.ADMIN_EMAIL) {
+        envVars.set('ADMIN_EMAIL', updates.admin.email);
+        changedKeys.push('ADMIN_EMAIL');
+      }
+      if (shouldUpdate(updates.admin.password, process.env.ADMIN_PASSWORD || '')) {
+        envVars.set('ADMIN_PASSWORD', updates.admin.password!);
+        changedKeys.push('ADMIN_PASSWORD');
+      }
+    }
+
+    // Update Frontend settings
+    if (updates.frontend) {
+      if (updates.frontend.apiUrl && updates.frontend.apiUrl !== process.env.VITE_API_URL) {
+        envVars.set('VITE_API_URL', updates.frontend.apiUrl);
+        changedKeys.push('VITE_API_URL');
+      }
+      if (shouldUpdate(updates.frontend.stripePublishableKey, process.env.VITE_STRIPE_PUBLISHABLE_KEY || '')) {
+        envVars.set('VITE_STRIPE_PUBLISHABLE_KEY', updates.frontend.stripePublishableKey!);
+        changedKeys.push('VITE_STRIPE_PUBLISHABLE_KEY');
+      }
     }
 
     if (changedKeys.length === 0) {

@@ -24,6 +24,11 @@ export const requireAdmin: RequestHandler = async (
 
     // Return 401 if no session
     if (!session) {
+      console.error('requireAdmin: No session found', {
+        cookies: req.headers.cookie ? 'present' : 'missing',
+        origin: req.headers.origin,
+        path: req.path,
+      });
       res.status(401).json({ error: 'Unauthorized: No session found' });
       return;
     }

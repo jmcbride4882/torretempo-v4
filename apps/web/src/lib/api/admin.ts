@@ -986,11 +986,42 @@ export interface SettingsPayment {
   currency: string;
 }
 
+export interface SettingsDatabase {
+  url: string;
+  user: string;
+  password: string;
+  name: string;
+}
+
+export interface SettingsRedis {
+  url: string;
+}
+
+export interface SettingsAuth {
+  url: string;
+  secret: string;
+}
+
+export interface SettingsAdmin {
+  email: string;
+  password: string;
+}
+
+export interface SettingsFrontend {
+  apiUrl: string;
+  stripePublishableKey: string;
+}
+
 export interface AdminSettings {
   stripe: SettingsStripe;
   gocardless: SettingsGoCardless;
   email: SettingsEmail;
   payment: SettingsPayment;
+  database: SettingsDatabase;
+  redis: SettingsRedis;
+  auth: SettingsAuth;
+  admin: SettingsAdmin;
+  frontend: SettingsFrontend;
 }
 
 export interface SettingsResponse {

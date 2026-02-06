@@ -21,6 +21,11 @@ import {
   CheckCircle2,
   Loader2,
   ShieldAlert,
+  Database,
+  Zap,
+  Shield,
+  User,
+  Monitor,
 } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
@@ -53,7 +58,7 @@ import type { AdminSettings } from '@/lib/api/admin';
 // TYPES
 // ============================================================================
 
-type TabId = 'stripe' | 'gocardless' | 'email' | 'general';
+type TabId = 'stripe' | 'gocardless' | 'email' | 'general' | 'database' | 'redis' | 'auth' | 'admin' | 'frontend';
 
 interface TabDefinition {
   id: TabId;
@@ -103,6 +108,41 @@ const TABS: TabDefinition[] = [
     icon: Settings,
     color: 'text-emerald-400',
     gradient: 'from-emerald-600/20 to-green-600/20',
+  },
+  {
+    id: 'database',
+    label: 'Database',
+    icon: Database,
+    color: 'text-red-400',
+    gradient: 'from-red-600/20 to-pink-600/20',
+  },
+  {
+    id: 'redis',
+    label: 'Redis',
+    icon: Zap,
+    color: 'text-orange-400',
+    gradient: 'from-orange-600/20 to-yellow-600/20',
+  },
+  {
+    id: 'auth',
+    label: 'Auth',
+    icon: Shield,
+    color: 'text-blue-400',
+    gradient: 'from-blue-600/20 to-indigo-600/20',
+  },
+  {
+    id: 'admin',
+    label: 'Admin',
+    icon: User,
+    color: 'text-purple-400',
+    gradient: 'from-purple-600/20 to-fuchsia-600/20',
+  },
+  {
+    id: 'frontend',
+    label: 'Frontend',
+    icon: Monitor,
+    color: 'text-teal-400',
+    gradient: 'from-teal-600/20 to-cyan-600/20',
   },
 ];
 
@@ -157,6 +197,98 @@ const EMAIL_FIELDS: FieldConfig[] = [
   },
 ];
 
+const DATABASE_FIELDS: FieldConfig[] = [
+  {
+    key: 'url',
+    label: 'Database URL',
+    placeholder: 'postgresql://...',
+    sensitive: true,
+    description: '⚠️ CRITICAL: Changing this requires database migration',
+  },
+  {
+    key: 'user',
+    label: 'Database User',
+    placeholder: 'torretempo',
+    sensitive: false,
+    description: 'PostgreSQL username',
+  },
+  {
+    key: 'password',
+    label: 'Database Password',
+    placeholder: '••••••••',
+    sensitive: true,
+    description: 'PostgreSQL password',
+  },
+  {
+    key: 'name',
+    label: 'Database Name',
+    placeholder: 'torretempo',
+    sensitive: false,
+    description: 'PostgreSQL database name',
+  },
+];
+
+const REDIS_FIELDS: FieldConfig[] = [
+  {
+    key: 'url',
+    label: 'Redis URL',
+    placeholder: 'redis://localhost:6379',
+    sensitive: true,
+    description: 'Redis connection string for queues and caching',
+  },
+];
+
+const AUTH_FIELDS: FieldConfig[] = [
+  {
+    key: 'url',
+    label: 'Better Auth URL',
+    placeholder: 'https://time.lsltgroup.es',
+    sensitive: false,
+    description: 'Base URL for authentication callbacks',
+  },
+  {
+    key: 'secret',
+    label: 'Auth Secret',
+    placeholder: '64-character secret',
+    sensitive: true,
+    description: '⚠️ CRITICAL: Changing this invalidates all sessions',
+  },
+];
+
+const ADMIN_FIELDS: FieldConfig[] = [
+  {
+    key: 'email',
+    label: 'Admin Email',
+    placeholder: 'admin@lsltgroup.es',
+    sensitive: false,
+    description: 'Platform administrator email for initial setup',
+  },
+  {
+    key: 'password',
+    label: 'Admin Password',
+    placeholder: '••••••••',
+    sensitive: true,
+    description: 'Initial admin password (used for seed script)',
+  },
+];
+
+const FRONTEND_FIELDS: FieldConfig[] = [
+  {
+    key: 'apiUrl',
+    label: 'API URL',
+    placeholder: 'https://time.lsltgroup.es',
+    sensitive: false,
+    description: 'Backend API base URL for frontend calls',
+  },
+  {
+    key: 'stripePublishableKey',
+    label: 'Stripe Publishable Key (Frontend)',
+    placeholder: 'pk_live_...',
+    sensitive: false,
+    description: 'Public Stripe key exposed to client',
+  },
+];
+
 const CURRENCY_OPTIONS = [
   { value: 'EUR', label: 'EUR - Euro' },
   { value: 'GBP', label: 'GBP - British Pound' },
@@ -173,6 +305,11 @@ function getEmptySettings(): AdminSettings {
     gocardless: { accessToken: '', webhookSecret: '', environment: 'sandbox' },
     email: { resendApiKey: '' },
     payment: { currency: 'EUR' },
+    database: { url: '', user: '', password: '', name: '' },
+    redis: { url: '' },
+    auth: { url: '', secret: '' },
+    admin: { email: '', password: '' },
+    frontend: { apiUrl: '', stripePublishableKey: '' },
   };
 }
 
@@ -270,6 +407,11 @@ export default function SettingsPage() {
   const [editedGoCardless, setEditedGoCardless] = useState<Record<string, string>>({});
   const [editedEmail, setEditedEmail] = useState<Record<string, string>>({});
   const [editedPayment, setEditedPayment] = useState<Record<string, string>>({});
+  const [editedDatabase, setEditedDatabase] = useState<Record<string, string>>({});
+  const [editedRedis, setEditedRedis] = useState<Record<string, string>>({});
+  const [editedAuth, setEditedAuth] = useState<Record<string, string>>({});
+  const [editedAdmin, setEditedAdmin] = useState<Record<string, string>>({});
+  const [editedFrontend, setEditedFrontend] = useState<Record<string, string>>({});
 
   // Confirmation dialogs
   const [restartDialog, setRestartDialog] = useState(false);
@@ -280,9 +422,14 @@ export default function SettingsPage() {
       Object.keys(editedStripe).length > 0 ||
       Object.keys(editedGoCardless).length > 0 ||
       Object.keys(editedEmail).length > 0 ||
-      Object.keys(editedPayment).length > 0
+      Object.keys(editedPayment).length > 0 ||
+      Object.keys(editedDatabase).length > 0 ||
+      Object.keys(editedRedis).length > 0 ||
+      Object.keys(editedAuth).length > 0 ||
+      Object.keys(editedAdmin).length > 0 ||
+      Object.keys(editedFrontend).length > 0
     );
-  }, [editedStripe, editedGoCardless, editedEmail, editedPayment]);
+  }, [editedStripe, editedGoCardless, editedEmail, editedPayment, editedDatabase, editedRedis, editedAuth, editedAdmin, editedFrontend]);
 
   // Fetch settings from API
   const loadSettings = useCallback(async () => {
@@ -349,6 +496,61 @@ export default function SettingsPage() {
     setEditedPayment((prev) => ({ ...prev, currency: value }));
   }, []);
 
+  const handleDatabaseEdit = useCallback((key: string, value: string) => {
+    setEditedDatabase((prev) => {
+      if (value === '') {
+        const next = { ...prev };
+        delete next[key];
+        return next;
+      }
+      return { ...prev, [key]: value };
+    });
+  }, []);
+
+  const handleRedisEdit = useCallback((key: string, value: string) => {
+    setEditedRedis((prev) => {
+      if (value === '') {
+        const next = { ...prev };
+        delete next[key];
+        return next;
+      }
+      return { ...prev, [key]: value };
+    });
+  }, []);
+
+  const handleAuthEdit = useCallback((key: string, value: string) => {
+    setEditedAuth((prev) => {
+      if (value === '') {
+        const next = { ...prev };
+        delete next[key];
+        return next;
+      }
+      return { ...prev, [key]: value };
+    });
+  }, []);
+
+  const handleAdminEdit = useCallback((key: string, value: string) => {
+    setEditedAdmin((prev) => {
+      if (value === '') {
+        const next = { ...prev };
+        delete next[key];
+        return next;
+      }
+      return { ...prev, [key]: value };
+    });
+  }, []);
+
+  const handleFrontendEdit = useCallback((key: string, value: string) => {
+    setEditedFrontend((prev) => {
+      if (value === '') {
+        const next = { ...prev };
+        delete next[key];
+        return next;
+      }
+      return { ...prev, [key]: value };
+    });
+  }, []);
+
   // Build the partial settings object from edits only
   const buildUpdatePayload = useCallback((): Partial<AdminSettings> => {
     const payload: Partial<AdminSettings> = {};
@@ -372,9 +574,24 @@ export default function SettingsPage() {
     if (Object.keys(editedPayment).length > 0) {
       payload.payment = { ...settings.payment, ...editedPayment };
     }
+    if (Object.keys(editedDatabase).length > 0) {
+      payload.database = { ...settings.database, ...editedDatabase };
+    }
+    if (Object.keys(editedRedis).length > 0) {
+      payload.redis = { ...settings.redis, ...editedRedis };
+    }
+    if (Object.keys(editedAuth).length > 0) {
+      payload.auth = { ...settings.auth, ...editedAuth };
+    }
+    if (Object.keys(editedAdmin).length > 0) {
+      payload.admin = { ...settings.admin, ...editedAdmin };
+    }
+    if (Object.keys(editedFrontend).length > 0) {
+      payload.frontend = { ...settings.frontend, ...editedFrontend };
+    }
 
     return payload;
-  }, [editedStripe, editedGoCardless, editedEmail, editedPayment, settings]);
+  }, [editedStripe, editedGoCardless, editedEmail, editedPayment, editedDatabase, editedRedis, editedAuth, editedAdmin, editedFrontend, settings]);
 
   // Save
   const handleSave = async () => {
@@ -396,6 +613,11 @@ export default function SettingsPage() {
       setEditedGoCardless({});
       setEditedEmail({});
       setEditedPayment({});
+      setEditedDatabase({});
+      setEditedRedis({});
+      setEditedAuth({});
+      setEditedAdmin({});
+      setEditedFrontend({});
       await loadSettings();
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Failed to save settings';
@@ -427,7 +649,12 @@ export default function SettingsPage() {
     gocardless: Object.keys(editedGoCardless).length,
     email: Object.keys(editedEmail).length,
     general: Object.keys(editedPayment).length,
-  }), [editedStripe, editedGoCardless, editedEmail, editedPayment]);
+    database: Object.keys(editedDatabase).length,
+    redis: Object.keys(editedRedis).length,
+    auth: Object.keys(editedAuth).length,
+    admin: Object.keys(editedAdmin).length,
+    frontend: Object.keys(editedFrontend).length,
+  }), [editedStripe, editedGoCardless, editedEmail, editedPayment, editedDatabase, editedRedis, editedAuth, editedAdmin, editedFrontend]);
 
   // Resolve current GoCardless environment (edited or from settings)
   const currentEnvironment = (editedGoCardless.environment as 'sandbox' | 'live' | undefined) ?? settings.gocardless.environment;
@@ -751,59 +978,196 @@ export default function SettingsPage() {
                 </div>
               )}
 
-              {/* General Tab */}
-              {activeTab === 'general' && (
-                <div className="space-y-6">
-                  <SectionCard
-                    title="Payment Configuration"
-                    description="General payment and billing settings."
-                    icon={Settings}
-                    gradient="from-emerald-600/20 to-green-600/20"
-                    iconColor="text-emerald-400"
-                  >
-                    <motion.div
-                      initial={{ opacity: 0, y: 8 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      className="space-y-2"
-                    >
-                      <div className="flex items-center justify-between">
-                        <label className="text-sm font-medium text-neutral-300">
-                          Default Currency
-                          {editedPayment.currency !== undefined && (
-                            <Badge className="ml-2 border border-amber-500/30 bg-amber-500/20 text-amber-300 text-[10px]">
-                              Modified
-                            </Badge>
-                          )}
-                        </label>
-                      </div>
-                      <Select
-                        value={currentCurrency}
-                        onValueChange={handleCurrencyChange}
-                      >
-                        <SelectTrigger className="glass-card border-white/10 text-white">
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent className="glass-card border-white/10">
-                          {CURRENCY_OPTIONS.map((opt) => (
-                            <SelectItem
-                              key={opt.value}
-                              value={opt.value}
-                              className="text-neutral-200"
-                            >
-                              {opt.label}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                      <p className="text-xs text-neutral-500">
-                        The default currency used for subscription billing
-                      </p>
-                    </motion.div>
-                  </SectionCard>
-                </div>
-              )}
-            </motion.div>
-          </AnimatePresence>
+               {/* General Tab */}
+               {activeTab === 'general' && (
+                 <div className="space-y-6">
+                   <SectionCard
+                     title="Payment Configuration"
+                     description="General payment and billing settings."
+                     icon={Settings}
+                     gradient="from-emerald-600/20 to-green-600/20"
+                     iconColor="text-emerald-400"
+                   >
+                     <motion.div
+                       initial={{ opacity: 0, y: 8 }}
+                       animate={{ opacity: 1, y: 0 }}
+                       className="space-y-2"
+                     >
+                       <div className="flex items-center justify-between">
+                         <label className="text-sm font-medium text-neutral-300">
+                           Default Currency
+                           {editedPayment.currency !== undefined && (
+                             <Badge className="ml-2 border border-amber-500/30 bg-amber-500/20 text-amber-300 text-[10px]">
+                               Modified
+                             </Badge>
+                           )}
+                         </label>
+                       </div>
+                       <Select
+                         value={currentCurrency}
+                         onValueChange={handleCurrencyChange}
+                       >
+                         <SelectTrigger className="glass-card border-white/10 text-white">
+                           <SelectValue />
+                         </SelectTrigger>
+                         <SelectContent className="glass-card border-white/10">
+                           {CURRENCY_OPTIONS.map((opt) => (
+                             <SelectItem
+                               key={opt.value}
+                               value={opt.value}
+                               className="text-neutral-200"
+                             >
+                               {opt.label}
+                             </SelectItem>
+                           ))}
+                         </SelectContent>
+                       </Select>
+                       <p className="text-xs text-neutral-500">
+                         The default currency used for subscription billing
+                       </p>
+                     </motion.div>
+                   </SectionCard>
+                 </div>
+               )}
+
+               {/* Database Tab */}
+               {activeTab === 'database' && (
+                 <div className="space-y-6">
+                   <SectionCard
+                     title="Database Configuration"
+                     description="PostgreSQL connection settings. ⚠️ Changes require server restart and may cause downtime."
+                     icon={Database}
+                     gradient="from-red-600/20 to-pink-600/20"
+                     iconColor="text-red-400"
+                     badge={
+                       <Badge className="border border-red-500/30 bg-red-500/20 text-red-300 text-xs">
+                         <AlertTriangle className="mr-1 h-3 w-3" />
+                         Critical
+                       </Badge>
+                     }
+                   >
+                     <div className="space-y-5">
+                       {DATABASE_FIELDS.map((field) => (
+                         <SecretField
+                           key={field.key}
+                           field={field}
+                           value={settings.database[field.key as keyof typeof settings.database]}
+                           editedValue={editedDatabase[field.key]}
+                           onEdit={handleDatabaseEdit}
+                         />
+                       ))}
+                     </div>
+                   </SectionCard>
+                 </div>
+               )}
+
+               {/* Redis Tab */}
+               {activeTab === 'redis' && (
+                 <div className="space-y-6">
+                   <SectionCard
+                     title="Redis Configuration"
+                     description="Redis connection for queues (BullMQ) and caching."
+                     icon={Zap}
+                     gradient="from-orange-600/20 to-yellow-600/20"
+                     iconColor="text-orange-400"
+                   >
+                     <div className="space-y-5">
+                       {REDIS_FIELDS.map((field) => (
+                         <SecretField
+                           key={field.key}
+                           field={field}
+                           value={settings.redis[field.key as keyof typeof settings.redis]}
+                           editedValue={editedRedis[field.key]}
+                           onEdit={handleRedisEdit}
+                         />
+                       ))}
+                     </div>
+                   </SectionCard>
+                 </div>
+               )}
+
+               {/* Auth Tab */}
+               {activeTab === 'auth' && (
+                 <div className="space-y-6">
+                   <SectionCard
+                     title="Authentication Configuration"
+                     description="Better Auth settings for session management and OAuth callbacks."
+                     icon={Shield}
+                     gradient="from-blue-600/20 to-indigo-600/20"
+                     iconColor="text-blue-400"
+                     badge={
+                       <Badge className="border border-blue-500/30 bg-blue-500/20 text-blue-300 text-xs">
+                         <ShieldAlert className="mr-1 h-3 w-3" />
+                         Session Critical
+                       </Badge>
+                     }
+                   >
+                     <div className="space-y-5">
+                       {AUTH_FIELDS.map((field) => (
+                         <SecretField
+                           key={field.key}
+                           field={field}
+                           value={settings.auth[field.key as keyof typeof settings.auth]}
+                           editedValue={editedAuth[field.key]}
+                           onEdit={handleAuthEdit}
+                         />
+                       ))}
+                     </div>
+                   </SectionCard>
+                 </div>
+               )}
+
+               {/* Admin Tab */}
+               {activeTab === 'admin' && (
+                 <div className="space-y-6">
+                   <SectionCard
+                     title="Admin Credentials"
+                     description="Platform administrator account settings for initial setup."
+                     icon={User}
+                     gradient="from-purple-600/20 to-fuchsia-600/20"
+                     iconColor="text-purple-400"
+                   >
+                     <div className="space-y-5">
+                       {ADMIN_FIELDS.map((field) => (
+                         <SecretField
+                           key={field.key}
+                           field={field}
+                           value={settings.admin[field.key as keyof typeof settings.admin]}
+                           editedValue={editedAdmin[field.key]}
+                           onEdit={handleAdminEdit}
+                         />
+                       ))}
+                     </div>
+                   </SectionCard>
+                 </div>
+               )}
+
+               {/* Frontend Tab */}
+               {activeTab === 'frontend' && (
+                 <div className="space-y-6">
+                   <SectionCard
+                     title="Frontend Configuration"
+                     description="Client-side application settings and public API keys."
+                     icon={Monitor}
+                     gradient="from-teal-600/20 to-cyan-600/20"
+                     iconColor="text-teal-400"
+                   >
+                     <div className="space-y-5">
+                       {FRONTEND_FIELDS.map((field) => (
+                         <SecretField
+                           key={field.key}
+                           field={field}
+                           value={settings.frontend[field.key as keyof typeof settings.frontend]}
+                           editedValue={editedFrontend[field.key]}
+                           onEdit={handleFrontendEdit}
+                         />
+                       ))}
+                     </div>
+                   </SectionCard>
+                 </div>
+               )}
+             </motion.div>
+           </AnimatePresence>
         </>
       )}
 
