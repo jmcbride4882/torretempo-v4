@@ -100,8 +100,10 @@ router.put('/', requireAdmin, async (req: Request, res: Response) => {
       });
     }
 
-    // Parse .env into key-value pairs
+    // Parse .env into key-value pairs while preserving structure
     const envVars = new Map<string, string>();
+    const envLines: string[] = [];
+    
     envContent.split('\n').forEach(line => {
       const trimmed = line.trim();
       if (trimmed && !trimmed.startsWith('#')) {
@@ -110,51 +112,64 @@ router.put('/', requireAdmin, async (req: Request, res: Response) => {
           envVars.set(key.trim(), valueParts.join('=').trim());
         }
       }
+      envLines.push(line); // Preserve all lines (comments, blanks, etc.)
     });
 
     // Track what was changed for audit log
     const changedKeys: string[] = [];
 
+    // Helper: Check if value is different and not masked
+    const shouldUpdate = (newValue: string | undefined, currentValue: string): boolean => {
+      if (!newValue) return false;
+      const masked = maskKey(currentValue);
+      // Only update if: value is not masked AND different from current
+      if (newValue === masked) return false; // User didn't change it
+      if (!isMaskedValue(newValue) && newValue !== currentValue) {
+        return true; // New actual value
+      }
+      return false;
+    };
+
     // Update Stripe keys
     if (updates.stripe) {
-      if (updates.stripe.secretKey && updates.stripe.secretKey !== maskKey(process.env.STRIPE_SECRET_KEY || '')) {
-        envVars.set('STRIPE_SECRET_KEY', updates.stripe.secretKey);
+      if (shouldUpdate(updates.stripe.secretKey, process.env.STRIPE_SECRET_KEY || '')) {
+        envVars.set('STRIPE_SECRET_KEY', updates.stripe.secretKey!);
         changedKeys.push('STRIPE_SECRET_KEY');
       }
-      if (updates.stripe.publishableKey && updates.stripe.publishableKey !== maskKey(process.env.STRIPE_PUBLISHABLE_KEY || '')) {
-        envVars.set('STRIPE_PUBLISHABLE_KEY', updates.stripe.publishableKey);
+      if (shouldUpdate(updates.stripe.publishableKey, process.env.STRIPE_PUBLISHABLE_KEY || '')) {
+        envVars.set('STRIPE_PUBLISHABLE_KEY', updates.stripe.publishableKey!);
         changedKeys.push('STRIPE_PUBLISHABLE_KEY');
       }
-      if (updates.stripe.webhookSecret && updates.stripe.webhookSecret !== maskKey(process.env.STRIPE_WEBHOOK_SECRET || '')) {
-        envVars.set('STRIPE_WEBHOOK_SECRET', updates.stripe.webhookSecret);
+      if (shouldUpdate(updates.stripe.webhookSecret, process.env.STRIPE_WEBHOOK_SECRET || '')) {
+        envVars.set('STRIPE_WEBHOOK_SECRET', updates.stripe.webhookSecret!);
         changedKeys.push('STRIPE_WEBHOOK_SECRET');
       }
     }
 
     // Update GoCardless keys
     if (updates.gocardless) {
-      if (updates.gocardless.accessToken && updates.gocardless.accessToken !== maskKey(process.env.GOCARDLESS_ACCESS_TOKEN || '')) {
-        envVars.set('GOCARDLESS_ACCESS_TOKEN', updates.gocardless.accessToken);
+      if (shouldUpdate(updates.gocardless.accessToken, process.env.GOCARDLESS_ACCESS_TOKEN || '')) {
+        envVars.set('GOCARDLESS_ACCESS_TOKEN', updates.gocardless.accessToken!);
         changedKeys.push('GOCARDLESS_ACCESS_TOKEN');
       }
-      if (updates.gocardless.webhookSecret && updates.gocardless.webhookSecret !== maskKey(process.env.GOCARDLESS_WEBHOOK_SECRET || '')) {
-        envVars.set('GOCARDLESS_WEBHOOK_SECRET', updates.gocardless.webhookSecret);
+      if (shouldUpdate(updates.gocardless.webhookSecret, process.env.GOCARDLESS_WEBHOOK_SECRET || '')) {
+        envVars.set('GOCARDLESS_WEBHOOK_SECRET', updates.gocardless.webhookSecret!);
         changedKeys.push('GOCARDLESS_WEBHOOK_SECRET');
       }
-      if (updates.gocardless.environment) {
+      if (updates.gocardless.environment && updates.gocardless.environment !== process.env.GOCARDLESS_ENVIRONMENT) {
         envVars.set('GOCARDLESS_ENVIRONMENT', updates.gocardless.environment);
         changedKeys.push('GOCARDLESS_ENVIRONMENT');
       }
     }
 
     // Update Email key
-    if (updates.email?.resendApiKey && updates.email.resendApiKey !== maskKey(process.env.RESEND_API_KEY || '')) {
-      envVars.set('RESEND_API_KEY', updates.email.resendApiKey);
+    if (shouldUpdate(updates.email?.resendApiKey, process.env.RESEND_API_KEY || '')) {
+      envVars.set('RESEND_API_KEY', updates.email!.resendApiKey!);
       changedKeys.push('RESEND_API_KEY');
     }
 
     // Update Payment currency
-    if (updates.payment?.currency) {
+    if (updates.payment?.currency && updates.payment.currency !== process.env.PAYMENT_CURRENCY) {
       envVars.set('PAYMENT_CURRENCY', updates.payment.currency);
       changedKeys.push('PAYMENT_CURRENCY');
     }
@@ -166,12 +181,20 @@ router.put('/', requireAdmin, async (req: Request, res: Response) => {
       });
     }
 
-    // Write updated .env file
-    const newEnvContent = Array.from(envVars.entries())
-      .map(([key, value]) => `${key}=${value}`)
-      .join('\n');
+    // Write updated .env file (preserve structure where possible)
+    const newEnvLines = envLines.map(line => {
+      const trimmed = line.trim();
+      if (trimmed && !trimmed.startsWith('#')) {
+        const [key] = trimmed.split('=');
+        const cleanKey = key?.trim();
+        if (cleanKey && envVars.has(cleanKey)) {
+          return `${cleanKey}=${envVars.get(cleanKey)}`;
+        }
+      }
+      return line; // Keep comments and blank lines as-is
+    });
     
-    await fs.writeFile(envPath, newEnvContent + '\n', 'utf-8');
+    await fs.writeFile(envPath, newEnvLines.join('\n'), 'utf-8');
 
     // Log audit entry
     await logAdminAction({
@@ -240,6 +263,13 @@ router.post('/restart', requireAdmin, async (req: Request, res: Response) => {
 function maskKey(key: string): string {
   if (!key || key.length < 12) return key ? '****' : '';
   return `${key.slice(0, 4)}${'*'.repeat(key.length - 8)}${key.slice(-4)}`;
+}
+
+/**
+ * Check if a value appears to be masked (contains asterisks)
+ */
+function isMaskedValue(value: string): boolean {
+  return value.includes('*');
 }
 
 export default router;
