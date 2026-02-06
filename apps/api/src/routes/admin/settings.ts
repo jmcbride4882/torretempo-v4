@@ -123,8 +123,8 @@ router.get('/', requireAdmin, async (_req: Request, res: Response) => {
  */
 router.put('/', requireAdmin, async (req: Request, res: Response) => {
   try {
-    const actor = (req as any).actor;
-    if (!actor?.id) {
+    const user = (req as any).user;
+    if (!user?.id) {
       return res.status(401).json({ message: 'Unauthorized' });
     }
 
@@ -302,12 +302,12 @@ router.put('/', requireAdmin, async (req: Request, res: Response) => {
 
     // Log audit entry
     await logAdminAction({
-      adminId: actor.id,
+      adminId: user.id,
       action: 'settings.update',
       targetType: 'system',
       details: {
         changedKeys,
-        admin_email: actor.email,
+        admin_email: user.email,
       },
       ip: (req.headers['x-forwarded-for'] as string)?.split(',')[0] || req.socket.remoteAddress || '',
     });
@@ -332,18 +332,18 @@ router.put('/', requireAdmin, async (req: Request, res: Response) => {
  */
 router.post('/restart', requireAdmin, async (req: Request, res: Response) => {
   try {
-    const actor = (req as any).actor;
-    if (!actor?.id) {
+    const user = (req as any).user;
+    if (!user?.id) {
       return res.status(401).json({ message: 'Unauthorized' });
     }
 
     // Log audit entry
     await logAdminAction({
-      adminId: actor.id,
+      adminId: user.id,
       action: 'system.restart',
       targetType: 'system',
       details: {
-        admin_email: actor.email,
+        admin_email: user.email,
       },
       ip: (req.headers['x-forwarded-for'] as string)?.split(',')[0] || req.socket.remoteAddress || '',
     });
