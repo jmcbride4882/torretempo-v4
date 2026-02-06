@@ -20,6 +20,9 @@ import {
   Crown,
   Edit,
   Download,
+  Square,
+  CheckSquare,
+  X,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -54,6 +57,7 @@ import {
   unsuspendTenant,
   deleteTenant,
   updateTenant,
+  bulkDeleteTenants,
 } from '@/lib/api/admin';
 import type { Tenant } from '@/lib/api/admin';
 
@@ -102,6 +106,12 @@ export default function TenantsPage() {
   });
   const [isEditLoading, setIsEditLoading] = useState(false);
   const [isExporting, setIsExporting] = useState(false);
+
+  // Bulk selection state
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+  const [bulkDeleteModal, setBulkDeleteModal] = useState(false);
+  const [bulkDeleteConfirm, setBulkDeleteConfirm] = useState('');
+  const [isBulkLoading, setIsBulkLoading] = useState(false);
 
   // Fetch tenants
   const loadTenants = useCallback(
@@ -243,6 +253,53 @@ export default function TenantsPage() {
     setEditModal(tenant);
   };
 
+  // Selection helpers
+  const toggleSelection = (id: string) => {
+    setSelectedIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  };
+
+  const allSelected = tenants.length > 0 && tenants.every((t) => selectedIds.has(t.id));
+  const someSelected = tenants.some((t) => selectedIds.has(t.id));
+
+  const toggleSelectAll = () => {
+    if (allSelected) {
+      setSelectedIds(new Set());
+    } else {
+      setSelectedIds(new Set(tenants.map((t) => t.id)));
+    }
+  };
+
+  const clearSelection = () => setSelectedIds(new Set());
+
+  // Bulk delete handler
+  const handleBulkDelete = async () => {
+    if (bulkDeleteConfirm !== 'DELETE') {
+      toast.error('Type DELETE to confirm');
+      return;
+    }
+    setIsBulkLoading(true);
+    try {
+      const result = await bulkDeleteTenants(Array.from(selectedIds));
+      toast.success(`${result.success} tenant(s) deleted successfully`);
+      if (result.failed > 0) {
+        toast.warning(`${result.failed} tenant(s) failed to delete`);
+      }
+      setBulkDeleteModal(false);
+      setBulkDeleteConfirm('');
+      clearSelection();
+      loadTenants(true);
+    } catch (error) {
+      toast.error('Failed to delete tenants');
+    } finally {
+      setIsBulkLoading(false);
+    }
+  };
+
   // Stats
   const activeCount = tenants.filter((t) => t.subscriptionStatus === 'active').length;
   const suspendedCount = tenants.filter((t) => t.subscriptionStatus === 'suspended').length;
@@ -366,6 +423,27 @@ export default function TenantsPage() {
         transition={{ delay: 0.15 }}
         className="flex flex-wrap items-center gap-4 text-sm sm:gap-6"
       >
+        {/* Select All checkbox */}
+        {tenants.length > 0 && (
+          <button
+            onClick={toggleSelectAll}
+            className="flex items-center gap-2 rounded-lg border border-white/10 bg-white/5 px-3 py-1.5 text-neutral-300 transition-colors hover:bg-white/10"
+          >
+            {allSelected ? (
+              <CheckSquare className="h-4 w-4 text-amber-400" />
+            ) : someSelected ? (
+              <div className="relative">
+                <Square className="h-4 w-4 text-amber-400" />
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <div className="h-2 w-2 rounded-sm bg-amber-400" />
+                </div>
+              </div>
+            ) : (
+              <Square className="h-4 w-4" />
+            )}
+            <span className="text-xs font-medium">Select All</span>
+          </button>
+        )}
         <div className="flex items-center gap-2">
           <div className="h-2 w-2 rounded-full bg-amber-500" />
           <span className="text-neutral-400">
@@ -417,6 +495,8 @@ export default function TenantsPage() {
                   key={tenant.id}
                   tenant={tenant}
                   index={index}
+                  isSelected={selectedIds.has(tenant.id)}
+                  onToggleSelect={() => toggleSelection(tenant.id)}
                   onEdit={() => openEditModal(tenant)}
                   onSuspend={() => setConfirmModal({ type: 'suspend', tenant })}
                   onUnsuspend={() => setConfirmModal({ type: 'unsuspend', tenant })}
@@ -593,6 +673,83 @@ export default function TenantsPage() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {/* Floating Bulk Action Bar */}
+      <AnimatePresence>
+        {selectedIds.size > 0 && (
+          <motion.div
+            initial={{ y: 100, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            exit={{ y: 100, opacity: 0 }}
+            transition={{ type: 'spring', damping: 25, stiffness: 300 }}
+            className="fixed inset-x-0 bottom-6 z-50 mx-auto flex w-fit items-center gap-3 rounded-2xl border border-white/10 bg-zinc-900/95 px-5 py-3 shadow-2xl shadow-black/50 backdrop-blur-xl"
+          >
+            <span className="text-sm font-medium text-neutral-200">
+              <span className="text-amber-400">{selectedIds.size}</span> selected
+            </span>
+            <div className="h-5 w-px bg-white/10" />
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setBulkDeleteModal(true)}
+              className="gap-1.5 text-red-400 hover:bg-red-500/10 hover:text-red-300"
+            >
+              <Trash2 className="h-4 w-4" />
+              Delete Selected
+            </Button>
+            <div className="h-5 w-px bg-white/10" />
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={clearSelection}
+              className="gap-1.5 text-neutral-400 hover:bg-white/5 hover:text-neutral-200"
+            >
+              <X className="h-4 w-4" />
+              Clear
+            </Button>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Bulk Delete Modal */}
+      <Dialog open={bulkDeleteModal} onOpenChange={() => { setBulkDeleteModal(false); setBulkDeleteConfirm(''); }}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <AlertTriangle className="h-5 w-5 text-red-400" />
+              Delete {selectedIds.size} Tenant{selectedIds.size !== 1 ? 's' : ''}
+            </DialogTitle>
+            <DialogDescription>
+              <span className="text-red-400">This action cannot be undone.</span>{' '}
+              All data for these organizations including members, invitations, and subscriptions will be permanently deleted.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-2 py-2">
+            <label className="text-sm text-neutral-300">
+              Type <code className="rounded bg-neutral-800 px-1.5 py-0.5 text-red-400">DELETE</code> to confirm:
+            </label>
+            <Input
+              value={bulkDeleteConfirm}
+              onChange={(e) => setBulkDeleteConfirm(e.target.value)}
+              placeholder="DELETE"
+              className="glass-card border-white/10 text-white"
+              autoFocus
+            />
+          </div>
+          <DialogFooter>
+            <Button variant="ghost" onClick={() => { setBulkDeleteModal(false); setBulkDeleteConfirm(''); }} disabled={isBulkLoading}>
+              Cancel
+            </Button>
+            <Button
+              variant="destructive"
+              onClick={handleBulkDelete}
+              disabled={isBulkLoading || bulkDeleteConfirm !== 'DELETE'}
+            >
+              {isBulkLoading ? 'Deleting...' : `Delete ${selectedIds.size} Tenant${selectedIds.size !== 1 ? 's' : ''}`}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
@@ -601,13 +758,15 @@ export default function TenantsPage() {
 interface TenantCardProps {
   tenant: Tenant;
   index: number;
+  isSelected: boolean;
+  onToggleSelect: () => void;
   onEdit: () => void;
   onSuspend: () => void;
   onUnsuspend: () => void;
   onDelete: () => void;
 }
 
-function TenantCard({ tenant, index, onEdit, onSuspend, onUnsuspend, onDelete }: TenantCardProps) {
+function TenantCard({ tenant, index, isSelected, onToggleSelect, onEdit, onSuspend, onUnsuspend, onDelete }: TenantCardProps) {
   const isSuspended = tenant.subscriptionStatus === 'suspended';
 
   return (
@@ -621,11 +780,29 @@ function TenantCard({ tenant, index, onEdit, onSuspend, onUnsuspend, onDelete }:
       className={cn(
         'group relative overflow-hidden rounded-2xl border border-white/10 bg-white/5 backdrop-blur-xl transition-all duration-300',
         'hover:border-white/20 hover:bg-white/[0.07] hover:shadow-xl hover:shadow-amber-500/5',
-        isSuspended && 'border-red-500/20 bg-red-500/5'
+        isSuspended && 'border-red-500/20 bg-red-500/5',
+        isSelected && 'border-amber-500/40 bg-amber-500/10 ring-1 ring-amber-500/20'
       )}
     >
       {/* Gradient accent */}
       <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-amber-500/50 to-transparent opacity-0 transition-opacity group-hover:opacity-100" />
+
+      {/* Selection checkbox — top-left */}
+      <button
+        onClick={(e) => { e.stopPropagation(); onToggleSelect(); }}
+        className={cn(
+          'absolute left-3 top-3 z-10 flex h-6 w-6 items-center justify-center rounded-md border transition-all',
+          isSelected
+            ? 'border-amber-500 bg-amber-500 text-white'
+            : 'border-white/20 bg-white/5 text-transparent opacity-0 group-hover:opacity-100 hover:border-white/40'
+        )}
+      >
+        {isSelected ? (
+          <CheckSquare className="h-4 w-4" />
+        ) : (
+          <Square className="h-4 w-4 text-neutral-400" />
+        )}
+      </button>
 
       <div className="relative p-5">
         {/* Header */}

@@ -417,6 +417,53 @@ export async function updateUser(
 }
 
 // ============================================================================
+// BULK OPERATIONS API
+// ============================================================================
+
+export interface BulkOperationResult {
+  success: number;
+  failed: number;
+  errors: string[];
+}
+
+export async function bulkBanUsers(
+  userIds: string[],
+  reason: string,
+  expiresInDays = 30
+): Promise<BulkOperationResult> {
+  const url = `${API_URL}/api/admin/users/bulk-ban`;
+  const response = await fetch(url, {
+    method: 'POST',
+    credentials: 'include',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ userIds, reason, expiresInDays }),
+  });
+  return handleResponse<BulkOperationResult>(response);
+}
+
+export async function bulkDeleteUsers(userIds: string[]): Promise<BulkOperationResult> {
+  const url = `${API_URL}/api/admin/users/bulk-delete`;
+  const response = await fetch(url, {
+    method: 'POST',
+    credentials: 'include',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ userIds }),
+  });
+  return handleResponse<BulkOperationResult>(response);
+}
+
+export async function bulkDeleteTenants(tenantIds: string[]): Promise<BulkOperationResult> {
+  const url = `${API_URL}/api/admin/tenants/bulk-delete`;
+  const response = await fetch(url, {
+    method: 'POST',
+    credentials: 'include',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ tenantIds }),
+  });
+  return handleResponse<BulkOperationResult>(response);
+}
+
+// ============================================================================
 // SUBSCRIPTIONS API
 // ============================================================================
 

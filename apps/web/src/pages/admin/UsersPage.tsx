@@ -21,6 +21,11 @@ import {
   UserPlus,
   Edit,
   Download,
+  Square,
+  CheckSquare,
+  X,
+  Trash2,
+  AlertTriangle,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -56,6 +61,8 @@ import {
   grantAdmin,
   revokeAdmin,
   updateUser,
+  bulkBanUsers,
+  bulkDeleteUsers,
 } from '@/lib/api/admin';
 import type { AdminUser } from '@/lib/api/admin';
 
@@ -88,6 +95,14 @@ export default function UsersPage() {
   });
   const [isEditLoading, setIsEditLoading] = useState(false);
   const [isExporting, setIsExporting] = useState(false);
+
+  // Bulk selection state
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+  const [bulkBanModal, setBulkBanModal] = useState(false);
+  const [bulkDeleteModal, setBulkDeleteModal] = useState(false);
+  const [bulkBanReason, setBulkBanReason] = useState('');
+  const [bulkDeleteConfirm, setBulkDeleteConfirm] = useState('');
+  const [isBulkLoading, setIsBulkLoading] = useState(false);
 
   // Fetch users
   const loadUsers = useCallback(
@@ -235,6 +250,78 @@ export default function UsersPage() {
     setEditModal(user);
   };
 
+  // Selection helpers
+  const toggleSelection = (id: string) => {
+    setSelectedIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  };
+
+  const selectableUsers = users.filter((u) => !u.banned);
+  const allSelected = selectableUsers.length > 0 && selectableUsers.every((u) => selectedIds.has(u.id));
+  const someSelected = selectableUsers.some((u) => selectedIds.has(u.id));
+
+  const toggleSelectAll = () => {
+    if (allSelected) {
+      setSelectedIds(new Set());
+    } else {
+      setSelectedIds(new Set(selectableUsers.map((u) => u.id)));
+    }
+  };
+
+  const clearSelection = () => setSelectedIds(new Set());
+
+  // Bulk ban handler
+  const handleBulkBan = async () => {
+    if (!bulkBanReason.trim()) {
+      toast.error('Ban reason is required');
+      return;
+    }
+    setIsBulkLoading(true);
+    try {
+      const result = await bulkBanUsers(Array.from(selectedIds), bulkBanReason.trim());
+      toast.success(`${result.success} user(s) banned successfully`);
+      if (result.failed > 0) {
+        toast.warning(`${result.failed} user(s) failed to ban`);
+      }
+      setBulkBanModal(false);
+      setBulkBanReason('');
+      clearSelection();
+      loadUsers(true);
+    } catch (error) {
+      toast.error('Failed to ban users');
+    } finally {
+      setIsBulkLoading(false);
+    }
+  };
+
+  // Bulk delete handler
+  const handleBulkDelete = async () => {
+    if (bulkDeleteConfirm !== 'DELETE') {
+      toast.error('Type DELETE to confirm');
+      return;
+    }
+    setIsBulkLoading(true);
+    try {
+      const result = await bulkDeleteUsers(Array.from(selectedIds));
+      toast.success(`${result.success} user(s) deleted successfully`);
+      if (result.failed > 0) {
+        toast.warning(`${result.failed} user(s) failed to delete`);
+      }
+      setBulkDeleteModal(false);
+      setBulkDeleteConfirm('');
+      clearSelection();
+      loadUsers(true);
+    } catch (error) {
+      toast.error('Failed to delete users');
+    } finally {
+      setIsBulkLoading(false);
+    }
+  };
+
   // Stats
   const adminCount = users.filter((u) => u.isAdmin).length;
   const bannedCount = users.filter((u) => u.banned).length;
@@ -358,6 +445,27 @@ export default function UsersPage() {
         transition={{ delay: 0.15 }}
         className="flex flex-wrap items-center gap-4 text-sm sm:gap-6"
       >
+        {/* Select All checkbox */}
+        {users.length > 0 && (
+          <button
+            onClick={toggleSelectAll}
+            className="flex items-center gap-2 rounded-lg border border-white/10 bg-white/5 px-3 py-1.5 text-neutral-300 transition-colors hover:bg-white/10"
+          >
+            {allSelected ? (
+              <CheckSquare className="h-4 w-4 text-blue-400" />
+            ) : someSelected ? (
+              <div className="relative">
+                <Square className="h-4 w-4 text-blue-400" />
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <div className="h-2 w-2 rounded-sm bg-blue-400" />
+                </div>
+              </div>
+            ) : (
+              <Square className="h-4 w-4" />
+            )}
+            <span className="text-xs font-medium">Select All</span>
+          </button>
+        )}
         <div className="flex items-center gap-2">
           <div className="h-2 w-2 rounded-full bg-blue-500" />
           <span className="text-neutral-400">
@@ -415,6 +523,8 @@ export default function UsersPage() {
                   key={user.id}
                   user={user}
                   index={index}
+                  isSelected={selectedIds.has(user.id)}
+                  onToggleSelect={() => toggleSelection(user.id)}
                   onEdit={() => openEditModal(user)}
                   onBan={() => setConfirmModal({ type: 'ban', user })}
                   onUnban={() => setConfirmModal({ type: 'unban', user })}
@@ -599,6 +709,133 @@ export default function UsersPage() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {/* Floating Bulk Action Bar */}
+      <AnimatePresence>
+        {selectedIds.size > 0 && (
+          <motion.div
+            initial={{ y: 100, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            exit={{ y: 100, opacity: 0 }}
+            transition={{ type: 'spring', damping: 25, stiffness: 300 }}
+            className="fixed inset-x-0 bottom-6 z-50 mx-auto flex w-fit items-center gap-3 rounded-2xl border border-white/10 bg-zinc-900/95 px-5 py-3 shadow-2xl shadow-black/50 backdrop-blur-xl"
+          >
+            <span className="text-sm font-medium text-neutral-200">
+              <span className="text-blue-400">{selectedIds.size}</span> selected
+            </span>
+            <div className="h-5 w-px bg-white/10" />
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setBulkBanModal(true)}
+              className="gap-1.5 text-amber-400 hover:bg-amber-500/10 hover:text-amber-300"
+            >
+              <Ban className="h-4 w-4" />
+              Ban Selected
+            </Button>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setBulkDeleteModal(true)}
+              className="gap-1.5 text-red-400 hover:bg-red-500/10 hover:text-red-300"
+            >
+              <Trash2 className="h-4 w-4" />
+              Delete Selected
+            </Button>
+            <div className="h-5 w-px bg-white/10" />
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={clearSelection}
+              className="gap-1.5 text-neutral-400 hover:bg-white/5 hover:text-neutral-200"
+            >
+              <X className="h-4 w-4" />
+              Clear
+            </Button>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Bulk Ban Modal */}
+      <Dialog open={bulkBanModal} onOpenChange={() => { setBulkBanModal(false); setBulkBanReason(''); }}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <AlertTriangle className="h-5 w-5 text-amber-400" />
+              Ban {selectedIds.size} User{selectedIds.size !== 1 ? 's' : ''}
+            </DialogTitle>
+            <DialogDescription>
+              These users will be logged out and unable to access the platform.
+              Already-banned users are excluded from selection.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-2 py-2">
+            <label className="text-sm font-medium text-neutral-300">
+              Ban Reason <span className="text-red-400">*</span>
+            </label>
+            <Input
+              value={bulkBanReason}
+              onChange={(e) => setBulkBanReason(e.target.value)}
+              placeholder="Enter reason for banning..."
+              className="glass-card border-white/10 text-white"
+              autoFocus
+            />
+          </div>
+          <DialogFooter>
+            <Button variant="ghost" onClick={() => { setBulkBanModal(false); setBulkBanReason(''); }} disabled={isBulkLoading}>
+              Cancel
+            </Button>
+            <Button
+              variant="destructive"
+              onClick={handleBulkBan}
+              disabled={isBulkLoading || !bulkBanReason.trim()}
+              className="bg-amber-600 hover:bg-amber-500"
+            >
+              {isBulkLoading ? 'Banning...' : `Ban ${selectedIds.size} User${selectedIds.size !== 1 ? 's' : ''}`}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Bulk Delete Modal */}
+      <Dialog open={bulkDeleteModal} onOpenChange={() => { setBulkDeleteModal(false); setBulkDeleteConfirm(''); }}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <AlertTriangle className="h-5 w-5 text-red-400" />
+              Delete {selectedIds.size} User{selectedIds.size !== 1 ? 's' : ''}
+            </DialogTitle>
+            <DialogDescription>
+              <span className="text-red-400">This action cannot be undone.</span>{' '}
+              All data for these users will be permanently deleted.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-2 py-2">
+            <label className="text-sm text-neutral-300">
+              Type <code className="rounded bg-neutral-800 px-1.5 py-0.5 text-red-400">DELETE</code> to confirm:
+            </label>
+            <Input
+              value={bulkDeleteConfirm}
+              onChange={(e) => setBulkDeleteConfirm(e.target.value)}
+              placeholder="DELETE"
+              className="glass-card border-white/10 text-white"
+              autoFocus
+            />
+          </div>
+          <DialogFooter>
+            <Button variant="ghost" onClick={() => { setBulkDeleteModal(false); setBulkDeleteConfirm(''); }} disabled={isBulkLoading}>
+              Cancel
+            </Button>
+            <Button
+              variant="destructive"
+              onClick={handleBulkDelete}
+              disabled={isBulkLoading || bulkDeleteConfirm !== 'DELETE'}
+            >
+              {isBulkLoading ? 'Deleting...' : `Delete ${selectedIds.size} User${selectedIds.size !== 1 ? 's' : ''}`}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
@@ -607,6 +844,8 @@ export default function UsersPage() {
 interface UserCardProps {
   user: AdminUser;
   index: number;
+  isSelected: boolean;
+  onToggleSelect: () => void;
   onEdit: () => void;
   onBan: () => void;
   onUnban: () => void;
@@ -614,7 +853,7 @@ interface UserCardProps {
   onRevokeAdmin: () => void;
 }
 
-function UserCard({ user, index, onEdit, onBan, onUnban, onGrantAdmin, onRevokeAdmin }: UserCardProps) {
+function UserCard({ user, index, isSelected, onToggleSelect, onEdit, onBan, onUnban, onGrantAdmin, onRevokeAdmin }: UserCardProps) {
   return (
     <motion.div
       layout
@@ -626,11 +865,31 @@ function UserCard({ user, index, onEdit, onBan, onUnban, onGrantAdmin, onRevokeA
       className={cn(
         'group relative overflow-hidden rounded-2xl border border-white/10 bg-white/5 backdrop-blur-xl transition-all duration-300',
         'hover:border-white/20 hover:bg-white/[0.07] hover:shadow-xl hover:shadow-blue-500/5',
-        user.banned && 'border-red-500/20 bg-red-500/5'
+        user.banned && 'border-red-500/20 bg-red-500/5',
+        isSelected && 'border-blue-500/40 bg-blue-500/10 ring-1 ring-blue-500/20'
       )}
     >
       {/* Gradient accent */}
       <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-blue-500/50 to-transparent opacity-0 transition-opacity group-hover:opacity-100" />
+
+      {/* Selection checkbox — top-left */}
+      {!user.banned && (
+        <button
+          onClick={(e) => { e.stopPropagation(); onToggleSelect(); }}
+          className={cn(
+            'absolute left-3 top-3 z-10 flex h-6 w-6 items-center justify-center rounded-md border transition-all',
+            isSelected
+              ? 'border-blue-500 bg-blue-500 text-white'
+              : 'border-white/20 bg-white/5 text-transparent opacity-0 group-hover:opacity-100 hover:border-white/40'
+          )}
+        >
+          {isSelected ? (
+            <CheckSquare className="h-4 w-4" />
+          ) : (
+            <Square className="h-4 w-4 text-neutral-400" />
+          )}
+        </button>
+      )}
 
       <div className="relative p-5">
         {/* Header */}
