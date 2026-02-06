@@ -27,6 +27,7 @@ import auditRouter from './routes/admin/audit.js';
 import analyticsRouter from './routes/admin/analytics.js';
 import errorsRouter from './routes/admin/errors.js';
 import featureFlagsRouter from './routes/admin/feature-flags.js';
+import broadcastsRouter from './routes/admin/broadcasts.js';
 import 'dotenv/config';
 import './workers/email.worker.js';
 
@@ -80,6 +81,7 @@ app.use('/api/admin/audit', auditRouter);
 app.use('/api/admin/analytics', analyticsRouter);
 app.use('/api/admin/errors', errorsRouter);
 app.use('/api/admin/feature-flags', featureFlagsRouter);
+app.use('/api/admin/broadcasts', broadcastsRouter);
 
 // Admin routes (tenant-specific)
 app.use('/api/admin/:slug/inspector-tokens', tenantMiddleware, inspectorTokensRouter);

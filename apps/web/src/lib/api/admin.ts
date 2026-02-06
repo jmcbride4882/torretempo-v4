@@ -277,6 +277,22 @@ export interface FeatureFlagsResponse {
   flags: FeatureFlag[];
 }
 
+export interface BroadcastMessage {
+  id: string;
+  admin_id: string;
+  title: string;
+  message: string;
+  severity: 'info' | 'warning' | 'urgent';
+  target_type: 'all' | 'organization' | 'user';
+  target_ids: string[] | null;
+  expires_at: string | null;
+  created_at: string;
+}
+
+export interface BroadcastsResponse {
+  broadcasts: BroadcastMessage[];
+}
+
 // ============================================================================
 // TENANTS API
 // ============================================================================
@@ -700,4 +716,41 @@ export async function resendVerificationEmail(userId: string): Promise<{ message
     credentials: 'include',
   });
   return handleResponse<{ message: string; expiresIn: string }>(response);
+}
+
+// ============================================================================
+// BROADCASTS API
+// ============================================================================
+
+export async function fetchBroadcasts(): Promise<BroadcastsResponse> {
+  const url = `${API_URL}/api/admin/broadcasts`;
+  const response = await fetch(url, { credentials: 'include' });
+  return handleResponse<BroadcastsResponse>(response);
+}
+
+export async function createBroadcast(data: {
+  title: string;
+  message: string;
+  severity: 'info' | 'warning' | 'urgent';
+  target_type: 'all' | 'organization' | 'user';
+  target_ids?: string[];
+  expires_at?: string;
+}): Promise<{ broadcast: BroadcastMessage }> {
+  const url = `${API_URL}/api/admin/broadcasts`;
+  const response = await fetch(url, {
+    method: 'POST',
+    credentials: 'include',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data),
+  });
+  return handleResponse<{ broadcast: BroadcastMessage }>(response);
+}
+
+export async function deleteBroadcast(broadcastId: string): Promise<{ message: string }> {
+  const url = `${API_URL}/api/admin/broadcasts/${broadcastId}`;
+  const response = await fetch(url, {
+    method: 'DELETE',
+    credentials: 'include',
+  });
+  return handleResponse<{ message: string }>(response);
 }

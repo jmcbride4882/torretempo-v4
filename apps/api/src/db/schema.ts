@@ -569,3 +569,28 @@ export const subscription_plans = pgTable(
     active_idx: index('subscription_plans_active_idx').on(table.is_active),
   })
 );
+
+// ============================================================================
+// ADMIN BROADCAST MESSAGES
+// ============================================================================
+export const admin_broadcast_messages = pgTable(
+  'admin_broadcast_messages',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    admin_id: text('admin_id').notNull(),
+    title: varchar('title', { length: 200 }).notNull(),
+    message: text('message').notNull(),
+    severity: varchar('severity', { length: 20 }).notNull().default('info'), // info, warning, urgent
+    target_type: varchar('target_type', { length: 50 }).notNull(), // all, organization, user
+    target_ids: text('target_ids').array(), // Array of user/org IDs if targeted
+    expires_at: timestamp('expires_at', { withTimezone: true }),
+    created_at: timestamp('created_at', { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+  },
+  (table) => ({
+    admin_idx: index('admin_broadcast_admin_idx').on(table.admin_id),
+    target_idx: index('admin_broadcast_target_idx').on(table.target_type),
+    created_idx: index('admin_broadcast_created_idx').on(table.created_at),
+  })
+);
