@@ -520,9 +520,12 @@ export const subscription_details = pgTable(
     organization_id: text('organization_id').notNull().unique(),
     tier: varchar('tier', { length: 20 }).notNull().default('starter'), // starter, professional, enterprise
     seat_count: integer('seat_count').default(0),
+    subscription_status: varchar('subscription_status', { length: 20 }).notNull().default('active'), // active, past_due, cancelled, suspended
     stripe_customer_id: varchar('stripe_customer_id', { length: 255 }),
+    stripe_subscription_id: varchar('stripe_subscription_id', { length: 255 }),
     gocardless_customer_id: varchar('gocardless_customer_id', { length: 255 }),
     gocardless_mandate_id: varchar('gocardless_mandate_id', { length: 255 }),
+    gocardless_subscription_id: varchar('gocardless_subscription_id', { length: 255 }),
     trial_ends_at: timestamp('trial_ends_at', { withTimezone: true }),
     plan_id: uuid('plan_id').references(() => subscription_plans.id),
     plan_price_cents: integer('plan_price_cents'),

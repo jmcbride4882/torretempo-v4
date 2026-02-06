@@ -28,6 +28,8 @@ import analyticsRouter from './routes/admin/analytics.js';
 import errorsRouter from './routes/admin/errors.js';
 import featureFlagsRouter from './routes/admin/feature-flags.js';
 import broadcastsRouter from './routes/admin/broadcasts.js';
+import billingRouter from './routes/admin/billing.js';
+import stripeWebhookRouter from './routes/webhooks/stripe.js';
 import 'dotenv/config';
 import './workers/email.worker.js';
 
@@ -58,7 +60,10 @@ app.use(limiter);
 // CRITICAL: Better Auth handler BEFORE express.json()
 app.all('/api/auth/*', toNodeHandler(auth));
 
-// Body parsing AFTER Better Auth
+// Stripe webhook - MUST use express.raw() BEFORE express.json()
+app.use('/api/webhooks/stripe', express.raw({ type: 'application/json' }), stripeWebhookRouter);
+
+// Body parsing AFTER Better Auth and webhooks
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -82,6 +87,7 @@ app.use('/api/admin/analytics', analyticsRouter);
 app.use('/api/admin/errors', errorsRouter);
 app.use('/api/admin/feature-flags', featureFlagsRouter);
 app.use('/api/admin/broadcasts', broadcastsRouter);
+app.use('/api/admin/billing', billingRouter);
 
 // Admin routes (tenant-specific)
 app.use('/api/admin/:slug/inspector-tokens', tenantMiddleware, inspectorTokensRouter);
