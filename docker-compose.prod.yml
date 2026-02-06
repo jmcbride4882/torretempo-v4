@@ -42,13 +42,33 @@ services:
     container_name: torretempo-api-prod
     environment:
       NODE_ENV: production
+      # Database
       DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+      # Redis
       REDIS_URL: redis://redis:6379
-      AUTH_BASE_URL: ${AUTH_BASE_URL}
-      AUTH_SECRET: ${AUTH_SECRET}
+      # Better Auth
+      BETTER_AUTH_URL: ${BETTER_AUTH_URL}
+      BETTER_AUTH_SECRET: ${BETTER_AUTH_SECRET}
+      # Admin Seed
       ADMIN_EMAIL: ${ADMIN_EMAIL}
       ADMIN_PASSWORD: ${ADMIN_PASSWORD}
+      # Email
       RESEND_API_KEY: ${RESEND_API_KEY}
+      # Stripe
+      STRIPE_SECRET_KEY: ${STRIPE_SECRET_KEY}
+      STRIPE_PUBLISHABLE_KEY: ${STRIPE_PUBLISHABLE_KEY}
+      STRIPE_WEBHOOK_SECRET: ${STRIPE_WEBHOOK_SECRET}
+      # GoCardless
+      GOCARDLESS_ACCESS_TOKEN: ${GOCARDLESS_ACCESS_TOKEN}
+      GOCARDLESS_WEBHOOK_SECRET: ${GOCARDLESS_WEBHOOK_SECRET}
+      GOCARDLESS_ENVIRONMENT: ${GOCARDLESS_ENVIRONMENT}
+      # Payment
+      PAYMENT_CURRENCY: ${PAYMENT_CURRENCY}
+    volumes:
+      - ./.env:/app/.env
     depends_on:
       postgres:
         condition: service_healthy
