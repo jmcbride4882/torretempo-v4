@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Shift Reminder</title>
+  </head>
+  <body
+    style="margin:0; padding:0; background-color:#0b1120; font-family:'Inter','Segoe UI',Arial,sans-serif;"
+  >
+    <div style="display:none; max-height:0; overflow:hidden; opacity:0;">
+      Your shift starts {{shiftTime}} - Torre Tempo reminder.
+    </div>
+    <table
+      width="100%"
+      cellpadding="0"
+      cellspacing="0"
+      style="background: radial-gradient(circle at top, #1e3a8a 0%, #0b1120 55%); padding: 32px 16px;"
+    >
+      <tr>
+        <td align="center">
+          <table
+            width="100%"
+            cellpadding="0"
+            cellspacing="0"
+            style="max-width: 640px; background: rgba(15,23,42,0.92); border-radius: 24px; border: 1px solid rgba(148,163,184,0.25); box-shadow: 0 30px 60px rgba(15,23,42,0.45);"
+          >
+            <tr>
+              <td style="padding: 0;">
+                <div
+                  style="height: 4px; background: linear-gradient(90deg, #3b82f6, #2563eb, #1d4ed8); border-radius: 24px 24px 0 0;"
+                ></div>
+              </td>
+            </tr>
+            <tr>
+              <td style="padding: 28px 28px 20px;">
+                <table width="100%" cellpadding="0" cellspacing="0">
+                  <tr>
+                    <td
+                      style="font-size: 12px; letter-spacing: 2px; text-transform: uppercase; color: #94a3b8;"
+                    >
+                      {{appName}}
+                    </td>
+                    <td align="right" style="font-size: 12px; color: #3b82f6;">Shift Reminder</td>
+                  </tr>
+                </table>
+                <h1 style="margin: 18px 0 8px; font-size: 24px; color: #f8fafc;">
+                  ⏰ Upcoming Shift Reminder
+                </h1>
+                <p style="margin: 0 0 16px; color: #cbd5e1; font-size: 15px;">
+                  Recordatorio de turno próximo
+                </p>
+                <p style="margin: 0 0 12px; color: #e2e8f0; font-size: 15px;">Hello {{userName}},</p>
+                <p style="margin: 0 0 12px; color: #e2e8f0; font-size: 15px;">
+                  This is a friendly reminder about your upcoming shift starting {{reminderTime}}.
+                </p>
+                <p style="margin: 0 0 20px; color: #94a3b8; font-size: 14px;">
+                  Este es un recordatorio de tu turno que comienza {{reminderTime}}.
+                </p>
+                <div
+                  style="background: rgba(59,130,246,0.15); border: 1px solid rgba(59,130,246,0.3); border-radius: 16px; padding: 20px; margin-bottom: 20px; text-align: center;"
+                >
+                  <p style="margin: 0 0 4px; color: #93c5fd; font-size: 12px; text-transform: uppercase; letter-spacing: 1px;">
+                    Shift Date
+                  </p>
+                  <p style="margin: 0 0 12px; color: #f8fafc; font-size: 24px; font-weight: 700;">
+                    {{shiftDate}}
+                  </p>
+                  <div style="height: 1px; background: rgba(148,163,184,0.2); margin: 12px 0;"></div>
+                  <table width="100%" cellpadding="0" cellspacing="0">
+                    <tr>
+                      <td width="50%" style="padding-right: 8px;">
+                        <p style="margin: 0 0 4px; color: #93c5fd; font-size: 11px; text-transform: uppercase;">
+                          Start Time
+                        </p>
+                        <p style="margin: 0; color: #dbeafe; font-size: 18px; font-weight: 600;">
+                          {{startTime}}
+                        </p>
+                      </td>
+                      <td width="50%" style="padding-left: 8px; border-left: 1px solid rgba(148,163,184,0.2);">
+                        <p style="margin: 0 0 4px; color: #93c5fd; font-size: 11px; text-transform: uppercase;">
+                          End Time
+                        </p>
+                        <p style="margin: 0; color: #dbeafe; font-size: 18px; font-weight: 600;">
+                          {{endTime}}
+                        </p>
+                      </td>
+                    </tr>
+                  </table>
+                </div>
+                <div
+                  style="background: rgba(15,23,42,0.7); border: 1px solid rgba(148,163,184,0.25); border-radius: 16px; padding: 16px; margin-bottom: 20px;"
+                >
+                  <p style="margin: 0 0 8px; color: #e2e8f0; font-size: 14px;">
+                    <strong style="color: #f8fafc;">📍 Location:</strong> {{locationName}}
+                  </p>
+                  {{#locationAddress}}
+                  <p style="margin: 0 0 8px; color: #cbd5e1; font-size: 13px;">
+                    {{locationAddress}}
+                  </p>
+                  {{/locationAddress}}
+                  {{#role}}
+                  <p style="margin: 0; color: #e2e8f0; font-size: 14px;">
+                    <strong style="color: #f8fafc;">Role:</strong> {{role}}
+                  </p>
+                  {{/role}}
+                </div>
+                {{#notes}}
+                <div
+                  style="background: rgba(251,191,36,0.1); border: 1px solid rgba(251,191,36,0.3); border-radius: 12px; padding: 12px; margin-bottom: 20px;"
+                >
+                  <p style="margin: 0 0 6px; color: #fde047; font-size: 13px; font-weight: 600;">
+                    📝 Shift Notes:
+                  </p>
+                  <p style="margin: 0; color: #fef3c7; font-size: 13px;">
+                    {{notes}}
+                  </p>
+                </div>
+                {{/notes}}
+                <p style="margin: 0 0 8px; color: #e2e8f0; font-size: 14px;">
+                  <strong>Reminders:</strong>
+                </p>
+                <ul style="margin: 0 0 20px; padding-left: 20px; color: #cbd5e1; font-size: 14px;">
+                  <li style="margin-bottom: 6px;">Arrive on time and ready to clock in</li>
+                  <li style="margin-bottom: 6px;">Remember to clock out at the end of your shift</li>
+                  <li style="margin-bottom: 6px;">Contact your manager if you cannot make it</li>
+                  <li style="margin-bottom: 0;">Check your schedule regularly for any changes</li>
+                </ul>
+                <div style="margin-bottom: 20px;">
+                  <a
+                    href="{{scheduleLink}}"
+                    style="display:inline-block; background: #3b82f6; color: #ffffff; text-decoration: none; padding: 14px 24px; border-radius: 12px; font-weight: 600; font-size: 15px;"
+                    >View Full Schedule</a>
+                </div>
+                <p style="margin: 0 0 8px; color: #94a3b8; font-size: 13px;">
+                  💡 Use the Torre Tempo mobile app to clock in easily from your phone.
+                </p>
+                <p style="margin: 0 0 20px; color: #94a3b8; font-size: 13px;">
+                  Questions? Contact your manager or support at {{supportEmail}}
+                </p>
+                <p style="margin: 20px 0 0; color: #64748b; font-size: 12px;">
+                  Torre Tempo · Shift Reminder · Support: {{supportEmail}}
+                </p>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+  </body>
+</html>
