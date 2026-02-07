@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Settings as SettingsIcon, MapPin, Users, Bell, Lock } from 'lucide-react';
+import { Settings as SettingsIcon, MapPin, Users, Bell, Lock, Loader2 } from 'lucide-react';
 
 import { LocationManager } from '@/components/locations/LocationManager';
 import { useOrganization } from '@/hooks/useOrganization';
@@ -47,7 +47,12 @@ export default function SettingsPage() {
   const [activeTab, setActiveTab] = useState<SettingsTab>('locations');
 
   if (!organization?.slug) {
-    return null;
+    return (
+      <div className="flex items-center justify-center py-12">
+        <Loader2 className="h-6 w-6 animate-spin text-neutral-400" />
+        <span className="ml-2 text-sm text-neutral-400">Loading settings...</span>
+      </div>
+    );
   }
 
   return (
