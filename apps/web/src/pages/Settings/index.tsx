@@ -1,9 +1,9 @@
 import { useState } from 'react';
+import { useParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Settings as SettingsIcon, MapPin, Users, Bell, Lock, Loader2 } from 'lucide-react';
+import { Settings as SettingsIcon, MapPin, Users, Bell, Lock } from 'lucide-react';
 
 import { LocationManager } from '@/components/locations/LocationManager';
-import { useOrganization } from '@/hooks/useOrganization';
 import { cn } from '@/lib/utils';
 
 type SettingsTab = 'locations' | 'team' | 'notifications' | 'security';
@@ -43,16 +43,11 @@ const tabs: TabItem[] = [
 ];
 
 export default function SettingsPage() {
-  const { organization } = useOrganization();
+  const { slug } = useParams<{ slug: string }>();
   const [activeTab, setActiveTab] = useState<SettingsTab>('locations');
 
-  if (!organization?.slug) {
-    return (
-      <div className="flex items-center justify-center py-12">
-        <Loader2 className="h-6 w-6 animate-spin text-neutral-400" />
-        <span className="ml-2 text-sm text-neutral-400">Loading settings...</span>
-      </div>
-    );
+  if (!slug) {
+    return null;
   }
 
   return (
@@ -104,7 +99,7 @@ export default function SettingsPage() {
 
         {/* Tab content */}
         <div className="p-6">
-          {activeTab === 'locations' && <LocationManager organizationSlug={organization.slug} />}
+          {activeTab === 'locations' && <LocationManager organizationSlug={slug} />}
           {activeTab === 'team' && <PlaceholderContent tab="team" />}
           {activeTab === 'notifications' && <PlaceholderContent tab="notifications" />}
           {activeTab === 'security' && <PlaceholderContent tab="security" />}
