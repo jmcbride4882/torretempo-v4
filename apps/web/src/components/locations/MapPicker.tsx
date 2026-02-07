@@ -1,7 +1,10 @@
 import { useEffect, useState } from 'react';
 import { MapContainer, TileLayer, Marker, useMapEvents } from 'react-leaflet';
 import L from 'leaflet';
+import { Maximize2, X } from 'lucide-react';
 import 'leaflet/dist/leaflet.css';
+
+import { Button } from '@/components/ui/button';
 
 // Fix for default marker icons in production builds
 // @ts-ignore
@@ -33,6 +36,7 @@ export function MapPicker({ lat, lng, onLocationSelect, height = '400px' }: MapP
   const [position, setPosition] = useState<[number, number] | null>(
     lat && lng ? [lat, lng] : null
   );
+  const [isFullscreen, setIsFullscreen] = useState(false);
 
   // Default center: Madrid, Spain
   const defaultCenter: [number, number] = [40.4168, -3.7038];
@@ -49,24 +53,86 @@ export function MapPicker({ lat, lng, onLocationSelect, height = '400px' }: MapP
     onLocationSelect(newLat, newLng);
   };
 
-  return (
-    <div 
-      className="overflow-hidden rounded-lg border border-zinc-800" 
-      style={{ height }}
+  const MapView = ({ fullscreen = false }: { fullscreen?: boolean }) => (
+    <MapContainer
+      center={center}
+      zoom={position ? 15 : 6}
+      style={{ height: '100%', width: '100%' }}
+      className="z-0"
+      key={fullscreen ? 'fullscreen' : 'inline'} // Force remount for fullscreen
     >
-      <MapContainer
-        center={center}
-        zoom={position ? 15 : 6}
-        style={{ height: '100%', width: '100%' }}
-        className="z-0"
-      >
-        <TileLayer
-          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-        />
-        <MapClickHandler onLocationSelect={handleLocationSelect} />
-        {position && <Marker position={position} />}
-      </MapContainer>
-    </div>
+      <TileLayer
+        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+      />
+      <MapClickHandler onLocationSelect={handleLocationSelect} />
+      {position && <Marker position={position} />}
+    </MapContainer>
+  );
+
+  return (
+    <>
+      {/* Inline map view */}
+      <div className="relative">
+        <div 
+          className="overflow-hidden rounded-lg border border-zinc-800" 
+          style={{ height }}
+        >
+          <MapView />
+        </div>
+        
+        {/* Expand button */}
+        <Button
+          type="button"
+          variant="secondary"
+          size="sm"
+          onClick={() => setIsFullscreen(true)}
+          className="absolute right-2 top-2 z-[1000] gap-2 shadow-lg"
+        >
+          <Maximize2 className="h-4 w-4" />
+          <span className="hidden sm:inline">Expand Map</span>
+        </Button>
+      </div>
+
+      {/* Fullscreen map modal */}
+      {isFullscreen && (
+        <div className="fixed inset-0 z-[9999] bg-zinc-950">
+          {/* Header */}
+          <div className="absolute left-0 right-0 top-0 z-[10000] flex items-center justify-between border-b border-zinc-800 bg-zinc-900/95 p-4 backdrop-blur-sm">
+            <div>
+              <h3 className="font-semibold text-neutral-200">Select Location</h3>
+              <p className="text-xs text-neutral-400">Tap on the map to set coordinates</p>
+            </div>
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              onClick={() => setIsFullscreen(false)}
+              className="gap-2"
+            >
+              <X className="h-5 w-5" />
+              Close
+            </Button>
+          </div>
+
+          {/* Full-height map */}
+          <div className="h-full w-full pt-[73px]">
+            <MapView fullscreen />
+          </div>
+
+          {/* Coordinates display */}
+          {position && (
+            <div className="absolute bottom-0 left-0 right-0 z-[10000] border-t border-zinc-800 bg-zinc-900/95 p-4 backdrop-blur-sm">
+              <div className="text-center">
+                <p className="text-xs text-neutral-400">Selected Coordinates</p>
+                <p className="font-mono text-sm text-neutral-200">
+                  {position[0].toFixed(6)}, {position[1].toFixed(6)}
+                </p>
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+    </>
   );
 }

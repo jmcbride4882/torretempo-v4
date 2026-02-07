@@ -374,20 +374,22 @@ function LocationFormModal({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="border-zinc-800 bg-zinc-900 sm:max-w-[500px]">
-        <form onSubmit={handleSubmit}>
-          <DialogHeader>
-            <DialogTitle className="text-neutral-200">
-              {editingLocation ? 'Edit Location' : 'Create Location'}
-            </DialogTitle>
-            <DialogDescription className="text-neutral-400">
-              {editingLocation
-                ? 'Update the location details below.'
-                : 'Add a new work site for scheduling and time tracking.'}
-            </DialogDescription>
-          </DialogHeader>
+      <DialogContent className="flex max-h-[90vh] flex-col gap-0 border-zinc-800 bg-zinc-900 p-0 sm:max-w-[600px]">
+        <form onSubmit={handleSubmit} className="flex flex-col overflow-hidden">
+          <div className="p-6 pb-4">
+            <DialogHeader>
+              <DialogTitle className="text-neutral-200">
+                {editingLocation ? 'Edit Location' : 'Create Location'}
+              </DialogTitle>
+              <DialogDescription className="text-neutral-400">
+                {editingLocation
+                  ? 'Update the location details below.'
+                  : 'Add a new work site for scheduling and time tracking.'}
+              </DialogDescription>
+            </DialogHeader>
+          </div>
 
-          <div className="space-y-4 py-4">
+          <div className="flex-1 space-y-4 overflow-y-auto px-6 py-4">
             {/* Error message */}
             {error && (
               <motion.div
@@ -435,7 +437,7 @@ function LocationFormModal({
                 Location on Map (Optional)
               </Label>
               <p className="text-xs text-neutral-500">
-                Click on the map to set coordinates, or enter them manually below
+                Tap on the map to set coordinates, or use "Expand Map" for full screen view
               </p>
               <MapPicker
                 lat={formData.lat ? parseFloat(formData.lat) : undefined}
@@ -447,7 +449,7 @@ function LocationFormModal({
                     lng: lng.toFixed(6),
                   });
                 }}
-                height="300px"
+                height="250px"
               />
             </div>
 
@@ -504,24 +506,26 @@ function LocationFormModal({
             </div>
           </div>
 
-          <DialogFooter>
-            <Button type="button" variant="ghost" onClick={() => onOpenChange(false)} disabled={isSubmitting}>
-              Cancel
-            </Button>
-            <Button type="submit" disabled={isSubmitting} className="gap-2">
-              {isSubmitting ? (
-                <>
-                  <Loader2 className="h-4 w-4 animate-spin" />
-                  {editingLocation ? 'Updating...' : 'Creating...'}
-                </>
-              ) : (
-                <>
-                  <Check className="h-4 w-4" />
-                  {editingLocation ? 'Update Location' : 'Create Location'}
-                </>
-              )}
-            </Button>
-          </DialogFooter>
+          <div className="border-t border-zinc-800 p-6 pt-4">
+            <DialogFooter>
+              <Button type="button" variant="ghost" onClick={() => onOpenChange(false)} disabled={isSubmitting}>
+                Cancel
+              </Button>
+              <Button type="submit" disabled={isSubmitting} className="gap-2">
+                {isSubmitting ? (
+                  <>
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                    {editingLocation ? 'Updating...' : 'Creating...'}
+                  </>
+                ) : (
+                  <>
+                    <Check className="h-4 w-4" />
+                    {editingLocation ? 'Update Location' : 'Create Location'}
+                  </>
+                )}
+              </Button>
+            </DialogFooter>
+          </div>
         </form>
       </DialogContent>
     </Dialog>

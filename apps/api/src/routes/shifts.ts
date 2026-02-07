@@ -49,6 +49,41 @@ router.get('/', async (req: Request, res: Response) => {
   }
 });
 
+// GET /api/v1/org/:slug/shifts/open - List open (unassigned) shifts
+router.get('/open', async (req: Request, res: Response) => {
+  try {
+    const organizationId = req.organizationId!;
+    const { location_id, start_date, end_date } = req.query;
+
+    const conditions: any[] = [
+      eq(shifts.organization_id, organizationId),
+      isNull(shifts.user_id), // Unassigned shifts only
+      eq(shifts.status, 'published'), // Only published shifts
+    ];
+
+    if (location_id) {
+      conditions.push(eq(shifts.location_id, location_id as string));
+    }
+    if (start_date) {
+      conditions.push(gte(shifts.start_time, new Date(start_date as string)));
+    }
+    if (end_date) {
+      conditions.push(lte(shifts.start_time, new Date(end_date as string)));
+    }
+
+    const openShifts = await db
+      .select()
+      .from(shifts)
+      .where(and(...conditions))
+      .orderBy(shifts.start_time);
+
+    res.json({ shifts: openShifts });
+  } catch (error) {
+    console.error('Error fetching open shifts:', error);
+    res.status(500).json({ error: 'Failed to fetch open shifts' });
+  }
+});
+
 // GET /api/v1/org/:slug/shifts/:id - Get single shift by ID
 router.get('/:id', async (req: Request, res: Response) => {
   try {
@@ -624,41 +659,6 @@ router.post('/:id/unassign', requireRole(['manager', 'tenantAdmin', 'owner']), a
   } catch (error) {
     console.error('Error unassigning user from shift:', error);
     res.status(500).json({ error: 'Failed to unassign user from shift' });
-  }
-});
-
-// GET /api/v1/org/:slug/shifts/open - List open (unassigned) shifts
-router.get('/open', async (req: Request, res: Response) => {
-  try {
-    const organizationId = req.organizationId!;
-    const { location_id, start_date, end_date } = req.query;
-
-    const conditions: any[] = [
-      eq(shifts.organization_id, organizationId),
-      isNull(shifts.user_id), // Unassigned shifts only
-      eq(shifts.status, 'published'), // Only published shifts
-    ];
-
-    if (location_id) {
-      conditions.push(eq(shifts.location_id, location_id as string));
-    }
-    if (start_date) {
-      conditions.push(gte(shifts.start_time, new Date(start_date as string)));
-    }
-    if (end_date) {
-      conditions.push(lte(shifts.start_time, new Date(end_date as string)));
-    }
-
-    const openShifts = await db
-      .select()
-      .from(shifts)
-      .where(and(...conditions))
-      .orderBy(shifts.start_time);
-
-    res.json({ shifts: openShifts });
-  } catch (error) {
-    console.error('Error fetching open shifts:', error);
-    res.status(500).json({ error: 'Failed to fetch open shifts' });
   }
 });
 
