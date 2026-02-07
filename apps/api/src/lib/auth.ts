@@ -8,6 +8,7 @@ import { emailQueue } from './queue.js';
 import 'dotenv/config';
 
 const baseURL = process.env.AUTH_BASE_URL || 'http://localhost:3000';
+const frontendURL = process.env.FRONTEND_URL || baseURL.replace('/api', '');
 const secret = process.env.AUTH_SECRET;
 
 if (!secret) {
@@ -24,7 +25,7 @@ export const auth = betterAuth({
   plugins: [
     organization({
       async sendInvitationEmail(data) {
-        const invitationLink = `${baseURL.replace('/api', '')}/accept-invitation/${data.id}`;
+        const invitationLink = `${frontendURL}/accept-invitation/${data.id}`;
         
         await emailQueue.add('organization-invitation', {
           to: data.email,

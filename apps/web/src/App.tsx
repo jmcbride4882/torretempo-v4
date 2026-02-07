@@ -16,6 +16,7 @@ import VerifyEmail from '@/pages/auth/VerifyEmail';
 // Onboarding pages
 import CreateTenant from '@/pages/onboarding/CreateTenant';
 import SelectOrganization from '@/pages/onboarding/SelectOrganization';
+import AcceptInvitation from '@/pages/onboarding/AcceptInvitation';
 
 // Tenant pages
 import AppShell from '@/components/layout/AppShell';
@@ -36,6 +37,9 @@ function App() {
           <Route path="/auth/signup" element={<SignUp />} />
           <Route path="/auth/reset-password" element={<ResetPassword />} />
           <Route path="/auth/verify-email" element={<VerifyEmail />} />
+          
+          {/* Public invitation acceptance */}
+          <Route path="/accept-invitation/:id" element={<AcceptInvitation />} />
 
           {/* Protected routes */}
           <Route element={<ProtectedRoute />}>
