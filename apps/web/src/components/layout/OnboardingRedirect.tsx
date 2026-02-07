@@ -15,7 +15,7 @@ type RedirectState = 'loading' | 'to-org' | 'to-select' | 'to-create';
  */
 export function OnboardingRedirect() {
   const { isAuthenticated, isLoading: authLoading } = useAuth();
-  const { organization, isLoading: orgLoading, listUserOrganizations, setActiveOrganization } = useOrganization();
+  const { organization, isLoading: orgLoading, listUserOrganizations, setActiveOrganization, acceptInvitation } = useOrganization();
   
   const [redirectState, setRedirectState] = useState<RedirectState>('loading');
   const [targetSlug, setTargetSlug] = useState<string | null>(null);
@@ -29,6 +29,29 @@ export function OnboardingRedirect() {
       if (!isAuthenticated) {
         setRedirectState('loading');
         return;
+      }
+
+      // Check for pending invitation (from AcceptInvitation page)
+      const pendingInvitation = sessionStorage.getItem('pendingInvitation');
+      if (pendingInvitation) {
+        try {
+          // Accept the invitation using Better Auth
+          const result = await acceptInvitation(pendingInvitation);
+          
+          // Clear the pending invitation
+          sessionStorage.removeItem('pendingInvitation');
+          
+          // Set as active organization
+          await setActiveOrganization(result.organizationId);
+          
+          // Reload to get the updated organization
+          window.location.href = '/dashboard';
+          return;
+        } catch (error) {
+          console.error('Failed to accept pending invitation:', error);
+          // Clear the invalid invitation and continue normal flow
+          sessionStorage.removeItem('pendingInvitation');
+        }
       }
 
       // If user has an active organization, go to it
