@@ -27,6 +27,7 @@ import TimeEntryList from '@/pages/TimeClock/TimeEntryList';
 import ReportsPage from '@/pages/Reports';
 import ReportDetailPage from '@/pages/Reports/ReportDetail';
 import GenerateReportPage from '@/pages/Reports/GenerateReport';
+import SettingsPage from '@/pages/Settings';
 
 // Placeholder pages - these will be built in Phase 2
 function DashboardPage() {
@@ -185,15 +186,7 @@ export default function AppShell() {
                 <Route path="reports" element={<ReportsPage />} />
                 <Route path="reports/:id" element={<ReportDetailPage />} />
                 <Route path="reports/generate" element={<GenerateReportPage />} />
-                <Route
-                  path="settings"
-                  element={
-                    <PlaceholderPage
-                      title="Settings"
-                      description="Configure your workspace, integrations, and preferences."
-                    />
-                  }
-                />
+                <Route path="settings" element={<SettingsPage />} />
                 <Route path="*" element={<Navigate to={`/t/${slug}/dashboard`} replace />} />
               </Routes>
             </motion.div>
