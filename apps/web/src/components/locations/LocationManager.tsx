@@ -16,6 +16,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
+import { MapPicker } from './MapPicker';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
 
@@ -425,6 +426,28 @@ function LocationFormModal({
                 value={formData.address}
                 onChange={(e) => setFormData({ ...formData, address: e.target.value })}
                 className="border-zinc-800 bg-zinc-950 text-neutral-200 placeholder:text-neutral-500"
+              />
+            </div>
+
+            {/* Map Picker */}
+            <div className="space-y-2">
+              <Label className="text-neutral-300">
+                Location on Map (Optional)
+              </Label>
+              <p className="text-xs text-neutral-500">
+                Click on the map to set coordinates, or enter them manually below
+              </p>
+              <MapPicker
+                lat={formData.lat ? parseFloat(formData.lat) : undefined}
+                lng={formData.lng ? parseFloat(formData.lng) : undefined}
+                onLocationSelect={(lat, lng) => {
+                  setFormData({
+                    ...formData,
+                    lat: lat.toFixed(6),
+                    lng: lng.toFixed(6),
+                  });
+                }}
+                height="300px"
               />
             </div>
 
