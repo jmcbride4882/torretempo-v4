@@ -998,12 +998,17 @@ export default function TimeEntryList() {
       {entries.length > 0 && <SummaryStats entries={entries} />}
 
       {/* Sheets */}
-      <ClockInSheet isOpen={showClockIn} onClose={handleClockInClose} />
-      <ClockOutSheet
-        isOpen={showClockOut}
-        onClose={handleClockOutClose}
-        activeEntry={activeEntry}
-      />
+      {slug && (
+        <>
+          <ClockInSheet isOpen={showClockIn} onClose={handleClockInClose} organizationSlug={slug} />
+          <ClockOutSheet
+            isOpen={showClockOut}
+            onClose={handleClockOutClose}
+            organizationSlug={slug}
+            activeEntry={activeEntry}
+          />
+        </>
+      )}
     </div>
   );
 }

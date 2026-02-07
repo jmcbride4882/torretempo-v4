@@ -24,7 +24,6 @@ import { Badge } from '@/components/ui/badge';
 import { Label } from '@/components/ui/label';
 import { cn } from '@/lib/utils';
 import { useGeolocation, formatAccuracy } from '@/hooks/useGeolocation';
-import { useOrganization } from '@/hooks/useOrganization';
 import { useHaptic } from '@/hooks/useHaptic';
 import { useOfflineQueue } from '@/hooks/useOfflineQueue';
 import { clockOut, fetchBreaks, TimeEntryApiError } from '@/lib/api/time-entries';
@@ -37,6 +36,7 @@ import type { TimeEntry, BreakEntry } from '@/lib/api/time-entries';
 export interface ClockOutSheetProps {
   isOpen: boolean;
   onClose: () => void;
+  organizationSlug: string;
   activeEntry: TimeEntry | null;
 }
 
@@ -77,9 +77,7 @@ function formatTime(isoString: string): string {
 // Component
 // ============================================================================
 
-export function ClockOutSheet({ isOpen, onClose, activeEntry }: ClockOutSheetProps) {
-  // Organization context
-  const { organization } = useOrganization();
+export function ClockOutSheet({ isOpen, onClose, organizationSlug, activeEntry }: ClockOutSheetProps) {
   
   // Geolocation
   const { 
@@ -151,12 +149,12 @@ export function ClockOutSheet({ isOpen, onClose, activeEntry }: ClockOutSheetPro
 
   // Fetch breaks when sheet opens
   React.useEffect(() => {
-    if (!isOpen || !activeEntry || !organization?.slug) return;
+    if (!isOpen || !activeEntry || !organizationSlug) return;
     
     const loadBreaks = async () => {
       setBreaksLoading(true);
       try {
-        const response = await fetchBreaks(organization.slug, activeEntry.id);
+        const response = await fetchBreaks(organizationSlug, activeEntry.id);
         setBreaks(response.breaks);
       } catch {
         // Silently fail - breaks are not critical
@@ -167,7 +165,7 @@ export function ClockOutSheet({ isOpen, onClose, activeEntry }: ClockOutSheetPro
     };
     
     loadBreaks();
-  }, [isOpen, activeEntry, organization?.slug]);
+  }, [isOpen, activeEntry, organizationSlug]);
 
   // Reset state when sheet opens
   React.useEffect(() => {
@@ -186,7 +184,7 @@ export function ClockOutSheet({ isOpen, onClose, activeEntry }: ClockOutSheetPro
 
   // Handle clock out submission
   const handleClockOut = async () => {
-    if (!organization?.slug || !activeEntry || !position) return;
+    if (!organizationSlug || !activeEntry || !position) return;
     
     // Light haptic feedback on button press
     haptic.light();
@@ -208,7 +206,7 @@ export function ClockOutSheet({ isOpen, onClose, activeEntry }: ClockOutSheetPro
     try {
       if (!isOnline) {
         // Queue action for offline processing
-        await enqueueAction('clock-out', organization.slug, clockOutData);
+        await enqueueAction('clock-out', organizationSlug, clockOutData);
         
         setSuccess(true);
         haptic.success();
@@ -222,7 +220,7 @@ export function ClockOutSheet({ isOpen, onClose, activeEntry }: ClockOutSheetPro
       }
 
       // Online - process immediately
-      await clockOut(organization.slug, activeEntry.id, clockOutData);
+      await clockOut(organizationSlug, activeEntry.id, clockOutData);
 
       setSuccess(true);
       

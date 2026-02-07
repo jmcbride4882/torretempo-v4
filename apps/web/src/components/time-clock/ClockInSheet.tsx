@@ -24,7 +24,6 @@ import { Badge } from '@/components/ui/badge';
 import { Label } from '@/components/ui/label';
 import { cn } from '@/lib/utils';
 import { useGeolocation, formatAccuracy, isAccuracyAcceptable } from '@/hooks/useGeolocation';
-import { useOrganization } from '@/hooks/useOrganization';
 import { useNFC } from '@/hooks/useNFC';
 import { useQRScanner } from '@/hooks/useQRScanner';
 import { useHaptic } from '@/hooks/useHaptic';
@@ -40,6 +39,7 @@ import type { ClockMethod } from '@/lib/api/time-entries';
 export interface ClockInSheetProps {
   isOpen: boolean;
   onClose: () => void;
+  organizationSlug: string;
   shiftId?: string;
 }
 
@@ -67,9 +67,7 @@ const SPRING_CONFIG = { type: 'spring', damping: 30, stiffness: 300 } as const;
 // Component
 // ============================================================================
 
-export function ClockInSheet({ isOpen, onClose, shiftId }: ClockInSheetProps) {
-  // Organization context
-  const { organization } = useOrganization();
+export function ClockInSheet({ isOpen, onClose, organizationSlug, shiftId }: ClockInSheetProps) {
   
   // Geolocation
   const { 
@@ -222,7 +220,7 @@ export function ClockInSheet({ isOpen, onClose, shiftId }: ClockInSheetProps) {
 
   // Handle clock in submission
   const handleClockIn = async () => {
-    if (!organization?.slug || !position) return;
+    if (!organizationSlug || !position) return;
     
     // Light haptic feedback on button press
     haptic.light();
@@ -244,7 +242,7 @@ export function ClockInSheet({ isOpen, onClose, shiftId }: ClockInSheetProps) {
     try {
       if (!isOnline) {
         // Queue action for offline processing
-        await enqueueAction('clock-in', organization.slug, clockInData);
+        await enqueueAction('clock-in', organizationSlug, clockInData);
         
         setSuccess(true);
         haptic.success();
@@ -258,7 +256,7 @@ export function ClockInSheet({ isOpen, onClose, shiftId }: ClockInSheetProps) {
       }
 
       // Online - process immediately
-      await clockIn(organization.slug, clockInData);
+      await clockIn(organizationSlug, clockInData);
 
       setSuccess(true);
       
