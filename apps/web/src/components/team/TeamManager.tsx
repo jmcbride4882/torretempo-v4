@@ -1,9 +1,12 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Users, Shield, Crown, User, Loader2, AlertCircle } from 'lucide-react';
+import { Users, Shield, Crown, User, Loader2, AlertCircle, UserPlus } from 'lucide-react';
 import { toast } from 'sonner';
 
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { InviteMemberModal } from '@/components/team/InviteMemberModal';
+import { useOrganization } from '@/hooks/useOrganization';
 import { cn } from '@/lib/utils';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
@@ -47,6 +50,8 @@ const ROLE_COLORS = {
 export function TeamManager({ organizationSlug }: TeamManagerProps) {
   const [members, setMembers] = useState<TeamMember[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [isInviteModalOpen, setIsInviteModalOpen] = useState(false);
+  const { organization } = useOrganization();
 
   // Fetch team members
   const fetchMembers = async () => {
@@ -92,6 +97,13 @@ export function TeamManager({ organizationSlug }: TeamManagerProps) {
             {members.length} {members.length === 1 ? 'member' : 'members'} in your organization
           </p>
         </div>
+        <Button
+          onClick={() => setIsInviteModalOpen(true)}
+          className="gap-2 bg-blue-600 hover:bg-blue-700"
+        >
+          <UserPlus className="h-4 w-4" />
+          Invite Member
+        </Button>
       </div>
 
       {/* Members List */}
@@ -181,13 +193,24 @@ export function TeamManager({ organizationSlug }: TeamManagerProps) {
       <div className="flex items-start gap-3 rounded-lg border border-blue-500/20 bg-blue-500/10 p-4">
         <AlertCircle className="h-5 w-5 shrink-0 text-blue-400 mt-0.5" />
         <div className="text-sm text-blue-300">
-          <p className="font-medium mb-1">Team management via Better Auth</p>
+          <p className="font-medium mb-1">Invite team members via email</p>
           <p className="text-blue-300/80">
-            To invite new members or manage roles, use the Better Auth organization dashboard or API.
-            Members added through Better Auth will automatically appear here.
+            Click "Invite Member" to send an invitation email. New members will receive a link to join your organization.
           </p>
         </div>
       </div>
+
+      {/* Invite Member Modal */}
+      {organization && (
+        <InviteMemberModal
+          open={isInviteModalOpen}
+          onOpenChange={setIsInviteModalOpen}
+          onSuccess={() => {
+            fetchMembers(); // Refresh member list after successful invitation
+          }}
+          organizationId={organization.id}
+        />
+      )}
     </div>
   );
 }
