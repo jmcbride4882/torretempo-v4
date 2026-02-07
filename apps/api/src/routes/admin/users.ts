@@ -260,6 +260,80 @@ router.get(
 );
 
 /**
+ * DELETE /api/admin/users/:id
+ * Delete a single user
+ * 
+ * Params:
+ * - id: string - User ID
+ * 
+ * Returns:
+ * - { message: string, userId: string } - Success confirmation
+ */
+router.delete(
+  '/:id',
+  requireAdmin,
+  async (req: Request, res: Response) => {
+    try {
+      const actor = req.user!;
+      const userId = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id;
+
+      if (!userId) {
+        return res.status(400).json({ error: 'User ID is required' });
+      }
+
+      // Prevent deleting own account
+      if (userId === actor.id) {
+        return res.status(403).json({ 
+          error: 'Cannot delete your own account',
+        });
+      }
+
+      // Get user
+      const users = await db
+        .select()
+        .from(user)
+        .where(eq(user.id, userId))
+        .limit(1);
+
+      if (users.length === 0) {
+        return res.status(404).json({ error: 'User not found' });
+      }
+
+      const userData = users[0]!;
+
+      // Delete user (cascade handled by database)
+      await db
+        .delete(user)
+        .where(eq(user.id, userId));
+
+      // Log admin action
+      await logAdminAction({
+        adminId: actor.id,
+        action: 'user.delete',
+        targetType: 'user',
+        targetId: userId,
+        details: {
+          user_name: userData.name,
+          user_email: userData.email,
+        },
+        ip: req.ip || req.socket.remoteAddress || 'unknown',
+      });
+
+      res.json({ 
+        message: 'User deleted successfully',
+        userId,
+      });
+    } catch (error) {
+      console.error('Error deleting user:', error);
+      res.status(500).json({ 
+        error: 'Failed to delete user',
+        details: error instanceof Error ? error.message : 'Unknown error'
+      });
+    }
+  }
+);
+
+/**
  * GET /api/admin/users/:id
  * Get detailed user information with organization memberships
  * 
@@ -855,80 +929,6 @@ router.post(
        });
      }
    }
-);
-
-/**
- * DELETE /api/admin/users/:id
- * Delete a single user
- * 
- * Params:
- * - id: string - User ID
- * 
- * Returns:
- * - { message: string, userId: string } - Success confirmation
- */
-router.delete(
-  '/:id',
-  requireAdmin,
-  async (req: Request, res: Response) => {
-    try {
-      const actor = req.user!;
-      const userId = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id;
-
-      if (!userId) {
-        return res.status(400).json({ error: 'User ID is required' });
-      }
-
-      // Prevent deleting own account
-      if (userId === actor.id) {
-        return res.status(403).json({ 
-          error: 'Cannot delete your own account',
-        });
-      }
-
-      // Get user
-      const users = await db
-        .select()
-        .from(user)
-        .where(eq(user.id, userId))
-        .limit(1);
-
-      if (users.length === 0) {
-        return res.status(404).json({ error: 'User not found' });
-      }
-
-      const userData = users[0]!;
-
-      // Delete user (cascade handled by database)
-      await db
-        .delete(user)
-        .where(eq(user.id, userId));
-
-      // Log admin action
-      await logAdminAction({
-        adminId: actor.id,
-        action: 'user.delete',
-        targetType: 'user',
-        targetId: userId,
-        details: {
-          user_name: userData.name,
-          user_email: userData.email,
-        },
-        ip: req.ip || req.socket.remoteAddress || 'unknown',
-      });
-
-      res.json({ 
-        message: 'User deleted successfully',
-        userId,
-      });
-    } catch (error) {
-      console.error('Error deleting user:', error);
-      res.status(500).json({ 
-        error: 'Failed to delete user',
-        details: error instanceof Error ? error.message : 'Unknown error'
-      });
-    }
-  }
 );
 
 /**
