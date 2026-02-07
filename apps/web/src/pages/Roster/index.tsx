@@ -4,13 +4,19 @@ import { motion } from 'framer-motion';
 import { toast } from 'sonner';
 import { Users, Plus, RefreshCw, Filter, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { RosterGrid } from '@/components/roster/RosterGrid';
+import { StaffRosterGrid } from '@/components/roster/StaffRosterGrid';
 import { WeekSelector, getWeekRange } from '@/components/roster/WeekSelector';
 import { LocationFilter } from '@/components/roster/LocationFilter';
 import { CreateShiftModal } from '@/components/roster/CreateShiftModal';
 import type { Shift, Location, ShiftsResponse, LocationsResponse } from '@/types/roster';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+
+interface StaffMember {
+  id: string;
+  name: string;
+  email: string;
+}
 
 export default function RosterPage() {
   const { slug } = useParams<{ slug: string }>();
@@ -19,9 +25,11 @@ export default function RosterPage() {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [shifts, setShifts] = useState<Shift[]>([]);
   const [locations, setLocations] = useState<Location[]>([]);
+  const [staff, setStaff] = useState<StaffMember[]>([]);
   const [selectedLocationId, setSelectedLocationId] = useState<string | null>(null);
   const [isLoadingShifts, setIsLoadingShifts] = useState(true);
   const [isLoadingLocations, setIsLoadingLocations] = useState(true);
+  const [isLoadingStaff, setIsLoadingStaff] = useState(true);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [showFilters, setShowFilters] = useState(false);
   const [showCreateModal, setShowCreateModal] = useState(false);
@@ -47,6 +55,35 @@ export default function RosterPage() {
       // Don't show toast for locations - not critical
     } finally {
       setIsLoadingLocations(false);
+    }
+  }, [slug]);
+  
+  // Fetch staff/team members
+  const fetchStaff = useCallback(async () => {
+    if (!slug) return;
+    
+    setIsLoadingStaff(true);
+    try {
+      const response = await fetch(`${API_URL}/api/v1/org/${slug}/members`, {
+        credentials: 'include',
+      });
+      
+      if (!response.ok) {
+        throw new Error('Failed to fetch team members');
+      }
+      
+      const data = await response.json();
+      // Transform members to staff format
+      const staffList: StaffMember[] = (data.members || []).map((member: any) => ({
+        id: member.userId,
+        name: member.user?.name || member.user?.email || 'Unknown',
+        email: member.user?.email || '',
+      }));
+      setStaff(staffList);
+    } catch (error) {
+      console.error('Error fetching staff:', error);
+    } finally {
+      setIsLoadingStaff(false);
     }
   }, [slug]);
   
@@ -96,7 +133,8 @@ export default function RosterPage() {
   // Load data on mount and when dependencies change
   useEffect(() => {
     fetchLocations();
-  }, [fetchLocations]);
+    fetchStaff();
+  }, [fetchLocations, fetchStaff]);
   
   useEffect(() => {
     fetchShifts();
@@ -135,7 +173,7 @@ export default function RosterPage() {
     toast.success('Shift created successfully');
   };
   
-  const handleShiftDrop = async (shiftId: string, targetDate: Date) => {
+  const handleShiftDrop = async (shiftId: string, newUserId: string, targetDate: Date) => {
     if (!slug) return;
     
     try {
@@ -156,15 +194,25 @@ export default function RosterPage() {
       
       const newEnd = new Date(newStart.getTime() + duration);
       
+      // Prepare update payload
+      const updateData: any = {
+        start_time: newStart.toISOString(),
+        end_time: newEnd.toISOString(),
+      };
+      
+      // Handle user assignment (null for unassigned)
+      if (newUserId === 'unassigned') {
+        updateData.user_id = null;
+      } else {
+        updateData.user_id = newUserId;
+      }
+      
       // Update shift via API
       const response = await fetch(`${API_URL}/api/v1/org/${slug}/shifts/${shiftId}`, {
         method: 'PUT',
         credentials: 'include',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          start_time: newStart.toISOString(),
-          end_time: newEnd.toISOString(),
-        }),
+        body: JSON.stringify(updateData),
       });
       
       if (!response.ok) {
@@ -393,10 +441,11 @@ export default function RosterPage() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.2 }}
       >
-        <RosterGrid
+        <StaffRosterGrid
           shifts={shifts}
+          staff={staff}
           currentDate={currentDate}
-          isLoading={isLoadingShifts}
+          isLoading={isLoadingShifts || isLoadingStaff}
           onShiftClick={handleShiftClick}
           onShiftDrop={handleShiftDrop}
         />
