@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import { Settings as SettingsIcon, MapPin, Users, Bell, Lock } from 'lucide-react';
 
 import { LocationManager } from '@/components/locations/LocationManager';
+import { TeamManager } from '@/components/team/TeamManager';
 import { cn } from '@/lib/utils';
 
 type SettingsTab = 'locations' | 'team' | 'notifications' | 'security';
@@ -100,7 +101,7 @@ export default function SettingsPage() {
         {/* Tab content */}
         <div className="p-6">
           {activeTab === 'locations' && <LocationManager organizationSlug={slug} />}
-          {activeTab === 'team' && <PlaceholderContent tab="team" />}
+          {activeTab === 'team' && <TeamManager organizationSlug={slug} />}
           {activeTab === 'notifications' && <PlaceholderContent tab="notifications" />}
           {activeTab === 'security' && <PlaceholderContent tab="security" />}
         </div>

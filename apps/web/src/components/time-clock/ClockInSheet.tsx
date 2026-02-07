@@ -26,6 +26,7 @@ import { cn } from '@/lib/utils';
 import { useGeolocation, formatAccuracy, isAccuracyAcceptable } from '@/hooks/useGeolocation';
 import { useNFC } from '@/hooks/useNFC';
 import { useQRScanner } from '@/hooks/useQRScanner';
+import { LocationMap } from '@/components/locations/LocationMap';
 import { useHaptic } from '@/hooks/useHaptic';
 import { useOfflineQueue } from '@/hooks/useOfflineQueue';
 import { PINInput } from '@/components/time-clock/PINInput';
@@ -405,7 +406,7 @@ export function ClockInSheet({ isOpen, onClose, organizationSlug, shiftId }: Clo
                     {formatAccuracy(accuracy ?? 0)}
                   </span>
                 </div>
-                {hasLowAccuracy && (
+                 {hasLowAccuracy && (
                   <motion.div
                     initial={{ opacity: 0, height: 0 }}
                     animate={{ opacity: 1, height: 'auto' }}
@@ -415,6 +416,17 @@ export function ClockInSheet({ isOpen, onClose, organizationSlug, shiftId }: Clo
                     Low GPS accuracy detected
                   </motion.div>
                 )}
+                
+                {/* Location Map */}
+                <div className="mt-3">
+                  <LocationMap
+                    lat={position.coords.latitude}
+                    lng={position.coords.longitude}
+                    accuracy={accuracy ?? undefined}
+                    height="180px"
+                    showAccuracyCircle={true}
+                  />
+                </div>
               </motion.div>
             ) : geoError ? (
               <motion.div

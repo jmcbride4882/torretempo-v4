@@ -26,6 +26,7 @@ import { cn } from '@/lib/utils';
 import { useGeolocation, formatAccuracy } from '@/hooks/useGeolocation';
 import { useHaptic } from '@/hooks/useHaptic';
 import { useOfflineQueue } from '@/hooks/useOfflineQueue';
+import { LocationMap } from '@/components/locations/LocationMap';
 import { clockOut, fetchBreaks, TimeEntryApiError } from '@/lib/api/time-entries';
 import type { TimeEntry, BreakEntry } from '@/lib/api/time-entries';
 
@@ -509,6 +510,20 @@ export function ClockOutSheet({ isOpen, onClose, organizationSlug, activeEntry }
             </Badge>
           )}
         </div>
+
+        {/* Location Map */}
+        {position && (
+          <div className="space-y-2">
+            <Label className="text-zinc-400">Clock-Out Location</Label>
+            <LocationMap
+              lat={position.coords.latitude}
+              lng={position.coords.longitude}
+              accuracy={position.coords.accuracy}
+              height="180px"
+              showAccuracyCircle={true}
+            />
+          </div>
+        )}
 
         {/* Notes */}
         <div className="space-y-2">
