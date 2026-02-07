@@ -6,7 +6,6 @@ import { toast } from 'sonner';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { InviteMemberModal } from '@/components/team/InviteMemberModal';
-import { useOrganization } from '@/hooks/useOrganization';
 import { cn } from '@/lib/utils';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
@@ -51,7 +50,7 @@ export function TeamManager({ organizationSlug }: TeamManagerProps) {
   const [members, setMembers] = useState<TeamMember[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isInviteModalOpen, setIsInviteModalOpen] = useState(false);
-  const { organization } = useOrganization();
+  const [organizationId, setOrganizationId] = useState<string | null>(null);
 
   // Fetch team members
   const fetchMembers = async () => {
@@ -66,6 +65,11 @@ export function TeamManager({ organizationSlug }: TeamManagerProps) {
 
       const data = await response.json();
       setMembers(data.members || []);
+      
+      // Extract organizationId from first member (all members share same org)
+      if (data.members && data.members.length > 0) {
+        setOrganizationId(data.members[0].organizationId);
+      }
     } catch (error) {
       console.error('Error fetching team members:', error);
       toast.error('Failed to load team members');
@@ -201,14 +205,14 @@ export function TeamManager({ organizationSlug }: TeamManagerProps) {
       </div>
 
       {/* Invite Member Modal */}
-      {organization && (
+      {organizationId && (
         <InviteMemberModal
           open={isInviteModalOpen}
           onOpenChange={setIsInviteModalOpen}
           onSuccess={() => {
             fetchMembers(); // Refresh member list after successful invitation
           }}
-          organizationId={organization.id}
+          organizationId={organizationId}
         />
       )}
     </div>
