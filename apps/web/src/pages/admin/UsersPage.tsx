@@ -89,6 +89,7 @@ export default function UsersPage() {
     user: AdminUser;
   } | null>(null);
   const [isActionLoading, setIsActionLoading] = useState(false);
+  const [banReason, setBanReason] = useState('');
 
   // Edit modal state
   const [editModal, setEditModal] = useState<AdminUser | null>(null);
@@ -183,11 +184,17 @@ export default function UsersPage() {
   const handleAction = async () => {
     if (!confirmModal) return;
 
+    // Validate ban reason if banning
+    if (confirmModal.type === 'ban' && !banReason.trim()) {
+      toast.error('Ban reason is required');
+      return;
+    }
+
     setIsActionLoading(true);
     try {
       switch (confirmModal.type) {
         case 'ban':
-          await banUser(confirmModal.user.id);
+          await banUser(confirmModal.user.id, banReason.trim());
           toast.success(`${confirmModal.user.name} has been banned`);
           break;
         case 'unban':
@@ -204,6 +211,7 @@ export default function UsersPage() {
           break;
       }
       setConfirmModal(null);
+      setBanReason('');
       loadUsers(true);
     } catch (error) {
       console.error('Error performing action:', error);
@@ -623,7 +631,7 @@ export default function UsersPage() {
       </motion.div>
 
       {/* Confirmation Modal */}
-      <Dialog open={!!confirmModal} onOpenChange={() => setConfirmModal(null)}>
+      <Dialog open={!!confirmModal} onOpenChange={() => { setConfirmModal(null); setBanReason(''); }}>
         <DialogContent>
           <DialogHeader>
             <DialogTitle>
@@ -659,10 +667,27 @@ export default function UsersPage() {
               )}
             </DialogDescription>
           </DialogHeader>
+          
+          {/* Ban reason input (only for ban action) */}
+          {confirmModal?.type === 'ban' && (
+            <div className="space-y-2 py-2">
+              <label className="text-sm font-medium text-neutral-300">
+                Ban Reason <span className="text-red-400">*</span>
+              </label>
+              <Input
+                value={banReason}
+                onChange={(e) => setBanReason(e.target.value)}
+                placeholder="Enter reason for banning..."
+                className="glass-card border-white/10 text-white"
+                autoFocus
+              />
+            </div>
+          )}
+          
           <DialogFooter>
             <Button
               variant="ghost"
-              onClick={() => setConfirmModal(null)}
+              onClick={() => { setConfirmModal(null); setBanReason(''); }}
               disabled={isActionLoading}
             >
               Cancel
@@ -670,7 +695,7 @@ export default function UsersPage() {
             <Button
               variant={confirmModal?.type === 'ban' || confirmModal?.type === 'revoke-admin' ? 'destructive' : 'default'}
               onClick={handleAction}
-              disabled={isActionLoading}
+              disabled={isActionLoading || (confirmModal?.type === 'ban' && !banReason.trim())}
               className={confirmModal?.type === 'unban' || confirmModal?.type === 'grant-admin' ? 'bg-emerald-600 hover:bg-emerald-500' : ''}
             >
               {isActionLoading ? 'Processing...' : 'Confirm'}
