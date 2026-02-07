@@ -3,24 +3,37 @@ import { Router, Request, Response } from 'express';
 import { eq, and } from 'drizzle-orm';
 import bcrypt from 'bcryptjs';
 import { db } from '../db/index.js';
-import { member } from '../db/schema.js';
+import { member, user } from '../db/schema.js';
 
 const router = Router();
 
 /**
  * GET /api/v1/org/:slug/members
- * List all members in the organization
+ * List all members in the organization with user details
  */
 router.get('/', async (req: Request, res: Response) => {
   try {
     const organizationId = req.organizationId!;
 
-    const members = await db
-      .select()
+    const result = await db
+      .select({
+        id: member.id,
+        userId: member.userId,
+        organizationId: member.organizationId,
+        role: member.role,
+        createdAt: member.createdAt,
+        user: {
+          id: user.id,
+          name: user.name,
+          email: user.email,
+          image: user.image,
+        },
+      })
       .from(member)
+      .leftJoin(user, eq(member.userId, user.id))
       .where(eq(member.organizationId, organizationId));
 
-    res.json({ members });
+    res.json({ members: result });
   } catch (error) {
     console.error('Error fetching members:', error);
     res.status(500).json({ error: 'Failed to fetch members' });
