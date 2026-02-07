@@ -858,6 +858,160 @@ router.post(
 );
 
 /**
+ * DELETE /api/admin/users/:id
+ * Delete a single user
+ * 
+ * Params:
+ * - id: string - User ID
+ * 
+ * Returns:
+ * - { message: string, userId: string } - Success confirmation
+ */
+router.delete(
+  '/:id',
+  requireAdmin,
+  async (req: Request, res: Response) => {
+    try {
+      const actor = req.user!;
+      const userId = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id;
+
+      if (!userId) {
+        return res.status(400).json({ error: 'User ID is required' });
+      }
+
+      // Prevent deleting own account
+      if (userId === actor.id) {
+        return res.status(403).json({ 
+          error: 'Cannot delete your own account',
+        });
+      }
+
+      // Get user
+      const users = await db
+        .select()
+        .from(user)
+        .where(eq(user.id, userId))
+        .limit(1);
+
+      if (users.length === 0) {
+        return res.status(404).json({ error: 'User not found' });
+      }
+
+      const userData = users[0]!;
+
+      // Delete user (cascade handled by database)
+      await db
+        .delete(user)
+        .where(eq(user.id, userId));
+
+      // Log admin action
+      await logAdminAction({
+        adminId: actor.id,
+        action: 'user.delete',
+        targetType: 'user',
+        targetId: userId,
+        details: {
+          user_name: userData.name,
+          user_email: userData.email,
+        },
+        ip: req.ip || req.socket.remoteAddress || 'unknown',
+      });
+
+      res.json({ 
+        message: 'User deleted successfully',
+        userId,
+      });
+    } catch (error) {
+      console.error('Error deleting user:', error);
+      res.status(500).json({ 
+        error: 'Failed to delete user',
+        details: error instanceof Error ? error.message : 'Unknown error'
+      });
+    }
+  }
+);
+
+/**
+ * POST /api/admin/users/:id/impersonate
+ * Impersonate a user (Better Auth admin plugin)
+ * 
+ * Params:
+ * - id: string - User ID to impersonate
+ * 
+ * Returns:
+ * - Session token for impersonated user
+ */
+router.post(
+  '/:id/impersonate',
+  requireAdmin,
+  async (req: Request, res: Response) => {
+    try {
+      const actor = req.user!;
+      const userId = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id;
+
+      if (!userId) {
+        return res.status(400).json({ error: 'User ID is required' });
+      }
+
+      // Prevent impersonating yourself
+      if (userId === actor.id) {
+        return res.status(400).json({ 
+          error: 'Cannot impersonate yourself',
+        });
+      }
+
+      // Get target user
+      const users = await db
+        .select()
+        .from(user)
+        .where(eq(user.id, userId))
+        .limit(1);
+
+      if (users.length === 0) {
+        return res.status(404).json({ error: 'User not found' });
+      }
+
+      const targetUser = users[0]!;
+
+      // Check if target is also an admin (prevent impersonating other admins)
+      if (targetUser.role === 'admin') {
+        return res.status(403).json({ 
+          error: 'Cannot impersonate other platform admins',
+        });
+      }
+
+      // Log admin action BEFORE impersonation
+      await logAdminAction({
+        adminId: actor.id,
+        action: 'user.impersonate',
+        targetType: 'user',
+        targetId: userId,
+        details: {
+          target_name: targetUser.name,
+          target_email: targetUser.email,
+        },
+        ip: req.ip || req.socket.remoteAddress || 'unknown',
+      });
+
+      // Use Better Auth's impersonation endpoint
+      // This requires calling Better Auth's API
+      // For now, return an error with instructions
+      res.status(501).json({
+        error: 'Impersonation not fully implemented',
+        message: 'This feature requires Better Auth admin plugin configuration',
+        hint: 'Use Better Auth client: authClient.admin.impersonateUser({ userId })',
+      });
+    } catch (error) {
+      console.error('Error during impersonation:', error);
+      res.status(500).json({ 
+        error: 'Failed to impersonate user',
+        details: error instanceof Error ? error.message : 'Unknown error'
+      });
+    }
+  }
+);
+
+/**
  * POST /api/admin/users/bulk-ban
  * Ban multiple users at once
  * 
