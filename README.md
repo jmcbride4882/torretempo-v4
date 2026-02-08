@@ -1,4 +1,4 @@
-# Torre Tempo V4 — "The Deputy Killer"
+# Torre Tempo V4 — 
 
 **Workforce Management for Spanish SMBs**  
 Inspector-Ready Compliance | Mobile-First PWA | SHA-256 Audit Chain
