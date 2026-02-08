@@ -384,7 +384,10 @@ export default function UsersPage() {
       const result = await bulkDeleteUsers(Array.from(selectedIds));
       toast.success(`${result.success} user(s) deleted successfully`);
       if (result.failed > 0) {
-        toast.warning(`${result.failed} user(s) failed to delete`);
+        // Show detailed error messages
+        result.errors.forEach((error) => {
+          toast.error(error, { duration: 5000 });
+        });
       }
       setBulkDeleteModal(false);
       setBulkDeleteConfirm('');

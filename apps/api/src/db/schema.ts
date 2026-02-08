@@ -42,7 +42,7 @@ export const session = pgTable('session', {
   userAgent: text('userAgent'),
   userId: text('userId')
     .notNull()
-    .references(() => user.id),
+    .references(() => user.id, { onDelete: 'cascade' }),
   impersonatedBy: text('impersonatedBy'), // Better Auth admin plugin impersonation
 });
 
@@ -52,7 +52,7 @@ export const account = pgTable('account', {
   providerId: text('providerId').notNull(),
   userId: text('userId')
     .notNull()
-    .references(() => user.id),
+    .references(() => user.id, { onDelete: 'cascade' }),
   accessToken: text('accessToken'),
   refreshToken: text('refreshToken'),
   idToken: text('idToken'),
@@ -89,7 +89,7 @@ export const member = pgTable('member', {
     .references(() => organization.id),
   userId: text('userId')
     .notNull()
-    .references(() => user.id),
+    .references(() => user.id, { onDelete: 'cascade' }),
   role: text('role').notNull(),
   createdAt: timestamp('createdAt').notNull(),
   clock_in_pin: text('clock_in_pin'), // Hashed 4-digit PIN for clock-in authentication
@@ -106,7 +106,7 @@ export const invitation = pgTable('invitation', {
   expiresAt: timestamp('expiresAt').notNull(),
   inviterId: text('inviterId')
     .notNull()
-    .references(() => user.id),
+    .references(() => user.id, { onDelete: 'cascade' }),
   createdAt: timestamp('createdAt').notNull().defaultNow(),
 });
 
