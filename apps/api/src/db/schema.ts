@@ -634,3 +634,342 @@ export const admin_broadcast_messages = pgTable(
     created_idx: index('admin_broadcast_created_idx').on(table.created_at),
   })
 );
+
+// ============================================================================
+// EMPLOYEE_PROFILES TABLE
+// ============================================================================
+/**
+ * Employee Profiles
+ * 
+ * Stores employment data separately from auth for security.
+ * Contains PII with encrypted fields for compliance.
+ * 
+ * Spanish law: Stores contract info, working hours, leave balance per Estatuto de los Trabajadores
+ */
+export const employee_profiles = pgTable(
+  'employee_profiles',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    user_id: text('user_id')
+      .notNull()
+      .references(() => user.id, { onDelete: 'cascade' }),
+    organization_id: text('organization_id')
+      .notNull()
+      .references(() => organization.id, { onDelete: 'cascade' }),
+
+    // Personal Information (ENCRYPTED - stored as Base64 strings)
+    dni_nie_encrypted: text('dni_nie_encrypted').notNull(),
+    social_security_number_encrypted: text('social_security_number_encrypted').notNull(),
+    date_of_birth: timestamp('date_of_birth', { withTimezone: true }).notNull(),
+    nationality: varchar('nationality', { length: 3 }), // ISO 3166-1 alpha-3
+    tax_id_encrypted: text('tax_id_encrypted'),
+    phone_number_encrypted: text('phone_number_encrypted'),
+    address_encrypted: text('address_encrypted'), // JSONB stored as encrypted text
+    emergency_contact_encrypted: text('emergency_contact_encrypted'), // JSONB stored as encrypted text
+
+    // Employment Information
+    employee_number: varchar('employee_number', { length: 50 }),
+    job_title: varchar('job_title', { length: 100 }).notNull(),
+    department: varchar('department', { length: 100 }),
+    employment_type: varchar('employment_type', { length: 50 }).notNull(), // indefinido, temporal, practicas, formacion
+    contract_start_date: timestamp('contract_start_date', { withTimezone: true }).notNull(),
+    contract_end_date: timestamp('contract_end_date', { withTimezone: true }),
+    base_salary_cents: integer('base_salary_cents'),
+    working_hours_per_week: numeric('working_hours_per_week', { precision: 4, scale: 2 }).notNull(),
+    work_location_id: uuid('work_location_id').references(() => locations.id, { onDelete: 'set null' }),
+
+    // Leave Balance
+    vacation_days_accrued: numeric('vacation_days_accrued', { precision: 4, scale: 1 }).default('0'),
+    vacation_days_used: numeric('vacation_days_used', { precision: 4, scale: 1 }).default('0'),
+    sick_days_used: integer('sick_days_used').default(0),
+
+    // Compliance
+    health_safety_training_date: timestamp('health_safety_training_date', { withTimezone: true }),
+    work_permit_number_encrypted: text('work_permit_number_encrypted'),
+    work_permit_expiry: timestamp('work_permit_expiry', { withTimezone: true }),
+
+    // GDPR
+    gdpr_consent_date: timestamp('gdpr_consent_date', { withTimezone: true }),
+    data_processing_consent: boolean('data_processing_consent').default(false),
+
+    // Metadata
+    created_at: timestamp('created_at', { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+    updated_at: timestamp('updated_at', { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+  },
+  (table) => ({
+    user_org_unique: uniqueIndex('employee_profiles_user_org_unique').on(
+      table.user_id,
+      table.organization_id
+    ),
+    org_idx: index('employee_profiles_org_idx').on(table.organization_id),
+    dni_idx: index('employee_profiles_dni_idx').on(table.dni_nie_encrypted),
+  })
+);
+
+// ============================================================================
+// LEAVE_REQUESTS TABLE
+// ============================================================================
+/**
+ * Leave Requests
+ * 
+ * Tracks vacation, sick leave, personal days, and unpaid leave.
+ * Supports half-days and manager approval workflow.
+ * 
+ * Spanish law: Vacation days per Estatuto Art. 38 (30 calendar days = 22 working days)
+ */
+export const leave_requests = pgTable(
+  'leave_requests',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    user_id: text('user_id')
+      .notNull()
+      .references(() => user.id, { onDelete: 'cascade' }),
+    organization_id: text('organization_id')
+      .notNull()
+      .references(() => organization.id, { onDelete: 'cascade' }),
+
+    // Leave Details
+    leave_type: varchar('leave_type', { length: 50 }).notNull(), // vacation, sick, personal, unpaid
+    start_date: timestamp('start_date', { withTimezone: true }).notNull(),
+    end_date: timestamp('end_date', { withTimezone: true }).notNull(),
+    days_count: numeric('days_count', { precision: 3, scale: 1 }).notNull(), // 5.0, 2.5 (half days)
+
+    // Request Info
+    reason: text('reason'),
+    status: varchar('status', { length: 20 }).notNull().default('pending'), // pending, approved, rejected, cancelled
+    requested_at: timestamp('requested_at', { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+
+    // Approval
+    approved_by: text('approved_by').references(() => user.id, { onDelete: 'set null' }),
+    approved_at: timestamp('approved_at', { withTimezone: true }),
+    rejection_reason: text('rejection_reason'),
+
+    // Sick Leave Specific
+    doctors_note_url: text('doctors_note_url'),
+    doctors_note_verified: boolean('doctors_note_verified').default(false),
+
+    // Metadata
+    created_at: timestamp('created_at', { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+    updated_at: timestamp('updated_at', { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+  },
+  (table) => ({
+    user_idx: index('leave_requests_user_idx').on(table.user_id),
+    org_idx: index('leave_requests_org_idx').on(table.organization_id),
+    dates_idx: index('leave_requests_dates_idx').on(table.start_date, table.end_date),
+    status_idx: index('leave_requests_status_idx').on(table.status),
+  })
+);
+
+// ============================================================================
+// GENERATED_REPORTS TABLE
+// ============================================================================
+/**
+ * Generated Reports
+ * 
+ * Audit trail for all generated reports with SHA-256 integrity verification.
+ * Links to inspector tokens for ITSS access control.
+ */
+export const generated_reports = pgTable(
+  'generated_reports',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    organization_id: text('organization_id')
+      .notNull()
+      .references(() => organization.id, { onDelete: 'cascade' }),
+
+    // Report Details
+    report_type: varchar('report_type', { length: 50 }).notNull(), // monthly_timesheet, compliance, variance, inspector
+    report_name: varchar('report_name', { length: 255 }).notNull(),
+    period_start: timestamp('period_start', { withTimezone: true }),
+    period_end: timestamp('period_end', { withTimezone: true }),
+
+    // Generation Info
+    generated_by: text('generated_by')
+      .notNull()
+      .references(() => user.id, { onDelete: 'set null' }),
+    generated_at: timestamp('generated_at', { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+
+    // File Info
+    file_path: text('file_path').notNull(),
+    file_size_bytes: integer('file_size_bytes'),
+    file_hash: varchar('file_hash', { length: 64 }).notNull(), // SHA-256
+
+    // Access Control
+    access_level: varchar('access_level', { length: 20 })
+      .notNull()
+      .default('internal'), // internal, inspector, public
+    inspector_token_id: uuid('inspector_token_id').references(() => inspector_tokens.id, { onDelete: 'set null' }),
+    expires_at: timestamp('expires_at', { withTimezone: true }),
+
+    // Metadata
+    metadata: jsonb('metadata'), // Additional data (employee count, hours, etc.)
+    created_at: timestamp('created_at', { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+  },
+  (table) => ({
+    org_idx: index('generated_reports_org_idx').on(table.organization_id),
+    type_idx: index('generated_reports_type_idx').on(table.report_type),
+    period_idx: index('generated_reports_period_idx').on(table.period_start, table.period_end),
+  })
+);
+
+// ============================================================================
+// COMPLIANCE_CHECKS TABLE
+// ============================================================================
+/**
+ * Compliance Checks
+ * 
+ * Logs all automated compliance checks against Spanish labor law.
+ * Tracks violations and resolutions.
+ * 
+ * Spanish law references: Estatuto de los Trabajadores Art. 34 (working time limits)
+ */
+export const compliance_checks = pgTable(
+  'compliance_checks',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    organization_id: text('organization_id')
+      .notNull()
+      .references(() => organization.id, { onDelete: 'cascade' }),
+    user_id: text('user_id').references(() => user.id, { onDelete: 'cascade' }),
+
+    // Check Details
+    check_type: varchar('check_type', { length: 50 }).notNull(), // daily_limit, weekly_limit, rest_period, break_required
+    check_result: varchar('check_result', { length: 20 }).notNull(), // pass, warning, violation
+    severity: varchar('severity', { length: 20 }), // low, medium, high, critical
+
+    // Context
+    time_entry_id: uuid('time_entry_id').references(() => time_entries.id, { onDelete: 'set null' }),
+    shift_id: uuid('shift_id').references(() => shifts.id, { onDelete: 'set null' }),
+    related_data: jsonb('related_data'),
+
+    // Violation Details
+    rule_reference: varchar('rule_reference', { length: 255 }), // "Estatuto Art. 34.3"
+    message: text('message').notNull(),
+    recommended_action: text('recommended_action'),
+
+    // Resolution
+    resolved: boolean('resolved').default(false),
+    resolved_at: timestamp('resolved_at', { withTimezone: true }),
+    resolved_by: text('resolved_by').references(() => user.id, { onDelete: 'set null' }),
+    resolution_notes: text('resolution_notes'),
+
+    // Metadata
+    checked_at: timestamp('checked_at', { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+  },
+  (table) => ({
+    org_idx: index('compliance_checks_org_idx').on(table.organization_id),
+    user_idx: index('compliance_checks_user_idx').on(table.user_id),
+    result_idx: index('compliance_checks_result_idx').on(table.check_result),
+    unresolved_idx: index('compliance_checks_unresolved_idx').on(table.resolved, table.organization_id),
+  })
+);
+
+// ============================================================================
+// NOTIFICATION_PREFERENCES TABLE
+// ============================================================================
+/**
+ * Notification Preferences
+ * 
+ * User-specific notification settings including Do Not Disturb (DND).
+ * 
+ * Spanish law: Right to Disconnect (Ley Orgánica 3/2018) - DND during off-hours
+ */
+export const notification_preferences = pgTable(
+  'notification_preferences',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    user_id: text('user_id')
+      .notNull()
+      .references(() => user.id, { onDelete: 'cascade' })
+      .unique(),
+
+    // Do Not Disturb
+    dnd_enabled: boolean('dnd_enabled').default(false),
+    dnd_start_time: varchar('dnd_start_time', { length: 5 }), // "22:00"
+    dnd_end_time: varchar('dnd_end_time', { length: 5 }), // "08:00"
+    dnd_days: text('dnd_days').array(), // ['saturday', 'sunday']
+    dnd_urgent_override: boolean('dnd_urgent_override').default(true),
+
+    // Metadata
+    created_at: timestamp('created_at', { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+    updated_at: timestamp('updated_at', { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+  }
+);
+
+// ============================================================================
+// ORGANIZATION_SETTINGS TABLE
+// ============================================================================
+/**
+ * Organization Settings
+ * 
+ * Per-organization compliance policies and defaults.
+ * 
+ * Spanish law defaults:
+ * - Max 9 hours/day (Estatuto Art. 34.3)
+ * - Max 40 hours/week (Estatuto Art. 34.1)
+ * - Min 12 hours rest between shifts (Estatuto Art. 34.3)
+ */
+export const organization_settings = pgTable(
+  'organization_settings',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    organization_id: text('organization_id')
+      .notNull()
+      .references(() => organization.id, { onDelete: 'cascade' })
+      .unique(),
+
+    // Compliance Policies (Spanish Labor Law)
+    max_daily_hours: numeric('max_daily_hours', { precision: 3, scale: 1 }).notNull().default('9.0'),
+    max_weekly_hours: numeric('max_weekly_hours', { precision: 4, scale: 1 }).notNull().default('40.0'),
+    min_rest_hours: numeric('min_rest_hours', { precision: 3, scale: 1 }).notNull().default('12.0'),
+    break_required_after_hours: numeric('break_required_after_hours', { precision: 3, scale: 1 }).notNull().default('6.0'),
+    min_break_minutes: integer('min_break_minutes').notNull().default(15),
+
+    // Clock In/Out Settings
+    clock_in_tolerance_minutes: integer('clock_in_tolerance_minutes').notNull().default(5),
+    clock_out_tolerance_minutes: integer('clock_out_tolerance_minutes').notNull().default(5),
+    require_manager_approval_corrections: boolean('require_manager_approval_corrections').default(true),
+
+    // Geofencing
+    geofence_enabled: boolean('geofence_enabled').default(true),
+    geofence_radius_meters: integer('geofence_radius_meters').default(100),
+    strict_geofence_enforcement: boolean('strict_geofence_enforcement').default(false),
+
+    // Notification Defaults
+    notify_shift_published: boolean('notify_shift_published').default(true),
+    notify_swap_request: boolean('notify_swap_request').default(true),
+    notify_compliance_violation: boolean('notify_compliance_violation').default(true),
+    notification_advance_hours: integer('notification_advance_hours').default(24), // Notify 24h before shift
+
+    // Extensible Settings
+    metadata: jsonb('metadata'), // Additional custom settings
+
+    // Metadata
+    created_at: timestamp('created_at', { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+    updated_at: timestamp('updated_at', { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+  }
+);

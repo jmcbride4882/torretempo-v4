@@ -4,6 +4,7 @@ import cors from 'cors';
 import rateLimit from 'express-rate-limit';
 import { toNodeHandler } from 'better-auth/node';
 import { auth } from './lib/auth.js';
+import { createWebSocketServer } from './lib/websocket.js';
 import { tenantMiddleware } from './middleware/tenant.js';
 import { requireAdmin } from './middleware/requireAdmin.js';
 import { errorLogger } from './middleware/errorLogger.js';
@@ -12,13 +13,16 @@ import shiftsRouter from './routes/shifts.js';
 import shiftTemplatesRouter from './routes/shift-templates.js';
 import locationsRouter from './routes/locations.js';
 import swapsRouter from './routes/swaps.js';
-import notificationsRouter from './routes/notifications.js';
-import timeEntriesRouter from './routes/time-entries.js';
-import breaksRouter from './routes/breaks.js';
-import correctionsRouter from './routes/corrections.js';
+import timeEntriesRouter from './routes/v1/time-entries.js';
+import breaksRouter from './routes/v1/breaks.js';
+import correctionsRouter from './routes/v1/correction-requests.js';
 import membersRouter from './routes/members.js';
 import inspectorRouter from './routes/inspector.js';
 import reportsRouter from './routes/reports.js';
+import employeeProfilesRouter from './routes/v1/employee-profiles.js';
+import leaveRequestsRouter from './routes/v1/leave-requests.js';
+import notificationsRouter from './routes/v1/notifications.js';
+import auditChainRouter from './routes/v1/audit.js';
 import inspectorTokensRouter from './routes/admin/inspector-tokens.js';
 import systemRouter from './routes/admin/system.js';
 import tenantsRouter from './routes/admin/tenants.js';
@@ -116,10 +120,13 @@ app.use('/api/v1/org/:slug/shift-templates', tenantMiddleware, shiftTemplatesRou
 app.use('/api/v1/org/:slug/swaps', tenantMiddleware, swapsRouter);
 app.use('/api/v1/org/:slug/notifications', tenantMiddleware, notificationsRouter);
 app.use('/api/v1/org/:slug/time-entries', tenantMiddleware, timeEntriesRouter);
-app.use('/api/v1/org/:slug/time-entries', tenantMiddleware, breaksRouter);
+app.use('/api/v1/org/:slug/breaks', tenantMiddleware, breaksRouter);
 app.use('/api/v1/org/:slug/corrections', tenantMiddleware, correctionsRouter);
 app.use('/api/v1/org/:slug/members', tenantMiddleware, membersRouter);
 app.use('/api/v1/org/:slug/reports', tenantMiddleware, reportsRouter);
+app.use('/api/v1/org/:slug/employees', tenantMiddleware, employeeProfilesRouter);
+app.use('/api/v1/org/:slug/leave-requests', tenantMiddleware, leaveRequestsRouter);
+app.use('/api/v1/org/:slug/audit/verify', tenantMiddleware, auditChainRouter);
 
 // 404 handler
 app.use((_req: Request, res: Response) => {
@@ -133,9 +140,14 @@ app.use(errorLogger);
 async function start() {
   try {
     await testConnection();
-    app.listen(PORT, () => {
+    
+    // Start HTTP server
+    const server = app.listen(PORT, () => {
       console.log(`✅ API server running on http://localhost:${PORT}`);
     });
+    
+    // Initialize WebSocket server
+    createWebSocketServer(server);
   } catch (error) {
     console.error('❌ Failed to start server:', error);
     process.exit(1);
