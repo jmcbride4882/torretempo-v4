@@ -29,6 +29,7 @@ import {
 } from '@/components/ui/select';
 import { generateReport, fetchTeamMembers } from '@/lib/api/reports';
 import { useAuth } from '@/hooks/useAuth';
+import { useIsManager } from '@/hooks/useIsManager';
 import type { ReportType, ReportGenerationRequest, TeamMember } from '@/types/reports';
 import { useEffect, useCallback } from 'react';
 
@@ -92,8 +93,7 @@ export default function GenerateReportPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
 
-  // Role check
-  const isManager = true; // TODO: Get from user context
+  const isManager = useIsManager();
 
   // Year options
   const yearOptions = useMemo(() => getYearOptions(), []);

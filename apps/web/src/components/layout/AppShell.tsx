@@ -1,6 +1,7 @@
-import { Routes, Route, Navigate, useParams } from 'react-router-dom';
+import { useState } from 'react';
+import { Routes, Route, Navigate, useParams, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Menu, Clock, Shield } from 'lucide-react';
+import { Menu, Clock, Shield, X } from 'lucide-react';
 import { Sidebar } from './Sidebar';
 import { BottomTabs } from './BottomTabs';
 import { NotificationBell } from '@/components/notifications/NotificationBell';
@@ -23,51 +24,16 @@ import OpenShiftsPage from '@/pages/OpenShifts';
 import SwapsPage from '@/pages/Swaps';
 import TimeEntryList from '@/pages/TimeClock/TimeEntryList';
 
+// Dashboard
+import DashboardPage from '@/pages/Dashboard';
+
 // Reports pages
 import ReportsPage from '@/pages/Reports';
 import ReportDetailPage from '@/pages/Reports/ReportDetail';
 import GenerateReportPage from '@/pages/Reports/GenerateReport';
 import SettingsPage from '@/pages/Settings';
+import NotificationsPage from '@/pages/Notifications';
 
-// Placeholder pages - these will be built in Phase 2
-function DashboardPage() {
-  return (
-    <div className="flex flex-col items-center justify-center min-h-[60vh] text-center px-4">
-      <motion.div
-        initial={{ opacity: 0, scale: 0.9 }}
-        animate={{ opacity: 1, scale: 1 }}
-        className="space-y-4"
-      >
-        <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-primary-600/20">
-          <Clock className="h-8 w-8 text-primary-400" />
-        </div>
-        <h1 className="text-2xl font-bold text-white">Dashboard</h1>
-        <p className="max-w-md text-neutral-400">
-          Dashboard coming in Phase 2. This will show time tracking overview, recent activity, and quick actions.
-        </p>
-      </motion.div>
-    </div>
-  );
-}
-
-function PlaceholderPage({ title, description }: { title: string; description: string }) {
-  return (
-    <div className="flex flex-col items-center justify-center min-h-[60vh] text-center px-4">
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="space-y-4"
-      >
-        <h1 className="text-2xl font-bold text-white">{title}</h1>
-        <p className="max-w-md text-neutral-400">{description}</p>
-        <div className="flex items-center justify-center gap-2 text-sm text-neutral-500">
-          <span className="h-2 w-2 animate-pulse rounded-full bg-primary-500" />
-          Coming in Phase 2
-        </div>
-      </motion.div>
-    </div>
-  );
-}
 
 const pageTransition = {
   initial: { opacity: 0, y: 10 },
@@ -78,13 +44,47 @@ const pageTransition = {
 
 export default function AppShell() {
   const { slug } = useParams<{ slug: string }>();
+  const navigate = useNavigate();
   const { user, signOut } = useAuth();
   const { organization } = useOrganization();
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   return (
     <div className="min-h-screen bg-neutral-950">
       {/* Desktop sidebar */}
       <Sidebar />
+
+      {/* Mobile sidebar overlay */}
+      <AnimatePresence>
+        {mobileMenuOpen && (
+          <>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 z-40 bg-black/60 backdrop-blur-sm lg:hidden"
+              onClick={() => setMobileMenuOpen(false)}
+            />
+            <motion.div
+              initial={{ x: '-100%' }}
+              animate={{ x: 0 }}
+              exit={{ x: '-100%' }}
+              transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+              className="fixed inset-y-0 left-0 z-50 w-64 lg:hidden"
+            >
+              <div className="relative h-full">
+                <Sidebar />
+                <button
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="absolute right-2 top-4 rounded-lg p-2 text-neutral-400 hover:bg-white/10 hover:text-white"
+                >
+                  <X className="h-5 w-5" />
+                </button>
+              </div>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
 
       {/* Offline indicator */}
       <OfflineIndicator />
@@ -96,7 +96,12 @@ export default function AppShell() {
           <div className="flex h-full items-center justify-between px-4 lg:px-6">
             {/* Mobile menu button and logo */}
             <div className="flex items-center gap-3 lg:hidden">
-              <Button variant="ghost" size="icon" className="lg:hidden">
+              <Button
+                variant="ghost"
+                size="icon"
+                className="lg:hidden"
+                onClick={() => setMobileMenuOpen(true)}
+              >
                 <Menu className="h-5 w-5" />
               </Button>
               <div className="flex items-center gap-2">
@@ -144,14 +149,14 @@ export default function AppShell() {
                   <DropdownMenuSeparator />
                   {(user as any)?.role === 'admin' && (
                     <>
-                      <DropdownMenuItem onClick={() => window.location.href = '/admin'}>
+                      <DropdownMenuItem onClick={() => navigate('/admin')}>
                         <Shield className="mr-2 h-4 w-4 text-amber-400" />
                         <span>Admin Panel</span>
                       </DropdownMenuItem>
                       <DropdownMenuSeparator />
                     </>
                   )}
-                  <DropdownMenuItem onClick={() => window.location.href = `/t/${slug}/settings`}>
+                  <DropdownMenuItem onClick={() => navigate(`/t/${slug}/settings`)}>
                     Settings
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
@@ -174,15 +179,7 @@ export default function AppShell() {
                 <Route path="open-shifts" element={<OpenShiftsPage />} />
                 <Route path="clock" element={<TimeEntryList />} />
                 <Route path="swaps" element={<SwapsPage />} />
-                <Route
-                  path="notifications"
-                  element={
-                    <PlaceholderPage
-                      title="Notifications"
-                      description="View all your notifications and alerts."
-                    />
-                  }
-                />
+                <Route path="notifications" element={<NotificationsPage />} />
                 <Route path="reports" element={<ReportsPage />} />
                 <Route path="reports/:id" element={<ReportDetailPage />} />
                 <Route path="reports/generate" element={<GenerateReportPage />} />

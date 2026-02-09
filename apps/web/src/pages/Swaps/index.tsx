@@ -26,6 +26,7 @@ import { Input } from '@/components/ui/input';
 import { SwapCard, SwapCardSkeleton } from '@/components/swaps/SwapCard';
 import { RequestSwapModal } from '@/components/swaps/RequestSwapModal';
 import { useAuth } from '@/hooks/useAuth';
+import { useIsManager } from '@/hooks/useIsManager';
 import { cn } from '@/lib/utils';
 import type { SwapRequest, SwapStatus, SwapTab, CreateSwapRequestData } from '@/types/swaps';
 import type { Shift, TeamMember } from '@/types/roster';
@@ -79,8 +80,7 @@ export default function SwapsPage() {
   const [statusFilter, setStatusFilter] = useState<SwapStatus | 'all'>('all');
   const [searchQuery, setSearchQuery] = useState('');
 
-  // Role check (simplified - in real app this would come from user context)
-  const isManager = true; // TODO: Get from user role/permissions
+  const isManager = useIsManager();
 
   // Fetch swaps based on active tab
   const fetchData = useCallback(

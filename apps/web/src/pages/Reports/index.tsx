@@ -20,6 +20,7 @@ import { Input } from '@/components/ui/input';
 import { ReportCard, ReportCardSkeleton } from '@/components/reports/ReportCard';
 import { ReportFilters } from '@/components/reports/ReportFilters';
 import { useAuth } from '@/hooks/useAuth';
+import { useIsManager } from '@/hooks/useIsManager';
 import { cn } from '@/lib/utils';
 import { fetchReports, downloadReportPDF, fetchTeamMembers } from '@/lib/api/reports';
 import type { MonthlyReport, ReportFilter, TeamMember } from '@/types/reports';
@@ -37,8 +38,7 @@ export default function ReportsPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [filters, setFilters] = useState<ReportFilter>({});
 
-  // Role check (simplified - in real app from user context)
-  const isManager = true; // TODO: Get from user role/permissions
+  const isManager = useIsManager();
 
   // Fetch reports
   const fetchData = useCallback(
