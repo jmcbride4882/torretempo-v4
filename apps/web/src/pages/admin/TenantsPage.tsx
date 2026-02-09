@@ -51,6 +51,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { cn } from '@/lib/utils';
 import { PaginationControls } from '@/components/ui/pagination-controls';
+import { DateRangePicker } from '@/components/ui/date-range-picker';
 import {
   fetchTenants,
   suspendTenant,
@@ -86,6 +87,8 @@ export default function TenantsPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [tierFilter, setTierFilter] = useState<string>('all');
+  const [startDate, setStartDate] = useState<string>('');
+  const [endDate, setEndDate] = useState<string>('');
   const [page, setPage] = useState(1);
   const limit = 12;
 
@@ -124,6 +127,8 @@ export default function TenantsPage() {
           search: searchQuery || undefined,
           status: statusFilter !== 'all' ? statusFilter : undefined,
           tier: tierFilter !== 'all' ? tierFilter : undefined,
+          startDate: startDate || undefined,
+          endDate: endDate || undefined,
           page,
           limit,
         });
@@ -137,7 +142,7 @@ export default function TenantsPage() {
         setIsRefreshing(false);
       }
     },
-    [searchQuery, statusFilter, tierFilter, page]
+    [searchQuery, statusFilter, tierFilter, startDate, endDate, page]
   );
 
   useEffect(() => {
@@ -157,6 +162,8 @@ export default function TenantsPage() {
       if (searchQuery) params.set('search', searchQuery);
       if (statusFilter !== 'all') params.set('status', statusFilter);
       if (tierFilter !== 'all') params.set('tier', tierFilter);
+      if (startDate) params.set('startDate', startDate);
+      if (endDate) params.set('endDate', endDate);
 
       const url = `/api/admin/tenants/export${params.toString() ? `?${params.toString()}` : ''}`;
       const response = await fetch(url, { credentials: 'include' });
@@ -414,6 +421,25 @@ export default function TenantsPage() {
             <SelectItem value="enterprise" className="text-neutral-200">Enterprise</SelectItem>
           </SelectContent>
         </Select>
+
+        {/* Date range filter */}
+        <DateRangePicker
+          startDate={startDate}
+          endDate={endDate}
+          onStartDateChange={(value) => {
+            setStartDate(value);
+            setPage(1);
+          }}
+          onEndDateChange={(value) => {
+            setEndDate(value);
+            setPage(1);
+          }}
+          onClear={() => {
+            setStartDate('');
+            setEndDate('');
+            setPage(1);
+          }}
+        />
       </motion.div>
 
       {/* Stats bar */}

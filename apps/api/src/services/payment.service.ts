@@ -4,7 +4,16 @@
  */
 
 import Stripe from 'stripe';
+import { GoCardlessClient } from 'gocardless-nodejs/client';
+import { Environments } from 'gocardless-nodejs/constants';
+import type {
+  SubscriptionIntervalUnit,
+  PaymentCurrency,
+} from 'gocardless-nodejs/types/Types';
 import 'dotenv/config';
+
+// Re-export GoCardless types for external use
+export { SubscriptionIntervalUnit, PaymentCurrency } from 'gocardless-nodejs/types/Types';
 
 // Initialize Stripe
 const stripeKey = process.env.STRIPE_SECRET_KEY || '';
@@ -12,10 +21,46 @@ export const stripe = stripeKey ? new Stripe(stripeKey, {
   apiVersion: '2026-01-28.clover',
 }) : null;
 
-// GoCardless - will be implemented when needed
-export const gocardlessClient: any = null;
+// Initialize GoCardless
+const gocardlessToken = process.env.GOCARDLESS_ACCESS_TOKEN || '';
+const gocardlessEnv = process.env.GOCARDLESS_ENVIRONMENT === 'live'
+  ? Environments.Live
+  : Environments.Sandbox;
+
+export const gocardlessClient = gocardlessToken
+  ? new GoCardlessClient(gocardlessToken, gocardlessEnv)
+  : null;
 
 export const PAYMENT_CURRENCY = process.env.PAYMENT_CURRENCY || 'EUR';
+
+/**
+ * SEPA Zone Countries
+ * Used to determine whether to route payments through GoCardless (SEPA) or Stripe (cards)
+ */
+const SEPA_COUNTRIES = new Set([
+  'AT', 'BE', 'BG', 'HR', 'CY', 'CZ', 'DK', 'EE', 'FI', 'FR',
+  'DE', 'GR', 'HU', 'IE', 'IT', 'LV', 'LT', 'LU', 'MT', 'NL',
+  'PL', 'PT', 'RO', 'SK', 'SI', 'ES', 'SE', 'GB', 'CH', 'NO',
+  'IS', 'LI', 'MC', 'SM', 'VA'
+]);
+
+/**
+ * Determine if a country should use GoCardless (SEPA Direct Debit)
+ * @param countryCode - ISO 3166-1 alpha-2 country code
+ * @returns true if the country is in the SEPA zone
+ */
+export function shouldUseGoCardless(countryCode: string): boolean {
+  return SEPA_COUNTRIES.has(countryCode.toUpperCase());
+}
+
+/**
+ * Get the appropriate payment provider for a country
+ * @param countryCode - ISO 3166-1 alpha-2 country code
+ * @returns 'gocardless' for SEPA countries, 'stripe' for others
+ */
+export function getPaymentProvider(countryCode: string): 'gocardless' | 'stripe' {
+  return shouldUseGoCardless(countryCode) ? 'gocardless' : 'stripe';
+}
 
 /**
  * Stripe Functions
@@ -125,6 +170,7 @@ export async function createStripePaymentIntent(
 
 /**
  * GoCardless Functions
+ * Note: GoCardless SDK v7 requires string amounts and specific enum types
  */
 
 export async function createGoCardlessCustomer(
@@ -132,7 +178,7 @@ export async function createGoCardlessCustomer(
   givenName: string,
   familyName: string,
   metadata?: Record<string, string>
-) {
+): Promise<unknown> {
   if (!gocardlessClient) throw new Error('GoCardless not configured');
   
   return await gocardlessClient.customers.create({
@@ -143,7 +189,10 @@ export async function createGoCardlessCustomer(
   });
 }
 
-export async function createGoCardlessMandateFlow(customerId: string, redirectUrl: string) {
+export async function createGoCardlessMandateFlow(
+  customerId: string,
+  redirectUrl: string
+): Promise<unknown> {
   if (!gocardlessClient) throw new Error('GoCardless not configured');
   
   return await gocardlessClient.redirectFlows.create({
@@ -161,15 +210,16 @@ export async function createGoCardlessSubscription(
   amount: number,
   name: string,
   interval: number = 1,
-  intervalUnit: 'weekly' | 'monthly' | 'yearly' = 'monthly'
-) {
+  intervalUnit: SubscriptionIntervalUnit
+): Promise<unknown> {
   if (!gocardlessClient) throw new Error('GoCardless not configured');
   
+  // GoCardless SDK v7 requires string amounts in minor units (cents/pence)
   return await gocardlessClient.subscriptions.create({
-    amount: Math.round(amount * 100), // Convert to cents
-    currency: PAYMENT_CURRENCY,
+    amount: String(Math.round(amount * 100)),
+    currency: PAYMENT_CURRENCY as PaymentCurrency,
     name,
-    interval,
+    interval: String(interval),
     interval_unit: intervalUnit,
     links: {
       mandate: mandateId,
@@ -177,10 +227,10 @@ export async function createGoCardlessSubscription(
   });
 }
 
-export async function cancelGoCardlessSubscription(subscriptionId: string) {
+export async function cancelGoCardlessSubscription(subscriptionId: string): Promise<unknown> {
   if (!gocardlessClient) throw new Error('GoCardless not configured');
   
-  return await gocardlessClient.subscriptions.cancel(subscriptionId);
+  return await gocardlessClient.subscriptions.cancel(subscriptionId, {});
 }
 
 export async function createGoCardlessPayment(
@@ -188,12 +238,13 @@ export async function createGoCardlessPayment(
   amount: number,
   description: string,
   metadata?: Record<string, string>
-) {
+): Promise<unknown> {
   if (!gocardlessClient) throw new Error('GoCardless not configured');
   
+  // GoCardless SDK v7 requires string amounts in minor units (cents/pence)
   return await gocardlessClient.payments.create({
-    amount: Math.round(amount * 100),
-    currency: PAYMENT_CURRENCY,
+    amount: String(Math.round(amount * 100)),
+    currency: PAYMENT_CURRENCY as PaymentCurrency,
     description,
     links: {
       mandate: mandateId,
@@ -202,14 +253,19 @@ export async function createGoCardlessPayment(
   });
 }
 
-export async function createGoCardlessRefund(paymentId: string, amount?: number) {
+export async function createGoCardlessRefund(
+  paymentId: string,
+  amount: number
+): Promise<unknown> {
   if (!gocardlessClient) throw new Error('GoCardless not configured');
   
+  // GoCardless SDK v7 requires string amounts in minor units (cents/pence)
+  // Amount is required for GoCardless refunds
   return await gocardlessClient.refunds.create({
+    amount: String(Math.round(amount * 100)),
     links: {
       payment: paymentId,
     },
-    amount: amount ? Math.round(amount * 100) : undefined,
   });
 }
 

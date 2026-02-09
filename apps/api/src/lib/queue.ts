@@ -99,6 +99,22 @@ export interface BackupJob {
 }
 
 // ============================================================================
+// TRIAL QUEUE
+// ============================================================================
+export const trialQueue = new Queue('trial', defaultQueueOptions);
+
+export interface TrialJob {
+  type: 'trial-reminder' | 'trial-expired' | 'trial-downgraded' | 'trial-grace_ended' | 'trial-extended';
+  organizationId: string;
+  to?: string;
+  daysUntilTrialEnds?: number;
+  trialEndsAt?: Date;
+  trialEndedAt?: Date;
+  daysAdded?: number;
+  newTrialEndsAt?: Date;
+}
+
+// ============================================================================
 // QUEUE EXPORTS
 // ============================================================================
 export const queues = {
@@ -108,6 +124,7 @@ export const queues = {
   compliance: complianceQueue,
   monthly: monthlyQueue,
   backup: backupQueue,
+  trial: trialQueue,
 } as const;
 
 // Health check function
@@ -130,6 +147,7 @@ export async function closeQueues(): Promise<void> {
     complianceQueue.close(),
     monthlyQueue.close(),
     backupQueue.close(),
+    trialQueue.close(),
     redisConnection.quit(),
   ]);
 }

@@ -322,6 +322,8 @@ export async function fetchTenants(params?: {
   search?: string;
   status?: string;
   tier?: string;
+  startDate?: string;
+  endDate?: string;
   page?: number;
   limit?: number;
 }): Promise<TenantsResponse> {
@@ -329,6 +331,8 @@ export async function fetchTenants(params?: {
   if (params?.search) searchParams.append('search', params.search);
   if (params?.status) searchParams.append('status', params.status);
   if (params?.tier) searchParams.append('tier', params.tier);
+  if (params?.startDate) searchParams.append('startDate', params.startDate);
+  if (params?.endDate) searchParams.append('endDate', params.endDate);
   if (params?.page) searchParams.append('page', params.page.toString());
   if (params?.limit) searchParams.append('limit', params.limit.toString());
 
@@ -395,6 +399,8 @@ export async function fetchUsers(params?: {
   role?: string;
   banned?: boolean;
   isAdmin?: boolean;
+  startDate?: string;
+  endDate?: string;
   page?: number;
   limit?: number;
 }): Promise<UsersResponse> {
@@ -403,6 +409,8 @@ export async function fetchUsers(params?: {
   if (params?.role) searchParams.append('role', params.role);
   if (params?.banned !== undefined) searchParams.append('banned', params.banned.toString());
   if (params?.isAdmin !== undefined) searchParams.append('is_admin', params.isAdmin.toString());
+  if (params?.startDate) searchParams.append('startDate', params.startDate);
+  if (params?.endDate) searchParams.append('endDate', params.endDate);
   if (params?.page) searchParams.append('page', params.page.toString());
   if (params?.limit) searchParams.append('limit', params.limit.toString());
 

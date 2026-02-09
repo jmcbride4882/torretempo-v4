@@ -23,6 +23,7 @@ import employeeProfilesRouter from './routes/v1/employee-profiles.js';
 import leaveRequestsRouter from './routes/v1/leave-requests.js';
 import notificationsRouter from './routes/v1/notifications.js';
 import auditChainRouter from './routes/v1/audit.js';
+import rosterRouter from './routes/v1/roster.js';
 import inspectorTokensRouter from './routes/admin/inspector-tokens.js';
 import systemRouter from './routes/admin/system.js';
 import tenantsRouter from './routes/admin/tenants.js';
@@ -41,6 +42,8 @@ import plansRouter from './routes/admin/plans.js';
 import stripeWebhookRouter from './routes/webhooks/stripe.js';
 import 'dotenv/config';
 import './workers/email.worker.js';
+import './workers/trial.worker.js';
+import './workers/trial.worker.js';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -127,6 +130,7 @@ app.use('/api/v1/org/:slug/reports', tenantMiddleware, reportsRouter);
 app.use('/api/v1/org/:slug/employees', tenantMiddleware, employeeProfilesRouter);
 app.use('/api/v1/org/:slug/leave-requests', tenantMiddleware, leaveRequestsRouter);
 app.use('/api/v1/org/:slug/audit/verify', tenantMiddleware, auditChainRouter);
+app.use('/api/v1/org/:slug/roster', tenantMiddleware, rosterRouter);
 
 // 404 handler
 app.use((_req: Request, res: Response) => {

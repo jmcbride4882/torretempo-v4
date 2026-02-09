@@ -1,6 +1,6 @@
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { Clock, MapPin, Calendar, Plus, Loader2, AlertCircle } from 'lucide-react';
+import { AlertCircle, Calendar, Clock, Loader2, MapPin, Plus, User } from 'lucide-react';
 import {
   Dialog,
   DialogContent,
@@ -19,8 +19,11 @@ import {
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { useRosterValidation } from '@/hooks/useRosterValidation';
 import { cn } from '@/lib/utils';
+import { ValidationIndicator } from './ValidationIndicator';
 import type { Location } from '@/types/roster';
+import type { ValidationResult } from '@/hooks/useRosterValidation';
 
 interface CreateShiftModalProps {
   open: boolean;
@@ -33,11 +36,26 @@ interface CreateShiftModalProps {
 
 interface ShiftFormData {
   location_id: string;
+  user_id: string;
   start_date: string;
   start_time: string;
   end_time: string;
   break_minutes: number;
   notes: string;
+}
+
+interface MemberApiResponse {
+  members: Array<{
+    id: string;
+    userId: string;
+    role: string;
+    user: {
+      id: string;
+      name: string | null;
+      email: string | null;
+      image: string | null;
+    } | null;
+  }>;
 }
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
@@ -52,8 +70,13 @@ export function CreateShiftModal({
 }: CreateShiftModalProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [members, setMembers] = useState<MemberApiResponse['members']>([]);
+  const [isLoadingMembers, setIsLoadingMembers] = useState(false);
+  const [membersError, setMembersError] = useState<string | null>(null);
+  const [employeeValidationResult, setEmployeeValidationResult] = useState<ValidationResult | null>(null);
   const [formData, setFormData] = useState<ShiftFormData>({
     location_id: '',
+    user_id: '',
     start_date: defaultDate ? (defaultDate.toISOString().split('T')[0] ?? '') : (new Date().toISOString().split('T')[0] ?? ''),
     start_time: '09:00',
     end_time: '17:00',
@@ -61,11 +84,16 @@ export function CreateShiftModal({
     notes: '',
   });
 
+  const { validate, isValidating } = useRosterValidation({
+    organizationSlug,
+  });
+
   // Reset form when modal opens
   useEffect(() => {
     if (open) {
       setFormData({
         location_id: locations[0]?.id || '',
+        user_id: '',
         start_date: defaultDate ? (defaultDate.toISOString().split('T')[0] ?? '') : (new Date().toISOString().split('T')[0] ?? ''),
         start_time: '09:00',
         end_time: '17:00',
@@ -73,8 +101,94 @@ export function CreateShiftModal({
         notes: '',
       });
       setError(null);
+      setEmployeeValidationResult(null);
     }
   }, [open, defaultDate, locations]);
+
+  // Fetch members when modal opens
+  useEffect(() => {
+    if (!open) return;
+
+    let isMounted = true;
+
+    async function fetchMembers(): Promise<void> {
+      setIsLoadingMembers(true);
+      setMembersError(null);
+
+      try {
+        const response = await fetch(`${API_URL}/api/v1/org/${organizationSlug}/members`, {
+          method: 'GET',
+          credentials: 'include',
+          headers: { 'Content-Type': 'application/json' },
+        });
+
+        if (!response.ok) {
+          throw new Error('Failed to fetch members');
+        }
+
+        const data: MemberApiResponse = await response.json();
+        const normalized = (data.members || []).filter((m) => Boolean(m.userId));
+
+        if (isMounted) {
+          setMembers(normalized);
+        }
+      } catch (err) {
+        if (isMounted) {
+          setMembersError(err instanceof Error ? err.message : 'Failed to fetch members');
+          setMembers([]);
+        }
+      } finally {
+        if (isMounted) {
+          setIsLoadingMembers(false);
+        }
+      }
+    }
+
+    void fetchMembers();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [open, organizationSlug]);
+
+  // Real-time validation when an employee is selected
+  useEffect(() => {
+    if (!open) return;
+
+    if (!formData.user_id) {
+      setEmployeeValidationResult(null);
+      return;
+    }
+
+    const startDateTime = new Date(`${formData.start_date}T${formData.start_time}:00`);
+    const endDateTime = new Date(`${formData.start_date}T${formData.end_time}:00`);
+
+    if (Number.isNaN(startDateTime.getTime()) || Number.isNaN(endDateTime.getTime()) || endDateTime <= startDateTime) {
+      setEmployeeValidationResult(null);
+      return;
+    }
+
+    let isMounted = true;
+
+    async function runValidation(): Promise<void> {
+      const result = await validate(formData.user_id, {
+        start: startDateTime,
+        end: endDateTime,
+        locationId: formData.location_id || undefined,
+        breakMinutes: formData.break_minutes,
+      });
+
+      if (isMounted) {
+        setEmployeeValidationResult(result);
+      }
+    }
+
+    void runValidation();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [open, formData.user_id, formData.start_date, formData.start_time, formData.end_time, formData.break_minutes, formData.location_id, validate]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -102,6 +216,7 @@ export function CreateShiftModal({
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           location_id: formData.location_id,
+          user_id: formData.user_id || null,
           start_time: startDateTime.toISOString(),
           end_time: endDateTime.toISOString(),
           break_minutes: formData.break_minutes,
@@ -193,6 +308,62 @@ export function CreateShiftModal({
                   ))}
                 </SelectContent>
               </Select>
+            </div>
+
+            {/* Employee (optional) */}
+            <div className="space-y-2">
+              <div className="flex items-center justify-between gap-3">
+                <Label htmlFor="employee" className="flex items-center gap-2 text-sm text-neutral-300">
+                  <User className="h-3.5 w-3.5 text-neutral-500" />
+                  Employee <span className="text-neutral-500">(optional)</span>
+                </Label>
+                <ValidationIndicator
+                  result={employeeValidationResult}
+                  isValidating={isValidating}
+                  size="sm"
+                  showTooltip
+                />
+              </div>
+
+              <Select
+                value={formData.user_id}
+                onValueChange={(value) => setFormData({ ...formData, user_id: value })}
+                disabled={isLoadingMembers}
+              >
+                <SelectTrigger
+                  id="employee"
+                  className="glass-card border-white/10 text-white focus:border-primary-500"
+                >
+                  <SelectValue placeholder={isLoadingMembers ? 'Loading employees…' : 'Unassigned'} />
+                </SelectTrigger>
+
+                <SelectContent className="glass-card border-white/10">
+                  <SelectItem value="" className="text-neutral-200">
+                    Unassigned
+                  </SelectItem>
+                  {members
+                    .filter((m) => Boolean(m.userId))
+                    .map((m) => {
+                      const name = m.user?.name || m.user?.email || 'Unnamed';
+                      const roleLabel = m.role;
+
+                      return (
+                        <SelectItem key={m.userId} value={m.userId} className="text-neutral-200">
+                          <div className="flex w-full items-center justify-between gap-3">
+                            <span className="truncate">{name}</span>
+                            <span className="shrink-0 rounded-full bg-white/5 px-2 py-0.5 text-[10px] uppercase text-neutral-400">
+                              {roleLabel}
+                            </span>
+                          </div>
+                        </SelectItem>
+                      );
+                    })}
+                </SelectContent>
+              </Select>
+
+              {membersError && (
+                <p className="text-xs text-red-300">{membersError}</p>
+              )}
             </div>
 
             {/* Date */}

@@ -57,6 +57,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { cn } from '@/lib/utils';
 import { PaginationControls } from '@/components/ui/pagination-controls';
+import { DateRangePicker } from '@/components/ui/date-range-picker';
 import {
   fetchUsers,
   banUser,
@@ -80,6 +81,8 @@ export default function UsersPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [roleFilter, setRoleFilter] = useState<string>('all');
   const [statusFilter, setStatusFilter] = useState<string>('all');
+  const [startDate, setStartDate] = useState<string>('');
+  const [endDate, setEndDate] = useState<string>('');
   const [page, setPage] = useState(1);
   const limit = 12;
 
@@ -122,6 +125,8 @@ export default function UsersPage() {
           role: roleFilter !== 'all' ? roleFilter : undefined,
           banned: statusFilter === 'banned' ? true : statusFilter === 'active' ? false : undefined,
           isAdmin: statusFilter === 'admin' ? true : undefined,
+          startDate: startDate || undefined,
+          endDate: endDate || undefined,
           page,
           limit,
         });
@@ -135,7 +140,7 @@ export default function UsersPage() {
         setIsRefreshing(false);
       }
     },
-    [searchQuery, roleFilter, statusFilter, page]
+    [searchQuery, roleFilter, statusFilter, startDate, endDate, page]
   );
 
   useEffect(() => {
@@ -157,6 +162,8 @@ export default function UsersPage() {
       if (statusFilter === 'banned') params.set('banned', 'true');
       else if (statusFilter === 'active') params.set('banned', 'false');
       if (statusFilter === 'admin') params.set('isAdmin', 'true');
+      if (startDate) params.set('startDate', startDate);
+      if (endDate) params.set('endDate', endDate);
 
       const url = `/api/admin/users/export${params.toString() ? `?${params.toString()}` : ''}`;
       const response = await fetch(url, { credentials: 'include' });
@@ -514,6 +521,25 @@ export default function UsersPage() {
             <SelectItem value="admin" className="text-neutral-200">Admins Only</SelectItem>
           </SelectContent>
         </Select>
+
+        {/* Date range filter */}
+        <DateRangePicker
+          startDate={startDate}
+          endDate={endDate}
+          onStartDateChange={(value) => {
+            setStartDate(value);
+            setPage(1);
+          }}
+          onEndDateChange={(value) => {
+            setEndDate(value);
+            setPage(1);
+          }}
+          onClear={() => {
+            setStartDate('');
+            setEndDate('');
+            setPage(1);
+          }}
+        />
       </motion.div>
 
       {/* Stats bar */}
