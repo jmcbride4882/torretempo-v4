@@ -700,6 +700,310 @@ export class ComplianceValidator {
     };
   }
 
+  // ==========================================================================
+  // REAL DECRETO 1561/1995 — SECTOR-SPECIFIC WORKING TIME RULES
+  // ==========================================================================
+
+  /**
+   * 13. Validate Hospitality Split Shift Rules
+   * RD 1561/1995 Art. 34 — Hostelería sector allows split shifts
+   * Max 12h window (jornada partida), min 1h break between parts
+   */
+  validateHospitalitySplitShift(entries: TimeEntry[], targetDate?: Date): ComplianceResult {
+    const date = targetDate || new Date();
+    const dayEntries = getEntriesForDay(entries, date)
+      .filter((e) => e.clock_out)
+      .sort((a, b) => a.clock_in.getTime() - b.clock_in.getTime());
+
+    if (dayEntries.length < 2) {
+      return {
+        pass: true,
+        message: 'No split shift detected',
+        ruleReference: 'RD 1561/1995 Art. 34',
+      };
+    }
+
+    // Check total window from first clock-in to last clock-out
+    const first = dayEntries[0]!;
+    const last = dayEntries[dayEntries.length - 1]!;
+    const windowHours = calculateHours(first.clock_in, last.clock_out!);
+
+    if (windowHours > 12) {
+      return {
+        pass: false,
+        severity: 'high',
+        message: `Split shift window (${windowHours.toFixed(1)}h) exceeds 12h maximum`,
+        ruleReference: 'RD 1561/1995 Art. 34',
+        recommendedAction: 'Hospitality split shifts must fit within a 12-hour window',
+      };
+    }
+
+    // Check minimum gap between split parts (1 hour)
+    for (let i = 0; i < dayEntries.length - 1; i++) {
+      const current = dayEntries[i]!;
+      const next = dayEntries[i + 1]!;
+      if (current.clock_out && next.clock_in) {
+        const gapHours = calculateHours(current.clock_out, next.clock_in);
+        if (gapHours < 1) {
+          return {
+            pass: false,
+            severity: 'medium',
+            message: `Split shift gap (${(gapHours * 60).toFixed(0)}min) below minimum 1h`,
+            ruleReference: 'RD 1561/1995 Art. 34',
+            recommendedAction: 'Minimum 1 hour break between split shift parts',
+          };
+        }
+      }
+    }
+
+    return {
+      pass: true,
+      message: `Split shift compliant (window: ${windowHours.toFixed(1)}h)`,
+      ruleReference: 'RD 1561/1995 Art. 34',
+    };
+  }
+
+  /**
+   * 14. Validate Retail Extended Hours
+   * RD 1561/1995 Art. 36 — Comercio sector can have 9h regular day
+   * but requires compensatory rest if exceeding regular schedule
+   */
+  validateRetailExtendedHours(entries: TimeEntry[], targetDate?: Date): ComplianceResult {
+    const date = targetDate || new Date();
+    const dayEntries = getEntriesForDay(entries, date);
+    const totalHours = calculateTotalHours(dayEntries);
+    const RETAIL_MAX_DAILY = 9;
+
+    if (totalHours <= RETAIL_MAX_DAILY) {
+      return {
+        pass: true,
+        message: `Retail daily hours (${totalHours.toFixed(1)}h) within sector limit`,
+        ruleReference: 'RD 1561/1995 Art. 36',
+      };
+    }
+
+    return {
+      pass: false,
+      severity: 'medium',
+      message: `Retail daily hours (${totalHours.toFixed(1)}h) exceed ${RETAIL_MAX_DAILY}h sector limit`,
+      ruleReference: 'RD 1561/1995 Art. 36',
+      recommendedAction: 'Hours exceeding 9h in retail require compensatory rest within 4 weeks',
+    };
+  }
+
+  /**
+   * 15. Validate Transport Driving Hours
+   * RD 1561/1995 Art. 10–12 — Transport sector (aligned with EU Reg 561/2006)
+   * Max 9h driving/day (extendable to 10h twice/week), 4.5h before 45min break
+   */
+  validateTransportDrivingHours(
+    entries: TimeEntry[],
+    targetDate?: Date,
+    weekEntries?: TimeEntry[]
+  ): ComplianceResult {
+    const date = targetDate || new Date();
+    const dayEntries = getEntriesForDay(entries, date);
+    const totalDriving = calculateTotalHours(dayEntries);
+
+    const TRANSPORT_MAX_DAILY = 9;
+    const TRANSPORT_MAX_DAILY_EXTENDED = 10;
+    const TRANSPORT_MAX_CONTINUOUS = 4.5;
+
+    // Check continuous driving without break
+    for (const entry of dayEntries) {
+      if (!entry.clock_out) continue;
+      const continuous = calculateHours(entry.clock_in, entry.clock_out, 0);
+      if (continuous > TRANSPORT_MAX_CONTINUOUS) {
+        return {
+          pass: false,
+          severity: 'critical',
+          message: `Continuous driving (${continuous.toFixed(1)}h) exceeds ${TRANSPORT_MAX_CONTINUOUS}h limit`,
+          ruleReference: 'RD 1561/1995 Art. 10',
+          recommendedAction: 'Driver must take 45min break after 4.5h continuous driving',
+        };
+      }
+    }
+
+    if (totalDriving <= TRANSPORT_MAX_DAILY) {
+      return {
+        pass: true,
+        message: `Transport daily hours (${totalDriving.toFixed(1)}h) within limit`,
+        ruleReference: 'RD 1561/1995 Art. 10',
+      };
+    }
+
+    if (totalDriving <= TRANSPORT_MAX_DAILY_EXTENDED) {
+      // Check if this is one of the allowed 2 extended days per week
+      if (weekEntries) {
+        const extendedDays = weekEntries.filter((e) => {
+          if (!e.clock_out) return false;
+          const h = calculateHours(e.clock_in, e.clock_out, e.break_minutes);
+          return h > TRANSPORT_MAX_DAILY;
+        }).length;
+
+        if (extendedDays > 2) {
+          return {
+            pass: false,
+            severity: 'high',
+            message: `Extended driving days this week (${extendedDays}) exceeds maximum of 2`,
+            ruleReference: 'RD 1561/1995 Art. 10',
+            recommendedAction: 'Only 2 days per week may extend to 10h driving',
+          };
+        }
+      }
+
+      return {
+        pass: true,
+        severity: 'low',
+        message: `Extended transport day (${totalDriving.toFixed(1)}h) — max 2 per week allowed`,
+        ruleReference: 'RD 1561/1995 Art. 10',
+      };
+    }
+
+    return {
+      pass: false,
+      severity: 'critical',
+      message: `Transport daily hours (${totalDriving.toFixed(1)}h) exceed absolute max of ${TRANSPORT_MAX_DAILY_EXTENDED}h`,
+      ruleReference: 'RD 1561/1995 Art. 10',
+      recommendedAction: 'Driver must stop driving immediately',
+    };
+  }
+
+  /**
+   * 16. Validate Healthcare On-Call Rules
+   * RD 1561/1995 Art. 19–20 — Healthcare sector on-call and guardia rules
+   * On-call rest: if called in during rest, must get equivalent compensatory rest
+   */
+  validateHealthcareOnCall(
+    entries: TimeEntry[],
+    targetDate?: Date,
+    isOnCall = false
+  ): ComplianceResult {
+    if (!isOnCall) {
+      return {
+        pass: true,
+        message: 'Not applicable (not on-call)',
+        ruleReference: 'RD 1561/1995 Art. 19',
+      };
+    }
+
+    const date = targetDate || new Date();
+    const dayEntries = getEntriesForDay(entries, date);
+    const totalHours = calculateTotalHours(dayEntries);
+    const HEALTHCARE_ONCALL_MAX = 24;
+
+    if (totalHours > HEALTHCARE_ONCALL_MAX) {
+      return {
+        pass: false,
+        severity: 'critical',
+        message: `On-call presence (${totalHours.toFixed(1)}h) exceeds 24h limit`,
+        ruleReference: 'RD 1561/1995 Art. 19',
+        recommendedAction: 'On-call workers must be relieved after 24 hours',
+      };
+    }
+
+    // On-call active work hours should count toward weekly limits
+    return {
+      pass: true,
+      severity: totalHours > 12 ? 'low' : undefined,
+      message: `Healthcare on-call hours (${totalHours.toFixed(1)}h) within limits`,
+      ruleReference: 'RD 1561/1995 Art. 19',
+      recommendedAction: totalHours > 12
+        ? 'Ensure compensatory rest is provided for on-call active hours'
+        : undefined,
+    };
+  }
+
+  /**
+   * 17. Validate Seasonal/Agriculture Flexible Hours
+   * RD 1561/1995 Art. 22–25 — Agriculture sector seasonal flexibility
+   * Weekly hours can be distributed irregularly, but annual average must be ≤40h/week
+   */
+  validateSeasonalFlexHours(
+    weeklyHoursHistory: number[],
+    currentWeekHours: number
+  ): ComplianceResult {
+    const MAX_SEASONAL_WEEKLY = 48;
+    const TARGET_ANNUAL_AVG = 40;
+
+    if (currentWeekHours > MAX_SEASONAL_WEEKLY) {
+      return {
+        pass: false,
+        severity: 'high',
+        message: `Seasonal weekly hours (${currentWeekHours.toFixed(1)}h) exceed absolute max of ${MAX_SEASONAL_WEEKLY}h`,
+        ruleReference: 'RD 1561/1995 Art. 22',
+        recommendedAction: 'Even with seasonal flexibility, 48h/week maximum applies',
+      };
+    }
+
+    // Check rolling average
+    const allWeeks = [...weeklyHoursHistory, currentWeekHours];
+    if (allWeeks.length >= 4) {
+      const avg = allWeeks.reduce((sum, h) => sum + h, 0) / allWeeks.length;
+      if (avg > TARGET_ANNUAL_AVG) {
+        return {
+          pass: false,
+          severity: 'medium',
+          message: `Rolling average (${avg.toFixed(1)}h/week over ${allWeeks.length} weeks) exceeds ${TARGET_ANNUAL_AVG}h target`,
+          ruleReference: 'RD 1561/1995 Art. 22',
+          recommendedAction: 'Reduce hours in upcoming weeks to bring average below 40h/week',
+        };
+      }
+    }
+
+    return {
+      pass: true,
+      message: `Seasonal hours compliant (current week: ${currentWeekHours.toFixed(1)}h)`,
+      ruleReference: 'RD 1561/1995 Art. 22',
+    };
+  }
+
+  /**
+   * 18. Validate Sunday/Holiday Rest (Retail-specific)
+   * RD 1561/1995 Art. 37 — Retail workers get minimum 2 Sundays off per month
+   * and equivalent compensatory rest for holiday work
+   */
+  validateSundayRest(
+    entries: TimeEntry[],
+    targetMonth: { year: number; month: number }
+  ): ComplianceResult {
+    const MIN_SUNDAYS_OFF = 2;
+    const { year, month } = targetMonth;
+
+    // Find all Sundays in the month
+    const sundays: Date[] = [];
+    const d = new Date(year, month - 1, 1);
+    while (d.getMonth() === month - 1) {
+      if (d.getDay() === 0) sundays.push(new Date(d));
+      d.setDate(d.getDate() + 1);
+    }
+
+    // Count Sundays where the employee worked
+    let workedSundays = 0;
+    for (const sunday of sundays) {
+      const dayEntries = getEntriesForDay(entries, sunday);
+      if (dayEntries.length > 0) workedSundays++;
+    }
+
+    const sundaysOff = sundays.length - workedSundays;
+
+    if (sundaysOff >= MIN_SUNDAYS_OFF) {
+      return {
+        pass: true,
+        message: `Retail Sunday rest met (${sundaysOff}/${sundays.length} Sundays off)`,
+        ruleReference: 'RD 1561/1995 Art. 37',
+      };
+    }
+
+    return {
+      pass: false,
+      severity: 'high',
+      message: `Only ${sundaysOff} Sundays off (minimum ${MIN_SUNDAYS_OFF} required)`,
+      ruleReference: 'RD 1561/1995 Art. 37',
+      recommendedAction: 'Retail workers must have at least 2 Sundays off per month',
+    };
+  }
+
   /**
    * Validate all rules against current context
    */

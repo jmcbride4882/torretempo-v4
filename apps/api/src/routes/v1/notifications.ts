@@ -3,6 +3,11 @@ import { eq, and, desc, sql } from 'drizzle-orm';
 import { db } from '../../db/index.js';
 import { notifications } from '../../db/schema.js';
 import { logAudit } from '../../services/audit.service.js';
+import {
+  saveSubscription,
+  removeSubscription,
+  getVapidPublicKey,
+} from '../../services/push-notification.service.js';
 
 const router = Router();
 
@@ -175,6 +180,64 @@ router.patch('/read-all', async (req: Request, res: Response) => {
   } catch (error) {
     console.error('Error marking all notifications as read:', error);
     res.status(500).json({ message: 'Failed to mark all notifications as read' });
+  }
+});
+
+// ============================================================================
+// PUSH NOTIFICATION ENDPOINTS
+// ============================================================================
+
+/**
+ * GET /api/v1/org/:slug/notifications/push/vapid-key
+ * Get VAPID public key for client-side push subscription
+ */
+router.get('/push/vapid-key', (_req: Request, res: Response) => {
+  const key = getVapidPublicKey();
+  if (!key) {
+    return res.status(503).json({ message: 'Push notifications not configured' });
+  }
+  res.json({ publicKey: key });
+});
+
+/**
+ * POST /api/v1/org/:slug/notifications/push/subscribe
+ * Register a push subscription for the current user
+ */
+router.post('/push/subscribe', async (req: Request, res: Response) => {
+  try {
+    const userId = req.session!.user.id;
+    const { subscription } = req.body;
+
+    if (!subscription?.endpoint || !subscription?.keys?.p256dh || !subscription?.keys?.auth) {
+      return res.status(400).json({ message: 'Invalid push subscription object' });
+    }
+
+    const result = await saveSubscription(userId, subscription, req.headers['user-agent']);
+    res.json({ message: 'Push subscription registered', id: result.id });
+  } catch (error) {
+    console.error('Error saving push subscription:', error);
+    res.status(500).json({ message: 'Failed to save push subscription' });
+  }
+});
+
+/**
+ * POST /api/v1/org/:slug/notifications/push/unsubscribe
+ * Remove a push subscription
+ */
+router.post('/push/unsubscribe', async (req: Request, res: Response) => {
+  try {
+    const userId = req.session!.user.id;
+    const { endpoint } = req.body;
+
+    if (!endpoint) {
+      return res.status(400).json({ message: 'endpoint is required' });
+    }
+
+    await removeSubscription(userId, endpoint);
+    res.json({ message: 'Push subscription removed' });
+  } catch (error) {
+    console.error('Error removing push subscription:', error);
+    res.status(500).json({ message: 'Failed to remove push subscription' });
   }
 });
 

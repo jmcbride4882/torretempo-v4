@@ -46,7 +46,7 @@ export interface EmailJob {
 export const pdfQueue = new Queue('pdf', defaultQueueOptions);
 
 export interface PdfJob {
-  type: 'monthly_summary' | 'report' | 'export';
+  type: 'monthly_summary' | 'report' | 'export' | 'compliance_report' | 'roster_summary';
   organizationId: string;
   userId?: string;
   data: Record<string, unknown>;

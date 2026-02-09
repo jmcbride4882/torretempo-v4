@@ -973,3 +973,27 @@ export const organization_settings = pgTable(
       .defaultNow(),
   }
 );
+
+// ============================================================================
+// PUSH_SUBSCRIPTIONS TABLE
+// ============================================================================
+export const push_subscriptions = pgTable(
+  'push_subscriptions',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    user_id: text('user_id')
+      .notNull()
+      .references(() => user.id, { onDelete: 'cascade' }),
+    endpoint: text('endpoint').notNull(),
+    p256dh: text('p256dh').notNull(),
+    auth: text('auth').notNull(),
+    user_agent: text('user_agent'),
+    created_at: timestamp('created_at', { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+  },
+  (table) => ({
+    user_idx: index('push_sub_user_idx').on(table.user_id),
+    endpoint_idx: index('push_sub_endpoint_idx').on(table.endpoint),
+  })
+);

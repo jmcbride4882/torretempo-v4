@@ -10,6 +10,7 @@ import { and, eq, gte, lte } from 'drizzle-orm';
 import { db } from '../../db/index.js';
 import { shifts, notifications } from '../../db/schema.js';
 import { rosterValidator } from '../../services/roster-validator.js';
+import { autoSchedule } from '../../services/auto-scheduler.js';
 import { logAudit } from '../../services/audit.service.js';
 
 const router = Router();
@@ -366,10 +367,56 @@ async function handleGetUserHours(req: Request, res: Response) {
   }
 }
 
+// ============================================================================
+// POST /api/v1/org/:slug/roster/auto-schedule
+// Auto-generate shift assignments for a week
+// ============================================================================
+async function handleAutoSchedule(req: Request, res: Response) {
+  try {
+    const actor = getActor(req, res);
+    if (!actor) return;
+    if (!requireManager(actor, res)) return;
+
+    const organizationId = req.organizationId!;
+    const { weekStart, locationIds, respectAvailability = true, maxHoursPerEmployee } = req.body;
+
+    if (!weekStart) {
+      return res.status(400).json({ message: 'weekStart is required (ISO date string for Monday)' });
+    }
+
+    const result = await autoSchedule({
+      organizationId,
+      weekStart: new Date(weekStart),
+      locationIds,
+      respectAvailability,
+      maxHoursPerEmployee,
+    });
+
+    await logAudit({
+      orgId: organizationId,
+      actorId: actor.id,
+      action: 'auto_schedule',
+      entityType: 'roster',
+      newData: {
+        weekStart,
+        created: result.created,
+        skipped: result.skipped,
+        unfilled: result.unfilledSlots.length,
+      },
+    });
+
+    res.json(result);
+  } catch (error) {
+    console.error('Error auto-scheduling:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+}
+
 // Register routes
 router.post('/validate', handleValidateShift);
 router.post('/publish', handlePublishRoster);
 router.post('/duplicate', handleDuplicateRoster);
+router.post('/auto-schedule', handleAutoSchedule);
 router.get('/user-hours', handleGetUserHours);
 
 export default router;
