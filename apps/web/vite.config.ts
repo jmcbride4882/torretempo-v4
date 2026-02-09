@@ -39,6 +39,7 @@ export default defineConfig({
         // Enable background sync support
         skipWaiting: true,
         clientsClaim: true,
+        maximumFileSizeToCacheInBytes: 5 * 1024 * 1024, // 5 MB
       },
       // Enable Background Sync API
       devOptions: {
