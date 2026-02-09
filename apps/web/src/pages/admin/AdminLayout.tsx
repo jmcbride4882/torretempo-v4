@@ -20,6 +20,7 @@ import {
   Monitor,
   Settings,
   DollarSign,
+  Receipt,
 } from 'lucide-react';
 import { useState } from 'react';
 import { cn } from '@/lib/utils';
@@ -48,6 +49,7 @@ import NotificationsPage from './NotificationsPage';
 import SessionsPage from './SessionsPage';
 import SettingsPage from './SettingsPage';
 import PlansPage from './PlansPage';
+import BillingPage from './BillingPage';
 
 // Admin nav items
 const adminNavItems = [
@@ -56,6 +58,7 @@ const adminNavItems = [
   { icon: Monitor, label: 'Sessions', path: 'sessions' },
   { icon: CreditCard, label: 'Subscriptions', path: 'subscriptions' },
   { icon: DollarSign, label: 'Plans', path: 'plans' },
+  { icon: Receipt, label: 'Billing', path: 'billing' },
   { icon: Server, label: 'System', path: 'system' },
   { icon: AlertTriangle, label: 'Error Logs', path: 'errors' },
   { icon: Key, label: 'Inspector Tokens', path: 'inspector-tokens' },
@@ -384,6 +387,7 @@ export default function AdminLayout() {
                 <Route path="notifications" element={<NotificationsPage />} />
                 <Route path="audit" element={<AuditPage />} />
                 <Route path="analytics" element={<AnalyticsPage />} />
+                <Route path="billing" element={<BillingPage />} />
                 <Route path="settings" element={<SettingsPage />} />
                 <Route path="*" element={<Navigate to="tenants" replace />} />
               </Routes>

@@ -3,10 +3,14 @@ import { verifyGoCardlessWebhook } from '../../services/payment.service.js';
 import { db } from '../../db/index.js';
 import { subscription_details } from '../../db/schema.js';
 import { eq } from 'drizzle-orm';
+import { paymentQueue } from '../../lib/queue.js';
+import logger from '../../lib/logger.js';
 
 /**
  * GoCardless Webhook Handler
  * CRITICAL: This route MUST use express.raw() not express.json()
+ *
+ * Fast-acks the webhook, queues heavy processing via paymentQueue
  */
 
 const router = Router();
@@ -38,7 +42,7 @@ interface GoCardlessWebhookPayload {
 
 router.post('/gocardless', async (req: Request, res: Response) => {
   const signature = req.headers['webhook-signature'] as string;
-  
+
   if (!signature) {
     return res.status(400).send('No signature');
   }
@@ -48,7 +52,7 @@ router.post('/gocardless', async (req: Request, res: Response) => {
 
   // Verify webhook signature
   const isValid = verifyGoCardlessWebhook(payload, signature);
-  
+
   if (!isValid) {
     return res.status(400).send('Invalid signature');
   }
@@ -61,13 +65,14 @@ router.post('/gocardless', async (req: Request, res: Response) => {
     return res.status(400).send('Invalid JSON payload');
   }
 
-  console.log(`📨 GoCardless webhook received: ${webhookData.events.length} event(s)`);
+  logger.info(`GoCardless webhook received: ${webhookData.events.length} event(s)`);
 
   try {
     // Process each event
     for (const event of webhookData.events) {
-      console.log(`  Processing: ${event.resource_type}.${event.action}`);
-      
+      const eventKey = `${event.resource_type}.${event.action}`;
+      logger.info(`  Processing: ${eventKey}`);
+
       switch (event.resource_type) {
         case 'payments':
           await handlePaymentEvent(event);
@@ -79,103 +84,125 @@ router.post('/gocardless', async (req: Request, res: Response) => {
           await handleMandateEvent(event);
           break;
         default:
-          console.log(`  Unhandled resource type: ${event.resource_type}`);
+          logger.info(`  Unhandled resource type: ${event.resource_type}`);
       }
     }
 
     res.json({ received: true });
   } catch (error) {
-    console.error('Error processing GoCardless webhook:', error);
+    logger.error('Error processing GoCardless webhook:', error);
     res.status(500).json({ error: 'Webhook processing failed' });
   }
 });
 
 async function handlePaymentEvent(event: GoCardlessEvent) {
   const paymentId = event.links.payment;
-  
+
   switch (event.action) {
     case 'confirmed':
-      console.log(`✅ Payment confirmed: ${paymentId}`);
-      // Payment successful - update last_payment_at if needed
+      logger.info(`Payment confirmed: ${paymentId}`);
       break;
-      
+
     case 'failed':
-      console.log(`❌ Payment failed: ${paymentId}`);
-      // Find organization by mandate and update status
+      logger.info(`Payment failed: ${paymentId}`);
+      // Find org by mandate and queue dunning
       if (event.links.mandate) {
-        await updateSubscriptionStatusByMandate(event.links.mandate, 'past_due');
+        const org = await findOrgByMandate(event.links.mandate);
+        if (org) {
+          await paymentQueue.add('gocardless_payment_failed', {
+            type: 'gocardless_webhook',
+            provider: 'gocardless',
+            eventId: event.id,
+            eventType: 'payments.failed',
+            organizationId: org.organization_id,
+            payload: {
+              paymentId,
+              mandateId: event.links.mandate,
+              dunningAttempt: 1,
+            },
+          });
+        } else {
+          await updateSubscriptionStatusByMandate(event.links.mandate, 'past_due');
+        }
       }
       break;
-      
+
     case 'cancelled':
-      console.log(`⚠️ Payment cancelled: ${paymentId}`);
+      logger.info(`Payment cancelled: ${paymentId}`);
       break;
-      
+
     case 'charged_back':
-      console.log(`⚠️ Payment charged back: ${paymentId}`);
+      logger.info(`Payment charged back: ${paymentId}`);
       break;
-      
+
     default:
-      console.log(`  Unhandled payment action: ${event.action}`);
+      logger.info(`  Unhandled payment action: ${event.action}`);
   }
 }
 
 async function handleSubscriptionEvent(event: GoCardlessEvent) {
   const subscriptionId = event.links.subscription;
-  
+
   switch (event.action) {
     case 'created':
-      console.log(`✅ Subscription created: ${subscriptionId}`);
+      logger.info(`Subscription created: ${subscriptionId}`);
       break;
-      
+
     case 'cancelled':
-      console.log(`⚠️ Subscription cancelled: ${subscriptionId}`);
+      logger.info(`Subscription cancelled: ${subscriptionId}`);
       if (subscriptionId) {
         await updateSubscriptionStatusByGocardlessId(subscriptionId, 'cancelled');
       }
       break;
-      
+
     case 'finished':
-      console.log(`✅ Subscription finished: ${subscriptionId}`);
+      logger.info(`Subscription finished: ${subscriptionId}`);
       if (subscriptionId) {
         await updateSubscriptionStatusByGocardlessId(subscriptionId, 'cancelled');
       }
       break;
-      
+
     case 'payment_created':
-      console.log(`📝 Subscription payment created: ${subscriptionId}`);
+      logger.info(`Subscription payment created: ${subscriptionId}`);
       break;
-      
+
     default:
-      console.log(`  Unhandled subscription action: ${event.action}`);
+      logger.info(`  Unhandled subscription action: ${event.action}`);
   }
 }
 
 async function handleMandateEvent(event: GoCardlessEvent) {
   const mandateId = event.links.mandate;
-  
+
   switch (event.action) {
     case 'created':
-      console.log(`✅ Mandate created: ${mandateId}`);
+      logger.info(`Mandate created: ${mandateId}`);
       break;
-      
+
     case 'active':
-      console.log(`✅ Mandate active: ${mandateId}`);
+      logger.info(`Mandate active: ${mandateId}`);
       break;
-      
+
     case 'cancelled':
     case 'failed':
     case 'expired':
-      console.log(`⚠️ Mandate ${event.action}: ${mandateId}`);
-      // Mandate is no longer valid - update subscription status
+      logger.info(`Mandate ${event.action}: ${mandateId}`);
       if (mandateId) {
         await updateSubscriptionStatusByMandate(mandateId, 'suspended');
       }
       break;
-      
+
     default:
-      console.log(`  Unhandled mandate action: ${event.action}`);
+      logger.info(`  Unhandled mandate action: ${event.action}`);
   }
+}
+
+async function findOrgByMandate(mandateId: string) {
+  const result = await db.select()
+    .from(subscription_details)
+    .where(eq(subscription_details.gocardless_mandate_id, mandateId))
+    .limit(1);
+  return result[0] ?? null;
 }
 
 async function updateSubscriptionStatusByMandate(
@@ -184,15 +211,12 @@ async function updateSubscriptionStatusByMandate(
 ) {
   const result = await db
     .update(subscription_details)
-    .set({
-      subscription_status: status,
-      updated_at: new Date(),
-    })
+    .set({ subscription_status: status, updated_at: new Date() })
     .where(eq(subscription_details.gocardless_mandate_id, mandateId))
     .returning();
 
   if (result.length > 0) {
-    console.log(`  Updated subscription status to ${status} for mandate ${mandateId}`);
+    logger.info(`Updated subscription status to ${status} for mandate ${mandateId}`);
   }
 }
 
@@ -202,15 +226,12 @@ async function updateSubscriptionStatusByGocardlessId(
 ) {
   const result = await db
     .update(subscription_details)
-    .set({
-      subscription_status: status,
-      updated_at: new Date(),
-    })
+    .set({ subscription_status: status, updated_at: new Date() })
     .where(eq(subscription_details.gocardless_subscription_id, subscriptionId))
     .returning();
 
   if (result.length > 0) {
-    console.log(`  Updated subscription status to ${status} for subscription ${subscriptionId}`);
+    logger.info(`Updated subscription status to ${status} for subscription ${subscriptionId}`);
   }
 }
 

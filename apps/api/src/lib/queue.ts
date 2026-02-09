@@ -115,6 +115,20 @@ export interface TrialJob {
 }
 
 // ============================================================================
+// PAYMENT QUEUE
+// ============================================================================
+export const paymentQueue = new Queue('payment', defaultQueueOptions);
+
+export interface PaymentJob {
+  type: 'stripe_webhook' | 'gocardless_webhook' | 'dunning_retry' | 'usage_sync';
+  provider: 'stripe' | 'gocardless';
+  eventId: string;
+  eventType: string;
+  organizationId?: string;
+  payload: Record<string, unknown>;
+}
+
+// ============================================================================
 // QUEUE EXPORTS
 // ============================================================================
 export const queues = {
@@ -125,6 +139,7 @@ export const queues = {
   monthly: monthlyQueue,
   backup: backupQueue,
   trial: trialQueue,
+  payment: paymentQueue,
 } as const;
 
 // Health check function
@@ -148,6 +163,7 @@ export async function closeQueues(): Promise<void> {
     monthlyQueue.close(),
     backupQueue.close(),
     trialQueue.close(),
+    paymentQueue.close(),
     redisConnection.quit(),
   ]);
 }

@@ -24,6 +24,7 @@ import leaveRequestsRouter from './routes/v1/leave-requests.js';
 import notificationsRouter from './routes/v1/notifications.js';
 import auditChainRouter from './routes/v1/audit.js';
 import rosterRouter from './routes/v1/roster.js';
+import tenantBillingRouter from './routes/v1/billing.js';
 import inspectorTokensRouter from './routes/admin/inspector-tokens.js';
 import systemRouter from './routes/admin/system.js';
 import tenantsRouter from './routes/admin/tenants.js';
@@ -41,10 +42,12 @@ import settingsRouter from './routes/admin/settings.js';
 import plansRouter from './routes/admin/plans.js';
 import trialJobsRouter from './routes/admin/trial-jobs.js';
 import stripeWebhookRouter from './routes/webhooks/stripe.js';
+import gocardlessWebhookRouter from './routes/webhooks/gocardless.js';
 import 'dotenv/config';
 import './workers/email.worker.js';
 import './workers/trial.worker.js';
 import './workers/trial-scheduler.worker.js';
+import './workers/payment.worker.js';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -73,8 +76,9 @@ app.use(limiter);
 // CRITICAL: Better Auth handler BEFORE express.json()
 app.all('/api/auth/*', toNodeHandler(auth));
 
-// Stripe webhook - MUST use express.raw() BEFORE express.json()
+// Webhooks - MUST use express.raw() BEFORE express.json()
 app.use('/api/webhooks/stripe', express.raw({ type: 'application/json' }), stripeWebhookRouter);
+app.use('/api/webhooks/gocardless', express.raw({ type: 'application/json' }), gocardlessWebhookRouter);
 
 // Body parsing AFTER Better Auth and webhooks
 app.use(express.json());
@@ -133,6 +137,7 @@ app.use('/api/v1/org/:slug/employees', tenantMiddleware, employeeProfilesRouter)
 app.use('/api/v1/org/:slug/leave-requests', tenantMiddleware, leaveRequestsRouter);
 app.use('/api/v1/org/:slug/audit/verify', tenantMiddleware, auditChainRouter);
 app.use('/api/v1/org/:slug/roster', tenantMiddleware, rosterRouter);
+app.use('/api/v1/org/:slug/billing', tenantMiddleware, tenantBillingRouter);
 
 // 404 handler
 app.use((_req: Request, res: Response) => {

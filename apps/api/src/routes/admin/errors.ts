@@ -235,4 +235,90 @@ router.get(
   }
 );
 
+/**
+ * GET /api/admin/errors/export
+ * Export error logs matching filters as CSV
+ *
+ * Query params:
+ * - level: 'error' | 'warning' | 'info' (optional)
+ * - source: string (optional)
+ * - search: string (optional)
+ * - startDate: ISO string (optional)
+ * - endDate: ISO string (optional)
+ *
+ * Returns:
+ * - CSV file with columns: id,timestamp,level,source,message,httpMethod,httpPath,httpStatus
+ */
+router.get(
+  '/export',
+  requireAdmin,
+  async (req: Request, res: Response) => {
+    try {
+      const levelFilter = req.query.level as string | undefined;
+      const sourceFilter = req.query.source as string | undefined;
+      const searchQuery = req.query.search as string | undefined;
+      const startDate = req.query.startDate as string | undefined;
+      const endDate = req.query.endDate as string | undefined;
+
+      const conditions: any[] = [];
+
+      if (levelFilter && ['error', 'warning', 'info'].includes(levelFilter)) {
+        conditions.push(eq(error_logs.level, levelFilter));
+      }
+      if (sourceFilter) {
+        conditions.push(eq(error_logs.source, sourceFilter));
+      }
+      if (searchQuery) {
+        conditions.push(
+          or(
+            like(error_logs.message, `%${searchQuery}%`),
+            like(error_logs.stack, `%${searchQuery}%`)
+          )
+        );
+      }
+      if (startDate) {
+        conditions.push(gte(error_logs.created_at, new Date(startDate)));
+      }
+      if (endDate) {
+        conditions.push(lte(error_logs.created_at, new Date(endDate)));
+      }
+
+      const logs = await db
+        .select({
+          id: error_logs.id,
+          timestamp: error_logs.created_at,
+          level: error_logs.level,
+          source: error_logs.source,
+          message: error_logs.message,
+          httpMethod: error_logs.http_method,
+          httpPath: error_logs.http_path,
+          httpStatus: error_logs.http_status,
+        })
+        .from(error_logs)
+        .where(conditions.length > 0 ? and(...conditions) : undefined)
+        .orderBy(desc(error_logs.created_at));
+
+      const csvLines: string[] = [];
+      csvLines.push('id,timestamp,level,source,message,httpMethod,httpPath,httpStatus');
+
+      for (const log of logs) {
+        const escapedMessage = `"${(log.message || '').replace(/"/g, '""')}"`;
+        csvLines.push(
+          `${log.id},${log.timestamp.toISOString()},${log.level},${log.source || ''},${escapedMessage},${log.httpMethod || ''},${log.httpPath || ''},${log.httpStatus || ''}`
+        );
+      }
+
+      res.setHeader('Content-Type', 'text/csv; charset=utf-8');
+      res.setHeader('Content-Disposition', 'attachment; filename=error-logs-export.csv');
+      res.send(csvLines.join('\n'));
+    } catch (error) {
+      console.error('Error exporting error logs:', error);
+      res.status(500).json({
+        error: 'Failed to export error logs',
+        details: error instanceof Error ? error.message : 'Unknown error',
+      });
+    }
+  }
+);
+
 export default router;

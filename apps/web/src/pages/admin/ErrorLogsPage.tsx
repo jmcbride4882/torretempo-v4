@@ -17,6 +17,7 @@ import {
   Filter,
   Search,
   X,
+  Download,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -56,6 +57,7 @@ export default function ErrorLogsPage() {
   const [total, setTotal] = useState(0);
   const [_isLoading, setIsLoading] = useState(true); // TODO: Add loading skeleton UI
   const [isRefreshing, setIsRefreshing] = useState(false);
+  const [isExporting, setIsExporting] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [levelFilter, setLevelFilter] = useState<string>('all');
   const [sourceFilter, setSourceFilter] = useState<string>('all');
@@ -103,6 +105,38 @@ export default function ErrorLogsPage() {
   // Handlers
   const handleRefresh = () => loadErrors(true);
 
+  const handleExport = async () => {
+    setIsExporting(true);
+    try {
+      const params = new URLSearchParams();
+      if (levelFilter !== 'all') params.set('level', levelFilter);
+      if (sourceFilter !== 'all') params.set('source', sourceFilter);
+      if (searchQuery) params.set('search', searchQuery);
+      if (startDate) params.set('startDate', startDate);
+      if (endDate) params.set('endDate', endDate);
+
+      const url = `/api/admin/errors/export${params.toString() ? `?${params.toString()}` : ''}`;
+      const response = await fetch(url, { credentials: 'include' });
+
+      if (!response.ok) throw new Error('Export failed');
+
+      const blob = await response.blob();
+      const downloadUrl = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = downloadUrl;
+      a.download = `error-logs-export-${new Date().toISOString().slice(0, 10)}.csv`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(downloadUrl);
+      toast.success('Export downloaded');
+    } catch (error) {
+      toast.error('Failed to export error logs');
+    } finally {
+      setIsExporting(false);
+    }
+  };
+
   // Stats (from loaded errors)
   const errorCount = errors.filter((e) => e.level === 'error').length;
   const warningCount = errors.filter((e) => e.level === 'warning').length;
@@ -143,18 +177,33 @@ export default function ErrorLogsPage() {
           </div>
         </div>
 
-        <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={handleRefresh}
-            disabled={isRefreshing}
-            className="gap-1.5 rounded-lg border border-white/5 bg-white/5 text-neutral-300 hover:bg-white/10"
-          >
-            <RefreshCw className={cn('h-4 w-4', isRefreshing && 'animate-spin')} />
-            <span className="hidden sm:inline">Refresh</span>
-          </Button>
-        </motion.div>
+        <div className="flex items-center gap-2">
+          <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={handleExport}
+              disabled={isExporting}
+              className="gap-1.5 rounded-lg border border-white/5 bg-white/5 text-neutral-300 hover:bg-white/10"
+            >
+              <Download className={cn('h-4 w-4', isExporting && 'animate-bounce')} />
+              <span className="hidden sm:inline">{isExporting ? 'Exporting...' : 'Export CSV'}</span>
+            </Button>
+          </motion.div>
+
+          <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={handleRefresh}
+              disabled={isRefreshing}
+              className="gap-1.5 rounded-lg border border-white/5 bg-white/5 text-neutral-300 hover:bg-white/10"
+            >
+              <RefreshCw className={cn('h-4 w-4', isRefreshing && 'animate-spin')} />
+              <span className="hidden sm:inline">Refresh</span>
+            </Button>
+          </motion.div>
+        </div>
       </motion.div>
 
       {/* Filters */}
