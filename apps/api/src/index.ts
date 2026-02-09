@@ -39,11 +39,12 @@ import impersonationRouter from './routes/admin/impersonation.js';
 import sessionsRouter from './routes/admin/sessions.js';
 import settingsRouter from './routes/admin/settings.js';
 import plansRouter from './routes/admin/plans.js';
+import trialJobsRouter from './routes/admin/trial-jobs.js';
 import stripeWebhookRouter from './routes/webhooks/stripe.js';
 import 'dotenv/config';
 import './workers/email.worker.js';
 import './workers/trial.worker.js';
-import './workers/trial.worker.js';
+import './workers/trial-scheduler.worker.js';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -104,6 +105,7 @@ app.use('/api/admin/users', impersonationRouter);
 app.use('/api/admin/sessions', sessionsRouter);
 app.use('/api/admin/settings', settingsRouter);
 app.use('/api/admin/plans', plansRouter);
+app.use('/api/admin/trial-jobs', trialJobsRouter);
 
 // Admin routes (tenant-specific)
 app.use('/api/admin/:slug/inspector-tokens', tenantMiddleware, inspectorTokensRouter);

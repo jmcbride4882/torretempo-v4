@@ -897,7 +897,7 @@ Parallel Speedup: ~50% faster than sequential
 
 ---
 
-- [ ] 6. User Impersonation
+- [x] 6. User Impersonation
 
   **What to do**:
   - Create API endpoint: POST /api/admin/users/:id/impersonate

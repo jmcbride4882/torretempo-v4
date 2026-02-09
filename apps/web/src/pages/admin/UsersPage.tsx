@@ -56,7 +56,6 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { cn } from '@/lib/utils';
-import { PaginationControls } from '@/components/ui/pagination-controls';
 import { DateRangePicker } from '@/components/ui/date-range-picker';
 import {
   fetchUsers,
@@ -411,7 +410,6 @@ export default function UsersPage() {
   const adminCount = users.filter((u) => u.isAdmin).length;
   const bannedCount = users.filter((u) => u.banned).length;
   const verifiedCount = users.filter((u) => u.emailVerified).length;
-  const totalPages = Math.ceil(total / limit);
 
   return (
     <div className="space-y-6">
@@ -642,21 +640,6 @@ export default function UsersPage() {
             </AnimatePresence>
           </div>
         )}
-      </motion.div>
-
-      {/* Pagination */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.25 }}
-      >
-        <PaginationControls
-          page={page}
-          totalPages={totalPages}
-          total={total}
-          limit={limit}
-          onPageChange={setPage}
-        />
       </motion.div>
 
       {/* Confirmation Modal */}
