@@ -5,7 +5,7 @@
  */
 
 import { useState, useEffect, useCallback, useMemo } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 import {
   Settings,
@@ -65,7 +65,6 @@ interface TabDefinition {
   label: string;
   icon: typeof Settings;
   color: string;
-  gradient: string;
 }
 
 interface FieldConfig {
@@ -85,64 +84,55 @@ const TABS: TabDefinition[] = [
     id: 'stripe',
     label: 'Stripe',
     icon: CreditCard,
-    color: 'text-violet-400',
-    gradient: 'from-violet-600/20 to-indigo-600/20',
+    color: 'text-violet-600',
   },
   {
     id: 'gocardless',
     label: 'GoCardless',
     icon: DollarSign,
-    color: 'text-cyan-400',
-    gradient: 'from-cyan-600/20 to-teal-600/20',
+    color: 'text-cyan-600',
   },
   {
     id: 'email',
     label: 'Email',
     icon: Mail,
-    color: 'text-amber-400',
-    gradient: 'from-amber-600/20 to-orange-600/20',
+    color: 'text-amber-600',
   },
   {
     id: 'general',
     label: 'General',
     icon: Settings,
-    color: 'text-emerald-400',
-    gradient: 'from-emerald-600/20 to-green-600/20',
+    color: 'text-emerald-600',
   },
   {
     id: 'database',
     label: 'Database',
     icon: Database,
-    color: 'text-red-400',
-    gradient: 'from-red-600/20 to-pink-600/20',
+    color: 'text-red-600',
   },
   {
     id: 'redis',
     label: 'Redis',
     icon: Zap,
-    color: 'text-orange-400',
-    gradient: 'from-orange-600/20 to-yellow-600/20',
+    color: 'text-orange-600',
   },
   {
     id: 'auth',
     label: 'Auth',
     icon: Shield,
-    color: 'text-blue-400',
-    gradient: 'from-blue-600/20 to-indigo-600/20',
+    color: 'text-blue-600',
   },
   {
     id: 'admin',
     label: 'Admin',
     icon: User,
-    color: 'text-purple-400',
-    gradient: 'from-purple-600/20 to-fuchsia-600/20',
+    color: 'text-purple-600',
   },
   {
     id: 'frontend',
     label: 'Frontend',
     icon: Monitor,
-    color: 'text-teal-400',
-    gradient: 'from-teal-600/20 to-cyan-600/20',
+    color: 'text-teal-600',
   },
 ];
 
@@ -203,7 +193,7 @@ const DATABASE_FIELDS: FieldConfig[] = [
     label: 'Database URL',
     placeholder: 'postgresql://...',
     sensitive: true,
-    description: '⚠️ CRITICAL: Changing this requires database migration',
+    description: 'CRITICAL: Changing this requires database migration',
   },
   {
     key: 'user',
@@ -215,7 +205,7 @@ const DATABASE_FIELDS: FieldConfig[] = [
   {
     key: 'password',
     label: 'Database Password',
-    placeholder: '••••••••',
+    placeholder: '--------',
     sensitive: true,
     description: 'PostgreSQL password',
   },
@@ -251,7 +241,7 @@ const AUTH_FIELDS: FieldConfig[] = [
     label: 'Auth Secret',
     placeholder: '64-character secret',
     sensitive: true,
-    description: '⚠️ CRITICAL: Changing this invalidates all sessions',
+    description: 'CRITICAL: Changing this invalidates all sessions',
   },
 ];
 
@@ -266,7 +256,7 @@ const ADMIN_FIELDS: FieldConfig[] = [
   {
     key: 'password',
     label: 'Admin Password',
-    placeholder: '••••••••',
+    placeholder: '--------',
     sensitive: true,
     description: 'Initial admin password (used for seed script)',
   },
@@ -334,16 +324,12 @@ function SecretField({ field, value, editedValue, onEdit }: SecretFieldProps) {
   const isMasked = !isEdited && isMaskedValue(value);
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 8 }}
-      animate={{ opacity: 1, y: 0 }}
-      className="space-y-2"
-    >
+    <div className="space-y-2">
       <div className="flex items-center justify-between">
-        <label className="text-sm font-medium text-neutral-300">
+        <label className="text-sm font-medium text-zinc-700">
           {field.label}
           {isEdited && (
-            <Badge className="ml-2 border border-amber-500/30 bg-amber-500/20 text-amber-300 text-[10px]">
+            <Badge className="ml-2 border border-amber-300 bg-amber-50 text-amber-700 text-[10px]">
               Modified
             </Badge>
           )}
@@ -352,7 +338,7 @@ function SecretField({ field, value, editedValue, onEdit }: SecretFieldProps) {
           <button
             type="button"
             onClick={() => setVisible(!visible)}
-            className="flex items-center gap-1 rounded-md px-2 py-1 text-xs text-neutral-500 transition-colors hover:bg-white/5 hover:text-neutral-300"
+            className="flex items-center gap-1 rounded-md px-2 py-1 text-xs text-zinc-400 transition-colors hover:bg-zinc-50 hover:text-zinc-700"
           >
             {visible ? (
               <>
@@ -369,22 +355,22 @@ function SecretField({ field, value, editedValue, onEdit }: SecretFieldProps) {
         )}
       </div>
       <div className="relative">
-        <Key className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-neutral-600" />
+        <Key className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-400" />
         <Input
           type={field.sensitive && !visible ? 'password' : 'text'}
           placeholder={isMasked ? value : field.placeholder}
           value={isEdited ? editedValue : (isMasked ? '' : value)}
           onChange={(e) => onEdit(field.key, e.target.value)}
           className={cn(
-            'pl-10 glass-card border-white/10 text-white font-mono text-sm',
-            isEdited && 'border-amber-500/30 bg-amber-500/5'
+            'pl-10 rounded-xl border border-zinc-200 bg-white text-zinc-900 font-mono text-sm placeholder:text-zinc-400',
+            isEdited && 'border-amber-300 bg-amber-50'
           )}
         />
       </div>
       {field.description && (
-        <p className="text-xs text-neutral-500">{field.description}</p>
+        <p className="text-xs text-zinc-400">{field.description}</p>
       )}
-    </motion.div>
+    </div>
   );
 }
 
@@ -393,6 +379,8 @@ function SecretField({ field, value, editedValue, onEdit }: SecretFieldProps) {
 // ============================================================================
 
 export default function SettingsPage() {
+  const { t } = useTranslation();
+
   // Core state
   const [settings, setSettings] = useState<AdminSettings>(getEmptySettings());
   const [isLoading, setIsLoading] = useState(true);
@@ -455,7 +443,6 @@ export default function SettingsPage() {
   const handleStripeEdit = useCallback((key: string, value: string) => {
     setEditedStripe((prev) => {
       if (value === '') {
-        // If user clears a masked field, remove the edit
         const next = { ...prev };
         delete next[key];
         return next;
@@ -663,18 +650,14 @@ export default function SettingsPage() {
   return (
     <div className="space-y-6">
       {/* Page header */}
-      <motion.div
-        initial={{ opacity: 0, y: -10 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between"
-      >
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-amber-600/20 to-orange-600/20 shadow-lg shadow-amber-500/10">
-            <Settings className="h-5 w-5 text-amber-400" />
+          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-amber-50 shadow-sm">
+            <Settings className="h-5 w-5 text-amber-600" />
           </div>
           <div>
-            <h1 className="text-xl font-bold text-white sm:text-2xl">Settings</h1>
-            <p className="text-sm text-neutral-400">
+            <h1 className="text-xl font-bold text-zinc-900 sm:text-2xl">{t('admin.settings.title')}</h1>
+            <p className="text-sm text-zinc-500">
               Integration keys and platform configuration
             </p>
           </div>
@@ -682,31 +665,25 @@ export default function SettingsPage() {
 
         <div className="flex items-center gap-2">
           {/* Restart button */}
-          <AnimatePresence>
-            {requiresRestart && (
-              <motion.div
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.9 }}
+          {requiresRestart && (
+            <div>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setRestartDialog(true)}
+                disabled={isRestarting}
+                className="gap-1.5 rounded-lg border border-red-200 bg-red-50 text-red-600 hover:bg-red-100 hover:text-red-700"
               >
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => setRestartDialog(true)}
-                  disabled={isRestarting}
-                  className="gap-1.5 rounded-lg border border-red-500/20 bg-red-500/10 text-red-400 hover:bg-red-500/20 hover:text-red-300"
-                >
-                  <RefreshCw className={cn('h-4 w-4', isRestarting && 'animate-spin')} />
-                  <span className="hidden sm:inline">
-                    {isRestarting ? 'Restarting...' : 'Restart Server'}
-                  </span>
-                </Button>
-              </motion.div>
-            )}
-          </AnimatePresence>
+                <RefreshCw className={cn('h-4 w-4', isRestarting && 'animate-spin')} />
+                <span className="hidden sm:inline">
+                  {isRestarting ? 'Restarting...' : 'Restart Server'}
+                </span>
+              </Button>
+            </div>
+          )}
 
           {/* Save button */}
-          <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+          <div>
             <Button
               size="sm"
               onClick={handleSave}
@@ -714,8 +691,8 @@ export default function SettingsPage() {
               className={cn(
                 'gap-1.5 rounded-lg transition-all',
                 hasChanges
-                  ? 'bg-amber-600 text-white hover:bg-amber-500 shadow-lg shadow-amber-500/20'
-                  : 'border border-white/5 bg-white/5 text-neutral-500'
+                  ? 'bg-amber-600 text-white hover:bg-amber-500 shadow-sm'
+                  : 'border border-zinc-200 bg-zinc-50 text-zinc-400'
               )}
             >
               {isSaving ? (
@@ -724,75 +701,61 @@ export default function SettingsPage() {
                 <Save className="h-4 w-4" />
               )}
               <span className="hidden sm:inline">
-                {isSaving ? 'Saving...' : 'Save Changes'}
+                {isSaving ? t('admin.saving') : t('common.save')}
               </span>
             </Button>
-          </motion.div>
+          </div>
         </div>
-      </motion.div>
+      </div>
 
       {/* Warning banner */}
-      <AnimatePresence>
-        {requiresRestart && (
-          <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: 'auto' }}
-            exit={{ opacity: 0, height: 0 }}
-            className="overflow-hidden"
-          >
-            <div className="flex items-center gap-3 rounded-xl border border-amber-500/20 bg-amber-500/10 px-4 py-3">
-              <AlertTriangle className="h-5 w-5 shrink-0 text-amber-400" />
-              <p className="text-sm text-amber-200">
-                Settings have been updated. A server restart is required for changes to take effect.
-              </p>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => setRestartDialog(true)}
-                disabled={isRestarting}
-                className="ml-auto shrink-0 text-amber-400 hover:bg-amber-500/20 hover:text-amber-300"
-              >
-                {isRestarting ? 'Restarting...' : 'Restart Now'}
-              </Button>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      {requiresRestart && (
+        <div className="overflow-hidden">
+          <div className="flex items-center gap-3 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3">
+            <AlertTriangle className="h-5 w-5 shrink-0 text-amber-600" />
+            <p className="text-sm text-amber-800">
+              Settings have been updated. A server restart is required for changes to take effect.
+            </p>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setRestartDialog(true)}
+              disabled={isRestarting}
+              className="ml-auto shrink-0 text-amber-600 hover:bg-amber-100 hover:text-amber-700"
+            >
+              {isRestarting ? 'Restarting...' : 'Restart Now'}
+            </Button>
+          </div>
+        </div>
+      )}
 
       {/* Pending changes banner */}
-      <AnimatePresence>
-        {hasChanges && !requiresRestart && (
-          <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: 'auto' }}
-            exit={{ opacity: 0, height: 0 }}
-            className="overflow-hidden"
-          >
-            <div className="flex items-center gap-3 rounded-xl border border-blue-500/20 bg-blue-500/10 px-4 py-3">
-              <ShieldAlert className="h-5 w-5 shrink-0 text-blue-400" />
-              <p className="text-sm text-blue-200">
-                You have unsaved changes. Save to apply them to the server configuration.
-              </p>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      {hasChanges && !requiresRestart && (
+        <div className="overflow-hidden">
+          <div className="flex items-center gap-3 rounded-xl border border-blue-200 bg-blue-50 px-4 py-3">
+            <ShieldAlert className="h-5 w-5 shrink-0 text-blue-600" />
+            <p className="text-sm text-blue-800">
+              You have unsaved changes. Save to apply them to the server configuration.
+            </p>
+          </div>
+        </div>
+      )}
 
       {/* Loading state */}
       {isLoading ? (
-        <div className="flex flex-col items-center justify-center rounded-2xl border border-white/10 bg-white/5 px-6 py-16 text-center backdrop-blur-xl">
-          <RefreshCw className="mb-3 h-8 w-8 animate-spin text-neutral-600" />
-          <p className="text-neutral-500">Loading settings...</p>
+        <div className="flex flex-col items-center justify-center rounded-2xl border border-zinc-200 bg-zinc-50 px-6 py-16 text-center">
+          <RefreshCw className="mb-3 h-8 w-8 animate-spin text-zinc-400" />
+          <p className="text-zinc-500">{t('common.loading')}</p>
         </div>
       ) : fetchError ? (
-        <div className="flex flex-col items-center justify-center rounded-2xl border border-red-500/20 bg-red-500/5 px-6 py-16 text-center">
-          <AlertTriangle className="mb-3 h-8 w-8 text-red-400" />
-          <p className="mb-4 text-neutral-400">{fetchError}</p>
+        <div className="flex flex-col items-center justify-center rounded-2xl border border-red-200 bg-red-50 px-6 py-16 text-center">
+          <AlertTriangle className="mb-3 h-8 w-8 text-red-600" />
+          <p className="mb-4 text-zinc-500">{fetchError}</p>
           <Button
             variant="ghost"
             size="sm"
             onClick={loadSettings}
-            className="gap-2 border border-white/10 text-neutral-300 hover:bg-white/5"
+            className="gap-2 border border-zinc-200 text-zinc-700 hover:bg-zinc-50"
           >
             <RefreshCw className="h-4 w-4" />
             Retry
@@ -801,12 +764,7 @@ export default function SettingsPage() {
       ) : (
         <>
           {/* Tab Navigation */}
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 }}
-            className="flex gap-2 overflow-x-auto pb-1"
-          >
+          <div className="flex gap-2 overflow-x-auto pb-1">
             {TABS.map((tab) => {
               const isActive = activeTab === tab.id;
               const changeCount = changeCountByTab[tab.id];
@@ -817,357 +775,337 @@ export default function SettingsPage() {
                   className={cn(
                     'group relative flex shrink-0 items-center gap-2 rounded-xl px-4 py-2.5 text-sm font-medium transition-all duration-200',
                     isActive
-                      ? 'border border-white/15 bg-white/10 text-white shadow-lg'
-                      : 'border border-transparent text-neutral-400 hover:bg-white/5 hover:text-white'
+                      ? 'border border-zinc-200 bg-white text-zinc-900 shadow-sm'
+                      : 'border border-transparent text-zinc-500 hover:bg-zinc-50 hover:text-zinc-900'
                   )}
                 >
-                  <tab.icon className={cn('h-4 w-4', isActive ? tab.color : 'text-neutral-500 group-hover:text-neutral-300')} />
+                  <tab.icon className={cn('h-4 w-4', isActive ? tab.color : 'text-zinc-400 group-hover:text-zinc-700')} />
                   {tab.label}
                   {changeCount > 0 && (
-                    <span className="flex h-5 min-w-5 items-center justify-center rounded-full bg-amber-500/20 px-1.5 text-[10px] font-semibold text-amber-300">
+                    <span className="flex h-5 min-w-5 items-center justify-center rounded-full bg-amber-50 px-1.5 text-[10px] font-semibold text-amber-700">
                       {changeCount}
                     </span>
                   )}
                   {isActive && (
-                    <motion.div
-                      layoutId="settings-tab-indicator"
-                      className="absolute inset-x-0 -bottom-0.5 h-0.5 rounded-full bg-amber-400"
-                      transition={{ type: 'spring', stiffness: 500, damping: 30 }}
-                    />
+                    <div className="absolute inset-x-0 -bottom-0.5 h-0.5 rounded-full bg-amber-500" />
                   )}
                 </button>
               );
             })}
-          </motion.div>
+          </div>
 
           {/* Tab Content */}
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={activeTab}
-              initial={{ opacity: 0, y: 15 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -10 }}
-              transition={{ duration: 0.2 }}
-            >
-              {/* Stripe Tab */}
-              {activeTab === 'stripe' && (
-                <div className="space-y-6">
-                  <SectionCard
-                    title="Stripe Configuration"
-                    description="Configure Stripe payment gateway keys for subscription billing."
-                    icon={CreditCard}
-                    gradient="from-violet-600/20 to-indigo-600/20"
-                    iconColor="text-violet-400"
-                  >
-                    <div className="space-y-5">
-                      {STRIPE_FIELDS.map((field) => (
-                        <SecretField
-                          key={field.key}
-                          field={field}
-                          value={settings.stripe[field.key as keyof typeof settings.stripe]}
-                          editedValue={editedStripe[field.key]}
-                          onEdit={handleStripeEdit}
-                        />
-                      ))}
-                    </div>
-                  </SectionCard>
-                </div>
-              )}
+          <div>
+            {/* Stripe Tab */}
+            {activeTab === 'stripe' && (
+              <div className="space-y-6">
+                <SectionCard
+                  title="Stripe Configuration"
+                  description="Configure Stripe payment gateway keys for subscription billing."
+                  icon={CreditCard}
+                  iconColor="text-violet-600"
+                  iconBg="bg-violet-50"
+                >
+                  <div className="space-y-5">
+                    {STRIPE_FIELDS.map((field) => (
+                      <SecretField
+                        key={field.key}
+                        field={field}
+                        value={settings.stripe[field.key as keyof typeof settings.stripe]}
+                        editedValue={editedStripe[field.key]}
+                        onEdit={handleStripeEdit}
+                      />
+                    ))}
+                  </div>
+                </SectionCard>
+              </div>
+            )}
 
-              {/* GoCardless Tab */}
-              {activeTab === 'gocardless' && (
-                <div className="space-y-6">
-                  <SectionCard
-                    title="GoCardless Configuration"
-                    description="Configure GoCardless Direct Debit payment keys."
-                    icon={DollarSign}
-                    gradient="from-cyan-600/20 to-teal-600/20"
-                    iconColor="text-cyan-400"
-                    badge={
-                      <Badge
-                        className={cn(
-                          'border text-xs',
-                          currentEnvironment === 'live'
-                            ? 'border-emerald-500/30 bg-emerald-500/20 text-emerald-300'
-                            : 'border-amber-500/30 bg-amber-500/20 text-amber-300'
-                        )}
+            {/* GoCardless Tab */}
+            {activeTab === 'gocardless' && (
+              <div className="space-y-6">
+                <SectionCard
+                  title="GoCardless Configuration"
+                  description="Configure GoCardless Direct Debit payment keys."
+                  icon={DollarSign}
+                  iconColor="text-cyan-600"
+                  iconBg="bg-cyan-50"
+                  badge={
+                    <Badge
+                      className={cn(
+                        'border text-xs',
+                        currentEnvironment === 'live'
+                          ? 'border-emerald-300 bg-emerald-50 text-emerald-700'
+                          : 'border-amber-300 bg-amber-50 text-amber-700'
+                      )}
+                    >
+                      {currentEnvironment === 'live' ? (
+                        <CheckCircle2 className="mr-1 h-3 w-3" />
+                      ) : (
+                        <AlertTriangle className="mr-1 h-3 w-3" />
+                      )}
+                      {currentEnvironment === 'live' ? 'Live' : 'Sandbox'}
+                    </Badge>
+                  }
+                >
+                  <div className="space-y-5">
+                    {GOCARDLESS_FIELDS.map((field) => (
+                      <SecretField
+                        key={field.key}
+                        field={field}
+                        value={settings.gocardless[field.key as keyof typeof settings.gocardless]}
+                        editedValue={editedGoCardless[field.key]}
+                        onEdit={handleGoCardlessEdit}
+                      />
+                    ))}
+
+                    {/* Environment selector */}
+                    <div className="space-y-2">
+                      <div className="flex items-center justify-between">
+                        <label className="text-sm font-medium text-zinc-700">
+                          Environment
+                          {editedGoCardless.environment !== undefined && (
+                            <Badge className="ml-2 border border-amber-300 bg-amber-50 text-amber-700 text-[10px]">
+                              Modified
+                            </Badge>
+                          )}
+                        </label>
+                      </div>
+                      <Select
+                        value={currentEnvironment}
+                        onValueChange={handleEnvironmentChange}
                       >
-                        {currentEnvironment === 'live' ? (
-                          <CheckCircle2 className="mr-1 h-3 w-3" />
-                        ) : (
-                          <AlertTriangle className="mr-1 h-3 w-3" />
-                        )}
-                        {currentEnvironment === 'live' ? 'Live' : 'Sandbox'}
-                      </Badge>
-                    }
-                  >
-                    <div className="space-y-5">
-                      {GOCARDLESS_FIELDS.map((field) => (
-                        <SecretField
-                          key={field.key}
-                          field={field}
-                          value={settings.gocardless[field.key as keyof typeof settings.gocardless]}
-                          editedValue={editedGoCardless[field.key]}
-                          onEdit={handleGoCardlessEdit}
-                        />
-                      ))}
-
-                      {/* Environment selector */}
-                      <motion.div
-                        initial={{ opacity: 0, y: 8 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        className="space-y-2"
-                      >
-                        <div className="flex items-center justify-between">
-                          <label className="text-sm font-medium text-neutral-300">
-                            Environment
-                            {editedGoCardless.environment !== undefined && (
-                              <Badge className="ml-2 border border-amber-500/30 bg-amber-500/20 text-amber-300 text-[10px]">
-                                Modified
-                              </Badge>
-                            )}
-                          </label>
-                        </div>
-                        <Select
-                          value={currentEnvironment}
-                          onValueChange={handleEnvironmentChange}
-                        >
-                          <SelectTrigger className="glass-card border-white/10 text-white">
-                            <SelectValue />
-                          </SelectTrigger>
-                          <SelectContent className="glass-card border-white/10">
-                            <SelectItem value="sandbox" className="text-neutral-200">
-                              Sandbox (Testing)
-                            </SelectItem>
-                            <SelectItem value="live" className="text-neutral-200">
-                              Live (Production)
-                            </SelectItem>
-                          </SelectContent>
-                        </Select>
-                        <p className="text-xs text-neutral-500">
-                          Use Sandbox for testing, Live for production payments
-                        </p>
-                      </motion.div>
+                        <SelectTrigger className="rounded-xl border border-zinc-200 bg-white text-zinc-900">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent className="rounded-xl border border-zinc-200 bg-white">
+                          <SelectItem value="sandbox" className="text-zinc-700">
+                            Sandbox (Testing)
+                          </SelectItem>
+                          <SelectItem value="live" className="text-zinc-700">
+                            Live (Production)
+                          </SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <p className="text-xs text-zinc-400">
+                        Use Sandbox for testing, Live for production payments
+                      </p>
                     </div>
-                  </SectionCard>
-                </div>
-              )}
+                  </div>
+                </SectionCard>
+              </div>
+            )}
 
-              {/* Email Tab */}
-              {activeTab === 'email' && (
-                <div className="space-y-6">
-                  <SectionCard
-                    title="Email Configuration"
-                    description="Configure the Resend email service for transactional emails."
-                    icon={Mail}
-                    gradient="from-amber-600/20 to-orange-600/20"
-                    iconColor="text-amber-400"
-                  >
-                    <div className="space-y-5">
-                      {EMAIL_FIELDS.map((field) => (
-                        <SecretField
-                          key={field.key}
-                          field={field}
-                          value={settings.email[field.key as keyof typeof settings.email]}
-                          editedValue={editedEmail[field.key]}
-                          onEdit={handleEmailEdit}
-                        />
-                      ))}
-                    </div>
-                  </SectionCard>
-                </div>
-              )}
+            {/* Email Tab */}
+            {activeTab === 'email' && (
+              <div className="space-y-6">
+                <SectionCard
+                  title={t('admin.settings.emailTemplates')}
+                  description="Configure the Resend email service for transactional emails."
+                  icon={Mail}
+                  iconColor="text-amber-600"
+                  iconBg="bg-amber-50"
+                >
+                  <div className="space-y-5">
+                    {EMAIL_FIELDS.map((field) => (
+                      <SecretField
+                        key={field.key}
+                        field={field}
+                        value={settings.email[field.key as keyof typeof settings.email]}
+                        editedValue={editedEmail[field.key]}
+                        onEdit={handleEmailEdit}
+                      />
+                    ))}
+                  </div>
+                </SectionCard>
+              </div>
+            )}
 
-               {/* General Tab */}
-               {activeTab === 'general' && (
-                 <div className="space-y-6">
-                   <SectionCard
-                     title="Payment Configuration"
-                     description="General payment and billing settings."
-                     icon={Settings}
-                     gradient="from-emerald-600/20 to-green-600/20"
-                     iconColor="text-emerald-400"
-                   >
-                     <motion.div
-                       initial={{ opacity: 0, y: 8 }}
-                       animate={{ opacity: 1, y: 0 }}
-                       className="space-y-2"
+             {/* General Tab */}
+             {activeTab === 'general' && (
+               <div className="space-y-6">
+                 <SectionCard
+                   title="Payment Configuration"
+                   description="General payment and billing settings."
+                   icon={Settings}
+                   iconColor="text-emerald-600"
+                   iconBg="bg-emerald-50"
+                 >
+                   <div className="space-y-2">
+                     <div className="flex items-center justify-between">
+                       <label className="text-sm font-medium text-zinc-700">
+                         Default Currency
+                         {editedPayment.currency !== undefined && (
+                           <Badge className="ml-2 border border-amber-300 bg-amber-50 text-amber-700 text-[10px]">
+                             Modified
+                           </Badge>
+                         )}
+                       </label>
+                     </div>
+                     <Select
+                       value={currentCurrency}
+                       onValueChange={handleCurrencyChange}
                      >
-                       <div className="flex items-center justify-between">
-                         <label className="text-sm font-medium text-neutral-300">
-                           Default Currency
-                           {editedPayment.currency !== undefined && (
-                             <Badge className="ml-2 border border-amber-500/30 bg-amber-500/20 text-amber-300 text-[10px]">
-                               Modified
-                             </Badge>
-                           )}
-                         </label>
-                       </div>
-                       <Select
-                         value={currentCurrency}
-                         onValueChange={handleCurrencyChange}
-                       >
-                         <SelectTrigger className="glass-card border-white/10 text-white">
-                           <SelectValue />
-                         </SelectTrigger>
-                         <SelectContent className="glass-card border-white/10">
-                           {CURRENCY_OPTIONS.map((opt) => (
-                             <SelectItem
-                               key={opt.value}
-                               value={opt.value}
-                               className="text-neutral-200"
-                             >
-                               {opt.label}
-                             </SelectItem>
-                           ))}
-                         </SelectContent>
-                       </Select>
-                       <p className="text-xs text-neutral-500">
-                         The default currency used for subscription billing
-                       </p>
-                     </motion.div>
-                   </SectionCard>
-                 </div>
-               )}
+                       <SelectTrigger className="rounded-xl border border-zinc-200 bg-white text-zinc-900">
+                         <SelectValue />
+                       </SelectTrigger>
+                       <SelectContent className="rounded-xl border border-zinc-200 bg-white">
+                         {CURRENCY_OPTIONS.map((opt) => (
+                           <SelectItem
+                             key={opt.value}
+                             value={opt.value}
+                             className="text-zinc-700"
+                           >
+                             {opt.label}
+                           </SelectItem>
+                         ))}
+                       </SelectContent>
+                     </Select>
+                     <p className="text-xs text-zinc-400">
+                       The default currency used for subscription billing
+                     </p>
+                   </div>
+                 </SectionCard>
+               </div>
+             )}
 
-               {/* Database Tab */}
-               {activeTab === 'database' && (
-                 <div className="space-y-6">
-                   <SectionCard
-                     title="Database Configuration"
-                     description="PostgreSQL connection settings. ⚠️ Changes require server restart and may cause downtime."
-                     icon={Database}
-                     gradient="from-red-600/20 to-pink-600/20"
-                     iconColor="text-red-400"
-                     badge={
-                       <Badge className="border border-red-500/30 bg-red-500/20 text-red-300 text-xs">
-                         <AlertTriangle className="mr-1 h-3 w-3" />
-                         Critical
-                       </Badge>
-                     }
-                   >
-                     <div className="space-y-5">
-                       {DATABASE_FIELDS.map((field) => (
-                         <SecretField
-                           key={field.key}
-                           field={field}
-                           value={settings.database[field.key as keyof typeof settings.database]}
-                           editedValue={editedDatabase[field.key]}
-                           onEdit={handleDatabaseEdit}
-                         />
-                       ))}
-                     </div>
-                   </SectionCard>
-                 </div>
-               )}
+             {/* Database Tab */}
+             {activeTab === 'database' && (
+               <div className="space-y-6">
+                 <SectionCard
+                   title="Database Configuration"
+                   description="PostgreSQL connection settings. Changes require server restart and may cause downtime."
+                   icon={Database}
+                   iconColor="text-red-600"
+                   iconBg="bg-red-50"
+                   badge={
+                     <Badge className="border border-red-300 bg-red-50 text-red-700 text-xs">
+                       <AlertTriangle className="mr-1 h-3 w-3" />
+                       Critical
+                     </Badge>
+                   }
+                 >
+                   <div className="space-y-5">
+                     {DATABASE_FIELDS.map((field) => (
+                       <SecretField
+                         key={field.key}
+                         field={field}
+                         value={settings.database[field.key as keyof typeof settings.database]}
+                         editedValue={editedDatabase[field.key]}
+                         onEdit={handleDatabaseEdit}
+                       />
+                     ))}
+                   </div>
+                 </SectionCard>
+               </div>
+             )}
 
-               {/* Redis Tab */}
-               {activeTab === 'redis' && (
-                 <div className="space-y-6">
-                   <SectionCard
-                     title="Redis Configuration"
-                     description="Redis connection for queues (BullMQ) and caching."
-                     icon={Zap}
-                     gradient="from-orange-600/20 to-yellow-600/20"
-                     iconColor="text-orange-400"
-                   >
-                     <div className="space-y-5">
-                       {REDIS_FIELDS.map((field) => (
-                         <SecretField
-                           key={field.key}
-                           field={field}
-                           value={settings.redis[field.key as keyof typeof settings.redis]}
-                           editedValue={editedRedis[field.key]}
-                           onEdit={handleRedisEdit}
-                         />
-                       ))}
-                     </div>
-                   </SectionCard>
-                 </div>
-               )}
+             {/* Redis Tab */}
+             {activeTab === 'redis' && (
+               <div className="space-y-6">
+                 <SectionCard
+                   title="Redis Configuration"
+                   description="Redis connection for queues (BullMQ) and caching."
+                   icon={Zap}
+                   iconColor="text-orange-600"
+                   iconBg="bg-orange-50"
+                 >
+                   <div className="space-y-5">
+                     {REDIS_FIELDS.map((field) => (
+                       <SecretField
+                         key={field.key}
+                         field={field}
+                         value={settings.redis[field.key as keyof typeof settings.redis]}
+                         editedValue={editedRedis[field.key]}
+                         onEdit={handleRedisEdit}
+                       />
+                     ))}
+                   </div>
+                 </SectionCard>
+               </div>
+             )}
 
-               {/* Auth Tab */}
-               {activeTab === 'auth' && (
-                 <div className="space-y-6">
-                   <SectionCard
-                     title="Authentication Configuration"
-                     description="Better Auth settings for session management and OAuth callbacks."
-                     icon={Shield}
-                     gradient="from-blue-600/20 to-indigo-600/20"
-                     iconColor="text-blue-400"
-                     badge={
-                       <Badge className="border border-blue-500/30 bg-blue-500/20 text-blue-300 text-xs">
-                         <ShieldAlert className="mr-1 h-3 w-3" />
-                         Session Critical
-                       </Badge>
-                     }
-                   >
-                     <div className="space-y-5">
-                       {AUTH_FIELDS.map((field) => (
-                         <SecretField
-                           key={field.key}
-                           field={field}
-                           value={settings.auth[field.key as keyof typeof settings.auth]}
-                           editedValue={editedAuth[field.key]}
-                           onEdit={handleAuthEdit}
-                         />
-                       ))}
-                     </div>
-                   </SectionCard>
-                 </div>
-               )}
+             {/* Auth Tab */}
+             {activeTab === 'auth' && (
+               <div className="space-y-6">
+                 <SectionCard
+                   title="Authentication Configuration"
+                   description="Better Auth settings for session management and OAuth callbacks."
+                   icon={Shield}
+                   iconColor="text-blue-600"
+                   iconBg="bg-blue-50"
+                   badge={
+                     <Badge className="border border-blue-300 bg-blue-50 text-blue-700 text-xs">
+                       <ShieldAlert className="mr-1 h-3 w-3" />
+                       Session Critical
+                     </Badge>
+                   }
+                 >
+                   <div className="space-y-5">
+                     {AUTH_FIELDS.map((field) => (
+                       <SecretField
+                         key={field.key}
+                         field={field}
+                         value={settings.auth[field.key as keyof typeof settings.auth]}
+                         editedValue={editedAuth[field.key]}
+                         onEdit={handleAuthEdit}
+                       />
+                     ))}
+                   </div>
+                 </SectionCard>
+               </div>
+             )}
 
-               {/* Admin Tab */}
-               {activeTab === 'admin' && (
-                 <div className="space-y-6">
-                   <SectionCard
-                     title="Admin Credentials"
-                     description="Platform administrator account settings for initial setup."
-                     icon={User}
-                     gradient="from-purple-600/20 to-fuchsia-600/20"
-                     iconColor="text-purple-400"
-                   >
-                     <div className="space-y-5">
-                       {ADMIN_FIELDS.map((field) => (
-                         <SecretField
-                           key={field.key}
-                           field={field}
-                           value={settings.admin[field.key as keyof typeof settings.admin]}
-                           editedValue={editedAdmin[field.key]}
-                           onEdit={handleAdminEdit}
-                         />
-                       ))}
-                     </div>
-                   </SectionCard>
-                 </div>
-               )}
+             {/* Admin Tab */}
+             {activeTab === 'admin' && (
+               <div className="space-y-6">
+                 <SectionCard
+                   title="Admin Credentials"
+                   description="Platform administrator account settings for initial setup."
+                   icon={User}
+                   iconColor="text-purple-600"
+                   iconBg="bg-purple-50"
+                 >
+                   <div className="space-y-5">
+                     {ADMIN_FIELDS.map((field) => (
+                       <SecretField
+                         key={field.key}
+                         field={field}
+                         value={settings.admin[field.key as keyof typeof settings.admin]}
+                         editedValue={editedAdmin[field.key]}
+                         onEdit={handleAdminEdit}
+                       />
+                     ))}
+                   </div>
+                 </SectionCard>
+               </div>
+             )}
 
-               {/* Frontend Tab */}
-               {activeTab === 'frontend' && (
-                 <div className="space-y-6">
-                   <SectionCard
-                     title="Frontend Configuration"
-                     description="Client-side application settings and public API keys."
-                     icon={Monitor}
-                     gradient="from-teal-600/20 to-cyan-600/20"
-                     iconColor="text-teal-400"
-                   >
-                     <div className="space-y-5">
-                       {FRONTEND_FIELDS.map((field) => (
-                         <SecretField
-                           key={field.key}
-                           field={field}
-                           value={settings.frontend[field.key as keyof typeof settings.frontend]}
-                           editedValue={editedFrontend[field.key]}
-                           onEdit={handleFrontendEdit}
-                         />
-                       ))}
-                     </div>
-                   </SectionCard>
-                 </div>
-               )}
-             </motion.div>
-           </AnimatePresence>
+             {/* Frontend Tab */}
+             {activeTab === 'frontend' && (
+               <div className="space-y-6">
+                 <SectionCard
+                   title="Frontend Configuration"
+                   description="Client-side application settings and public API keys."
+                   icon={Monitor}
+                   iconColor="text-teal-600"
+                   iconBg="bg-teal-50"
+                 >
+                   <div className="space-y-5">
+                     {FRONTEND_FIELDS.map((field) => (
+                       <SecretField
+                         key={field.key}
+                         field={field}
+                         value={settings.frontend[field.key as keyof typeof settings.frontend]}
+                         editedValue={editedFrontend[field.key]}
+                         onEdit={handleFrontendEdit}
+                       />
+                     ))}
+                   </div>
+                 </SectionCard>
+               </div>
+             )}
+           </div>
         </>
       )}
 
@@ -1175,11 +1113,11 @@ export default function SettingsPage() {
       <Dialog open={restartDialog} onOpenChange={setRestartDialog}>
         <DialogContent className="sm:max-w-[440px]">
           <DialogHeader>
-            <DialogTitle className="flex items-center gap-2 text-white">
-              <RefreshCw className="h-5 w-5 text-red-400" />
+            <DialogTitle className="flex items-center gap-2 text-zinc-900">
+              <RefreshCw className="h-5 w-5 text-red-600" />
               Restart Server
             </DialogTitle>
-            <DialogDescription className="text-neutral-400">
+            <DialogDescription className="text-zinc-500">
               This will restart the server process. The application may be
               briefly unavailable during the restart. Are you sure you want to continue?
             </DialogDescription>
@@ -1190,7 +1128,7 @@ export default function SettingsPage() {
               onClick={() => setRestartDialog(false)}
               disabled={isRestarting}
             >
-              Cancel
+              {t('common.cancel')}
             </Button>
             <Button
               variant="destructive"
@@ -1222,8 +1160,8 @@ interface SectionCardProps {
   title: string;
   description: string;
   icon: typeof Settings;
-  gradient: string;
   iconColor: string;
+  iconBg: string;
   badge?: React.ReactNode;
   children: React.ReactNode;
 }
@@ -1232,35 +1170,28 @@ function SectionCard({
   title,
   description,
   icon: Icon,
-  gradient,
   iconColor,
+  iconBg,
   badge,
   children,
 }: SectionCardProps) {
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      className="group relative overflow-hidden rounded-2xl border border-white/10 bg-white/5 backdrop-blur-xl"
-    >
-      {/* Top gradient accent */}
-      <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent" />
-
+    <div className="group relative overflow-hidden rounded-2xl border border-zinc-200 bg-white shadow-sm">
       <div className="p-6">
         {/* Card header */}
         <div className="mb-6 flex items-start justify-between">
           <div className="flex items-center gap-3">
             <div
               className={cn(
-                'flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br shadow-lg',
-                gradient
+                'flex h-10 w-10 items-center justify-center rounded-xl shadow-sm',
+                iconBg
               )}
             >
               <Icon className={cn('h-5 w-5', iconColor)} />
             </div>
             <div>
-              <h2 className="text-lg font-semibold text-white">{title}</h2>
-              <p className="text-sm text-neutral-400">{description}</p>
+              <h2 className="text-lg font-semibold text-zinc-900">{title}</h2>
+              <p className="text-sm text-zinc-500">{description}</p>
             </div>
           </div>
           {badge}
@@ -1269,6 +1200,6 @@ function SectionCard({
         {/* Card content */}
         {children}
       </div>
-    </motion.div>
+    </div>
   );
 }

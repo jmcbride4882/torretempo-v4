@@ -1,5 +1,5 @@
 import { Routes, Route, Navigate, NavLink, useLocation } from 'react-router-dom';
-import { motion, AnimatePresence } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 import {
   Building2,
   Users,
@@ -53,266 +53,235 @@ import BillingPage from './BillingPage';
 
 // Admin nav items
 const adminNavItems = [
-  { icon: Building2, label: 'Tenants', path: 'tenants' },
-  { icon: Users, label: 'Users', path: 'users' },
-  { icon: Monitor, label: 'Sessions', path: 'sessions' },
-  { icon: CreditCard, label: 'Subscriptions', path: 'subscriptions' },
-  { icon: DollarSign, label: 'Plans', path: 'plans' },
-  { icon: Receipt, label: 'Billing', path: 'billing' },
-  { icon: Server, label: 'System', path: 'system' },
-  { icon: AlertTriangle, label: 'Error Logs', path: 'errors' },
-  { icon: Key, label: 'Inspector Tokens', path: 'inspector-tokens' },
-  { icon: Flag, label: 'Feature Flags', path: 'feature-flags' },
-  { icon: Bell, label: 'Notifications', path: 'notifications' },
-  { icon: FileText, label: 'Audit', path: 'audit' },
-  { icon: BarChart3, label: 'Analytics', path: 'analytics' },
-  { icon: Settings, label: 'Settings', path: 'settings' },
+  { icon: Building2, labelKey: 'admin.nav.tenants', path: 'tenants' },
+  { icon: Users, labelKey: 'admin.nav.users', path: 'users' },
+  { icon: Monitor, labelKey: 'admin.nav.sessions', path: 'sessions' },
+  { icon: CreditCard, labelKey: 'admin.nav.subscriptions', path: 'subscriptions' },
+  { icon: DollarSign, labelKey: 'admin.nav.plans', path: 'plans' },
+  { icon: Receipt, labelKey: 'admin.nav.billing', path: 'billing' },
+  { icon: Server, labelKey: 'admin.nav.system', path: 'system' },
+  { icon: AlertTriangle, labelKey: 'admin.nav.errors', path: 'errors' },
+  { icon: Key, labelKey: 'admin.nav.inspectorTokens', path: 'inspector-tokens' },
+  { icon: Flag, labelKey: 'admin.nav.featureFlags', path: 'feature-flags' },
+  { icon: Bell, labelKey: 'admin.nav.notifications', path: 'notifications' },
+  { icon: FileText, labelKey: 'admin.nav.audit', path: 'audit' },
+  { icon: BarChart3, labelKey: 'admin.nav.analytics', path: 'analytics' },
+  { icon: Settings, labelKey: 'admin.nav.settings', path: 'settings' },
 ];
-
-
 
 // Admin Sidebar
 function AdminSidebar() {
   const { user, signOut } = useAuth();
+  const { t } = useTranslation();
 
   return (
-    <motion.aside
-      initial={{ x: -20, opacity: 0 }}
-      animate={{ x: 0, opacity: 1 }}
-      className="hidden lg:flex fixed left-0 top-0 z-40 h-screen w-64 flex-col border-r border-white/5 bg-neutral-950"
-    >
+    <aside className="hidden lg:flex fixed left-0 top-0 z-40 h-screen w-64 flex-col border-r border-zinc-200 bg-white">
       {/* Logo and admin badge */}
-      <div className="flex h-16 items-center justify-between border-b border-white/5 px-4">
+      <div className="flex h-16 items-center justify-between border-b border-zinc-200 px-4">
         <div className="flex items-center gap-3">
           <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-amber-600">
             <Shield className="h-5 w-5 text-white" />
           </div>
           <div className="flex flex-col">
-            <span className="text-sm font-semibold text-white">Torre Tempo</span>
-            <span className="text-xs text-amber-400">Admin Panel</span>
+            <span className="text-sm font-semibold text-zinc-900">Torre Tempo</span>
+            <span className="text-xs text-amber-600">{t('admin.panel')}</span>
           </div>
         </div>
       </div>
 
       {/* Navigation */}
-      <nav className="flex-1 space-y-1 overflow-y-auto p-3 scrollbar-thin">
-        {adminNavItems.filter(Boolean).map((item, index) => (
-          <motion.div
+      <nav className="flex-1 space-y-1 overflow-y-auto p-3">
+        {adminNavItems.map((item) => (
+          <NavLink
             key={item.path}
-            initial={{ opacity: 0, x: -10 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: index * 0.05 }}
+            to={`/admin/${item.path}`}
+            className={({ isActive }) =>
+              cn(
+                'group flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors',
+                isActive
+                  ? 'bg-amber-50 text-amber-700'
+                  : 'text-zinc-600 hover:bg-zinc-50 hover:text-zinc-900'
+              )
+            }
           >
-            <NavLink
-              to={`/admin/${item.path}`}
-              className={({ isActive }) =>
-                cn(
-                  'group flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all duration-200',
-                  isActive
-                    ? 'bg-amber-600/10 text-amber-400'
-                    : 'text-neutral-400 hover:bg-white/5 hover:text-white'
-                )
-              }
-            >
-              {({ isActive }) => (
-                <>
-                  <item.icon
-                    className={cn(
-                      'h-5 w-5 transition-colors',
-                      isActive ? 'text-amber-400' : 'text-neutral-500 group-hover:text-white'
-                    )}
-                  />
-                  <span className="flex-1">{item.label}</span>
-                  {isActive && (
-                    <motion.div
-                      layoutId="admin-sidebar-indicator"
-                      className="h-1.5 w-1.5 rounded-full bg-amber-400"
-                    />
+            {({ isActive }) => (
+              <>
+                <item.icon
+                  className={cn(
+                    'h-5 w-5 transition-colors',
+                    isActive ? 'text-amber-600' : 'text-zinc-400 group-hover:text-zinc-600'
                   )}
-                </>
-              )}
-            </NavLink>
-          </motion.div>
+                />
+                <span className="flex-1">{t(item.labelKey)}</span>
+                {isActive && (
+                  <div className="h-1.5 w-1.5 rounded-full bg-amber-500" />
+                )}
+              </>
+            )}
+          </NavLink>
         ))}
 
         {/* Separator and back to app link */}
-        <div className="my-4 border-t border-white/5" />
+        <div className="my-4 border-t border-zinc-200" />
         <NavLink
           to="/"
-          className="group flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-neutral-400 hover:bg-white/5 hover:text-white transition-all duration-200"
+          className="group flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-zinc-500 hover:bg-zinc-50 hover:text-zinc-900 transition-colors"
         >
-          <Clock className="h-5 w-5 text-neutral-500 group-hover:text-white" />
-          <span className="flex-1">Back to App</span>
-          <ChevronRight className="h-4 w-4 text-neutral-600" />
+          <Clock className="h-5 w-5 text-zinc-400 group-hover:text-zinc-600" />
+          <span className="flex-1">{t('admin.backToApp')}</span>
+          <ChevronRight className="h-4 w-4 text-zinc-400" />
         </NavLink>
       </nav>
 
       {/* User section */}
-      <div className="border-t border-white/5 p-3">
-        <div className="flex items-center gap-3 rounded-lg bg-white/5 p-3">
-          <div className="flex h-9 w-9 items-center justify-center rounded-full bg-gradient-to-br from-amber-500 to-amber-700 text-sm font-medium text-white">
+      <div className="border-t border-zinc-200 p-3">
+        <div className="flex items-center gap-3 rounded-lg bg-zinc-50 p-3">
+          <div className="flex h-9 w-9 items-center justify-center rounded-full bg-amber-600 text-sm font-medium text-white">
             {user?.name?.charAt(0).toUpperCase() || 'A'}
           </div>
           <div className="flex-1 overflow-hidden">
             <div className="flex items-center gap-2">
-              <p className="truncate text-sm font-medium text-white">{user?.name || 'Admin'}</p>
-              <span className="rounded bg-amber-600/20 px-1.5 py-0.5 text-[10px] font-semibold uppercase text-amber-400">
+              <p className="truncate text-sm font-medium text-zinc-900">{user?.name || 'Admin'}</p>
+              <span className="rounded bg-amber-100 px-1.5 py-0.5 text-[10px] font-semibold uppercase text-amber-700">
                 Admin
               </span>
             </div>
-            <p className="truncate text-xs text-neutral-500">{user?.email}</p>
+            <p className="truncate text-xs text-zinc-500">{user?.email}</p>
           </div>
           <button
             onClick={signOut}
-            className="rounded-lg p-2 text-neutral-400 transition-colors hover:bg-white/10 hover:text-white"
-            title="Sign out"
+            className="rounded-lg p-2 text-zinc-400 transition-colors hover:bg-zinc-100 hover:text-zinc-700"
+            title={t('admin.signOut')}
           >
             <LogOut className="h-4 w-4" />
           </button>
         </div>
       </div>
-    </motion.aside>
+    </aside>
   );
 }
 
-const pageTransition = {
-  initial: { opacity: 0, y: 10 },
-  animate: { opacity: 1, y: 0 },
-  exit: { opacity: 0, y: -10 },
-  transition: { duration: 0.2 },
-};
-
 export default function AdminLayout() {
   const { user, signOut } = useAuth();
+  const { t } = useTranslation();
   const location = useLocation();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   return (
-    <div className="min-h-screen bg-neutral-950">
+    <div className="min-h-screen bg-zinc-50">
       {/* Desktop sidebar */}
       <AdminSidebar />
 
       {/* Mobile navigation drawer */}
-      <AnimatePresence>
-        {isMobileMenuOpen && (
-          <>
-            {/* Backdrop */}
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              onClick={() => setIsMobileMenuOpen(false)}
-              className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm lg:hidden"
-            />
-            {/* Drawer */}
-            <motion.aside
-              initial={{ x: -280 }}
-              animate={{ x: 0 }}
-              exit={{ x: -280 }}
-              transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-              className="fixed left-0 top-0 z-50 h-screen w-64 border-r border-white/5 bg-neutral-950 lg:hidden"
-            >
-              {/* Logo and close button */}
-              <div className="flex h-16 items-center justify-between border-b border-white/5 px-4">
-                <div className="flex items-center gap-3">
-                  <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-amber-600">
-                    <Shield className="h-5 w-5 text-white" />
+      {isMobileMenuOpen && (
+        <>
+          {/* Backdrop */}
+          <div
+            onClick={() => setIsMobileMenuOpen(false)}
+            className="fixed inset-0 z-50 bg-black/40 lg:hidden"
+          />
+          {/* Drawer */}
+          <aside className="fixed left-0 top-0 z-50 h-screen w-64 border-r border-zinc-200 bg-white lg:hidden">
+            {/* Logo and close button */}
+            <div className="flex h-16 items-center justify-between border-b border-zinc-200 px-4">
+              <div className="flex items-center gap-3">
+                <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-amber-600">
+                  <Shield className="h-5 w-5 text-white" />
+                </div>
+                <div className="flex flex-col">
+                  <span className="text-sm font-semibold text-zinc-900">Torre Tempo</span>
+                  <span className="text-xs text-amber-600">{t('admin.panel')}</span>
+                </div>
+              </div>
+              <button
+                onClick={() => setIsMobileMenuOpen(false)}
+                className="rounded-lg p-2 text-zinc-400 hover:bg-zinc-100 hover:text-zinc-700"
+              >
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+
+            {/* Navigation */}
+            <nav className="flex-1 space-y-1 overflow-y-auto p-3">
+              {adminNavItems.map((item) => (
+                <NavLink
+                  key={item.path}
+                  to={`/admin/${item.path}`}
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className={({ isActive }) =>
+                    cn(
+                      'group flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors',
+                      isActive
+                        ? 'bg-amber-50 text-amber-700'
+                        : 'text-zinc-600 hover:bg-zinc-50 hover:text-zinc-900'
+                    )
+                  }
+                >
+                  {({ isActive }) => (
+                    <>
+                      <item.icon
+                        className={cn(
+                          'h-5 w-5 transition-colors',
+                          isActive ? 'text-amber-600' : 'text-zinc-400 group-hover:text-zinc-600'
+                        )}
+                      />
+                      <span className="flex-1">{t(item.labelKey)}</span>
+                    </>
+                  )}
+                </NavLink>
+              ))}
+
+              {/* Separator and back to app link */}
+              <div className="my-4 border-t border-zinc-200" />
+              <NavLink
+                to="/"
+                onClick={() => setIsMobileMenuOpen(false)}
+                className="group flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-zinc-500 hover:bg-zinc-50 hover:text-zinc-900 transition-colors"
+              >
+                <Clock className="h-5 w-5 text-zinc-400 group-hover:text-zinc-600" />
+                <span className="flex-1">{t('admin.backToApp')}</span>
+                <ChevronRight className="h-4 w-4 text-zinc-400" />
+              </NavLink>
+            </nav>
+
+            {/* User section */}
+            <div className="border-t border-zinc-200 p-3">
+              <div className="flex items-center gap-3 rounded-lg bg-zinc-50 p-3">
+                <div className="flex h-9 w-9 items-center justify-center rounded-full bg-amber-600 text-sm font-medium text-white">
+                  {user?.name?.charAt(0).toUpperCase() || 'A'}
+                </div>
+                <div className="flex-1 overflow-hidden">
+                  <div className="flex items-center gap-2">
+                    <p className="truncate text-sm font-medium text-zinc-900">{user?.name || 'Admin'}</p>
+                    <span className="rounded bg-amber-100 px-1.5 py-0.5 text-[10px] font-semibold uppercase text-amber-700">
+                      Admin
+                    </span>
                   </div>
-                  <div className="flex flex-col">
-                    <span className="text-sm font-semibold text-white">Torre Tempo</span>
-                    <span className="text-xs text-amber-400">Admin Panel</span>
-                  </div>
+                  <p className="truncate text-xs text-zinc-500">{user?.email}</p>
                 </div>
                 <button
-                  onClick={() => setIsMobileMenuOpen(false)}
-                  className="rounded-lg p-2 text-neutral-400 hover:bg-white/10 hover:text-white"
+                  onClick={signOut}
+                  className="rounded-lg p-2 text-zinc-400 transition-colors hover:bg-zinc-100 hover:text-zinc-700"
+                  title={t('admin.signOut')}
                 >
-                  <X className="h-5 w-5" />
+                  <LogOut className="h-4 w-4" />
                 </button>
               </div>
-
-              {/* Navigation */}
-              <nav className="flex-1 space-y-1 overflow-y-auto p-3 scrollbar-thin">
-                {adminNavItems.map((item) => (
-                  <NavLink
-                    key={item.path}
-                    to={`/admin/${item.path}`}
-                    onClick={() => setIsMobileMenuOpen(false)}
-                    className={({ isActive }) =>
-                      cn(
-                        'group flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all duration-200',
-                        isActive
-                          ? 'bg-amber-600/10 text-amber-400'
-                          : 'text-neutral-400 hover:bg-white/5 hover:text-white'
-                      )
-                    }
-                  >
-                    {({ isActive }) => (
-                      <>
-                        <item.icon
-                          className={cn(
-                            'h-5 w-5 transition-colors',
-                            isActive ? 'text-amber-400' : 'text-neutral-500 group-hover:text-white'
-                          )}
-                        />
-                        <span className="flex-1">{item.label}</span>
-                      </>
-                    )}
-                  </NavLink>
-                ))}
-
-                {/* Separator and back to app link */}
-                <div className="my-4 border-t border-white/5" />
-                <NavLink
-                  to="/"
-                  onClick={() => setIsMobileMenuOpen(false)}
-                  className="group flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-neutral-400 hover:bg-white/5 hover:text-white transition-all duration-200"
-                >
-                  <Clock className="h-5 w-5 text-neutral-500 group-hover:text-white" />
-                  <span className="flex-1">Back to App</span>
-                  <ChevronRight className="h-4 w-4 text-neutral-600" />
-                </NavLink>
-              </nav>
-
-              {/* User section */}
-              <div className="border-t border-white/5 p-3">
-                <div className="flex items-center gap-3 rounded-lg bg-white/5 p-3">
-                  <div className="flex h-9 w-9 items-center justify-center rounded-full bg-gradient-to-br from-amber-500 to-amber-700 text-sm font-medium text-white">
-                    {user?.name?.charAt(0).toUpperCase() || 'A'}
-                  </div>
-                  <div className="flex-1 overflow-hidden">
-                    <div className="flex items-center gap-2">
-                      <p className="truncate text-sm font-medium text-white">{user?.name || 'Admin'}</p>
-                      <span className="rounded bg-amber-600/20 px-1.5 py-0.5 text-[10px] font-semibold uppercase text-amber-400">
-                        Admin
-                      </span>
-                    </div>
-                    <p className="truncate text-xs text-neutral-500">{user?.email}</p>
-                  </div>
-                  <button
-                    onClick={signOut}
-                    className="rounded-lg p-2 text-neutral-400 transition-colors hover:bg-white/10 hover:text-white"
-                    title="Sign out"
-                  >
-                    <LogOut className="h-4 w-4" />
-                  </button>
-                </div>
-              </div>
-            </motion.aside>
-          </>
-        )}
-      </AnimatePresence>
+            </div>
+          </aside>
+        </>
+      )}
 
       {/* Main content area */}
       <div className="lg:pl-64 pb-16 lg:pb-0">
         {/* Header */}
-        <header className="glass-header sticky top-0 z-30 h-16 border-b border-amber-500/20">
+        <header className="sticky top-0 z-30 h-16 border-b border-zinc-200 bg-white">
           <div className="flex h-full items-center justify-between px-4 lg:px-6">
             {/* Mobile: Menu button and Logo */}
             <div className="flex items-center gap-3 lg:hidden">
               <button
                 onClick={() => setIsMobileMenuOpen(true)}
-                className="rounded-lg p-2 text-neutral-400 hover:bg-white/10 hover:text-white"
+                className="rounded-lg p-2 text-zinc-500 hover:bg-zinc-100 hover:text-zinc-700"
               >
                 <Menu className="h-5 w-5" />
               </button>
@@ -320,14 +289,14 @@ export default function AdminLayout() {
                 <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-amber-600">
                   <Shield className="h-4 w-4 text-white" />
                 </div>
-                <span className="font-semibold text-white">Admin</span>
+                <span className="font-semibold text-zinc-900">Admin</span>
               </div>
             </div>
 
             {/* Desktop: Admin badge */}
             <div className="hidden items-center gap-3 lg:flex">
-              <span className="rounded-full bg-amber-600/20 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-amber-400">
-                Admin Panel
+              <span className="rounded-full bg-amber-100 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-amber-700">
+                {t('admin.panel')}
               </span>
             </div>
 
@@ -336,10 +305,10 @@ export default function AdminLayout() {
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button variant="ghost" className="gap-2 px-2">
-                    <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-amber-500 to-amber-700 text-sm font-medium text-white">
+                    <div className="flex h-8 w-8 items-center justify-center rounded-full bg-amber-600 text-sm font-medium text-white">
                       {user?.name?.charAt(0).toUpperCase() || 'A'}
                     </div>
-                    <span className="hidden text-sm font-medium text-white md:inline">
+                    <span className="hidden text-sm font-medium text-zinc-700 md:inline">
                       {user?.name?.split(' ')[0]}
                     </span>
                   </Button>
@@ -348,21 +317,21 @@ export default function AdminLayout() {
                   <DropdownMenuLabel>
                     <div className="flex flex-col">
                       <div className="flex items-center gap-2">
-                        <span className="text-white">{user?.name}</span>
-                        <span className="rounded bg-amber-600/20 px-1.5 py-0.5 text-[10px] font-semibold uppercase text-amber-400">
+                        <span className="text-zinc-900">{user?.name}</span>
+                        <span className="rounded bg-amber-100 px-1.5 py-0.5 text-[10px] font-semibold uppercase text-amber-700">
                           Admin
                         </span>
                       </div>
-                      <span className="text-xs font-normal text-neutral-400">{user?.email}</span>
+                      <span className="text-xs font-normal text-zinc-500">{user?.email}</span>
                     </div>
                   </DropdownMenuLabel>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem onClick={() => window.location.href = '/'}>
-                    Back to App
+                    {t('admin.backToApp')}
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={signOut} className="text-red-400 focus:text-red-400">
-                    Sign out
+                  <DropdownMenuItem onClick={signOut} className="text-red-600 focus:text-red-600">
+                    {t('admin.signOut')}
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
@@ -372,31 +341,27 @@ export default function AdminLayout() {
 
         {/* Page content */}
         <main className="min-h-[calc(100vh-4rem)] p-4 lg:p-6">
-          <AnimatePresence mode="wait">
-            <motion.div {...pageTransition}>
-              <Routes>
-                <Route path="tenants" element={<TenantsPage />} />
-                <Route path="users" element={<UsersPage />} />
-                <Route path="sessions" element={<SessionsPage />} />
-                <Route path="subscriptions" element={<SubscriptionsPage />} />
-                <Route path="plans" element={<PlansPage />} />
-                <Route path="system" element={<SystemPage />} />
-                <Route path="errors" element={<ErrorLogsPage />} />
-                <Route path="inspector-tokens" element={<InspectorTokensPage />} />
-                <Route path="feature-flags" element={<FeatureFlagsPage />} />
-                <Route path="notifications" element={<NotificationsPage />} />
-                <Route path="audit" element={<AuditPage />} />
-                <Route path="analytics" element={<AnalyticsPage />} />
-                <Route path="billing" element={<BillingPage />} />
-                <Route path="settings" element={<SettingsPage />} />
-                <Route path="*" element={<Navigate to="tenants" replace />} />
-              </Routes>
-            </motion.div>
-          </AnimatePresence>
+          <Routes>
+            <Route path="tenants" element={<TenantsPage />} />
+            <Route path="users" element={<UsersPage />} />
+            <Route path="sessions" element={<SessionsPage />} />
+            <Route path="subscriptions" element={<SubscriptionsPage />} />
+            <Route path="plans" element={<PlansPage />} />
+            <Route path="system" element={<SystemPage />} />
+            <Route path="errors" element={<ErrorLogsPage />} />
+            <Route path="inspector-tokens" element={<InspectorTokensPage />} />
+            <Route path="feature-flags" element={<FeatureFlagsPage />} />
+            <Route path="notifications" element={<NotificationsPage />} />
+            <Route path="audit" element={<AuditPage />} />
+            <Route path="analytics" element={<AnalyticsPage />} />
+            <Route path="billing" element={<BillingPage />} />
+            <Route path="settings" element={<SettingsPage />} />
+            <Route path="*" element={<Navigate to="tenants" replace />} />
+          </Routes>
         </main>
 
         {/* Mobile bottom navigation */}
-        <nav className="fixed bottom-0 left-0 right-0 z-30 border-t border-white/5 bg-neutral-950 lg:hidden">
+        <nav className="fixed bottom-0 left-0 right-0 z-30 border-t border-zinc-200 bg-white lg:hidden">
           <div className="grid grid-cols-4 gap-1 p-2">
             {adminNavItems.slice(0, 4).map((item) => {
               const isActive = location.pathname === `/admin/${item.path}`;
@@ -404,14 +369,14 @@ export default function AdminLayout() {
                 <NavLink
                   key={item.path}
                   to={`/admin/${item.path}`}
-                  className="group relative flex flex-col items-center gap-1 rounded-xl px-3 py-2 transition-all duration-200"
+                  className="group relative flex flex-col items-center gap-1 rounded-xl px-3 py-2 transition-colors"
                 >
                   <div
                     className={cn(
-                      'flex h-10 w-10 items-center justify-center rounded-xl transition-all duration-200',
+                      'flex h-10 w-10 items-center justify-center rounded-xl transition-colors',
                       isActive
-                        ? 'bg-amber-600/20 text-amber-400 shadow-lg shadow-amber-500/20'
-                        : 'text-neutral-500 group-hover:bg-white/5 group-hover:text-white'
+                        ? 'bg-amber-50 text-amber-600'
+                        : 'text-zinc-400 group-hover:bg-zinc-50 group-hover:text-zinc-600'
                     )}
                   >
                     <item.icon className="h-5 w-5" />
@@ -419,17 +384,13 @@ export default function AdminLayout() {
                   <span
                     className={cn(
                       'text-[10px] font-medium transition-colors',
-                      isActive ? 'text-amber-400' : 'text-neutral-500 group-hover:text-white'
+                      isActive ? 'text-amber-600' : 'text-zinc-400 group-hover:text-zinc-600'
                     )}
                   >
-                    {item.label}
+                    {t(item.labelKey)}
                   </span>
                   {isActive && (
-                    <motion.div
-                      layoutId="admin-mobile-indicator"
-                      className="absolute -top-0.5 left-1/2 h-0.5 w-8 -translate-x-1/2 rounded-full bg-amber-400"
-                      transition={{ type: 'spring', stiffness: 500, damping: 30 }}
-                    />
+                    <div className="absolute -top-0.5 left-1/2 h-0.5 w-8 -translate-x-1/2 rounded-full bg-amber-500" />
                   )}
                 </NavLink>
               );

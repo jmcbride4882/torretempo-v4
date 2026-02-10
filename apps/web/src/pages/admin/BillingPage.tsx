@@ -4,7 +4,7 @@
  */
 
 import { useState } from 'react';
-import { motion } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 import {
   CreditCard,
@@ -51,6 +51,7 @@ interface RecentAction {
 }
 
 export default function BillingPage() {
+  const { t } = useTranslation();
   const [activeModal, setActiveModal] = useState<ModalType>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [recentActions, setRecentActions] = useState<RecentAction[]>([]);
@@ -170,24 +171,24 @@ export default function BillingPage() {
       title: 'Create Invoice',
       description: 'Generate a manual invoice for a customer',
       icon: Receipt,
-      color: 'from-blue-600/20 to-blue-400/20',
-      textColor: 'text-blue-400',
+      bgColor: 'bg-blue-50',
+      textColor: 'text-blue-600',
       onClick: () => setActiveModal('invoice'),
     },
     {
       title: 'Process Refund',
       description: 'Issue a partial or full refund',
       icon: ArrowDownLeft,
-      color: 'from-amber-600/20 to-amber-400/20',
-      textColor: 'text-amber-400',
+      bgColor: 'bg-amber-50',
+      textColor: 'text-amber-600',
       onClick: () => setActiveModal('refund'),
     },
     {
       title: 'Apply Credit',
       description: 'Add credit to a customer account',
       icon: DollarSign,
-      color: 'from-emerald-600/20 to-emerald-400/20',
-      textColor: 'text-emerald-400',
+      bgColor: 'bg-emerald-50',
+      textColor: 'text-emerald-600',
       onClick: () => setActiveModal('credit'),
     },
   ];
@@ -195,82 +196,68 @@ export default function BillingPage() {
   return (
     <div className="space-y-6">
       {/* Page header */}
-      <motion.div
-        initial={{ opacity: 0, y: -10 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="flex items-center gap-3"
-      >
-        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-emerald-600/20 to-teal-600/20 shadow-lg shadow-emerald-500/10">
-          <CreditCard className="h-5 w-5 text-emerald-400" />
+      <div className="flex items-center gap-3">
+        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-amber-50 shadow-sm">
+          <CreditCard className="h-5 w-5 text-amber-600" />
         </div>
         <div>
-          <h1 className="text-xl font-bold text-white sm:text-2xl">Billing Operations</h1>
-          <p className="text-sm text-neutral-400">Manual billing actions for platform admins</p>
+          <h1 className="text-xl font-bold text-zinc-900 sm:text-2xl">{t('admin.billing.title')}</h1>
+          <p className="text-sm text-zinc-500">Manual billing actions for platform admins</p>
         </div>
-      </motion.div>
+      </div>
 
       {/* Action Cards */}
       <div className="grid gap-4 sm:grid-cols-3">
-        {actionCards.map((card, i) => (
-          <motion.button
+        {actionCards.map((card) => (
+          <button
             key={card.title}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: i * 0.1 }}
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
             onClick={card.onClick}
-            className="flex flex-col items-start gap-3 rounded-xl border border-white/5 bg-white/[0.02] p-6 text-left backdrop-blur-sm transition-colors hover:border-white/10 hover:bg-white/[0.04]"
+            className="flex flex-col items-start gap-3 rounded-xl border border-zinc-200 bg-white p-6 text-left shadow-sm transition-colors hover:border-zinc-300 hover:bg-zinc-50"
           >
-            <div className={cn('flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-br', card.color)}>
+            <div className={cn('flex h-10 w-10 items-center justify-center rounded-lg', card.bgColor)}>
               <card.icon className={cn('h-5 w-5', card.textColor)} />
             </div>
             <div>
-              <h3 className="font-semibold text-white">{card.title}</h3>
-              <p className="text-sm text-neutral-400">{card.description}</p>
+              <h3 className="font-semibold text-zinc-900">{card.title}</h3>
+              <p className="text-sm text-zinc-500">{card.description}</p>
             </div>
-          </motion.button>
+          </button>
         ))}
       </div>
 
       {/* Recent Actions */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.3 }}
-        className="rounded-xl border border-white/5 bg-white/[0.02] p-6 backdrop-blur-sm"
-      >
-        <h2 className="mb-4 text-lg font-semibold text-white">Recent Actions</h2>
+      <div className="rounded-xl border border-zinc-200 bg-white p-6 shadow-sm">
+        <h2 className="mb-4 text-lg font-semibold text-zinc-900">Recent Actions</h2>
         {recentActions.length === 0 ? (
-          <p className="text-sm text-neutral-500">No billing actions performed this session</p>
+          <p className="text-sm text-zinc-500">No billing actions performed this session</p>
         ) : (
           <div className="space-y-3">
             {recentActions.map((action) => (
               <div
                 key={action.id}
-                className="flex items-center justify-between rounded-lg border border-white/5 bg-white/[0.02] px-4 py-3"
+                className="flex items-center justify-between rounded-lg border border-zinc-200 bg-zinc-50 px-4 py-3"
               >
                 <div className="flex items-center gap-3">
                   <Badge
                     variant="outline"
                     className={cn(
-                      action.type === 'invoice' && 'border-blue-500/30 text-blue-400',
-                      action.type === 'refund' && 'border-amber-500/30 text-amber-400',
-                      action.type === 'credit' && 'border-emerald-500/30 text-emerald-400'
+                      action.type === 'invoice' && 'border-blue-200 text-blue-600',
+                      action.type === 'refund' && 'border-amber-200 text-amber-600',
+                      action.type === 'credit' && 'border-emerald-200 text-emerald-600'
                     )}
                   >
                     {action.type}
                   </Badge>
-                  <span className="text-sm text-neutral-300">{action.description}</span>
+                  <span className="text-sm text-zinc-700">{action.description}</span>
                 </div>
                 <div className="flex items-center gap-3">
-                  <span className="text-sm font-medium text-white">
-                    {action.type === 'refund' ? '-' : ''}€{action.amount}
+                  <span className="text-sm font-medium text-zinc-900">
+                    {action.type === 'refund' ? '-' : ''}{t('admin.billing.revenue', { defaultValue: '' })}{action.amount}
                   </span>
                   <Badge variant={action.status === 'success' ? 'default' : 'destructive'}>
                     {action.status}
                   </Badge>
-                  <span className="text-xs text-neutral-500">
+                  <span className="text-xs text-zinc-500">
                     {action.timestamp.toLocaleTimeString()}
                   </span>
                 </div>
@@ -278,7 +265,7 @@ export default function BillingPage() {
             ))}
           </div>
         )}
-      </motion.div>
+      </div>
 
       {/* Create Invoice Modal */}
       <Dialog open={activeModal === 'invoice'} onOpenChange={() => setActiveModal(null)}>
@@ -289,7 +276,7 @@ export default function BillingPage() {
           </DialogHeader>
           <div className="space-y-4 py-4">
             <div>
-              <label className="mb-1 block text-sm font-medium text-neutral-300">Stripe Customer ID</label>
+              <label className="mb-1 block text-sm font-medium text-zinc-700">Stripe Customer ID</label>
               <Input
                 placeholder="cus_..."
                 value={invoiceForm.customer_id}
@@ -297,7 +284,7 @@ export default function BillingPage() {
               />
             </div>
             <div>
-              <label className="mb-1 block text-sm font-medium text-neutral-300">Amount (EUR)</label>
+              <label className="mb-1 block text-sm font-medium text-zinc-700">Amount (EUR)</label>
               <Input
                 type="number"
                 step="0.01"
@@ -307,7 +294,7 @@ export default function BillingPage() {
               />
             </div>
             <div>
-              <label className="mb-1 block text-sm font-medium text-neutral-300">Description</label>
+              <label className="mb-1 block text-sm font-medium text-zinc-700">Description</label>
               <Input
                 placeholder="Invoice description..."
                 value={invoiceForm.description}
@@ -316,7 +303,7 @@ export default function BillingPage() {
             </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setActiveModal(null)}>Cancel</Button>
+            <Button variant="outline" onClick={() => setActiveModal(null)}>{t('common.cancel')}</Button>
             <Button onClick={handleCreateInvoice} disabled={isSubmitting}>
               {isSubmitting ? <RefreshCw className="mr-2 h-4 w-4 animate-spin" /> : <Plus className="mr-2 h-4 w-4" />}
               Create Invoice
@@ -334,7 +321,7 @@ export default function BillingPage() {
           </DialogHeader>
           <div className="space-y-4 py-4">
             <div>
-              <label className="mb-1 block text-sm font-medium text-neutral-300">Payment Intent ID</label>
+              <label className="mb-1 block text-sm font-medium text-zinc-700">Payment Intent ID</label>
               <Input
                 placeholder="pi_..."
                 value={refundForm.payment_intent_id}
@@ -342,7 +329,7 @@ export default function BillingPage() {
               />
             </div>
             <div>
-              <label className="mb-1 block text-sm font-medium text-neutral-300">Amount (EUR, leave empty for full refund)</label>
+              <label className="mb-1 block text-sm font-medium text-zinc-700">Amount (EUR, leave empty for full refund)</label>
               <Input
                 type="number"
                 step="0.01"
@@ -352,7 +339,7 @@ export default function BillingPage() {
               />
             </div>
             <div>
-              <label className="mb-1 block text-sm font-medium text-neutral-300">Reason</label>
+              <label className="mb-1 block text-sm font-medium text-zinc-700">Reason</label>
               <Select
                 value={refundForm.reason}
                 onValueChange={(value: 'duplicate' | 'fraudulent' | 'requested_by_customer') =>
@@ -371,7 +358,7 @@ export default function BillingPage() {
             </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setActiveModal(null)}>Cancel</Button>
+            <Button variant="outline" onClick={() => setActiveModal(null)}>{t('common.cancel')}</Button>
             <Button variant="destructive" onClick={handleProcessRefund} disabled={isSubmitting}>
               {isSubmitting ? <RefreshCw className="mr-2 h-4 w-4 animate-spin" /> : <ArrowDownLeft className="mr-2 h-4 w-4" />}
               Process Refund
@@ -389,7 +376,7 @@ export default function BillingPage() {
           </DialogHeader>
           <div className="space-y-4 py-4">
             <div>
-              <label className="mb-1 block text-sm font-medium text-neutral-300">Stripe Customer ID</label>
+              <label className="mb-1 block text-sm font-medium text-zinc-700">Stripe Customer ID</label>
               <Input
                 placeholder="cus_..."
                 value={creditForm.customer_id}
@@ -397,7 +384,7 @@ export default function BillingPage() {
               />
             </div>
             <div>
-              <label className="mb-1 block text-sm font-medium text-neutral-300">Amount (EUR)</label>
+              <label className="mb-1 block text-sm font-medium text-zinc-700">Amount (EUR)</label>
               <Input
                 type="number"
                 step="0.01"
@@ -407,7 +394,7 @@ export default function BillingPage() {
               />
             </div>
             <div>
-              <label className="mb-1 block text-sm font-medium text-neutral-300">Description</label>
+              <label className="mb-1 block text-sm font-medium text-zinc-700">Description</label>
               <Input
                 placeholder="Credit description..."
                 value={creditForm.description}
@@ -416,7 +403,7 @@ export default function BillingPage() {
             </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setActiveModal(null)}>Cancel</Button>
+            <Button variant="outline" onClick={() => setActiveModal(null)}>{t('common.cancel')}</Button>
             <Button onClick={handleApplyCredit} disabled={isSubmitting}>
               {isSubmitting ? <RefreshCw className="mr-2 h-4 w-4 animate-spin" /> : <DollarSign className="mr-2 h-4 w-4" />}
               Apply Credit

@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { motion } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 import { AlertCircle, Calendar, Clock, Loader2, MapPin, Plus, User } from 'lucide-react';
 import {
   Dialog,
@@ -68,6 +68,7 @@ export function CreateShiftModal({
   organizationSlug,
   defaultDate,
 }: CreateShiftModalProps) {
+  const { t } = useTranslation();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [members, setMembers] = useState<MemberApiResponse['members']>([]);
@@ -198,7 +199,7 @@ export function CreateShiftModal({
     try {
       // Validate form
       if (!formData.location_id) {
-        throw new Error('Please select a location');
+        throw new Error(t('roster.pleaseSelectLocation'));
       }
 
       // Combine date and time into ISO timestamps
@@ -206,7 +207,7 @@ export function CreateShiftModal({
       const endDateTime = new Date(`${formData.start_date}T${formData.end_time}:00`);
 
       if (endDateTime <= startDateTime) {
-        throw new Error('End time must be after start time');
+        throw new Error(t('roster.endAfterStart'));
       }
 
       // Create shift
@@ -227,24 +228,24 @@ export function CreateShiftModal({
 
       if (!response.ok) {
         const errorData = await response.json();
-        
+
         // Handle compliance violations
         if (errorData.violations && Array.isArray(errorData.violations)) {
           const violationMessages = errorData.violations
             .map((v: any) => `• ${v.message}`)
             .join('\n');
-          throw new Error(`Compliance violations:\n${violationMessages}`);
+          throw new Error(`${t('roster.complianceViolations')}\n${violationMessages}`);
         }
-        
-        throw new Error(errorData.message || 'Failed to create shift');
+
+        throw new Error(errorData.message || t('roster.failedToCreateShift'));
       }
-      
+
       // Success!
       onSuccess();
       onOpenChange(false);
     } catch (err) {
       console.error('Error creating shift:', err);
-      setError(err instanceof Error ? err.message : 'Failed to create shift');
+      setError(err instanceof Error ? err.message : t('roster.failedToCreateShift'));
     } finally {
       setIsSubmitting(false);
     }
@@ -252,16 +253,16 @@ export function CreateShiftModal({
 
   const calculateDuration = () => {
     if (!formData.start_time || !formData.end_time) return null;
-    
+
     const start = new Date(`2000-01-01T${formData.start_time}:00`);
     const end = new Date(`2000-01-01T${formData.end_time}:00`);
-    
+
     if (end <= start) return null;
-    
+
     const diffMs = end.getTime() - start.getTime();
     const hours = Math.floor(diffMs / (1000 * 60 * 60));
     const minutes = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
-    
+
     return `${hours}h ${minutes}m`;
   };
 
@@ -269,16 +270,16 @@ export function CreateShiftModal({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="glass-card max-w-md border-white/10">
+      <DialogContent className="max-w-md">
         <DialogHeader>
-          <DialogTitle className="flex items-center gap-2 text-xl text-white">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary-600/20">
-              <Plus className="h-4 w-4 text-primary-400" />
+          <DialogTitle className="flex items-center gap-2 text-xl text-zinc-900">
+            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary-50">
+              <Plus className="h-4 w-4 text-primary-600" />
             </div>
-            Create New Shift
+            {t('roster.createNewShift')}
           </DialogTitle>
-          <DialogDescription className="text-neutral-400">
-            Schedule a new shift for your team. The shift will be created as a draft.
+          <DialogDescription className="text-zinc-500">
+            {t('roster.createShiftDescription')}
           </DialogDescription>
         </DialogHeader>
 
@@ -286,23 +287,20 @@ export function CreateShiftModal({
           <div className="space-y-4 py-4">
             {/* Location */}
             <div className="space-y-2">
-              <Label htmlFor="location" className="flex items-center gap-2 text-sm text-neutral-300">
-                <MapPin className="h-3.5 w-3.5 text-neutral-500" />
-                Location
+              <Label htmlFor="location" className="flex items-center gap-2 text-sm text-zinc-700">
+                <MapPin className="h-3.5 w-3.5 text-zinc-400" />
+                {t('common.location')}
               </Label>
               <Select
                 value={formData.location_id}
                 onValueChange={(value) => setFormData({ ...formData, location_id: value })}
               >
-                <SelectTrigger
-                  id="location"
-                  className="glass-card border-white/10 text-white focus:border-primary-500"
-                >
-                  <SelectValue placeholder="Select a location" />
+                <SelectTrigger id="location">
+                  <SelectValue placeholder={t('roster.selectLocation')} />
                 </SelectTrigger>
-                <SelectContent className="glass-card border-white/10">
+                <SelectContent>
                   {locations.map((location) => (
-                    <SelectItem key={location.id} value={location.id} className="text-neutral-200">
+                    <SelectItem key={location.id} value={location.id} className="text-zinc-900">
                       {location.name}
                     </SelectItem>
                   ))}
@@ -313,9 +311,9 @@ export function CreateShiftModal({
             {/* Employee (optional) */}
             <div className="space-y-2">
               <div className="flex items-center justify-between gap-3">
-                <Label htmlFor="employee" className="flex items-center gap-2 text-sm text-neutral-300">
-                  <User className="h-3.5 w-3.5 text-neutral-500" />
-                  Employee <span className="text-neutral-500">(optional)</span>
+                <Label htmlFor="employee" className="flex items-center gap-2 text-sm text-zinc-700">
+                  <User className="h-3.5 w-3.5 text-zinc-400" />
+                  {t('common.employee')} <span className="text-zinc-400">{t('common.optional')}</span>
                 </Label>
                 <ValidationIndicator
                   result={employeeValidationResult}
@@ -330,16 +328,13 @@ export function CreateShiftModal({
                 onValueChange={(value) => setFormData({ ...formData, user_id: value })}
                 disabled={isLoadingMembers}
               >
-                <SelectTrigger
-                  id="employee"
-                  className="glass-card border-white/10 text-white focus:border-primary-500"
-                >
-                  <SelectValue placeholder={isLoadingMembers ? 'Loading employees…' : 'Unassigned'} />
+                <SelectTrigger id="employee">
+                  <SelectValue placeholder={isLoadingMembers ? t('roster.loadingEmployees') : t('roster.unassigned')} />
                 </SelectTrigger>
 
-                <SelectContent className="glass-card border-white/10">
-                  <SelectItem value="" className="text-neutral-200">
-                    Unassigned
+                <SelectContent>
+                  <SelectItem value="" className="text-zinc-900">
+                    {t('roster.unassigned')}
                   </SelectItem>
                   {members
                     .filter((m) => Boolean(m.userId))
@@ -348,10 +343,10 @@ export function CreateShiftModal({
                       const roleLabel = m.role;
 
                       return (
-                        <SelectItem key={m.userId} value={m.userId} className="text-neutral-200">
+                        <SelectItem key={m.userId} value={m.userId} className="text-zinc-900">
                           <div className="flex w-full items-center justify-between gap-3">
                             <span className="truncate">{name}</span>
-                            <span className="shrink-0 rounded-full bg-white/5 px-2 py-0.5 text-[10px] uppercase text-neutral-400">
+                            <span className="shrink-0 rounded-full bg-zinc-100 px-2 py-0.5 text-[10px] uppercase text-zinc-500">
                               {roleLabel}
                             </span>
                           </div>
@@ -362,22 +357,21 @@ export function CreateShiftModal({
               </Select>
 
               {membersError && (
-                <p className="text-xs text-red-300">{membersError}</p>
+                <p className="text-xs text-red-600">{membersError}</p>
               )}
             </div>
 
             {/* Date */}
             <div className="space-y-2">
-              <Label htmlFor="date" className="flex items-center gap-2 text-sm text-neutral-300">
-                <Calendar className="h-3.5 w-3.5 text-neutral-500" />
-                Date
+              <Label htmlFor="date" className="flex items-center gap-2 text-sm text-zinc-700">
+                <Calendar className="h-3.5 w-3.5 text-zinc-400" />
+                {t('common.date')}
               </Label>
               <Input
                 id="date"
                 type="date"
                 value={formData.start_date}
                 onChange={(e) => setFormData({ ...formData, start_date: e.target.value })}
-                className="glass-card border-white/10 text-white focus:border-primary-500"
                 required
               />
             </div>
@@ -385,30 +379,28 @@ export function CreateShiftModal({
             {/* Time Range */}
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-2">
-                <Label htmlFor="start-time" className="flex items-center gap-2 text-sm text-neutral-300">
-                  <Clock className="h-3.5 w-3.5 text-neutral-500" />
-                  Start Time
+                <Label htmlFor="start-time" className="flex items-center gap-2 text-sm text-zinc-700">
+                  <Clock className="h-3.5 w-3.5 text-zinc-400" />
+                  {t('roster.startTime')}
                 </Label>
                 <Input
                   id="start-time"
                   type="time"
                   value={formData.start_time}
                   onChange={(e) => setFormData({ ...formData, start_time: e.target.value })}
-                  className="glass-card border-white/10 text-white focus:border-primary-500"
                   required
                 />
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="end-time" className="text-sm text-neutral-300">
-                  End Time
+                <Label htmlFor="end-time" className="text-sm text-zinc-700">
+                  {t('roster.endTime')}
                 </Label>
                 <Input
                   id="end-time"
                   type="time"
                   value={formData.end_time}
                   onChange={(e) => setFormData({ ...formData, end_time: e.target.value })}
-                  className="glass-card border-white/10 text-white focus:border-primary-500"
                   required
                 />
               </div>
@@ -416,24 +408,20 @@ export function CreateShiftModal({
 
             {/* Duration display */}
             {duration && (
-              <motion.div
-                initial={{ opacity: 0, y: -5 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="rounded-lg border border-primary-500/20 bg-primary-500/5 px-3 py-2"
-              >
-                <p className="text-xs text-primary-300">
-                  <span className="font-medium">Duration:</span> {duration}
+              <div className="rounded-lg border border-primary-200 bg-primary-50 px-3 py-2">
+                <p className="text-xs text-primary-700">
+                  <span className="font-medium">{t('clock.duration')}</span> {duration}
                   {formData.break_minutes > 0 && (
-                    <span className="text-neutral-400"> (+ {formData.break_minutes}m break)</span>
+                    <span className="text-zinc-500"> (+ {formData.break_minutes}m break)</span>
                   )}
                 </p>
-              </motion.div>
+              </div>
             )}
 
             {/* Break Minutes */}
             <div className="space-y-2">
-              <Label htmlFor="break" className="text-sm text-neutral-300">
-                Break Duration (minutes)
+              <Label htmlFor="break" className="text-sm text-zinc-700">
+                {t('roster.breakDuration')}
               </Label>
               <Input
                 id="break"
@@ -442,35 +430,30 @@ export function CreateShiftModal({
                 step="5"
                 value={formData.break_minutes}
                 onChange={(e) => setFormData({ ...formData, break_minutes: parseInt(e.target.value) || 0 })}
-                className="glass-card border-white/10 text-white focus:border-primary-500"
               />
             </div>
 
             {/* Notes */}
             <div className="space-y-2">
-              <Label htmlFor="notes" className="text-sm text-neutral-300">
-                Notes <span className="text-neutral-500">(optional)</span>
+              <Label htmlFor="notes" className="text-sm text-zinc-700">
+                {t('common.notes')} <span className="text-zinc-400">{t('common.optional')}</span>
               </Label>
               <textarea
                 id="notes"
                 value={formData.notes}
                 onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
-                className="glass-card w-full rounded-lg border border-white/10 bg-transparent px-3 py-2 text-sm text-white placeholder:text-neutral-500 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+                className="w-full rounded-lg border border-zinc-200 bg-white px-3 py-2 text-sm text-zinc-900 placeholder:text-zinc-400 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
                 rows={3}
-                placeholder="Add any additional details..."
+                placeholder={t('common.addDetails')}
               />
             </div>
 
             {/* Error message */}
             {error && (
-              <motion.div
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="flex items-start gap-2 rounded-lg border border-red-500/20 bg-red-500/10 p-3"
-              >
-                <AlertCircle className="h-4 w-4 shrink-0 text-red-400" />
-                <p className="text-sm text-red-300">{error}</p>
-              </motion.div>
+              <div className="flex items-start gap-2 rounded-lg border border-red-200 bg-red-50 p-3">
+                <AlertCircle className="h-4 w-4 shrink-0 text-red-600" />
+                <p className="text-sm text-red-600">{error}</p>
+              </div>
             )}
           </div>
 
@@ -480,27 +463,27 @@ export function CreateShiftModal({
               variant="ghost"
               onClick={() => onOpenChange(false)}
               disabled={isSubmitting}
-              className="rounded-lg border border-white/5 bg-white/5 text-neutral-300 hover:bg-white/10"
+              className="rounded-lg border border-zinc-200 bg-white text-zinc-700 hover:bg-zinc-50"
             >
-              Cancel
+              {t('common.cancel')}
             </Button>
             <Button
               type="submit"
               disabled={isSubmitting || !formData.location_id}
               className={cn(
-                'gap-2 rounded-lg bg-primary-600 text-white hover:bg-primary-500',
+                'gap-2 rounded-lg bg-primary-600 text-white hover:bg-primary-700',
                 isSubmitting && 'cursor-not-allowed opacity-50'
               )}
             >
               {isSubmitting ? (
                 <>
                   <Loader2 className="h-4 w-4 animate-spin" />
-                  Creating...
+                  {t('common.creating')}
                 </>
               ) : (
                 <>
                   <Plus className="h-4 w-4" />
-                  Create Shift
+                  {t('roster.createShift')}
                 </>
               )}
             </Button>

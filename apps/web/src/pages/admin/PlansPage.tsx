@@ -4,7 +4,7 @@
  */
 
 import { useState, useEffect, useCallback } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 import {
   CreditCard,
@@ -183,6 +183,7 @@ function validateForm(form: PlanFormState): Record<string, string | null> {
 // ============================================================================
 
 export default function PlansPage() {
+  const { t } = useTranslation();
   const [plans, setPlans] = useState<SubscriptionPlan[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isRefreshing, setIsRefreshing] = useState(false);
@@ -374,124 +375,106 @@ export default function PlansPage() {
   return (
     <div className="space-y-6">
       {/* Page header */}
-      <motion.div
-        initial={{ opacity: 0, y: -10 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between"
-      >
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-emerald-600/20 to-teal-600/20 shadow-lg shadow-emerald-500/10">
-            <CreditCard className="h-5 w-5 text-emerald-400" />
+          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-amber-50 shadow-sm">
+            <CreditCard className="h-5 w-5 text-amber-600" />
           </div>
           <div>
-            <h1 className="text-xl font-bold text-white sm:text-2xl">Subscription Plans</h1>
-            <p className="text-sm text-neutral-400">
+            <h1 className="text-xl font-bold text-zinc-900 sm:text-2xl">{t('admin.plans.title')}</h1>
+            <p className="text-sm text-zinc-500">
               Manage pricing tiers and feature bundles
             </p>
           </div>
         </div>
 
         <div className="flex items-center gap-2">
-          <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+          <div>
             <Button
               variant="ghost"
               size="sm"
               onClick={() => loadPlans(true)}
               disabled={isRefreshing}
-              className="gap-1.5 rounded-lg border border-white/5 bg-white/5 text-neutral-300 hover:bg-white/10"
+              className="gap-1.5 rounded-lg border border-zinc-200 bg-zinc-50 text-zinc-700 hover:bg-zinc-100"
             >
               <RefreshCw className={cn('h-4 w-4', isRefreshing && 'animate-spin')} />
               <span className="hidden sm:inline">Refresh</span>
             </Button>
-          </motion.div>
-          <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+          </div>
+          <div>
             <Button
               size="sm"
               onClick={openCreateModal}
-              className="gap-1.5 bg-emerald-600 hover:bg-emerald-700"
+              className="gap-1.5 bg-amber-600 hover:bg-amber-700"
             >
               <Plus className="h-4 w-4" />
-              New Plan
+              {t('admin.plans.createPlan')}
             </Button>
-          </motion.div>
+          </div>
         </div>
-      </motion.div>
+      </div>
 
       {/* Loading state */}
       {isLoading ? (
         <PlansPageSkeleton />
       ) : plans.length === 0 ? (
-        <motion.div
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="flex flex-col items-center justify-center rounded-xl border border-dashed border-white/10 bg-white/[0.02] py-16 text-center"
-        >
-          <CreditCard className="mb-3 h-10 w-10 text-neutral-600" />
-          <p className="text-lg font-medium text-neutral-300">No subscription plans yet</p>
-          <p className="mt-1 text-sm text-neutral-500">Create your first plan to get started</p>
+        <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-zinc-200 bg-zinc-50 py-16 text-center">
+          <CreditCard className="mb-3 h-10 w-10 text-zinc-400" />
+          <p className="text-lg font-medium text-zinc-700">{t('admin.plans.title')}</p>
+          <p className="mt-1 text-sm text-zinc-500">Create your first plan to get started</p>
           <Button
             size="sm"
             onClick={openCreateModal}
-            className="mt-5 gap-1.5 bg-emerald-600 hover:bg-emerald-700"
+            className="mt-5 gap-1.5 bg-amber-600 hover:bg-amber-700"
           >
             <Plus className="h-4 w-4" />
-            Create First Plan
+            {t('admin.plans.createPlan')}
           </Button>
-        </motion.div>
+        </div>
       ) : (
         <>
           {/* Active Plans */}
           {activePlans.length > 0 && (
-            <motion.div
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.1 }}
-            >
-              <h2 className="mb-4 text-lg font-semibold text-white">
+            <div>
+              <h2 className="mb-4 text-lg font-semibold text-zinc-900">
                 Active Plans
-                <span className="ml-2 text-sm font-normal text-neutral-500">
+                <span className="ml-2 text-sm font-normal text-zinc-500">
                   ({activePlans.length})
                 </span>
               </h2>
               <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
-                {activePlans.map((plan, index) => (
+                {activePlans.map((plan) => (
                   <PlanCard
                     key={plan.id}
                     plan={plan}
-                    index={index}
                     onEdit={openEditModal}
                     onToggleActive={setDeactivateTarget}
                   />
                 ))}
               </div>
-            </motion.div>
+            </div>
           )}
 
           {/* Inactive Plans */}
           {inactivePlans.length > 0 && (
-            <motion.div
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.2 }}
-            >
-              <h2 className="mb-4 text-lg font-semibold text-neutral-400">
+            <div>
+              <h2 className="mb-4 text-lg font-semibold text-zinc-500">
                 Inactive Plans
-                <span className="ml-2 text-sm font-normal text-neutral-600">
+                <span className="ml-2 text-sm font-normal text-zinc-400">
                   ({inactivePlans.length})
                 </span>
               </h2>
               <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
-                {inactivePlans.map((plan, index) => (
+                {inactivePlans.map((plan) => (
                   <PlanCard
                     key={plan.id}
                     plan={plan}
-                    index={index}
                     onEdit={openEditModal}
                     onToggleActive={setDeactivateTarget}
                   />
                 ))}
               </div>
-            </motion.div>
+            </div>
           )}
         </>
       )}
@@ -510,14 +493,14 @@ export default function PlansPage() {
         <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-lg">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
-              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-emerald-500/20">
+              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-amber-50">
                 {isEditMode ? (
-                  <Edit className="h-4 w-4 text-emerald-400" />
+                  <Edit className="h-4 w-4 text-amber-600" />
                 ) : (
-                  <Plus className="h-4 w-4 text-emerald-400" />
+                  <Plus className="h-4 w-4 text-amber-600" />
                 )}
               </div>
-              {isEditMode ? 'Edit Plan' : 'Create New Plan'}
+              {isEditMode ? t('admin.plans.editPlan') : t('admin.plans.createPlan')}
             </DialogTitle>
             <DialogDescription>
               {isEditMode
@@ -530,7 +513,7 @@ export default function PlansPage() {
             {/* Code */}
             <div className="space-y-2">
               <Label htmlFor="plan-code">
-                Plan Code <span className="text-red-400">*</span>
+                Plan Code <span className="text-red-500">*</span>
               </Label>
               <Input
                 id="plan-code"
@@ -543,18 +526,16 @@ export default function PlansPage() {
                   fieldErrors.code && 'border-red-500/50 focus-visible:ring-red-500'
                 )}
               />
-              <p className="text-xs text-neutral-500">
+              <p className="text-xs text-zinc-500">
                 Lowercase, no spaces. Used internally as an identifier.
               </p>
-              <AnimatePresence>
-                {fieldErrors.code && <FieldError message={fieldErrors.code} />}
-              </AnimatePresence>
+              {fieldErrors.code && <FieldError message={fieldErrors.code} />}
             </div>
 
             {/* Name */}
             <div className="space-y-2">
               <Label htmlFor="plan-name">
-                Display Name <span className="text-red-400">*</span>
+                Display Name <span className="text-red-500">*</span>
               </Label>
               <Input
                 id="plan-name"
@@ -563,9 +544,7 @@ export default function PlansPage() {
                 onChange={(e) => updateField('name', e.target.value)}
                 className={cn(fieldErrors.name && 'border-red-500/50 focus-visible:ring-red-500')}
               />
-              <AnimatePresence>
-                {fieldErrors.name && <FieldError message={fieldErrors.name} />}
-              </AnimatePresence>
+              {fieldErrors.name && <FieldError message={fieldErrors.name} />}
             </div>
 
             {/* Description */}
@@ -577,7 +556,7 @@ export default function PlansPage() {
                 value={form.description}
                 onChange={(e) => updateField('description', e.target.value)}
                 rows={3}
-                className="flex w-full rounded-lg border border-white/10 bg-neutral-900 px-3 py-2 text-sm text-white placeholder:text-neutral-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-600 focus-visible:ring-offset-2 focus-visible:ring-offset-neutral-900 disabled:cursor-not-allowed disabled:opacity-50 transition-all duration-200 resize-none"
+                className="flex w-full rounded-lg border border-zinc-200 bg-white px-3 py-2 text-sm text-zinc-900 placeholder:text-zinc-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-600 focus-visible:ring-offset-2 focus-visible:ring-offset-white disabled:cursor-not-allowed disabled:opacity-50 transition-all duration-200 resize-none"
               />
             </div>
 
@@ -585,7 +564,7 @@ export default function PlansPage() {
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="plan-price">
-                  Price (cents) <span className="text-red-400">*</span>
+                  Price (cents) <span className="text-red-500">*</span>
                 </Label>
                 <Input
                   id="plan-price"
@@ -598,18 +577,16 @@ export default function PlansPage() {
                   className={cn(fieldErrors.price_cents && 'border-red-500/50 focus-visible:ring-red-500')}
                 />
                 {form.price_cents && !fieldErrors.price_cents && form.currency && (
-                  <p className="text-xs text-emerald-400">
+                  <p className="text-xs text-amber-600">
                     = {formatPrice(Number(form.price_cents) || 0, form.currency)}
                   </p>
                 )}
-                <AnimatePresence>
-                  {fieldErrors.price_cents && <FieldError message={fieldErrors.price_cents} />}
-                </AnimatePresence>
+                {fieldErrors.price_cents && <FieldError message={fieldErrors.price_cents} />}
               </div>
 
               <div className="space-y-2">
                 <Label>
-                  Currency <span className="text-red-400">*</span>
+                  Currency <span className="text-red-500">*</span>
                 </Label>
                 <Select
                   value={form.currency}
@@ -626,16 +603,14 @@ export default function PlansPage() {
                     ))}
                   </SelectContent>
                 </Select>
-                <AnimatePresence>
-                  {fieldErrors.currency && <FieldError message={fieldErrors.currency} />}
-                </AnimatePresence>
+                {fieldErrors.currency && <FieldError message={fieldErrors.currency} />}
               </div>
             </div>
 
             {/* Billing Period */}
             <div className="space-y-2">
               <Label>
-                Billing Period <span className="text-red-400">*</span>
+                Billing Period <span className="text-red-500">*</span>
               </Label>
               <Select
                 value={form.billing_period}
@@ -652,9 +627,7 @@ export default function PlansPage() {
                   ))}
                 </SelectContent>
               </Select>
-              <AnimatePresence>
-                {fieldErrors.billing_period && <FieldError message={fieldErrors.billing_period} />}
-              </AnimatePresence>
+              {fieldErrors.billing_period && <FieldError message={fieldErrors.billing_period} />}
             </div>
 
             {/* Employee Limit */}
@@ -672,18 +645,14 @@ export default function PlansPage() {
                       setFieldErrors((prev) => ({ ...prev, employee_limit: null }));
                     }
                   }}
-                  className="h-4 w-4 rounded border-zinc-700 bg-zinc-800"
+                  className="h-4 w-4 rounded border-zinc-300 bg-white"
                 />
-                <label htmlFor="unlimited-employees" className="text-sm text-neutral-300">
+                <label htmlFor="unlimited-employees" className="text-sm text-zinc-700">
                   Unlimited employees
                 </label>
               </div>
               {!form.unlimited_employees && (
-                <motion.div
-                  initial={{ opacity: 0, height: 0 }}
-                  animate={{ opacity: 1, height: 'auto' }}
-                  exit={{ opacity: 0, height: 0 }}
-                >
+                <div>
                   <Input
                     type="number"
                     placeholder="e.g., 50"
@@ -693,12 +662,10 @@ export default function PlansPage() {
                     onChange={(e) => updateField('employee_limit', e.target.value)}
                     className={cn(fieldErrors.employee_limit && 'border-red-500/50 focus-visible:ring-red-500')}
                   />
-                  <AnimatePresence>
-                    {fieldErrors.employee_limit && (
-                      <FieldError message={fieldErrors.employee_limit} />
-                    )}
-                  </AnimatePresence>
-                </motion.div>
+                  {fieldErrors.employee_limit && (
+                    <FieldError message={fieldErrors.employee_limit} />
+                  )}
+                </div>
               )}
             </div>
 
@@ -712,8 +679,8 @@ export default function PlansPage() {
                     className={cn(
                       'flex cursor-pointer items-center gap-2.5 rounded-lg border px-3 py-2.5 text-sm transition-all duration-200',
                       form.included_modules[mod.key]
-                        ? 'border-emerald-500/40 bg-emerald-500/10 text-emerald-300'
-                        : 'border-white/10 bg-white/[0.02] text-neutral-400 hover:border-white/20 hover:bg-white/5'
+                        ? 'border-amber-500/40 bg-amber-50 text-amber-700'
+                        : 'border-zinc-200 bg-zinc-50 text-zinc-500 hover:border-zinc-300 hover:bg-zinc-100'
                     )}
                   >
                     <input
@@ -726,8 +693,8 @@ export default function PlansPage() {
                       className={cn(
                         'flex h-4 w-4 shrink-0 items-center justify-center rounded border transition-all duration-150',
                         form.included_modules[mod.key]
-                          ? 'border-emerald-500 bg-emerald-500'
-                          : 'border-neutral-600 bg-transparent'
+                          ? 'border-amber-500 bg-amber-500'
+                          : 'border-zinc-300 bg-transparent'
                       )}
                     >
                       {form.included_modules[mod.key] && (
@@ -742,24 +709,22 @@ export default function PlansPage() {
 
             {/* Active toggle (edit mode) */}
             {isEditMode && (
-              <div className="flex items-center gap-2 rounded-lg border border-white/10 bg-white/[0.02] p-3">
+              <div className="flex items-center gap-2 rounded-lg border border-zinc-200 bg-zinc-50 p-3">
                 <input
                   type="checkbox"
                   id="plan-active"
                   checked={form.is_active}
                   onChange={(e) => updateField('is_active', e.target.checked)}
-                  className="h-4 w-4 rounded border-zinc-700 bg-zinc-800"
+                  className="h-4 w-4 rounded border-zinc-300 bg-white"
                 />
-                <label htmlFor="plan-active" className="text-sm text-neutral-300">
+                <label htmlFor="plan-active" className="text-sm text-zinc-700">
                   Plan is active and available for purchase
                 </label>
               </div>
             )}
 
             {/* API Error */}
-            <AnimatePresence>
-              {apiError && <ApiErrorBanner message={apiError} />}
-            </AnimatePresence>
+            {apiError && <ApiErrorBanner message={apiError} />}
           </div>
 
           <DialogFooter>
@@ -771,17 +736,17 @@ export default function PlansPage() {
                 resetForm();
               }}
               disabled={isActionLoading}
-              className="text-neutral-400 hover:text-white"
+              className="text-zinc-500 hover:text-zinc-900"
             >
-              Cancel
+              {t('common.cancel')}
             </Button>
             <Button
               onClick={isEditMode ? handleUpdate : handleCreate}
               disabled={isActionLoading}
-              className="gap-2 bg-emerald-600 hover:bg-emerald-700"
+              className="gap-2 bg-amber-600 hover:bg-amber-700"
             >
               {isActionLoading && <Loader2 className="h-4 w-4 animate-spin" />}
-              {isEditMode ? 'Update Plan' : 'Create Plan'}
+              {isEditMode ? t('common.save') : t('common.create')}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -795,29 +760,29 @@ export default function PlansPage() {
               <div
                 className={cn(
                   'flex h-8 w-8 items-center justify-center rounded-lg',
-                  deactivateTarget?.is_active ? 'bg-red-500/20' : 'bg-emerald-500/20'
+                  deactivateTarget?.is_active ? 'bg-red-50' : 'bg-amber-50'
                 )}
               >
                 <Power
                   className={cn(
                     'h-4 w-4',
-                    deactivateTarget?.is_active ? 'text-red-400' : 'text-emerald-400'
+                    deactivateTarget?.is_active ? 'text-red-500' : 'text-amber-600'
                   )}
                 />
               </div>
-              {deactivateTarget?.is_active ? 'Deactivate Plan' : 'Reactivate Plan'}
+              {deactivateTarget?.is_active ? t('admin.plans.deletePlan') : 'Reactivate Plan'}
             </DialogTitle>
             <DialogDescription>
               {deactivateTarget?.is_active ? (
                 <>
                   Are you sure you want to deactivate{' '}
-                  <span className="font-semibold text-white">{deactivateTarget.name}</span>?
+                  <span className="font-semibold text-zinc-900">{deactivateTarget.name}</span>?
                   It will no longer be available for new subscriptions.
                 </>
               ) : (
                 <>
                   Reactivate{' '}
-                  <span className="font-semibold text-white">{deactivateTarget?.name}</span>?
+                  <span className="font-semibold text-zinc-900">{deactivateTarget?.name}</span>?
                   It will become available for subscriptions again.
                 </>
               )}
@@ -828,9 +793,9 @@ export default function PlansPage() {
               variant="ghost"
               onClick={() => setDeactivateTarget(null)}
               disabled={isActionLoading}
-              className="text-neutral-400 hover:text-white"
+              className="text-zinc-500 hover:text-zinc-900"
             >
-              Cancel
+              {t('common.cancel')}
             </Button>
             <Button
               onClick={handleDeactivate}
@@ -839,11 +804,11 @@ export default function PlansPage() {
                 'gap-2',
                 deactivateTarget?.is_active
                   ? 'bg-red-600 hover:bg-red-700'
-                  : 'bg-emerald-600 hover:bg-emerald-700'
+                  : 'bg-amber-600 hover:bg-amber-700'
               )}
             >
               {isActionLoading && <Loader2 className="h-4 w-4 animate-spin" />}
-              {deactivateTarget?.is_active ? 'Deactivate' : 'Reactivate'}
+              {deactivateTarget?.is_active ? t('common.delete') : 'Reactivate'}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -858,26 +823,22 @@ export default function PlansPage() {
 
 interface PlanCardProps {
   plan: SubscriptionPlan;
-  index: number;
   onEdit: (plan: SubscriptionPlan) => void;
   onToggleActive: (plan: SubscriptionPlan) => void;
 }
 
-function PlanCard({ plan, index, onEdit, onToggleActive }: PlanCardProps) {
+function PlanCard({ plan, onEdit, onToggleActive }: PlanCardProps) {
   const enabledModules = Object.entries(plan.included_modules || {}).filter(
     ([, enabled]) => enabled
   );
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: index * 0.05 }}
+    <div
       className={cn(
         'group relative overflow-hidden rounded-xl border p-5 transition-all duration-200',
         plan.is_active
-          ? 'border-white/10 bg-white/5 backdrop-blur-xl hover:border-white/20 hover:bg-white/[0.07]'
-          : 'border-white/5 bg-white/[0.02] opacity-60 hover:opacity-80'
+          ? 'border-zinc-200 bg-white shadow-sm hover:border-zinc-300 hover:shadow-md'
+          : 'border-zinc-200 bg-zinc-50 opacity-60 hover:opacity-80'
       )}
     >
       {/* Status badge */}
@@ -886,45 +847,45 @@ function PlanCard({ plan, index, onEdit, onToggleActive }: PlanCardProps) {
           className={cn(
             'border text-xs',
             plan.is_active
-              ? 'border-emerald-500/30 bg-emerald-500/20 text-emerald-300'
-              : 'border-neutral-500/30 bg-neutral-500/20 text-neutral-400'
+              ? 'border-emerald-500/30 bg-emerald-50 text-emerald-700'
+              : 'border-zinc-300 bg-zinc-100 text-zinc-500'
           )}
         >
           {plan.is_active ? 'Active' : 'Inactive'}
         </Badge>
-        <code className="text-xs text-neutral-500">{plan.code}</code>
+        <code className="text-xs text-zinc-500">{plan.code}</code>
       </div>
 
       {/* Plan name */}
-      <h3 className="text-lg font-bold text-white">{plan.name}</h3>
+      <h3 className="text-lg font-bold text-zinc-900">{plan.name}</h3>
 
       {/* Price */}
       <div className="mt-2 flex items-baseline gap-1">
-        <span className="text-3xl font-bold text-emerald-400">
+        <span className="text-3xl font-bold text-amber-600">
           {formatPrice(plan.price_cents, plan.currency)}
         </span>
-        <span className="text-sm text-neutral-500">
+        <span className="text-sm text-zinc-500">
           /{plan.billing_period === 'monthly' ? 'mo' : 'year'}
         </span>
       </div>
 
       {/* Description */}
       {plan.description && (
-        <p className="mt-3 text-sm leading-relaxed text-neutral-400">
+        <p className="mt-3 text-sm leading-relaxed text-zinc-500">
           {plan.description}
         </p>
       )}
 
       {/* Employee limit */}
-      <div className="mt-4 flex items-center gap-2 text-sm text-neutral-400">
+      <div className="mt-4 flex items-center gap-2 text-sm text-zinc-500">
         {plan.employee_limit === null ? (
           <>
-            <Infinity className="h-4 w-4 text-neutral-500" />
+            <Infinity className="h-4 w-4 text-zinc-400" />
             <span>Unlimited employees</span>
           </>
         ) : (
           <>
-            <Users className="h-4 w-4 text-neutral-500" />
+            <Users className="h-4 w-4 text-zinc-400" />
             <span>Up to {plan.employee_limit} employees</span>
           </>
         )}
@@ -938,7 +899,7 @@ function PlanCard({ plan, index, onEdit, onToggleActive }: PlanCardProps) {
             return (
               <span
                 key={key}
-                className="rounded-md border border-white/10 bg-white/5 px-2 py-0.5 text-xs text-neutral-300"
+                className="rounded-md border border-zinc-200 bg-zinc-50 px-2 py-0.5 text-xs text-zinc-700"
               >
                 {mod?.label || key}
               </span>
@@ -948,12 +909,12 @@ function PlanCard({ plan, index, onEdit, onToggleActive }: PlanCardProps) {
       )}
 
       {/* Actions */}
-      <div className="mt-5 flex items-center gap-2 border-t border-white/5 pt-4">
+      <div className="mt-5 flex items-center gap-2 border-t border-zinc-200 pt-4">
         <Button
           variant="ghost"
           size="sm"
           onClick={() => onEdit(plan)}
-          className="flex-1 gap-1.5 text-neutral-400 hover:bg-white/10 hover:text-white"
+          className="flex-1 gap-1.5 text-zinc-500 hover:bg-zinc-100 hover:text-zinc-900"
         >
           <Edit className="h-3.5 w-3.5" />
           Edit
@@ -965,15 +926,15 @@ function PlanCard({ plan, index, onEdit, onToggleActive }: PlanCardProps) {
           className={cn(
             'flex-1 gap-1.5',
             plan.is_active
-              ? 'text-red-400 hover:bg-red-500/10 hover:text-red-300'
-              : 'text-emerald-400 hover:bg-emerald-500/10 hover:text-emerald-300'
+              ? 'text-red-500 hover:bg-red-50 hover:text-red-600'
+              : 'text-amber-600 hover:bg-amber-50 hover:text-amber-700'
           )}
         >
           <Power className="h-3.5 w-3.5" />
           {plan.is_active ? 'Deactivate' : 'Activate'}
         </Button>
       </div>
-    </motion.div>
+    </div>
   );
 }
 
@@ -983,29 +944,19 @@ function PlanCard({ plan, index, onEdit, onToggleActive }: PlanCardProps) {
 
 function FieldError({ message }: { message: string }) {
   return (
-    <motion.p
-      initial={{ opacity: 0, y: -4 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: -4 }}
-      className="flex items-center gap-1 text-xs text-red-400"
-    >
+    <p className="flex items-center gap-1 text-xs text-red-500">
       <AlertCircle className="h-3 w-3 shrink-0" />
       {message}
-    </motion.p>
+    </p>
   );
 }
 
 function ApiErrorBanner({ message }: { message: string }) {
   return (
-    <motion.div
-      initial={{ opacity: 0, y: -4 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: -4 }}
-      className="flex items-start gap-2 rounded-lg border border-red-500/30 bg-red-500/10 p-3"
-    >
-      <AlertCircle className="mt-0.5 h-4 w-4 shrink-0 text-red-400" />
-      <p className="text-sm text-red-300">{message}</p>
-    </motion.div>
+    <div className="flex items-start gap-2 rounded-lg border border-red-200 bg-red-50 p-3">
+      <AlertCircle className="mt-0.5 h-4 w-4 shrink-0 text-red-500" />
+      <p className="text-sm text-red-700">{message}</p>
+    </div>
   );
 }
 
@@ -1016,28 +967,28 @@ function ApiErrorBanner({ message }: { message: string }) {
 function PlansPageSkeleton() {
   return (
     <div className="space-y-6">
-      <div className="h-6 w-32 animate-pulse rounded bg-white/10" />
+      <div className="h-6 w-32 animate-pulse rounded bg-zinc-100" />
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
         {[...Array(3)].map((_, i) => (
           <div
             key={i}
-            className="animate-pulse rounded-xl border border-white/10 bg-white/5 p-5"
+            className="animate-pulse rounded-xl border border-zinc-200 bg-white p-5 shadow-sm"
           >
             <div className="mb-4 flex justify-between">
-              <div className="h-5 w-16 rounded-full bg-white/10" />
-              <div className="h-4 w-12 rounded bg-white/10" />
+              <div className="h-5 w-16 rounded-full bg-zinc-100" />
+              <div className="h-4 w-12 rounded bg-zinc-100" />
             </div>
-            <div className="h-6 w-32 rounded bg-white/10" />
-            <div className="mt-2 h-9 w-28 rounded bg-white/10" />
-            <div className="mt-3 h-4 w-full rounded bg-white/10" />
-            <div className="mt-4 h-4 w-40 rounded bg-white/10" />
+            <div className="h-6 w-32 rounded bg-zinc-100" />
+            <div className="mt-2 h-9 w-28 rounded bg-zinc-100" />
+            <div className="mt-3 h-4 w-full rounded bg-zinc-100" />
+            <div className="mt-4 h-4 w-40 rounded bg-zinc-100" />
             <div className="mt-4 flex gap-1.5">
-              <div className="h-5 w-20 rounded bg-white/10" />
-              <div className="h-5 w-16 rounded bg-white/10" />
+              <div className="h-5 w-20 rounded bg-zinc-100" />
+              <div className="h-5 w-16 rounded bg-zinc-100" />
             </div>
-            <div className="mt-5 flex gap-2 border-t border-white/5 pt-4">
-              <div className="h-8 flex-1 rounded bg-white/10" />
-              <div className="h-8 flex-1 rounded bg-white/10" />
+            <div className="mt-5 flex gap-2 border-t border-zinc-200 pt-4">
+              <div className="h-8 flex-1 rounded bg-zinc-100" />
+              <div className="h-8 flex-1 rounded bg-zinc-100" />
             </div>
           </div>
         ))}

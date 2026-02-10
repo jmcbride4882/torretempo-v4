@@ -4,7 +4,7 @@
  */
 
 import { useState, useEffect, useCallback } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 import {
   Flag,
@@ -39,6 +39,8 @@ import {
 import type { FeatureFlag } from '@/lib/api/admin';
 
 export default function FeatureFlagsPage() {
+  const { t } = useTranslation();
+
   // State
   const [flags, setFlags] = useState<FeatureFlag[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -203,18 +205,18 @@ export default function FeatureFlagsPage() {
   });
 
   return (
-    <div className="min-h-screen bg-zinc-950 p-4 md:p-8">
+    <div className="min-h-screen bg-zinc-50 p-4 md:p-8">
       {/* Header */}
       <div className="max-w-7xl mx-auto mb-8">
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-3">
-            <div className="p-2 rounded-xl bg-purple-500/20 border border-purple-500/30">
-              <Flag className="w-6 h-6 text-purple-400" />
+            <div className="p-2 rounded-xl bg-amber-50 border border-amber-200">
+              <Flag className="w-6 h-6 text-amber-600" />
             </div>
             <div>
-              <h1 className="text-2xl font-bold text-white">Feature Flags</h1>
-              <p className="text-sm text-zinc-400 mt-1">
-                Manage per-organization feature toggles
+              <h1 className="text-2xl font-bold text-zinc-900">{t('admin.featureFlags.title')}</h1>
+              <p className="text-sm text-zinc-500 mt-1">
+                {t('admin.featureFlags.perTenant')}
               </p>
             </div>
           </div>
@@ -224,17 +226,17 @@ export default function FeatureFlagsPage() {
               size="sm"
               onClick={() => loadFlags()}
               disabled={isRefreshing}
-              className="border-zinc-700 hover:bg-zinc-800"
+              className="border-zinc-200 hover:bg-zinc-100"
             >
               <RefreshCw
                 className={cn('w-4 h-4 mr-2', isRefreshing && 'animate-spin')}
               />
-              Refresh
+              {t('admin.refresh')}
             </Button>
             <Button
               size="sm"
               onClick={() => setCreateModal(true)}
-              className="bg-purple-600 hover:bg-purple-700"
+              className="bg-amber-600 hover:bg-amber-500"
             >
               <Plus className="w-4 h-4 mr-2" />
               Create Flag
@@ -244,12 +246,12 @@ export default function FeatureFlagsPage() {
 
         {/* Search */}
         <div className="relative">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-zinc-500" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-zinc-400" />
           <Input
             placeholder="Search by flag key or description..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-10 bg-zinc-900/50 border-zinc-800 text-white"
+            className="pl-10 bg-white border-zinc-200 text-zinc-900 placeholder:text-zinc-400"
           />
         </div>
       </div>
@@ -258,12 +260,12 @@ export default function FeatureFlagsPage() {
       <div className="max-w-7xl mx-auto">
         {isLoading ? (
           <div className="text-center py-12">
-            <RefreshCw className="w-8 h-8 text-zinc-600 mx-auto mb-3 animate-spin" />
-            <p className="text-zinc-500">Loading feature flags...</p>
+            <RefreshCw className="w-8 h-8 text-zinc-400 mx-auto mb-3 animate-spin" />
+            <p className="text-zinc-500">{t('common.loading')}</p>
           </div>
         ) : filteredFlags.length === 0 ? (
           <div className="text-center py-12">
-            <Flag className="w-12 h-12 text-zinc-700 mx-auto mb-3" />
+            <Flag className="w-12 h-12 text-zinc-300 mx-auto mb-3" />
             <p className="text-zinc-500">
               {searchQuery ? 'No flags match your search' : 'No feature flags yet'}
             </p>
@@ -271,7 +273,7 @@ export default function FeatureFlagsPage() {
               <Button
                 size="sm"
                 onClick={() => setCreateModal(true)}
-                className="mt-4 bg-purple-600 hover:bg-purple-700"
+                className="mt-4 bg-amber-600 hover:bg-amber-500"
               >
                 <Plus className="w-4 h-4 mr-2" />
                 Create First Flag
@@ -281,35 +283,33 @@ export default function FeatureFlagsPage() {
         ) : (
           <div className="grid gap-4">
             {filteredFlags.map((flag) => (
-              <motion.div
+              <div
                 key={flag.id}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="glass-card p-6 rounded-xl border border-white/10"
+                className="rounded-xl border border-zinc-200 bg-white shadow-sm p-6"
               >
                 <div className="flex items-start justify-between">
                   <div className="flex-1">
                     <div className="flex items-center gap-3 mb-2">
-                      <code className="text-lg font-mono font-semibold text-white">
+                      <code className="text-lg font-mono font-semibold text-zinc-900">
                         {flag.flag_key}
                       </code>
                       {flag.enabled_globally ? (
-                        <Badge className="bg-emerald-500/20 text-emerald-300 border-emerald-500/30">
+                        <Badge className="bg-emerald-50 text-emerald-700 border-emerald-200">
                           <Globe className="w-3 h-3 mr-1" />
-                          Enabled Globally
+                          {t('admin.featureFlags.enabled')}
                         </Badge>
                       ) : (
-                        <Badge className="bg-zinc-500/20 text-zinc-400 border-zinc-500/30">
-                          Disabled Globally
+                        <Badge className="bg-zinc-100 text-zinc-500 border-zinc-200">
+                          {t('admin.featureFlags.disabled')}
                         </Badge>
                       )}
                     </div>
                     {flag.description && (
-                      <p className="text-sm text-zinc-400 mb-3">
+                      <p className="text-sm text-zinc-500 mb-3">
                         {flag.description}
                       </p>
                     )}
-                    <div className="flex items-center gap-4 text-xs text-zinc-500">
+                    <div className="flex items-center gap-4 text-xs text-zinc-400">
                       {flag.enabled_for_orgs &&
                         flag.enabled_for_orgs.length > 0 && (
                           <div className="flex items-center gap-1">
@@ -340,10 +340,10 @@ export default function FeatureFlagsPage() {
                       size="sm"
                       onClick={() => handleToggleGlobal(flag)}
                       className={cn(
-                        'border-zinc-700',
+                        'border-zinc-200',
                         flag.enabled_globally
-                          ? 'hover:bg-emerald-500/10 text-emerald-400'
-                          : 'hover:bg-zinc-800 text-zinc-400'
+                          ? 'hover:bg-emerald-50 text-emerald-600'
+                          : 'hover:bg-zinc-100 text-zinc-500'
                       )}
                     >
                       {flag.enabled_globally ? (
@@ -357,258 +357,252 @@ export default function FeatureFlagsPage() {
                       variant="outline"
                       size="sm"
                       onClick={() => openEditModal(flag)}
-                      className="border-zinc-700 hover:bg-zinc-800"
+                      className="border-zinc-200 hover:bg-zinc-100"
                     >
                       <Edit className="w-4 h-4 mr-2" />
-                      Edit
+                      {t('common.edit')}
                     </Button>
                     <Button
                       variant="outline"
                       size="sm"
                       onClick={() => setDeleteModal(flag)}
-                      className="border-red-500/30 hover:bg-red-500/10 text-red-400"
+                      className="border-red-200 hover:bg-red-50 text-red-600"
                     >
                       <Trash2 className="w-4 h-4" />
                     </Button>
                   </div>
                 </div>
-              </motion.div>
+              </div>
             ))}
           </div>
         )}
       </div>
 
       {/* Create Modal */}
-      <AnimatePresence>
-        {createModal && (
-          <Dialog open={createModal} onOpenChange={setCreateModal}>
-            <DialogContent className="bg-zinc-900 border-zinc-800">
-              <DialogHeader>
-                <DialogTitle className="text-white">
-                  Create Feature Flag
-                </DialogTitle>
-                <DialogDescription className="text-zinc-400">
-                  Create a new feature flag for per-organization toggling
-                </DialogDescription>
-              </DialogHeader>
-              <div className="space-y-4 py-4">
-                <div>
-                  <label className="text-sm font-medium text-zinc-300 mb-2 block">
-                    Flag Key *
-                  </label>
-                  <Input
-                    placeholder="e.g., enable_advanced_reports"
-                    value={form.flag_key}
-                    onChange={(e) =>
-                      setForm({ ...form, flag_key: e.target.value })
-                    }
-                    className="bg-zinc-800 border-zinc-700 text-white"
-                  />
-                  <p className="text-xs text-zinc-500 mt-1">
-                    Use snake_case for flag keys
-                  </p>
-                </div>
-                <div>
-                  <label className="text-sm font-medium text-zinc-300 mb-2 block">
-                    Description
-                  </label>
-                  <Input
-                    placeholder="Brief description of the feature"
-                    value={form.description}
-                    onChange={(e) =>
-                      setForm({ ...form, description: e.target.value })
-                    }
-                    className="bg-zinc-800 border-zinc-700 text-white"
-                  />
-                </div>
-                <div className="flex items-center gap-2">
-                  <input
-                    type="checkbox"
-                    id="enabled_globally"
-                    checked={form.enabled_globally}
-                    onChange={(e) =>
-                      setForm({ ...form, enabled_globally: e.target.checked })
-                    }
-                    className="w-4 h-4 rounded bg-zinc-800 border-zinc-700"
-                  />
-                  <label
-                    htmlFor="enabled_globally"
-                    className="text-sm text-zinc-300"
-                  >
-                    Enable globally for all organizations
-                  </label>
-                </div>
+      {createModal && (
+        <Dialog open={createModal} onOpenChange={setCreateModal}>
+          <DialogContent className="bg-white border-zinc-200">
+            <DialogHeader>
+              <DialogTitle className="text-zinc-900">
+                Create Feature Flag
+              </DialogTitle>
+              <DialogDescription className="text-zinc-500">
+                Create a new feature flag for per-organization toggling
+              </DialogDescription>
+            </DialogHeader>
+            <div className="space-y-4 py-4">
+              <div>
+                <label className="text-sm font-medium text-zinc-700 mb-2 block">
+                  Flag Key *
+                </label>
+                <Input
+                  placeholder="e.g., enable_advanced_reports"
+                  value={form.flag_key}
+                  onChange={(e) =>
+                    setForm({ ...form, flag_key: e.target.value })
+                  }
+                  className="bg-zinc-50 border-zinc-200 text-zinc-900 placeholder:text-zinc-400"
+                />
+                <p className="text-xs text-zinc-400 mt-1">
+                  Use snake_case for flag keys
+                </p>
               </div>
-              <DialogFooter>
-                <Button
-                  variant="outline"
-                  onClick={() => setCreateModal(false)}
-                  disabled={isActionLoading}
-                  className="border-zinc-700 hover:bg-zinc-800"
+              <div>
+                <label className="text-sm font-medium text-zinc-700 mb-2 block">
+                  Description
+                </label>
+                <Input
+                  placeholder="Brief description of the feature"
+                  value={form.description}
+                  onChange={(e) =>
+                    setForm({ ...form, description: e.target.value })
+                  }
+                  className="bg-zinc-50 border-zinc-200 text-zinc-900 placeholder:text-zinc-400"
+                />
+              </div>
+              <div className="flex items-center gap-2">
+                <input
+                  type="checkbox"
+                  id="enabled_globally"
+                  checked={form.enabled_globally}
+                  onChange={(e) =>
+                    setForm({ ...form, enabled_globally: e.target.checked })
+                  }
+                  className="w-4 h-4 rounded bg-zinc-50 border-zinc-200"
+                />
+                <label
+                  htmlFor="enabled_globally"
+                  className="text-sm text-zinc-700"
                 >
-                  Cancel
-                </Button>
-                <Button
-                  onClick={handleCreate}
-                  disabled={isActionLoading || !form.flag_key.trim()}
-                  className="bg-purple-600 hover:bg-purple-700"
-                >
-                  {isActionLoading ? 'Creating...' : 'Create Flag'}
-                </Button>
-              </DialogFooter>
-            </DialogContent>
-          </Dialog>
-        )}
-      </AnimatePresence>
+                  {t('admin.featureFlags.global')}
+                </label>
+              </div>
+            </div>
+            <DialogFooter>
+              <Button
+                variant="outline"
+                onClick={() => setCreateModal(false)}
+                disabled={isActionLoading}
+                className="border-zinc-200 hover:bg-zinc-100"
+              >
+                Cancel
+              </Button>
+              <Button
+                onClick={handleCreate}
+                disabled={isActionLoading || !form.flag_key.trim()}
+                className="bg-amber-600 hover:bg-amber-500"
+              >
+                {isActionLoading ? 'Creating...' : t('common.save')}
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+      )}
 
       {/* Edit Modal */}
-      <AnimatePresence>
-        {editModal && (
-          <Dialog open={!!editModal} onOpenChange={() => setEditModal(null)}>
-            <DialogContent className="bg-zinc-900 border-zinc-800 max-w-2xl">
-              <DialogHeader>
-                <DialogTitle className="text-white">
-                  Edit Feature Flag
-                </DialogTitle>
-                <DialogDescription className="text-zinc-400">
-                  Update flag settings and per-organization overrides
-                </DialogDescription>
-              </DialogHeader>
-              <div className="space-y-4 py-4">
-                <div>
-                  <label className="text-sm font-medium text-zinc-300 mb-2 block">
-                    Flag Key (read-only)
-                  </label>
-                  <Input
-                    value={form.flag_key}
-                    disabled
-                    className="bg-zinc-800/50 border-zinc-700 text-zinc-500"
-                  />
-                </div>
-                <div>
-                  <label className="text-sm font-medium text-zinc-300 mb-2 block">
-                    Description
-                  </label>
-                  <Input
-                    placeholder="Brief description of the feature"
-                    value={form.description}
-                    onChange={(e) =>
-                      setForm({ ...form, description: e.target.value })
-                    }
-                    className="bg-zinc-800 border-zinc-700 text-white"
-                  />
-                </div>
-                <div className="flex items-center gap-2">
-                  <input
-                    type="checkbox"
-                    id="edit_enabled_globally"
-                    checked={form.enabled_globally}
-                    onChange={(e) =>
-                      setForm({ ...form, enabled_globally: e.target.checked })
-                    }
-                    className="w-4 h-4 rounded bg-zinc-800 border-zinc-700"
-                  />
-                  <label
-                    htmlFor="edit_enabled_globally"
-                    className="text-sm text-zinc-300"
-                  >
-                    Enable globally for all organizations
-                  </label>
-                </div>
-                <div>
-                  <label className="text-sm font-medium text-zinc-300 mb-2 block">
-                    Enabled for Organizations (comma-separated IDs)
-                  </label>
-                  <Input
-                    placeholder="org-uuid-1, org-uuid-2"
-                    value={form.enabled_for_orgs}
-                    onChange={(e) =>
-                      setForm({ ...form, enabled_for_orgs: e.target.value })
-                    }
-                    className="bg-zinc-800 border-zinc-700 text-white"
-                  />
-                  <p className="text-xs text-zinc-500 mt-1">
-                    Override global setting for specific organizations
-                  </p>
-                </div>
-                <div>
-                  <label className="text-sm font-medium text-zinc-300 mb-2 block">
-                    Disabled for Organizations (comma-separated IDs)
-                  </label>
-                  <Input
-                    placeholder="org-uuid-3, org-uuid-4"
-                    value={form.disabled_for_orgs}
-                    onChange={(e) =>
-                      setForm({ ...form, disabled_for_orgs: e.target.value })
-                    }
-                    className="bg-zinc-800 border-zinc-700 text-white"
-                  />
-                  <p className="text-xs text-zinc-500 mt-1">
-                    Disable for specific organizations even if globally enabled
-                  </p>
-                </div>
+      {editModal && (
+        <Dialog open={!!editModal} onOpenChange={() => setEditModal(null)}>
+          <DialogContent className="bg-white border-zinc-200 max-w-2xl">
+            <DialogHeader>
+              <DialogTitle className="text-zinc-900">
+                Edit Feature Flag
+              </DialogTitle>
+              <DialogDescription className="text-zinc-500">
+                Update flag settings and per-organization overrides
+              </DialogDescription>
+            </DialogHeader>
+            <div className="space-y-4 py-4">
+              <div>
+                <label className="text-sm font-medium text-zinc-700 mb-2 block">
+                  Flag Key (read-only)
+                </label>
+                <Input
+                  value={form.flag_key}
+                  disabled
+                  className="bg-zinc-100 border-zinc-200 text-zinc-400"
+                />
               </div>
-              <DialogFooter>
-                <Button
-                  variant="outline"
-                  onClick={() => setEditModal(null)}
-                  disabled={isActionLoading}
-                  className="border-zinc-700 hover:bg-zinc-800"
+              <div>
+                <label className="text-sm font-medium text-zinc-700 mb-2 block">
+                  Description
+                </label>
+                <Input
+                  placeholder="Brief description of the feature"
+                  value={form.description}
+                  onChange={(e) =>
+                    setForm({ ...form, description: e.target.value })
+                  }
+                  className="bg-zinc-50 border-zinc-200 text-zinc-900 placeholder:text-zinc-400"
+                />
+              </div>
+              <div className="flex items-center gap-2">
+                <input
+                  type="checkbox"
+                  id="edit_enabled_globally"
+                  checked={form.enabled_globally}
+                  onChange={(e) =>
+                    setForm({ ...form, enabled_globally: e.target.checked })
+                  }
+                  className="w-4 h-4 rounded bg-zinc-50 border-zinc-200"
+                />
+                <label
+                  htmlFor="edit_enabled_globally"
+                  className="text-sm text-zinc-700"
                 >
-                  Cancel
-                </Button>
-                <Button
-                  onClick={handleUpdate}
-                  disabled={isActionLoading}
-                  className="bg-purple-600 hover:bg-purple-700"
-                >
-                  {isActionLoading ? 'Updating...' : 'Update Flag'}
-                </Button>
-              </DialogFooter>
-            </DialogContent>
-          </Dialog>
-        )}
-      </AnimatePresence>
+                  {t('admin.featureFlags.global')}
+                </label>
+              </div>
+              <div>
+                <label className="text-sm font-medium text-zinc-700 mb-2 block">
+                  Enabled for Organizations (comma-separated IDs)
+                </label>
+                <Input
+                  placeholder="org-uuid-1, org-uuid-2"
+                  value={form.enabled_for_orgs}
+                  onChange={(e) =>
+                    setForm({ ...form, enabled_for_orgs: e.target.value })
+                  }
+                  className="bg-zinc-50 border-zinc-200 text-zinc-900 placeholder:text-zinc-400"
+                />
+                <p className="text-xs text-zinc-400 mt-1">
+                  Override global setting for specific organizations
+                </p>
+              </div>
+              <div>
+                <label className="text-sm font-medium text-zinc-700 mb-2 block">
+                  Disabled for Organizations (comma-separated IDs)
+                </label>
+                <Input
+                  placeholder="org-uuid-3, org-uuid-4"
+                  value={form.disabled_for_orgs}
+                  onChange={(e) =>
+                    setForm({ ...form, disabled_for_orgs: e.target.value })
+                  }
+                  className="bg-zinc-50 border-zinc-200 text-zinc-900 placeholder:text-zinc-400"
+                />
+                <p className="text-xs text-zinc-400 mt-1">
+                  Disable for specific organizations even if globally enabled
+                </p>
+              </div>
+            </div>
+            <DialogFooter>
+              <Button
+                variant="outline"
+                onClick={() => setEditModal(null)}
+                disabled={isActionLoading}
+                className="border-zinc-200 hover:bg-zinc-100"
+              >
+                Cancel
+              </Button>
+              <Button
+                onClick={handleUpdate}
+                disabled={isActionLoading}
+                className="bg-amber-600 hover:bg-amber-500"
+              >
+                {isActionLoading ? 'Updating...' : t('common.save')}
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+      )}
 
       {/* Delete Confirmation Modal */}
-      <AnimatePresence>
-        {deleteModal && (
-          <Dialog open={!!deleteModal} onOpenChange={() => setDeleteModal(null)}>
-            <DialogContent className="bg-zinc-900 border-zinc-800">
-              <DialogHeader>
-                <DialogTitle className="text-white flex items-center gap-2">
-                  <Trash2 className="w-5 h-5 text-red-400" />
-                  Delete Feature Flag
-                </DialogTitle>
-                <DialogDescription className="text-zinc-400">
-                  Are you sure you want to delete{' '}
-                  <code className="text-white font-mono">
-                    {deleteModal.flag_key}
-                  </code>
-                  ? This action cannot be undone.
-                </DialogDescription>
-              </DialogHeader>
-              <DialogFooter>
-                <Button
-                  variant="outline"
-                  onClick={() => setDeleteModal(null)}
-                  disabled={isActionLoading}
-                  className="border-zinc-700 hover:bg-zinc-800"
-                >
-                  Cancel
-                </Button>
-                <Button
-                  onClick={handleDelete}
-                  disabled={isActionLoading}
-                  className="bg-red-600 hover:bg-red-700"
-                >
-                  {isActionLoading ? 'Deleting...' : 'Delete Flag'}
-                </Button>
-              </DialogFooter>
-            </DialogContent>
-          </Dialog>
-        )}
-      </AnimatePresence>
+      {deleteModal && (
+        <Dialog open={!!deleteModal} onOpenChange={() => setDeleteModal(null)}>
+          <DialogContent className="bg-white border-zinc-200">
+            <DialogHeader>
+              <DialogTitle className="text-zinc-900 flex items-center gap-2">
+                <Trash2 className="w-5 h-5 text-red-600" />
+                Delete Feature Flag
+              </DialogTitle>
+              <DialogDescription className="text-zinc-500">
+                Are you sure you want to delete{' '}
+                <code className="text-zinc-900 font-mono">
+                  {deleteModal.flag_key}
+                </code>
+                ? This action cannot be undone.
+              </DialogDescription>
+            </DialogHeader>
+            <DialogFooter>
+              <Button
+                variant="outline"
+                onClick={() => setDeleteModal(null)}
+                disabled={isActionLoading}
+                className="border-zinc-200 hover:bg-zinc-100"
+              >
+                Cancel
+              </Button>
+              <Button
+                onClick={handleDelete}
+                disabled={isActionLoading}
+                className="bg-red-600 hover:bg-red-700"
+              >
+                {isActionLoading ? 'Deleting...' : t('common.delete')}
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+      )}
     </div>
   );
 }

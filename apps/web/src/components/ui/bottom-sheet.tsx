@@ -1,7 +1,6 @@
 /**
  * Bottom Sheet Component
- * Mobile-first bottom sheet with drag gestures and spring animations
- * Follows iOS/Android native sheet patterns
+ * Mobile-first bottom sheet with drag gestures
  */
 
 import * as React from 'react';
@@ -16,14 +15,14 @@ export interface BottomSheetProps {
   children: React.ReactNode;
   title?: string;
   description?: string;
-  snapPoints?: number[]; // Heights in pixels [min, mid, max]
-  initialSnap?: number; // Index of initial snap point (default: last)
-  dismissable?: boolean; // Can dismiss by swiping down (default: true)
-  showHandle?: boolean; // Show drag handle (default: true)
+  snapPoints?: number[];
+  initialSnap?: number;
+  dismissable?: boolean;
+  showHandle?: boolean;
   className?: string;
 }
 
-const DRAG_THRESHOLD = 50; // Pixels to drag before dismissing
+const DRAG_THRESHOLD = 50;
 const SPRING_CONFIG = { type: 'spring', damping: 30, stiffness: 300 } as const;
 
 export function BottomSheet({
@@ -32,7 +31,7 @@ export function BottomSheet({
   children,
   title,
   description,
-  snapPoints = [600], // Default to 600px height
+  snapPoints = [600],
   initialSnap = snapPoints.length - 1,
   dismissable = true,
   showHandle = true,
@@ -42,7 +41,6 @@ export function BottomSheet({
   const y = useMotionValue(0);
   const opacity = useTransform(y, [0, 200], [1, 0]);
 
-  // Lock body scroll when open
   React.useEffect(() => {
     if (isOpen) {
       const originalStyle = window.getComputedStyle(document.body).overflow;
@@ -53,24 +51,20 @@ export function BottomSheet({
     }
   }, [isOpen]);
 
-  // Handle drag end
   const handleDragEnd = (_event: MouseEvent | TouchEvent | PointerEvent, info: PanInfo) => {
     const dragDistance = info.offset.y;
     const dragVelocity = info.velocity.y;
 
-    // Dismiss if dragged down significantly
     if (dismissable && (dragDistance > DRAG_THRESHOLD || dragVelocity > 500)) {
       onClose();
       return;
     }
 
-    // Snap to nearest point
     if (snapPoints.length > 1) {
       const currentHeight = snapPoints[currentSnap] ?? snapPoints[0] ?? 600;
       const dragOffset = -dragDistance;
       const targetHeight = currentHeight + dragOffset;
 
-      // Find closest snap point
       let closestSnapIndex = 0;
       let minDiff = Math.abs((snapPoints[0] ?? 0) - targetHeight);
 
@@ -85,7 +79,6 @@ export function BottomSheet({
       setCurrentSnap(closestSnapIndex);
     }
 
-    // Reset position
     y.set(0);
   };
 
@@ -95,19 +88,17 @@ export function BottomSheet({
     <AnimatePresence>
       {isOpen && (
         <React.Fragment key="bottom-sheet">
-          {/* Backdrop */}
           <motion.div
             key="backdrop"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.2 }}
-            className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm"
+            className="fixed inset-0 z-50 bg-black/40"
             onClick={dismissable ? onClose : undefined}
             aria-hidden="true"
           />
 
-          {/* Bottom Sheet */}
           <motion.div
             key="sheet"
             role="dialog"
@@ -122,7 +113,7 @@ export function BottomSheet({
             dragConstraints={{ top: 0, bottom: 0 }}
             dragElastic={{ top: 0, bottom: 0.5 }}
             onDragEnd={handleDragEnd}
-            style={{ 
+            style={{
               y,
               opacity,
               height: sheetHeight,
@@ -130,27 +121,25 @@ export function BottomSheet({
             }}
             className={cn(
               'fixed bottom-0 left-0 right-0 z-50',
-              'glass-dark rounded-t-3xl',
+              'bg-white border-t border-zinc-200 rounded-t-3xl shadow-xl',
               'flex flex-col',
               'touch-pan-y',
               className
             )}
           >
-            {/* Drag Handle */}
             {showHandle && (
               <div className="flex items-center justify-center py-3 cursor-grab active:cursor-grabbing">
-                <div className="w-12 h-1.5 rounded-full bg-neutral-600" />
+                <div className="w-12 h-1.5 rounded-full bg-zinc-300" />
               </div>
             )}
 
-            {/* Header */}
             {(title || description) && (
               <div className="flex items-start justify-between px-6 pb-4">
                 <div className="flex-1">
                   {title && (
                     <h2
                       id="bottom-sheet-title"
-                      className="text-lg font-semibold text-white"
+                      className="text-lg font-semibold text-zinc-900"
                     >
                       {title}
                     </h2>
@@ -158,7 +147,7 @@ export function BottomSheet({
                   {description && (
                     <p
                       id="bottom-sheet-description"
-                      className="mt-1 text-sm text-neutral-400"
+                      className="mt-1 text-sm text-zinc-500"
                     >
                       {description}
                     </p>
@@ -166,7 +155,7 @@ export function BottomSheet({
                 </div>
                 <button
                   onClick={onClose}
-                  className="ml-4 rounded-full p-1.5 text-neutral-400 transition-colors hover:bg-white/5 hover:text-white"
+                  className="ml-4 rounded-full p-1.5 text-zinc-400 transition-colors hover:bg-zinc-100 hover:text-zinc-700"
                   aria-label="Close"
                 >
                   <X className="h-5 w-5" />
@@ -174,12 +163,10 @@ export function BottomSheet({
               </div>
             )}
 
-            {/* Content - Scrollable */}
             <div className="flex-1 overflow-y-auto px-6 pb-6 scrollbar-thin">
               {children}
             </div>
 
-            {/* Safe Area (iOS bottom inset) */}
             <div className="pb-safe" />
           </motion.div>
         </React.Fragment>
@@ -187,7 +174,6 @@ export function BottomSheet({
     </AnimatePresence>
   );
 
-  // Safety check: only render portal if document.body exists
   if (typeof document === 'undefined' || !document.body) {
     return null;
   }
@@ -195,7 +181,6 @@ export function BottomSheet({
   return createPortal(content, document.body);
 }
 
-// Export a hook for managing bottom sheet state
 export function useBottomSheet(initialOpen = false) {
   const [isOpen, setIsOpen] = React.useState(initialOpen);
 

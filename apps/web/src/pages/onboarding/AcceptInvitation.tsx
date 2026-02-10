@@ -1,17 +1,19 @@
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
-import { motion } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 import { CheckCircle2, XCircle, ArrowRight, UserPlus, Clock, Mail } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/hooks/useAuth';
 import { useOrganization } from '@/hooks/useOrganization';
+import { LanguageSwitcher } from '@/components/common/LanguageSwitcher';
 
 type AcceptState = 'loading' | 'accepting' | 'success' | 'error' | 'not-logged-in';
 
 export default function AcceptInvitation() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const { user, isLoading: authLoading } = useAuth();
   const { acceptInvitation, setActiveOrganization } = useOrganization();
 
@@ -31,7 +33,7 @@ export default function AcceptInvitation() {
 
   const handleAcceptInvitation = async () => {
     if (!id) {
-      setErrorMessage('Invalid invitation link');
+      setErrorMessage(t('onboarding.invalidInvitation'));
       setState('error');
       return;
     }
@@ -48,14 +50,14 @@ export default function AcceptInvitation() {
       }, 2000);
     } catch (error) {
       setState('error');
-      const message = error instanceof Error ? error.message : 'Failed to accept invitation';
+      const message = error instanceof Error ? error.message : t('onboarding.invitationFailed');
 
       if (message.toLowerCase().includes('expired')) {
-        setErrorMessage('This invitation has expired. Please request a new one from your organization admin.');
+        setErrorMessage(t('onboarding.invitationExpired'));
       } else if (message.toLowerCase().includes('invalid') || message.toLowerCase().includes('not found')) {
-        setErrorMessage('Invalid invitation link. Please check the link or request a new invitation.');
+        setErrorMessage(t('onboarding.invalidInvitation'));
       } else if (message.toLowerCase().includes('already')) {
-        setErrorMessage('You are already a member of this organization.');
+        setErrorMessage(t('onboarding.alreadyMember'));
       } else {
         setErrorMessage(message);
       }
@@ -73,38 +75,28 @@ export default function AcceptInvitation() {
   };
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center bg-surface-0 px-4">
-      {/* Background glow */}
-      <div className="pointer-events-none absolute inset-0 overflow-hidden">
-        <div className="absolute left-1/2 top-0 -translate-x-1/2 h-[600px] w-[800px] rounded-full bg-primary-600/[0.07] blur-[120px]" />
-      </div>
-
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.4 }}
-        className="relative w-full max-w-sm"
-      >
+    <div className="flex min-h-screen flex-col items-center justify-center bg-zinc-50 px-4">
+      <div className="w-full max-w-sm">
         {/* Logo */}
         <div className="mb-10 flex flex-col items-center gap-3">
-          <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-primary-500 to-primary-600 shadow-xl shadow-primary-500/25">
+          <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-primary-500 shadow-lg shadow-primary-500/20">
             <Clock className="h-7 w-7 text-white" />
           </div>
         </div>
 
         {/* Card */}
-        <div className="glass-card p-6 space-y-6">
+        <div className="rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm space-y-6">
           {/* Icon */}
           <div className="flex justify-center">
-            <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-primary-500/15 border border-primary-500/20">
+            <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-primary-50 border border-primary-200">
               {(state === 'loading' || state === 'accepting') ? (
-                <div className="h-7 w-7 animate-spin rounded-full border-2 border-primary-500/20 border-t-primary-500" />
+                <div className="h-7 w-7 animate-spin rounded-full border-2 border-primary-200 border-t-primary-500" />
               ) : state === 'success' ? (
-                <CheckCircle2 className="h-7 w-7 text-emerald-400" />
+                <CheckCircle2 className="h-7 w-7 text-emerald-600" />
               ) : state === 'error' ? (
-                <XCircle className="h-7 w-7 text-red-400" />
+                <XCircle className="h-7 w-7 text-red-600" />
               ) : (
-                <UserPlus className="h-7 w-7 text-primary-400" />
+                <UserPlus className="h-7 w-7 text-primary-600" />
               )}
             </div>
           </div>
@@ -112,37 +104,32 @@ export default function AcceptInvitation() {
           {/* Loading */}
           {state === 'loading' && (
             <div className="text-center">
-              <h2 className="text-lg font-semibold text-white">Loading Invitation...</h2>
-              <p className="text-sm text-neutral-400 mt-1">Verifying your invitation</p>
+              <h2 className="text-lg font-semibold text-zinc-900">{t('onboarding.loadingInvitation')}</h2>
+              <p className="text-sm text-zinc-500 mt-1">{t('onboarding.verifyingInvitation')}</p>
             </div>
           )}
 
           {/* Accepting */}
           {state === 'accepting' && (
             <div className="text-center">
-              <h2 className="text-lg font-semibold text-white">Accepting Invitation...</h2>
-              <p className="text-sm text-neutral-400 mt-1">Adding you to the organization</p>
+              <h2 className="text-lg font-semibold text-zinc-900">{t('onboarding.acceptingInvitation')}</h2>
+              <p className="text-sm text-zinc-500 mt-1">{t('onboarding.addingToOrg')}</p>
             </div>
           )}
 
           {/* Success */}
           {state === 'success' && (
             <div className="text-center">
-              <h2 className="text-lg font-semibold text-white">Welcome Aboard!</h2>
-              <p className="text-sm text-neutral-400 mt-1">
-                You've joined the organization. Redirecting...
+              <h2 className="text-lg font-semibold text-zinc-900">{t('onboarding.welcomeAboard')}</h2>
+              <p className="text-sm text-zinc-500 mt-1">
+                {t('onboarding.joinedRedirect')}
               </p>
-              <motion.div
-                initial={{ scale: 0 }}
-                animate={{ scale: 1 }}
-                transition={{ delay: 0.2, type: 'spring' }}
-                className="mt-4 inline-flex"
-              >
+              <div className="mt-4 inline-flex">
                 <span className="badge-success">
                   <CheckCircle2 className="h-3.5 w-3.5" />
-                  Invitation accepted
+                  {t('onboarding.invitationAccepted')}
                 </span>
-              </motion.div>
+              </div>
             </div>
           )}
 
@@ -150,9 +137,9 @@ export default function AcceptInvitation() {
           {state === 'error' && (
             <div className="space-y-4">
               <div className="text-center">
-                <h2 className="text-lg font-semibold text-white">Invitation Error</h2>
+                <h2 className="text-lg font-semibold text-zinc-900">{t('onboarding.invitationError')}</h2>
               </div>
-              <div className="flex items-center gap-2 rounded-xl border border-red-500/20 bg-red-500/10 px-4 py-3 text-sm text-red-400">
+              <div className="flex items-center gap-2 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
                 <XCircle className="h-4 w-4 shrink-0" />
                 {errorMessage}
               </div>
@@ -160,15 +147,15 @@ export default function AcceptInvitation() {
                 <Button
                   onClick={() => navigate('/auth/signin')}
                   variant="outline"
-                  className="h-11 rounded-xl border-white/[0.08] bg-white/[0.04] hover:bg-white/[0.08]"
+                  className="h-11"
                 >
-                  Sign In
+                  {t('auth.signIn')}
                 </Button>
                 <Button
                   onClick={() => navigate('/auth/signup')}
-                  className="h-11 rounded-xl bg-primary-500 hover:bg-primary-600"
+                  className="h-11"
                 >
-                  Sign Up
+                  {t('auth.signUp')}
                 </Button>
               </div>
             </div>
@@ -178,54 +165,58 @@ export default function AcceptInvitation() {
           {state === 'not-logged-in' && (
             <div className="space-y-5">
               <div className="text-center">
-                <h2 className="text-lg font-semibold text-white">You're Invited!</h2>
-                <p className="text-sm text-neutral-400 mt-1">
-                  Sign up or sign in to accept your invitation to Torre Tempo.
+                <h2 className="text-lg font-semibold text-zinc-900">{t('onboarding.youreInvited')}</h2>
+                <p className="text-sm text-zinc-500 mt-1">
+                  {t('onboarding.signUpToAccept')}
                 </p>
               </div>
 
               <div className="space-y-3">
                 <Button
                   onClick={handleSignUpWithInvitation}
-                  className="w-full h-12 gap-2 rounded-xl bg-primary-500 hover:bg-primary-600 text-white font-medium min-h-touch"
+                  className="w-full h-12 gap-2 min-h-touch"
                 >
                   <UserPlus className="h-4 w-4" />
-                  Create Account & Join
+                  {t('onboarding.createAndJoin')}
                   <ArrowRight className="h-4 w-4" />
                 </Button>
 
                 <div className="relative py-1">
                   <div className="absolute inset-0 flex items-center">
-                    <div className="w-full border-t border-white/[0.06]" />
+                    <div className="w-full border-t border-zinc-200" />
                   </div>
                   <div className="relative flex justify-center text-xs">
-                    <span className="bg-surface-0 px-3 text-neutral-600">Already have an account?</span>
+                    <span className="bg-white px-3 text-zinc-400">{t('auth.hasAccount')}</span>
                   </div>
                 </div>
 
                 <Button
                   onClick={handleSignInWithInvitation}
                   variant="outline"
-                  className="w-full h-11 gap-2 rounded-xl border-white/[0.08] bg-white/[0.04] hover:bg-white/[0.08]"
+                  className="w-full h-11 gap-2"
                 >
                   <Mail className="h-4 w-4" />
-                  Sign In & Join
+                  {t('onboarding.signInAndJoin')}
                 </Button>
               </div>
 
-              <p className="text-center text-xs text-neutral-500">
-                Your invitation will be automatically accepted after you sign in.
+              <p className="text-center text-xs text-zinc-500">
+                {t('onboarding.autoAccept')}
               </p>
             </div>
           )}
         </div>
 
-        <p className="mt-6 text-center text-sm text-neutral-500">
-          <Link to="/" className="hover:text-neutral-300 transition-colors">
-            Back to home
+        <p className="mt-6 text-center text-sm text-zinc-500">
+          <Link to="/" className="hover:text-zinc-900 transition-colors">
+            {t('common.backToHome')}
           </Link>
         </p>
-      </motion.div>
+
+        <div className="mt-4 flex justify-center">
+          <LanguageSwitcher />
+        </div>
+      </div>
     </div>
   );
 }

@@ -4,7 +4,7 @@
  */
 
 import { useState, useEffect, useCallback } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 import {
   Bell,
@@ -46,9 +46,9 @@ import {
 import type { BroadcastMessage } from '@/lib/api/admin';
 
 const severityColors = {
-  info: 'bg-blue-500/20 text-blue-300 border-blue-500/30',
-  warning: 'bg-amber-500/20 text-amber-300 border-amber-500/30',
-  urgent: 'bg-red-500/20 text-red-300 border-red-500/30',
+  info: 'bg-blue-50 text-blue-700 border-blue-200',
+  warning: 'bg-amber-50 text-amber-700 border-amber-200',
+  urgent: 'bg-red-50 text-red-700 border-red-200',
 };
 
 const severityIcons = {
@@ -64,6 +64,8 @@ const targetTypeIcons = {
 };
 
 export default function NotificationsPage() {
+  const { t } = useTranslation();
+
   // State
   const [broadcasts, setBroadcasts] = useState<BroadcastMessage[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -171,18 +173,18 @@ export default function NotificationsPage() {
   };
 
   return (
-    <div className="min-h-screen bg-zinc-950 p-4 md:p-8">
+    <div className="min-h-screen bg-zinc-50 p-4 md:p-8">
       {/* Header */}
       <div className="max-w-7xl mx-auto mb-8">
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-3">
-            <div className="p-2 rounded-xl bg-indigo-500/20 border border-indigo-500/30">
-              <Bell className="w-6 h-6 text-indigo-400" />
+            <div className="p-2 rounded-xl bg-amber-50 border border-amber-200">
+              <Bell className="w-6 h-6 text-amber-600" />
             </div>
             <div>
-              <h1 className="text-2xl font-bold text-white">Broadcast Messages</h1>
-              <p className="text-sm text-zinc-400 mt-1">
-                Send notifications to users and organizations
+              <h1 className="text-2xl font-bold text-zinc-900">{t('admin.notifications.title')}</h1>
+              <p className="text-sm text-zinc-500 mt-1">
+                {t('admin.notifications.createBroadcast')}
               </p>
             </div>
           </div>
@@ -192,20 +194,20 @@ export default function NotificationsPage() {
               size="sm"
               onClick={() => loadBroadcasts()}
               disabled={isRefreshing}
-              className="border-zinc-700 hover:bg-zinc-800"
+              className="border-zinc-200 hover:bg-zinc-100"
             >
               <RefreshCw
                 className={cn('w-4 h-4 mr-2', isRefreshing && 'animate-spin')}
               />
-              Refresh
+              {t('admin.refresh')}
             </Button>
             <Button
               size="sm"
               onClick={() => setCreateModal(true)}
-              className="bg-indigo-600 hover:bg-indigo-700"
+              className="bg-amber-600 hover:bg-amber-700"
             >
               <Plus className="w-4 h-4 mr-2" />
-              New Broadcast
+              {t('common.create')}
             </Button>
           </div>
         </div>
@@ -215,20 +217,20 @@ export default function NotificationsPage() {
       <div className="max-w-7xl mx-auto">
         {isLoading ? (
           <div className="text-center py-12">
-            <RefreshCw className="w-8 h-8 text-zinc-600 mx-auto mb-3 animate-spin" />
-            <p className="text-zinc-500">Loading broadcasts...</p>
+            <RefreshCw className="w-8 h-8 text-zinc-400 mx-auto mb-3 animate-spin" />
+            <p className="text-zinc-500">{t('common.loading')}</p>
           </div>
         ) : broadcasts.length === 0 ? (
           <div className="text-center py-12">
-            <Bell className="w-12 h-12 text-zinc-700 mx-auto mb-3" />
-            <p className="text-zinc-500">No broadcasts yet</p>
+            <Bell className="w-12 h-12 text-zinc-300 mx-auto mb-3" />
+            <p className="text-zinc-500">{t('admin.notifications.noBroadcasts')}</p>
             <Button
               size="sm"
               onClick={() => setCreateModal(true)}
-              className="mt-4 bg-indigo-600 hover:bg-indigo-700"
+              className="mt-4 bg-amber-600 hover:bg-amber-700"
             >
               <Plus className="w-4 h-4 mr-2" />
-              Create First Broadcast
+              {t('admin.notifications.createBroadcast')}
             </Button>
           </div>
         ) : (
@@ -239,19 +241,17 @@ export default function NotificationsPage() {
               const isExpired = broadcast.expires_at && new Date(broadcast.expires_at) < new Date();
 
               return (
-                <motion.div
+                <div
                   key={broadcast.id}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
                   className={cn(
-                    'glass-card p-6 rounded-xl border border-white/10',
+                    'rounded-xl border border-zinc-200 bg-white shadow-sm p-6',
                     isExpired && 'opacity-60'
                   )}
                 >
                   <div className="flex items-start justify-between">
                     <div className="flex-1">
                       <div className="flex items-center gap-3 mb-2">
-                        <h3 className="text-lg font-semibold text-white">
+                        <h3 className="text-lg font-semibold text-zinc-900">
                           {broadcast.title}
                         </h3>
                         <Badge className={severityColors[broadcast.severity]}>
@@ -259,12 +259,12 @@ export default function NotificationsPage() {
                           {broadcast.severity}
                         </Badge>
                         {isExpired && (
-                          <Badge className="bg-zinc-500/20 text-zinc-400 border-zinc-500/30">
+                          <Badge className="bg-zinc-100 text-zinc-500 border-zinc-200">
                             Expired
                           </Badge>
                         )}
                       </div>
-                      <p className="text-sm text-zinc-300 mb-4">
+                      <p className="text-sm text-zinc-700 mb-4">
                         {broadcast.message}
                       </p>
                       <div className="flex items-center gap-4 text-xs text-zinc-500">
@@ -294,12 +294,12 @@ export default function NotificationsPage() {
                       variant="outline"
                       size="sm"
                       onClick={() => setDeleteModal(broadcast)}
-                      className="border-red-500/30 hover:bg-red-500/10 text-red-400"
+                      className="border-red-200 hover:bg-red-50 text-red-600"
                     >
                       <Trash2 className="w-4 h-4" />
                     </Button>
                   </div>
-                </motion.div>
+                </div>
               );
             })}
           </div>
@@ -307,183 +307,179 @@ export default function NotificationsPage() {
       </div>
 
       {/* Create Modal */}
-      <AnimatePresence>
-        {createModal && (
-          <Dialog open={createModal} onOpenChange={setCreateModal}>
-            <DialogContent className="bg-zinc-900 border-zinc-800 max-w-2xl">
-              <DialogHeader>
-                <DialogTitle className="text-white">
-                  Create Broadcast Message
-                </DialogTitle>
-                <DialogDescription className="text-zinc-400">
-                  Send a notification to users or organizations
-                </DialogDescription>
-              </DialogHeader>
-              <div className="space-y-4 py-4">
+      {createModal && (
+        <Dialog open={createModal} onOpenChange={setCreateModal}>
+          <DialogContent className="bg-white border-zinc-200 max-w-2xl">
+            <DialogHeader>
+              <DialogTitle className="text-zinc-900">
+                {t('admin.notifications.createBroadcast')}
+              </DialogTitle>
+              <DialogDescription className="text-zinc-500">
+                Send a notification to users or organizations
+              </DialogDescription>
+            </DialogHeader>
+            <div className="space-y-4 py-4">
+              <div>
+                <label className="text-sm font-medium text-zinc-700 mb-2 block">
+                  Title *
+                </label>
+                <Input
+                  placeholder="Important update"
+                  value={form.title}
+                  onChange={(e) =>
+                    setForm({ ...form, title: e.target.value })
+                  }
+                  className="bg-zinc-50 border-zinc-200 text-zinc-900"
+                />
+              </div>
+              <div>
+                <label className="text-sm font-medium text-zinc-700 mb-2 block">
+                  Message *
+                </label>
+                <textarea
+                  placeholder="Broadcast message content..."
+                  value={form.message}
+                  onChange={(e) =>
+                    setForm({ ...form, message: e.target.value })
+                  }
+                  rows={4}
+                  className="w-full px-3 py-2 bg-zinc-50 border border-zinc-200 rounded-md text-zinc-900 placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-amber-500"
+                />
+              </div>
+              <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="text-sm font-medium text-zinc-300 mb-2 block">
-                    Title *
+                  <label className="text-sm font-medium text-zinc-700 mb-2 block">
+                    Severity
                   </label>
-                  <Input
-                    placeholder="Important update"
-                    value={form.title}
-                    onChange={(e) =>
-                      setForm({ ...form, title: e.target.value })
+                  <Select
+                    value={form.severity}
+                    onValueChange={(value: any) =>
+                      setForm({ ...form, severity: value })
                     }
-                    className="bg-zinc-800 border-zinc-700 text-white"
-                  />
+                  >
+                    <SelectTrigger className="bg-zinc-50 border-zinc-200 text-zinc-900">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent className="bg-white border-zinc-200">
+                      <SelectItem value="info">Info</SelectItem>
+                      <SelectItem value="warning">Warning</SelectItem>
+                      <SelectItem value="urgent">Urgent</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
                 <div>
-                  <label className="text-sm font-medium text-zinc-300 mb-2 block">
-                    Message *
+                  <label className="text-sm font-medium text-zinc-700 mb-2 block">
+                    Target
                   </label>
-                  <textarea
-                    placeholder="Broadcast message content..."
-                    value={form.message}
-                    onChange={(e) =>
-                      setForm({ ...form, message: e.target.value })
+                  <Select
+                    value={form.target_type}
+                    onValueChange={(value: any) =>
+                      setForm({ ...form, target_type: value })
                     }
-                    rows={4}
-                    className="w-full px-3 py-2 bg-zinc-800 border border-zinc-700 rounded-md text-white placeholder:text-zinc-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                  />
-                </div>
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="text-sm font-medium text-zinc-300 mb-2 block">
-                      Severity
-                    </label>
-                    <Select
-                      value={form.severity}
-                      onValueChange={(value: any) =>
-                        setForm({ ...form, severity: value })
-                      }
-                    >
-                      <SelectTrigger className="bg-zinc-800 border-zinc-700 text-white">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent className="bg-zinc-800 border-zinc-700">
-                        <SelectItem value="info">Info</SelectItem>
-                        <SelectItem value="warning">Warning</SelectItem>
-                        <SelectItem value="urgent">Urgent</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <div>
-                    <label className="text-sm font-medium text-zinc-300 mb-2 block">
-                      Target
-                    </label>
-                    <Select
-                      value={form.target_type}
-                      onValueChange={(value: any) =>
-                        setForm({ ...form, target_type: value })
-                      }
-                    >
-                      <SelectTrigger className="bg-zinc-800 border-zinc-700 text-white">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent className="bg-zinc-800 border-zinc-700">
-                        <SelectItem value="all">All Users</SelectItem>
-                        <SelectItem value="organization">
-                          Specific Organizations
-                        </SelectItem>
-                        <SelectItem value="user">Specific Users</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </div>
-                {form.target_type !== 'all' && (
-                  <div>
-                    <label className="text-sm font-medium text-zinc-300 mb-2 block">
-                      Target IDs (comma-separated)
-                    </label>
-                    <Input
-                      placeholder="id1, id2, id3"
-                      value={form.target_ids}
-                      onChange={(e) =>
-                        setForm({ ...form, target_ids: e.target.value })
-                      }
-                      className="bg-zinc-800 border-zinc-700 text-white"
-                    />
-                    <p className="text-xs text-zinc-500 mt-1">
-                      Enter user or organization IDs separated by commas
-                    </p>
-                  </div>
-                )}
-                <div>
-                  <label className="text-sm font-medium text-zinc-300 mb-2 block">
-                    Expiration Date (optional)
-                  </label>
-                  <Input
-                    type="datetime-local"
-                    value={form.expires_at}
-                    onChange={(e) =>
-                      setForm({ ...form, expires_at: e.target.value })
-                    }
-                    className="bg-zinc-800 border-zinc-700 text-white"
-                  />
-                  <p className="text-xs text-zinc-500 mt-1">
-                    Leave empty for no expiration
-                  </p>
+                  >
+                    <SelectTrigger className="bg-zinc-50 border-zinc-200 text-zinc-900">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent className="bg-white border-zinc-200">
+                      <SelectItem value="all">All Users</SelectItem>
+                      <SelectItem value="organization">
+                        Specific Organizations
+                      </SelectItem>
+                      <SelectItem value="user">Specific Users</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
               </div>
-              <DialogFooter>
-                <Button
-                  variant="outline"
-                  onClick={() => setCreateModal(false)}
-                  disabled={isActionLoading}
-                  className="border-zinc-700 hover:bg-zinc-800"
-                >
-                  Cancel
-                </Button>
-                <Button
-                  onClick={handleCreate}
-                  disabled={isActionLoading || !form.title.trim() || !form.message.trim()}
-                  className="bg-indigo-600 hover:bg-indigo-700"
-                >
-                  {isActionLoading ? 'Sending...' : 'Send Broadcast'}
-                </Button>
-              </DialogFooter>
-            </DialogContent>
-          </Dialog>
-        )}
-      </AnimatePresence>
+              {form.target_type !== 'all' && (
+                <div>
+                  <label className="text-sm font-medium text-zinc-700 mb-2 block">
+                    Target IDs (comma-separated)
+                  </label>
+                  <Input
+                    placeholder="id1, id2, id3"
+                    value={form.target_ids}
+                    onChange={(e) =>
+                      setForm({ ...form, target_ids: e.target.value })
+                    }
+                    className="bg-zinc-50 border-zinc-200 text-zinc-900"
+                  />
+                  <p className="text-xs text-zinc-500 mt-1">
+                    Enter user or organization IDs separated by commas
+                  </p>
+                </div>
+              )}
+              <div>
+                <label className="text-sm font-medium text-zinc-700 mb-2 block">
+                  Expiration Date (optional)
+                </label>
+                <Input
+                  type="datetime-local"
+                  value={form.expires_at}
+                  onChange={(e) =>
+                    setForm({ ...form, expires_at: e.target.value })
+                  }
+                  className="bg-zinc-50 border-zinc-200 text-zinc-900"
+                />
+                <p className="text-xs text-zinc-500 mt-1">
+                  Leave empty for no expiration
+                </p>
+              </div>
+            </div>
+            <DialogFooter>
+              <Button
+                variant="outline"
+                onClick={() => setCreateModal(false)}
+                disabled={isActionLoading}
+                className="border-zinc-200 hover:bg-zinc-100"
+              >
+                {t('common.cancel')}
+              </Button>
+              <Button
+                onClick={handleCreate}
+                disabled={isActionLoading || !form.title.trim() || !form.message.trim()}
+                className="bg-amber-600 hover:bg-amber-700"
+              >
+                {isActionLoading ? 'Sending...' : t('common.save')}
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+      )}
 
       {/* Delete Confirmation Modal */}
-      <AnimatePresence>
-        {deleteModal && (
-          <Dialog open={!!deleteModal} onOpenChange={() => setDeleteModal(null)}>
-            <DialogContent className="bg-zinc-900 border-zinc-800">
-              <DialogHeader>
-                <DialogTitle className="text-white flex items-center gap-2">
-                  <Trash2 className="w-5 h-5 text-red-400" />
-                  Delete Broadcast
-                </DialogTitle>
-                <DialogDescription className="text-zinc-400">
-                  Are you sure you want to delete "{deleteModal.title}"? This
-                  action cannot be undone.
-                </DialogDescription>
-              </DialogHeader>
-              <DialogFooter>
-                <Button
-                  variant="outline"
-                  onClick={() => setDeleteModal(null)}
-                  disabled={isActionLoading}
-                  className="border-zinc-700 hover:bg-zinc-800"
-                >
-                  Cancel
-                </Button>
-                <Button
-                  onClick={handleDelete}
-                  disabled={isActionLoading}
-                  className="bg-red-600 hover:bg-red-700"
-                >
-                  {isActionLoading ? 'Deleting...' : 'Delete Broadcast'}
-                </Button>
-              </DialogFooter>
-            </DialogContent>
-          </Dialog>
-        )}
-      </AnimatePresence>
+      {deleteModal && (
+        <Dialog open={!!deleteModal} onOpenChange={() => setDeleteModal(null)}>
+          <DialogContent className="bg-white border-zinc-200">
+            <DialogHeader>
+              <DialogTitle className="text-zinc-900 flex items-center gap-2">
+                <Trash2 className="w-5 h-5 text-red-600" />
+                Delete Broadcast
+              </DialogTitle>
+              <DialogDescription className="text-zinc-500">
+                Are you sure you want to delete "{deleteModal.title}"? This
+                action cannot be undone.
+              </DialogDescription>
+            </DialogHeader>
+            <DialogFooter>
+              <Button
+                variant="outline"
+                onClick={() => setDeleteModal(null)}
+                disabled={isActionLoading}
+                className="border-zinc-200 hover:bg-zinc-100"
+              >
+                {t('common.cancel')}
+              </Button>
+              <Button
+                onClick={handleDelete}
+                disabled={isActionLoading}
+                className="bg-red-600 hover:bg-red-700"
+              >
+                {isActionLoading ? 'Deleting...' : 'Delete Broadcast'}
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+      )}
     </div>
   );
 }

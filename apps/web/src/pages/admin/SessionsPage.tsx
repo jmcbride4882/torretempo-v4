@@ -4,7 +4,7 @@
  */
 
 import { useState, useEffect, useCallback } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 import {
   Monitor,
@@ -97,6 +97,8 @@ function formatRelativeTime(dateStr: string): string {
 }
 
 export default function SessionsPage() {
+  const { t } = useTranslation();
+
   // Data state
   const [sessions, setSessions] = useState<AdminSession[]>([]);
   const [total, setTotal] = useState(0);
@@ -189,58 +191,53 @@ export default function SessionsPage() {
   return (
     <div className="space-y-6">
       {/* Page header */}
-      <motion.div
-        initial={{ opacity: 0, y: -10 }}
-        animate={{ opacity: 1, y: 0 }}
+      <div
         className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between"
       >
         <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-violet-600/20 to-fuchsia-600/20 shadow-lg shadow-violet-500/10">
-            <Monitor className="h-5 w-5 text-violet-400" />
+          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-amber-50 shadow-sm">
+            <Monitor className="h-5 w-5 text-amber-600" />
           </div>
           <div>
-            <h1 className="text-xl font-bold text-white sm:text-2xl">Sessions</h1>
-            <p className="text-sm text-neutral-400">
+            <h1 className="text-xl font-bold text-zinc-900 sm:text-2xl">{t('admin.sessions.title')}</h1>
+            <p className="text-sm text-zinc-500">
               Live monitoring -- Updates every 10 seconds
             </p>
           </div>
         </div>
 
         <div className="flex items-center gap-2">
-          <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+          <div>
             <Button
               variant="ghost"
               size="sm"
               onClick={handleRefresh}
               disabled={isRefreshing}
-              className="gap-1.5 rounded-lg border border-white/5 bg-white/5 text-neutral-300 hover:bg-white/10"
+              className="gap-1.5 rounded-lg border border-zinc-200 bg-zinc-50 text-zinc-700 hover:bg-zinc-100"
             >
               <RefreshCw className={cn('h-4 w-4', isRefreshing && 'animate-spin')} />
-              <span className="hidden sm:inline">Refresh</span>
+              <span className="hidden sm:inline">{t('admin.refresh')}</span>
             </Button>
-          </motion.div>
+          </div>
         </div>
-      </motion.div>
+      </div>
 
       {/* Filters */}
-      <motion.div
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.1 }}
+      <div
         className="flex flex-col gap-3 sm:flex-row sm:items-center"
       >
         {/* Search */}
         <div className="relative flex-1 sm:max-w-xs">
-          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-neutral-500" />
+          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-500" />
           <Input
             type="text"
-            placeholder="Search by name or email..."
+            placeholder={t('common.search')}
             value={searchQuery}
             onChange={(e) => {
               setSearchQuery(e.target.value);
               setPage(1);
             }}
-            className="glass-card border-white/10 pl-9 text-white placeholder:text-neutral-500 focus:border-violet-500"
+            className="rounded-xl border border-zinc-200 bg-white pl-9 text-zinc-900 shadow-sm placeholder:text-zinc-400 focus:border-amber-500"
           />
         </div>
 
@@ -252,61 +249,54 @@ export default function SessionsPage() {
             setPage(1);
           }}
         >
-          <SelectTrigger className="w-[160px] glass-card border-white/10 text-white">
+          <SelectTrigger className="w-[160px] rounded-xl border border-zinc-200 bg-white text-zinc-900 shadow-sm">
             <SelectValue placeholder="Status" />
           </SelectTrigger>
-          <SelectContent className="glass-card border-white/10">
-            <SelectItem value="all" className="text-neutral-200">All Sessions</SelectItem>
-            <SelectItem value="active" className="text-neutral-200">Active</SelectItem>
-            <SelectItem value="expired" className="text-neutral-200">Expired</SelectItem>
-            <SelectItem value="impersonated" className="text-neutral-200">Impersonated</SelectItem>
+          <SelectContent className="rounded-xl border border-zinc-200 bg-white shadow-sm">
+            <SelectItem value="all" className="text-zinc-700">All Sessions</SelectItem>
+            <SelectItem value="active" className="text-zinc-700">Active</SelectItem>
+            <SelectItem value="expired" className="text-zinc-700">Expired</SelectItem>
+            <SelectItem value="impersonated" className="text-zinc-700">Impersonated</SelectItem>
           </SelectContent>
         </Select>
-      </motion.div>
+      </div>
 
       {/* Stats bar */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.15 }}
+      <div
         className="flex flex-wrap items-center gap-4 text-sm sm:gap-6"
       >
         <div className="flex items-center gap-2">
-          <div className="h-2 w-2 rounded-full bg-violet-500" />
-          <span className="text-neutral-400">
-            <span className="font-medium text-neutral-200">{total}</span> total
+          <div className="h-2 w-2 rounded-full bg-amber-500" />
+          <span className="text-zinc-500">
+            <span className="font-medium text-zinc-700">{total}</span> {t('admin.total')}
           </span>
         </div>
         <div className="flex items-center gap-2">
           <div className="h-2 w-2 rounded-full bg-emerald-500" />
-          <span className="text-neutral-400">
-            <span className="font-medium text-neutral-200">{activeCount}</span> active
+          <span className="text-zinc-500">
+            <span className="font-medium text-zinc-700">{activeCount}</span> {t('admin.active')}
           </span>
         </div>
         {expiredCount > 0 && (
           <div className="flex items-center gap-2">
-            <div className="h-2 w-2 rounded-full bg-neutral-500" />
-            <span className="text-neutral-400">
-              <span className="font-medium text-neutral-200">{expiredCount}</span> expired
+            <div className="h-2 w-2 rounded-full bg-zinc-400" />
+            <span className="text-zinc-500">
+              <span className="font-medium text-zinc-700">{expiredCount}</span> {t('admin.expired')}
             </span>
           </div>
         )}
         {impersonatedCount > 0 && (
           <div className="flex items-center gap-2">
             <div className="h-2 w-2 rounded-full bg-amber-500" />
-            <span className="text-neutral-400">
-              <span className="font-medium text-neutral-200">{impersonatedCount}</span> impersonated
+            <span className="text-zinc-500">
+              <span className="font-medium text-zinc-700">{impersonatedCount}</span> {t('admin.impersonated')}
             </span>
           </div>
         )}
-      </motion.div>
+      </div>
 
       {/* Sessions grid */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.2 }}
-      >
+      <div>
         {isLoading ? (
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {[...Array(6)].map((_, i) => (
@@ -323,26 +313,20 @@ export default function SessionsPage() {
           />
         ) : (
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            <AnimatePresence mode="popLayout">
-              {sessions.map((session, index) => (
-                <SessionCard
-                  key={session.id}
-                  session={session}
-                  index={index}
-                  onRevoke={() => setRevokeModal(session)}
-                />
-              ))}
-            </AnimatePresence>
+            {sessions.map((session, index) => (
+              <SessionCard
+                key={session.id}
+                session={session}
+                index={index}
+                onRevoke={() => setRevokeModal(session)}
+              />
+            ))}
           </div>
         )}
-      </motion.div>
+      </div>
 
       {/* Pagination */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.25 }}
-      >
+      <div>
         <PaginationControls
           page={page}
           totalPages={totalPages}
@@ -350,40 +334,41 @@ export default function SessionsPage() {
           limit={PAGE_SIZE}
           onPageChange={setPage}
         />
-      </motion.div>
+      </div>
 
       {/* Revoke Confirmation Modal */}
       <Dialog open={!!revokeModal} onOpenChange={() => setRevokeModal(null)}>
         <DialogContent>
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
-              <AlertTriangle className="h-5 w-5 text-red-400" />
-              Force Logout
+              <AlertTriangle className="h-5 w-5 text-red-500" />
+              {t('admin.sessions.forceLogout')}
             </DialogTitle>
             <DialogDescription>
-              Are you sure you want to revoke this session for{' '}
-              <strong>{revokeModal?.userName}</strong> ({revokeModal?.userEmail})?
-              They will be immediately logged out.
+              {t('admin.sessions.forceLogoutConfirm', {
+                name: revokeModal?.userName,
+                email: revokeModal?.userEmail,
+              })}
             </DialogDescription>
           </DialogHeader>
 
           {revokeModal && (
-            <div className="rounded-lg border border-white/10 bg-white/5 p-3 text-sm">
+            <div className="rounded-lg border border-zinc-200 bg-zinc-50 p-3 text-sm">
               <div className="flex items-center justify-between">
-                <span className="text-neutral-500">IP Address</span>
-                <span className="font-mono text-neutral-300">
+                <span className="text-zinc-500">{t('admin.sessions.ipAddress')}</span>
+                <span className="font-mono text-zinc-700">
                   {revokeModal.ipAddress || 'Unknown'}
                 </span>
               </div>
               <div className="mt-2 flex items-center justify-between">
-                <span className="text-neutral-500">Browser</span>
-                <span className="text-neutral-300">
+                <span className="text-zinc-500">{t('admin.sessions.browser')}</span>
+                <span className="text-zinc-700">
                   {parseUserAgent(revokeModal.userAgent)}
                 </span>
               </div>
               <div className="mt-2 flex items-center justify-between">
-                <span className="text-neutral-500">Created</span>
-                <span className="text-neutral-300">
+                <span className="text-zinc-500">{t('admin.sessions.created')}</span>
+                <span className="text-zinc-700">
                   {new Date(revokeModal.createdAt).toLocaleString()}
                 </span>
               </div>
@@ -403,7 +388,7 @@ export default function SessionsPage() {
               onClick={handleRevoke}
               disabled={isRevoking}
             >
-              {isRevoking ? 'Revoking...' : 'Force Logout'}
+              {isRevoking ? 'Revoking...' : t('admin.sessions.forceLogout')}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -422,36 +407,28 @@ interface SessionCardProps {
   onRevoke: () => void;
 }
 
-function SessionCard({ session, index, onRevoke }: SessionCardProps) {
+function SessionCard({ session, onRevoke }: SessionCardProps) {
+  const { t } = useTranslation();
   const expired = isSessionExpired(session.expiresAt);
   const isImpersonated = session.impersonatedBy !== null;
   const mobile = isMobileAgent(session.userAgent);
   const browser = parseUserAgent(session.userAgent);
 
   return (
-    <motion.div
-      layout
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: -20 }}
-      transition={{ delay: index * 0.05 }}
-      whileHover={{ y: -4 }}
+    <div
       className={cn(
-        'group relative overflow-hidden rounded-2xl border border-white/10 bg-white/5 backdrop-blur-xl transition-all duration-300',
-        'hover:border-white/20 hover:bg-white/[0.07] hover:shadow-xl hover:shadow-violet-500/5',
-        expired && 'border-neutral-500/20 bg-neutral-500/5 opacity-70',
-        isImpersonated && 'border-amber-500/20 bg-amber-500/5'
+        'group relative overflow-hidden rounded-xl border border-zinc-200 bg-white shadow-sm transition-all duration-300',
+        'hover:border-zinc-300 hover:shadow-md',
+        expired && 'border-zinc-200 bg-zinc-50 opacity-70',
+        isImpersonated && 'border-amber-200 bg-amber-50'
       )}
     >
-      {/* Gradient accent */}
-      <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-violet-500/50 to-transparent opacity-0 transition-opacity group-hover:opacity-100" />
-
       <div className="relative p-5">
         {/* Header: User info + status badge */}
         <div className="mb-4 flex items-start justify-between gap-3">
           <div className="flex items-center gap-3">
             <div className="relative">
-              <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br from-violet-600/80 to-fuchsia-600/80 text-sm font-semibold text-white">
+              <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-amber-100 text-sm font-semibold text-amber-700">
                 {session.userName.charAt(0).toUpperCase()}
               </div>
               {isImpersonated && (
@@ -461,17 +438,17 @@ function SessionCard({ session, index, onRevoke }: SessionCardProps) {
               )}
             </div>
             <div className="min-w-0">
-              <h3 className="truncate font-semibold text-white">{session.userName}</h3>
-              <p className="truncate text-sm text-neutral-500">{session.userEmail}</p>
+              <h3 className="truncate font-semibold text-zinc-900">{session.userName}</h3>
+              <p className="truncate text-sm text-zinc-500">{session.userEmail}</p>
             </div>
           </div>
 
           {expired ? (
-            <Badge className="border border-neutral-500/30 bg-neutral-500/20 text-neutral-300">
+            <Badge className="border border-zinc-300 bg-zinc-100 text-zinc-500">
               Expired
             </Badge>
           ) : (
-            <Badge className="border border-emerald-500/30 bg-emerald-500/20 text-emerald-300">
+            <Badge className="border border-emerald-300 bg-emerald-50 text-emerald-700">
               Active
             </Badge>
           )}
@@ -480,18 +457,18 @@ function SessionCard({ session, index, onRevoke }: SessionCardProps) {
         {/* Badges row */}
         <div className="mb-4 flex flex-wrap items-center gap-2">
           {session.userRole && (
-            <Badge className="border border-violet-500/30 bg-violet-500/20 text-violet-300">
+            <Badge className="border border-amber-300 bg-amber-50 text-amber-700">
               <Shield className="mr-1 h-3 w-3" />
               {session.userRole}
             </Badge>
           )}
           {isImpersonated && (
-            <Badge className="border border-amber-500/30 bg-amber-500/20 text-amber-300">
+            <Badge className="border border-amber-300 bg-amber-50 text-amber-700">
               <UserCog className="mr-1 h-3 w-3" />
-              Impersonated
+              {t('admin.impersonated')}
             </Badge>
           )}
-          <Badge className="border border-white/10 bg-white/5 text-neutral-400">
+          <Badge className="border border-zinc-200 bg-zinc-50 text-zinc-500">
             {mobile ? (
               <Smartphone className="mr-1 h-3 w-3" />
             ) : (
@@ -505,34 +482,34 @@ function SessionCard({ session, index, onRevoke }: SessionCardProps) {
         <div className="mb-4 space-y-2 text-sm">
           {session.ipAddress && (
             <div className="flex items-center justify-between">
-              <span className="flex items-center gap-1.5 text-neutral-500">
+              <span className="flex items-center gap-1.5 text-zinc-500">
                 <Globe className="h-3.5 w-3.5" />
-                IP Address
+                {t('admin.sessions.ipAddress')}
               </span>
-              <span className="font-mono text-neutral-300">{session.ipAddress}</span>
+              <span className="font-mono text-zinc-700">{session.ipAddress}</span>
             </div>
           )}
           <div className="flex items-center justify-between">
-            <span className="flex items-center gap-1.5 text-neutral-500">
+            <span className="flex items-center gap-1.5 text-zinc-500">
               <Clock className="h-3.5 w-3.5" />
-              Created
+              {t('admin.sessions.created')}
             </span>
-            <span className="text-neutral-300" title={new Date(session.createdAt).toLocaleString()}>
+            <span className="text-zinc-700" title={new Date(session.createdAt).toLocaleString()}>
               {formatRelativeTime(session.createdAt)}
             </span>
           </div>
           <div className="flex items-center justify-between">
-            <span className="text-neutral-500">Last active</span>
-            <span className="text-neutral-300" title={new Date(session.updatedAt).toLocaleString()}>
+            <span className="text-zinc-500">{t('admin.sessions.lastActive')}</span>
+            <span className="text-zinc-700" title={new Date(session.updatedAt).toLocaleString()}>
               {formatRelativeTime(session.updatedAt)}
             </span>
           </div>
           <div className="flex items-center justify-between">
-            <span className="text-neutral-500">Expires</span>
+            <span className="text-zinc-500">{t('admin.sessions.expires')}</span>
             <span
               className={cn(
                 'font-medium',
-                expired ? 'text-neutral-500' : 'text-neutral-300'
+                expired ? 'text-zinc-500' : 'text-zinc-700'
               )}
             >
               {expired
@@ -547,30 +524,30 @@ function SessionCard({ session, index, onRevoke }: SessionCardProps) {
 
         {/* Impersonation notice */}
         {isImpersonated && (
-          <div className="mb-4 flex items-center gap-2 rounded-lg border border-amber-500/20 bg-amber-500/10 px-3 py-2">
-            <AlertTriangle className="h-4 w-4 shrink-0 text-amber-400" />
-            <span className="text-sm text-amber-300">
-              Impersonated by {session.impersonatedBy}
+          <div className="mb-4 flex items-center gap-2 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2">
+            <AlertTriangle className="h-4 w-4 shrink-0 text-amber-600" />
+            <span className="text-sm text-amber-700">
+              {t('admin.sessions.impersonatedBy', { name: session.impersonatedBy })}
             </span>
           </div>
         )}
 
         {/* Force logout action */}
         {!expired && (
-          <div className="border-t border-white/5 pt-4">
+          <div className="border-t border-zinc-200 pt-4">
             <Button
               variant="ghost"
               size="sm"
               onClick={onRevoke}
-              className="w-full gap-1.5 text-red-400 hover:bg-red-500/10 hover:text-red-300"
+              className="w-full gap-1.5 text-red-500 hover:bg-red-50 hover:text-red-600"
             >
               <LogOut className="h-4 w-4" />
-              Force Logout
+              {t('admin.sessions.forceLogout')}
             </Button>
           </div>
         )}
       </div>
-    </motion.div>
+    </div>
   );
 }
 
@@ -580,28 +557,28 @@ function SessionCard({ session, index, onRevoke }: SessionCardProps) {
 
 function SessionCardSkeleton() {
   return (
-    <div className="animate-pulse rounded-2xl border border-white/10 bg-white/5 p-5">
+    <div className="animate-pulse rounded-xl border border-zinc-200 bg-white p-5 shadow-sm">
       <div className="mb-4 flex items-start justify-between">
         <div className="flex items-center gap-3">
-          <div className="h-11 w-11 rounded-xl bg-white/10" />
+          <div className="h-11 w-11 rounded-xl bg-zinc-100" />
           <div className="space-y-1.5">
-            <div className="h-5 w-28 rounded bg-white/10" />
-            <div className="h-4 w-36 rounded bg-white/10" />
+            <div className="h-5 w-28 rounded bg-zinc-100" />
+            <div className="h-4 w-36 rounded bg-zinc-100" />
           </div>
         </div>
-        <div className="h-6 w-16 rounded-full bg-white/10" />
+        <div className="h-6 w-16 rounded-full bg-zinc-100" />
       </div>
       <div className="mb-4 flex gap-2">
-        <div className="h-6 w-20 rounded-full bg-white/10" />
-        <div className="h-6 w-16 rounded-full bg-white/10" />
+        <div className="h-6 w-20 rounded-full bg-zinc-100" />
+        <div className="h-6 w-16 rounded-full bg-zinc-100" />
       </div>
       <div className="mb-4 space-y-2">
-        <div className="h-4 w-full rounded bg-white/10" />
-        <div className="h-4 w-full rounded bg-white/10" />
-        <div className="h-4 w-3/4 rounded bg-white/10" />
+        <div className="h-4 w-full rounded bg-zinc-100" />
+        <div className="h-4 w-full rounded bg-zinc-100" />
+        <div className="h-4 w-3/4 rounded bg-zinc-100" />
       </div>
-      <div className="border-t border-white/5 pt-4">
-        <div className="h-8 w-full rounded bg-white/10" />
+      <div className="border-t border-zinc-200 pt-4">
+        <div className="h-8 w-full rounded bg-zinc-100" />
       </div>
     </div>
   );
@@ -617,49 +594,44 @@ interface EmptyStateProps {
 }
 
 function EmptyState({ hasFilters, onClearFilters }: EmptyStateProps) {
+  const { t } = useTranslation();
+
   if (hasFilters) {
     return (
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-white/10 bg-white/[0.02] px-6 py-16 text-center"
+      <div
+        className="flex flex-col items-center justify-center rounded-xl border border-dashed border-zinc-200 bg-zinc-50 px-6 py-16 text-center"
       >
-        <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-xl bg-neutral-800/50">
-          <Search className="h-7 w-7 text-neutral-500" />
+        <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-xl bg-zinc-100">
+          <Search className="h-7 w-7 text-zinc-400" />
         </div>
-        <h3 className="mb-1 text-lg font-semibold text-white">No matching sessions</h3>
-        <p className="mb-4 max-w-sm text-sm text-neutral-400">
+        <h3 className="mb-1 text-lg font-semibold text-zinc-900">No matching sessions</h3>
+        <p className="mb-4 max-w-sm text-sm text-zinc-500">
           Try adjusting your filters or search query.
         </p>
         <Button
           variant="ghost"
           onClick={onClearFilters}
-          className="gap-2 rounded-lg border border-white/10 text-neutral-300 hover:bg-white/5"
+          className="gap-2 rounded-lg border border-zinc-200 text-zinc-700 hover:bg-zinc-50"
         >
           Clear filters
         </Button>
-      </motion.div>
+      </div>
     );
   }
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-white/10 bg-white/[0.02] px-6 py-16 text-center"
+    <div
+      className="flex flex-col items-center justify-center rounded-xl border border-dashed border-zinc-200 bg-zinc-50 px-6 py-16 text-center"
     >
-      <motion.div
-        initial={{ scale: 0.8 }}
-        animate={{ scale: 1 }}
-        transition={{ type: 'spring', stiffness: 200, delay: 0.1 }}
-        className="mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-violet-600/20 to-fuchsia-600/20"
+      <div
+        className="mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-amber-50"
       >
-        <Monitor className="h-8 w-8 text-violet-400" />
-      </motion.div>
-      <h3 className="mb-1 text-lg font-semibold text-white">No active sessions</h3>
-      <p className="max-w-sm text-sm text-neutral-400">
-        When users sign in, their sessions will appear here.
+        <Monitor className="h-8 w-8 text-amber-600" />
+      </div>
+      <h3 className="mb-1 text-lg font-semibold text-zinc-900">{t('admin.sessions.noSessionsYet')}</h3>
+      <p className="max-w-sm text-sm text-zinc-500">
+        {t('admin.sessions.sessionsAppearHere')}
       </p>
-    </motion.div>
+    </div>
   );
 }

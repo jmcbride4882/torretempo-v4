@@ -1,12 +1,14 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { motion } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 import { Mail, ArrowLeft, CheckCircle2, AlertCircle, Clock } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { LanguageSwitcher } from '@/components/common/LanguageSwitcher';
 
 export default function VerifyEmail() {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const token = searchParams.get('token');
 
   const [isVerifying, setIsVerifying] = useState(true);
@@ -15,7 +17,7 @@ export default function VerifyEmail() {
 
   useEffect(() => {
     if (!token) {
-      setError('Invalid or missing verification token');
+      setError(t('auth.invalidToken'));
       setIsVerifying(false);
       return;
     }
@@ -37,7 +39,7 @@ export default function VerifyEmail() {
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.error || 'Failed to verify email');
+        throw new Error(data.error || t('auth.verificationFailed'));
       }
 
       setSuccess(true);
@@ -45,82 +47,64 @@ export default function VerifyEmail() {
         navigate('/auth/signin');
       }, 3000);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to verify email');
+      setError(err instanceof Error ? err.message : t('auth.verificationFailed'));
     } finally {
       setIsVerifying(false);
     }
   };
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center bg-surface-0 px-4">
-      {/* Background glow */}
-      <div className="pointer-events-none absolute inset-0 overflow-hidden">
-        <div className="absolute left-1/2 top-0 -translate-x-1/2 h-[600px] w-[800px] rounded-full bg-primary-600/[0.07] blur-[120px]" />
-      </div>
-
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.4 }}
-        className="relative w-full max-w-sm"
-      >
+    <div className="flex min-h-screen flex-col items-center justify-center bg-zinc-50 px-4">
+      <div className="w-full max-w-sm">
         {/* Logo */}
         <div className="mb-10 flex flex-col items-center gap-3">
-          <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-primary-500 to-primary-600 shadow-xl shadow-primary-500/25">
+          <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-primary-500 shadow-lg shadow-primary-500/20">
             <Clock className="h-7 w-7 text-white" />
           </div>
           <div className="text-center">
-            <h1 className="text-xl font-bold text-white">Torre Tempo</h1>
-            <p className="text-sm text-neutral-500 mt-1">Workforce Management</p>
+            <h1 className="text-xl font-bold text-zinc-900">Torre Tempo</h1>
+            <p className="text-sm text-zinc-500 mt-1">{t('auth.subtitle')}</p>
           </div>
         </div>
 
         {/* Card */}
-        <div className="glass-card p-6 space-y-6">
+        <div className="rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm space-y-6">
           <div className="text-center">
             {isVerifying ? (
               <>
-                <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-primary-500/15 border border-primary-500/20">
-                  <Mail className="h-6 w-6 text-primary-400" />
+                <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-primary-50 border border-primary-200">
+                  <Mail className="h-6 w-6 text-primary-600" />
                 </div>
-                <h2 className="text-lg font-semibold text-white">Verifying Email</h2>
-                <p className="text-sm text-neutral-400 mt-1">Please wait...</p>
+                <h2 className="text-lg font-semibold text-zinc-900">{t('auth.verifyingEmail')}</h2>
+                <p className="text-sm text-zinc-500 mt-1">{t('common.loading')}...</p>
                 <div className="mt-6 flex justify-center">
-                  <div className="h-8 w-8 animate-spin rounded-full border-2 border-primary-500/20 border-t-primary-500" />
+                  <div className="h-8 w-8 animate-spin rounded-full border-2 border-primary-200 border-t-primary-500" />
                 </div>
               </>
             ) : success ? (
-              <motion.div
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                className="py-2"
-              >
-                <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-emerald-500/15 border border-emerald-500/20">
-                  <CheckCircle2 className="h-7 w-7 text-emerald-400" />
+              <div className="py-2">
+                <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-emerald-50 border border-emerald-200">
+                  <CheckCircle2 className="h-7 w-7 text-emerald-600" />
                 </div>
-                <h2 className="text-lg font-semibold text-white">Email Verified!</h2>
-                <p className="mt-2 text-sm text-neutral-400">
-                  Your email has been verified. Redirecting to sign in...
+                <h2 className="text-lg font-semibold text-zinc-900">{t('auth.emailVerified')}</h2>
+                <p className="mt-2 text-sm text-zinc-500">
+                  {t('auth.emailVerifiedRedirect')}
                 </p>
-              </motion.div>
+              </div>
             ) : (
-              <motion.div
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                className="py-2"
-              >
-                <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-red-500/15 border border-red-500/20">
-                  <AlertCircle className="h-7 w-7 text-red-400" />
+              <div className="py-2">
+                <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-red-50 border border-red-200">
+                  <AlertCircle className="h-7 w-7 text-red-600" />
                 </div>
-                <h2 className="text-lg font-semibold text-white">Verification Failed</h2>
-                <p className="mt-2 text-sm text-neutral-400">{error}</p>
+                <h2 className="text-lg font-semibold text-zinc-900">{t('auth.verificationFailed')}</h2>
+                <p className="mt-2 text-sm text-zinc-500">{error}</p>
                 <Button
                   onClick={() => navigate('/auth/signin')}
-                  className="mt-6 h-11 rounded-xl bg-primary-500 hover:bg-primary-600 text-white font-medium"
+                  className="mt-6"
                 >
-                  Go to Sign In
+                  {t('auth.goToSignIn')}
                 </Button>
-              </motion.div>
+              </div>
             )}
           </div>
         </div>
@@ -129,14 +113,18 @@ export default function VerifyEmail() {
           <div className="mt-6 text-center">
             <button
               onClick={() => navigate('/auth/signin')}
-              className="inline-flex items-center gap-2 text-sm text-neutral-500 transition-colors hover:text-white"
+              className="inline-flex items-center gap-2 text-sm text-zinc-500 transition-colors hover:text-zinc-900"
             >
               <ArrowLeft className="h-4 w-4" />
-              Back to Sign In
+              {t('auth.backToSignIn')}
             </button>
           </div>
         )}
-      </motion.div>
+
+        <div className="mt-4 flex justify-center">
+          <LanguageSwitcher />
+        </div>
+      </div>
     </div>
   );
 }

@@ -1,5 +1,4 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import { AnimatePresence } from 'framer-motion';
 import { ProtectedRoute } from '@/components/layout/ProtectedRoute';
 import { AdminRoute } from '@/components/layout/AdminRoute';
 import { OnboardingRedirect } from '@/components/layout/OnboardingRedirect';
@@ -27,44 +26,42 @@ import AdminLayout from '@/pages/admin/AdminLayout';
 function App() {
   return (
     <BrowserRouter>
-      <AnimatePresence mode="wait">
-        <Routes>
-          {/* Public landing page */}
-          <Route path="/" element={<Landing />} />
+      <Routes>
+        {/* Public landing page */}
+        <Route path="/" element={<Landing />} />
 
-          {/* Public auth routes */}
-          <Route path="/auth/signin" element={<SignIn />} />
-          <Route path="/auth/signup" element={<SignUp />} />
-          <Route path="/auth/reset-password" element={<ResetPassword />} />
-          <Route path="/auth/verify-email" element={<VerifyEmail />} />
-          
-          {/* Public invitation acceptance */}
-          <Route path="/accept-invitation/:id" element={<AcceptInvitation />} />
+        {/* Public auth routes */}
+        <Route path="/auth/signin" element={<SignIn />} />
+        <Route path="/auth/signup" element={<SignUp />} />
+        <Route path="/auth/reset-password" element={<ResetPassword />} />
+        <Route path="/auth/verify-email" element={<VerifyEmail />} />
 
-          {/* Protected routes */}
-          <Route element={<ProtectedRoute />}>
-            {/* Onboarding */}
-            <Route path="/onboarding/select" element={<SelectOrganization />} />
-            <Route path="/onboarding/create" element={<CreateTenant />} />
+        {/* Public invitation acceptance */}
+        <Route path="/accept-invitation/:id" element={<AcceptInvitation />} />
 
-            {/* Tenant routes */}
-            <Route path="/t/:slug/*" element={<AppShell />} />
-          </Route>
+        {/* Protected routes */}
+        <Route element={<ProtectedRoute />}>
+          {/* Onboarding */}
+          <Route path="/onboarding/select" element={<SelectOrganization />} />
+          <Route path="/onboarding/create" element={<CreateTenant />} />
 
-          {/* Admin routes */}
-          <Route element={<AdminRoute />}>
-            <Route path="/admin/*" element={<AdminLayout />} />
-          </Route>
+          {/* Tenant routes */}
+          <Route path="/t/:slug/*" element={<AppShell />} />
+        </Route>
 
-          {/* Smart redirect based on organization status */}
-          <Route element={<ProtectedRoute />}>
-            <Route path="/dashboard" element={<OnboardingRedirect />} />
-          </Route>
+        {/* Admin routes */}
+        <Route element={<AdminRoute />}>
+          <Route path="/admin/*" element={<AdminLayout />} />
+        </Route>
 
-          {/* Fallback redirects */}
-          <Route path="*" element={<Navigate to="/auth/signin" replace />} />
-        </Routes>
-      </AnimatePresence>
+        {/* Smart redirect based on organization status */}
+        <Route element={<ProtectedRoute />}>
+          <Route path="/dashboard" element={<OnboardingRedirect />} />
+        </Route>
+
+        {/* Fallback redirects */}
+        <Route path="*" element={<Navigate to="/auth/signin" replace />} />
+      </Routes>
     </BrowserRouter>
   );
 }

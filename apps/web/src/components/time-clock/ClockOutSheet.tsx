@@ -1,16 +1,15 @@
 /**
  * ClockOutSheet Component
  * Mobile-first bottom sheet for clocking out with duration summary and break tracking
- * Uses glassmorphism design, Framer Motion animations, and live duration counter
  */
 
 import * as React from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  MapPin, 
-  Loader2, 
-  CheckCircle2, 
-  AlertCircle, 
+import { useTranslation } from 'react-i18next';
+import {
+  MapPin,
+  Loader2,
+  CheckCircle2,
+  AlertCircle,
   Clock,
   Coffee,
   Timer,
@@ -42,35 +41,32 @@ export interface ClockOutSheetProps {
 }
 
 // ============================================================================
-// Constants
-// ============================================================================
-
-const SPRING_CONFIG = { type: 'spring', damping: 30, stiffness: 300 } as const;
-
-// ============================================================================
 // Helper Functions
 // ============================================================================
 
-function formatDuration(minutes: number): { hours: number; mins: number; text: string } {
+function formatDuration(
+  minutes: number,
+  t: (key: string, options?: Record<string, unknown>) => string
+): { hours: number; mins: number; text: string } {
   const hours = Math.floor(minutes / 60);
   const mins = minutes % 60;
-  
+
   if (hours === 0) {
-    return { hours, mins, text: `${mins} minute${mins !== 1 ? 's' : ''}` };
+    return { hours, mins, text: t('clock.durationMinutes', { count: mins }) };
   }
-  
-  return { 
-    hours, 
-    mins, 
-    text: `${hours} hour${hours !== 1 ? 's' : ''} ${mins} minute${mins !== 1 ? 's' : ''}` 
+
+  return {
+    hours,
+    mins,
+    text: `${t('clock.durationHours', { count: hours })} ${t('clock.durationMinutes', { count: mins })}`
   };
 }
 
 function formatTime(isoString: string): string {
-  return new Intl.DateTimeFormat('en-US', { 
-    hour: 'numeric', 
+  return new Intl.DateTimeFormat('es-ES', {
+    hour: '2-digit',
     minute: '2-digit',
-    hour12: true 
+    hour12: false
   }).format(new Date(isoString));
 }
 
@@ -79,12 +75,13 @@ function formatTime(isoString: string): string {
 // ============================================================================
 
 export function ClockOutSheet({ isOpen, onClose, organizationSlug, activeEntry }: ClockOutSheetProps) {
-  
+  const { t } = useTranslation();
+
   // Geolocation
-  const { 
-    position, 
-    loading: geoLoading, 
-    requestPermission 
+  const {
+    position,
+    loading: geoLoading,
+    requestPermission
   } = useGeolocation();
 
   // Haptic feedback
@@ -103,21 +100,21 @@ export function ClockOutSheet({ isOpen, onClose, organizationSlug, activeEntry }
   const [success, setSuccess] = React.useState(false);
   const [error, setError] = React.useState<string | null>(null);
 
-  // Time formatter
+  // Time formatter - es-ES locale with 24h time
   const timeFormatter = React.useMemo(
-    () => new Intl.DateTimeFormat('en-US', { 
-      hour: 'numeric', 
+    () => new Intl.DateTimeFormat('es-ES', {
+      hour: '2-digit',
       minute: '2-digit',
       second: '2-digit',
-      hour12: true 
+      hour12: false
     }),
     []
   );
 
   const dateFormatter = React.useMemo(
-    () => new Intl.DateTimeFormat('en-US', { 
+    () => new Intl.DateTimeFormat('es-ES', {
       weekday: 'long',
-      month: 'long', 
+      month: 'long',
       day: 'numeric'
     }),
     []
@@ -126,7 +123,7 @@ export function ClockOutSheet({ isOpen, onClose, organizationSlug, activeEntry }
   // Update current time and duration every second
   React.useEffect(() => {
     if (!isOpen || !activeEntry) return;
-    
+
     const updateDuration = () => {
       setCurrentTime(new Date());
       const clockInTime = Date.parse(activeEntry.clock_in);
@@ -134,7 +131,7 @@ export function ClockOutSheet({ isOpen, onClose, organizationSlug, activeEntry }
       const minutes = Math.floor((now - clockInTime) / 60000);
       setDurationMinutes(minutes);
     };
-    
+
     updateDuration();
     const interval = setInterval(updateDuration, 1000);
 
@@ -151,7 +148,7 @@ export function ClockOutSheet({ isOpen, onClose, organizationSlug, activeEntry }
   // Fetch breaks when sheet opens
   React.useEffect(() => {
     if (!isOpen || !activeEntry || !organizationSlug) return;
-    
+
     const loadBreaks = async () => {
       setBreaksLoading(true);
       try {
@@ -164,7 +161,7 @@ export function ClockOutSheet({ isOpen, onClose, organizationSlug, activeEntry }
         setBreaksLoading(false);
       }
     };
-    
+
     loadBreaks();
   }, [isOpen, activeEntry, organizationSlug]);
 
@@ -186,10 +183,10 @@ export function ClockOutSheet({ isOpen, onClose, organizationSlug, activeEntry }
   // Handle clock out submission
   const handleClockOut = async () => {
     if (!organizationSlug || !activeEntry || !position) return;
-    
+
     // Light haptic feedback on button press
     haptic.light();
-    
+
     setSubmitting(true);
     setError(null);
 
@@ -208,15 +205,15 @@ export function ClockOutSheet({ isOpen, onClose, organizationSlug, activeEntry }
       if (!isOnline) {
         // Queue action for offline processing
         await enqueueAction('clock-out', organizationSlug, clockOutData);
-        
+
         setSuccess(true);
         haptic.success();
-        
+
         // Close after success animation
         setTimeout(() => {
           onClose();
         }, 1500);
-        
+
         return;
       }
 
@@ -224,10 +221,10 @@ export function ClockOutSheet({ isOpen, onClose, organizationSlug, activeEntry }
       await clockOut(organizationSlug, activeEntry.id, clockOutData);
 
       setSuccess(true);
-      
+
       // Success haptic feedback (two short pulses)
       haptic.success();
-      
+
       // Close after success animation
       setTimeout(() => {
         onClose();
@@ -235,11 +232,11 @@ export function ClockOutSheet({ isOpen, onClose, organizationSlug, activeEntry }
     } catch (err) {
       // Error haptic feedback (three quick pulses)
       haptic.error();
-      
+
       if (err instanceof TimeEntryApiError) {
         setError(err.message);
       } else {
-        setError('Failed to clock out. Please try again.');
+        setError(t('clock.failedToClockOut'));
       }
     } finally {
       setSubmitting(false);
@@ -248,8 +245,7 @@ export function ClockOutSheet({ isOpen, onClose, organizationSlug, activeEntry }
 
   // Handle add break (placeholder)
   const handleAddBreak = () => {
-    // Placeholder - will open break sheet in future
-    setError('Break management coming soon!');
+    setError(t('clock.breakManagementSoon'));
     setTimeout(() => setError(null), 3000);
   };
 
@@ -262,13 +258,13 @@ export function ClockOutSheet({ isOpen, onClose, organizationSlug, activeEntry }
         snapPoints={[300]}
       >
         <div className="flex flex-col items-center justify-center py-8 gap-4">
-          <div className="h-16 w-16 rounded-full bg-red-500/20 flex items-center justify-center">
-            <AlertCircle className="h-8 w-8 text-red-400" />
+          <div className="h-16 w-16 rounded-full bg-red-50 flex items-center justify-center">
+            <AlertCircle className="h-8 w-8 text-red-600" />
           </div>
           <div className="text-center">
-            <p className="text-lg font-semibold text-white">No Active Entry</p>
-            <p className="text-sm text-zinc-400 mt-1">
-              You don&apos;t have an active time entry to clock out from.
+            <p className="text-lg font-semibold text-zinc-900">{t('clock.noActiveEntry')}</p>
+            <p className="text-sm text-zinc-500 mt-1">
+              {t('clock.noActiveEntryDescription')}
             </p>
           </div>
           <Button
@@ -276,7 +272,7 @@ export function ClockOutSheet({ isOpen, onClose, organizationSlug, activeEntry }
             onClick={onClose}
             className="mt-4"
           >
-            Close
+            {t('common.close')}
           </Button>
         </div>
       </BottomSheet>
@@ -294,39 +290,34 @@ export function ClockOutSheet({ isOpen, onClose, organizationSlug, activeEntry }
         {/* Header with Time */}
         <div className="text-center">
           <div className="flex items-center justify-center gap-2 mb-2">
-            <Clock className="h-5 w-5 text-amber-400" />
-            <h2 className="text-xl font-semibold text-white">Clock Out</h2>
+            <Clock className="h-5 w-5 text-amber-600" />
+            <h2 className="text-xl font-semibold text-zinc-900">{t('clock.clockOut')}</h2>
           </div>
-          <motion.div
-            key={currentTime.getTime()}
-            initial={{ opacity: 0.5 }}
-            animate={{ opacity: 1 }}
-            className="text-4xl font-mono font-bold text-white tracking-tight"
-          >
+          <div className="text-4xl font-mono font-bold text-zinc-900 tracking-tight">
             {timeFormatter.format(currentTime)}
-          </motion.div>
-          <p className="text-sm text-zinc-400 mt-1">
+          </div>
+          <p className="text-sm text-zinc-500 mt-1">
             {dateFormatter.format(currentTime)}
           </p>
         </div>
 
         {/* Duration Summary Card */}
         {activeEntry && (
-          <div className="glass-card rounded-xl p-4 space-y-4">
-            <div className="flex items-center gap-2 pb-2 border-b border-zinc-800">
-              <Timer className="h-4 w-4 text-emerald-400" />
-              <span className="text-sm font-medium text-zinc-300">Duration Summary</span>
+          <div className="bg-white border border-zinc-200 shadow-sm rounded-xl p-4 space-y-4">
+            <div className="flex items-center gap-2 pb-2 border-b border-zinc-200">
+              <Timer className="h-4 w-4 text-emerald-600" />
+              <span className="text-sm font-medium text-zinc-700">{t('clock.durationSummary')}</span>
             </div>
 
             {/* Clock In Time */}
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <div className="h-8 w-8 rounded-full bg-emerald-500/20 flex items-center justify-center">
-                  <Clock className="h-4 w-4 text-emerald-400" />
+                <div className="h-8 w-8 rounded-full bg-emerald-50 flex items-center justify-center">
+                  <Clock className="h-4 w-4 text-emerald-600" />
                 </div>
-                <span className="text-sm text-zinc-400">Clocked In</span>
+                <span className="text-sm text-zinc-500">{t('clock.clockedInAt')}</span>
               </div>
-              <span className="text-sm font-medium text-white">
+              <span className="text-sm font-medium text-zinc-900">
                 {formatTime(activeEntry.clock_in)}
               </span>
             </div>
@@ -334,50 +325,40 @@ export function ClockOutSheet({ isOpen, onClose, organizationSlug, activeEntry }
             {/* Current Duration */}
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <div className="h-8 w-8 rounded-full bg-blue-500/20 flex items-center justify-center">
-                  <Timer className="h-4 w-4 text-blue-400" />
+                <div className="h-8 w-8 rounded-full bg-blue-50 border border-blue-200 flex items-center justify-center">
+                  <Timer className="h-4 w-4 text-blue-600" />
                 </div>
-                <span className="text-sm text-zinc-400">Duration</span>
+                <span className="text-sm text-zinc-500">{t('clock.duration')}</span>
               </div>
-              <motion.span 
-                key={durationMinutes}
-                initial={{ opacity: 0.5 }}
-                animate={{ opacity: 1 }}
-                className="text-sm font-medium text-white font-mono"
-              >
-                {formatDuration(durationMinutes).text}
-              </motion.span>
+              <span className="text-sm font-medium text-zinc-900 font-mono">
+                {formatDuration(durationMinutes, t).text}
+              </span>
             </div>
 
             {/* Break Time */}
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <div className="h-8 w-8 rounded-full bg-amber-500/20 flex items-center justify-center">
-                  <Coffee className="h-4 w-4 text-amber-400" />
+                <div className="h-8 w-8 rounded-full bg-amber-50 flex items-center justify-center">
+                  <Coffee className="h-4 w-4 text-amber-600" />
                 </div>
-                <span className="text-sm text-zinc-400">Total Breaks</span>
+                <span className="text-sm text-zinc-500">{t('clock.totalBreaks')}</span>
               </div>
-              <span className="text-sm font-medium text-zinc-300">
-                {breakMinutes > 0 ? formatDuration(breakMinutes).text : 'None'}
+              <span className="text-sm font-medium text-zinc-700">
+                {breakMinutes > 0 ? formatDuration(breakMinutes, t).text : t('common.none')}
               </span>
             </div>
 
             {/* Net Work Time - Highlighted */}
-            <div className="flex items-center justify-between pt-2 border-t border-zinc-800">
+            <div className="flex items-center justify-between pt-2 border-t border-zinc-200">
               <div className="flex items-center gap-2">
-                <div className="h-8 w-8 rounded-full bg-emerald-500/30 flex items-center justify-center">
-                  <Briefcase className="h-4 w-4 text-emerald-400" />
+                <div className="h-8 w-8 rounded-full bg-emerald-50 flex items-center justify-center">
+                  <Briefcase className="h-4 w-4 text-emerald-600" />
                 </div>
-                <span className="text-sm font-medium text-white">Net Work Time</span>
+                <span className="text-sm font-medium text-zinc-900">{t('clock.netWorkTime')}</span>
               </div>
-              <motion.span 
-                key={netWorkMinutes}
-                initial={{ scale: 1.05 }}
-                animate={{ scale: 1 }}
-                className="text-lg font-bold text-emerald-400 font-mono"
-              >
-                {formatDuration(netWorkMinutes).text}
-              </motion.span>
+              <span className="text-lg font-bold text-emerald-600 font-mono">
+                {formatDuration(netWorkMinutes, t).text}
+              </span>
             </div>
           </div>
         )}
@@ -385,62 +366,62 @@ export function ClockOutSheet({ isOpen, onClose, organizationSlug, activeEntry }
         {/* Break List Section */}
         <div className="space-y-3">
           <div className="flex items-center justify-between">
-            <Label className="text-zinc-400 flex items-center gap-2">
+            <Label className="text-zinc-500 flex items-center gap-2">
               <Coffee className="h-4 w-4" />
-              Breaks
+              {t('clock.breaks')}
             </Label>
             <Button
               variant="ghost"
               size="sm"
               onClick={handleAddBreak}
               disabled={hasActiveBreak}
-              className="h-8 px-2 text-xs text-zinc-400 hover:text-white"
+              className="h-8 px-2 text-xs text-zinc-500 hover:text-zinc-900"
             >
               <Plus className="h-3 w-3 mr-1" />
-              Add Break
+              {t('clock.addBreak')}
             </Button>
           </div>
 
-          <div className="glass-card rounded-xl overflow-hidden">
+          <div className="bg-white border border-zinc-200 shadow-sm rounded-xl overflow-hidden">
             {breaksLoading ? (
               <div className="flex items-center justify-center py-6">
-                <Loader2 className="h-5 w-5 text-zinc-400 animate-spin" />
+                <Loader2 className="h-5 w-5 text-zinc-500 animate-spin" />
               </div>
             ) : breaks.length === 0 ? (
               <div className="flex items-center justify-center py-6 text-sm text-zinc-500">
-                No breaks taken
+                {t('clock.noBreaksTaken')}
               </div>
             ) : (
-              <div className="divide-y divide-zinc-800">
+              <div className="divide-y divide-zinc-200">
                 {breaks.map((breakEntry) => {
                   const isActive = breakEntry.break_end === null;
                   const breakDuration = isActive
                     ? Math.floor((Date.now() - Date.parse(breakEntry.break_start)) / 60000)
-                    : breakEntry.break_end 
+                    : breakEntry.break_end
                       ? Math.floor((Date.parse(breakEntry.break_end) - Date.parse(breakEntry.break_start)) / 60000)
                       : 0;
 
                   return (
-                    <div 
-                      key={breakEntry.id} 
+                    <div
+                      key={breakEntry.id}
                       className={cn(
                         "flex items-center justify-between p-3",
-                        isActive && "bg-amber-500/10"
+                        isActive && "bg-amber-50"
                       )}
                     >
                       <div className="flex items-center gap-3">
                         <div className={cn(
                           "h-8 w-8 rounded-full flex items-center justify-center",
-                          isActive ? "bg-amber-500/20" : "bg-zinc-800"
+                          isActive ? "bg-amber-50" : "bg-zinc-100"
                         )}>
                           <Coffee className={cn(
                             "h-4 w-4",
-                            isActive ? "text-amber-400" : "text-zinc-400"
+                            isActive ? "text-amber-600" : "text-zinc-500"
                           )} />
                         </div>
                         <div>
                           <div className="flex items-center gap-2">
-                            <span className="text-sm text-white">
+                            <span className="text-sm text-zinc-900">
                               {formatTime(breakEntry.break_start)}
                               {breakEntry.break_end && (
                                 <span className="text-zinc-500"> → </span>
@@ -449,16 +430,16 @@ export function ClockOutSheet({ isOpen, onClose, organizationSlug, activeEntry }
                             </span>
                             {isActive && (
                               <Badge variant="warning" className="text-[10px] px-1.5 py-0">
-                                Active
+                                {t('common.active')}
                               </Badge>
                             )}
                           </div>
                           <span className="text-xs text-zinc-500">
-                            {formatDuration(breakDuration).text}
+                            {formatDuration(breakDuration, t).text}
                           </span>
                         </div>
                       </div>
-                      <Badge 
+                      <Badge
                         variant={breakEntry.break_type === 'paid' ? 'success' : 'secondary'}
                         className="text-[10px]"
                       >
@@ -472,41 +453,34 @@ export function ClockOutSheet({ isOpen, onClose, organizationSlug, activeEntry }
           </div>
 
           {/* Active Break Warning */}
-          <AnimatePresence>
-            {hasActiveBreak && (
-              <motion.div
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -10 }}
-                className="flex items-center gap-2 p-3 rounded-xl bg-amber-500/10 border border-amber-500/20"
-              >
-                <AlertTriangle className="h-4 w-4 text-amber-400 flex-shrink-0" />
-                <p className="text-sm text-amber-400">
-                  You have an active break. Please end it before clocking out.
-                </p>
-              </motion.div>
-            )}
-          </AnimatePresence>
+          {hasActiveBreak && (
+            <div className="flex items-center gap-2 p-3 rounded-xl bg-amber-50 border border-amber-200">
+              <AlertTriangle className="h-4 w-4 text-amber-600 flex-shrink-0" />
+              <p className="text-sm text-amber-600">
+                {t('clock.endBreakBeforeClockOut')}
+              </p>
+            </div>
+          )}
         </div>
 
         {/* Location */}
-        <div className="flex items-center justify-between glass-card rounded-xl p-3">
+        <div className="flex items-center justify-between bg-white border border-zinc-200 shadow-sm rounded-xl p-3">
           <div className="flex items-center gap-2">
-            <MapPin className="h-4 w-4 text-zinc-400" />
-            <span className="text-sm text-zinc-400">Location</span>
+            <MapPin className="h-4 w-4 text-zinc-500" />
+            <span className="text-sm text-zinc-500">{t('clock.location')}</span>
           </div>
           {geoLoading ? (
             <Badge variant="ghost" className="gap-1">
               <Loader2 className="h-3 w-3 animate-spin" />
-              Fetching...
+              {t('common.fetching')}
             </Badge>
           ) : position ? (
             <span className="text-xs text-zinc-500 font-mono">
-              {formatAccuracy(position.coords.accuracy)} accuracy
+              {formatAccuracy(position.coords.accuracy)} {t('clock.accuracy')}
             </span>
           ) : (
             <Badge variant="destructive" className="text-[10px]">
-              Unavailable
+              {t('common.unavailable')}
             </Badge>
           )}
         </div>
@@ -514,7 +488,7 @@ export function ClockOutSheet({ isOpen, onClose, organizationSlug, activeEntry }
         {/* Location Map */}
         {position && (
           <div className="space-y-2">
-            <Label className="text-zinc-400">Clock-Out Location</Label>
+            <Label className="text-zinc-500">{t('clock.clockOutLocation')}</Label>
             <LocationMap
               lat={position.coords.latitude}
               lng={position.coords.longitude}
@@ -527,65 +501,45 @@ export function ClockOutSheet({ isOpen, onClose, organizationSlug, activeEntry }
 
         {/* Notes */}
         <div className="space-y-2">
-          <Label htmlFor="clock-out-notes" className="text-zinc-400">
-            Notes (optional)
+          <Label htmlFor="clock-out-notes" className="text-zinc-500">
+            {t('common.notesOptional')}
           </Label>
           <textarea
             id="clock-out-notes"
             value={notes}
             onChange={(e) => setNotes(e.target.value)}
-            placeholder="Add any notes about your shift..."
+            placeholder={t('clock.addShiftNotes')}
             rows={2}
             className={cn(
               "w-full px-3 py-2 rounded-xl resize-none",
-              "bg-zinc-900/50 border border-zinc-800",
-              "text-white placeholder:text-zinc-600",
-              "focus:outline-none focus:ring-2 focus:ring-amber-500/50 focus:border-amber-500/50",
+              "bg-zinc-50 border border-zinc-200",
+              "text-zinc-900 placeholder:text-zinc-400",
+              "focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-300",
               "text-sm"
             )}
           />
         </div>
 
         {/* Error Message */}
-        <AnimatePresence>
-          {error && (
-            <motion.div
-              initial={{ opacity: 0, y: -10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -10 }}
-              className="flex items-center gap-2 p-3 rounded-xl bg-red-500/10 border border-red-500/20"
-            >
-              <AlertCircle className="h-4 w-4 text-red-400 flex-shrink-0" />
-              <p className="text-sm text-red-400">{error}</p>
-            </motion.div>
-          )}
-        </AnimatePresence>
+        {error && (
+          <div className="flex items-center gap-2 p-3 rounded-xl bg-red-50 border border-red-200">
+            <AlertCircle className="h-4 w-4 text-red-600 flex-shrink-0" />
+            <p className="text-sm text-red-600">{error}</p>
+          </div>
+        )}
 
         {/* Success State */}
-        <AnimatePresence>
-          {success && (
-            <motion.div
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0 }}
-              transition={SPRING_CONFIG}
-              className="flex flex-col items-center justify-center py-4 gap-2"
-            >
-              <motion.div
-                initial={{ scale: 0 }}
-                animate={{ scale: 1 }}
-                transition={{ ...SPRING_CONFIG, delay: 0.1 }}
-                className="h-16 w-16 rounded-full bg-emerald-500/20 flex items-center justify-center"
-              >
-                <CheckCircle2 className="h-8 w-8 text-emerald-400" />
-              </motion.div>
-              <p className="text-lg font-semibold text-white">Clocked Out!</p>
-              <p className="text-sm text-zinc-400">
-                Total: {formatDuration(netWorkMinutes).text}
-              </p>
-            </motion.div>
-          )}
-        </AnimatePresence>
+        {success && (
+          <div className="flex flex-col items-center justify-center py-4 gap-2">
+            <div className="h-16 w-16 rounded-full bg-emerald-50 flex items-center justify-center">
+              <CheckCircle2 className="h-8 w-8 text-emerald-600" />
+            </div>
+            <p className="text-lg font-semibold text-zinc-900">{t('clock.clockedOutSuccess')}</p>
+            <p className="text-sm text-zinc-500">
+              {t('clock.total')}: {formatDuration(netWorkMinutes, t).text}
+            </p>
+          </div>
+        )}
 
         {/* Action Buttons */}
         {!success && (
@@ -596,26 +550,26 @@ export function ClockOutSheet({ isOpen, onClose, organizationSlug, activeEntry }
               className={cn(
                 "h-14 text-lg font-semibold rounded-xl",
                 "bg-amber-600 hover:bg-amber-700",
-                "disabled:bg-zinc-800 disabled:text-zinc-500"
+                "disabled:bg-zinc-200 disabled:text-zinc-400"
               )}
             >
               {submitting ? (
                 <span className="flex items-center gap-2">
                   <Loader2 className="h-5 w-5 animate-spin" />
-                  Clocking Out...
+                  {t('clock.clockingOut')}
                 </span>
               ) : (
-                'Clock Out'
+                t('clock.clockOut')
               )}
             </Button>
-            
+
             <Button
               variant="ghost"
               onClick={onClose}
               disabled={submitting}
-              className="h-12 text-zinc-400 hover:text-white"
+              className="h-12 text-zinc-500 hover:text-zinc-900"
             >
-              Cancel
+              {t('common.cancel')}
             </Button>
           </div>
         )}

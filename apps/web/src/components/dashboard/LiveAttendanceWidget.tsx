@@ -5,11 +5,11 @@
  */
 
 import * as React from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  Users, 
-  Coffee, 
-  Wifi, 
+import { useTranslation } from 'react-i18next';
+import {
+  Users,
+  Coffee,
+  Wifi,
   WifiOff,
   Clock,
   AlertTriangle
@@ -32,8 +32,6 @@ export interface LiveAttendanceWidgetProps {
 // Constants
 // ============================================================================
 
-const SPRING_CONFIG = { type: 'spring', damping: 25, stiffness: 300 } as const;
-
 // Time thresholds in hours
 const WARNING_THRESHOLD = 7.5; // Yellow: approaching overtime
 const VIOLATION_THRESHOLD = 9; // Red: violation territory
@@ -54,7 +52,7 @@ function formatDuration(clockInTime: string): string {
   const totalMinutes = Math.floor(hours * 60);
   const h = Math.floor(totalMinutes / 60);
   const m = totalMinutes % 60;
-  
+
   if (h === 0) {
     return `${m}m`;
   }
@@ -63,7 +61,7 @@ function formatDuration(clockInTime: string): string {
 
 function getStatusColor(clockInTime: string): 'green' | 'yellow' | 'red' {
   const hours = calculateHoursWorked(clockInTime);
-  
+
   if (hours >= VIOLATION_THRESHOLD) {
     return 'red';
   }
@@ -91,6 +89,7 @@ interface EmployeeRowProps {
 }
 
 function EmployeeRow({ entry }: EmployeeRowProps) {
+  const { t } = useTranslation();
   const [duration, setDuration] = React.useState(() => formatDuration(entry.clockInTime));
   const statusColor = getStatusColor(entry.clockInTime);
 
@@ -104,32 +103,26 @@ function EmployeeRow({ entry }: EmployeeRowProps) {
   }, [entry.clockInTime]);
 
   return (
-    <motion.div
-      layout
-      initial={{ opacity: 0, x: -20 }}
-      animate={{ opacity: 1, x: 0 }}
-      exit={{ opacity: 0, x: 20 }}
-      transition={SPRING_CONFIG}
+    <div
       className={cn(
         "flex items-center gap-3 p-3 rounded-xl",
-        "bg-zinc-900/30 border border-zinc-800/50",
-        "hover:bg-zinc-900/50 transition-colors"
+        "bg-zinc-50 border border-zinc-200",
+        "hover:bg-zinc-100 transition-colors"
       )}
     >
       {/* Avatar */}
       <div className={cn(
         "h-10 w-10 rounded-full flex items-center justify-center text-sm font-semibold",
-        "bg-gradient-to-br",
-        statusColor === 'green' && "from-emerald-500/20 to-emerald-600/20 text-emerald-400 border border-emerald-500/30",
-        statusColor === 'yellow' && "from-amber-500/20 to-amber-600/20 text-amber-400 border border-amber-500/30",
-        statusColor === 'red' && "from-red-500/20 to-red-600/20 text-red-400 border border-red-500/30"
+        statusColor === 'green' && "bg-emerald-50 text-emerald-600 border border-emerald-200",
+        statusColor === 'yellow' && "bg-amber-50 text-amber-600 border border-amber-200",
+        statusColor === 'red' && "bg-red-50 text-red-600 border border-red-200"
       )}>
         {getInitials(entry.userName)}
       </div>
 
       {/* Name and Location */}
       <div className="flex-1 min-w-0">
-        <p className="text-sm font-medium text-white truncate">
+        <p className="text-sm font-medium text-zinc-900 truncate">
           {entry.userName}
         </p>
         {entry.location && (
@@ -143,25 +136,25 @@ function EmployeeRow({ entry }: EmployeeRowProps) {
       <div className="flex items-center gap-2">
         {/* Break indicator */}
         {entry.isOnBreak && (
-          <div className="flex items-center gap-1 px-2 py-1 rounded-full bg-blue-500/20 border border-blue-500/30">
-            <Coffee className="h-3 w-3 text-blue-400" />
-            <span className="text-xs text-blue-400">Break</span>
+          <div className="flex items-center gap-1 px-2 py-1 rounded-full bg-blue-50 border border-blue-200">
+            <Coffee className="h-3 w-3 text-blue-600" />
+            <span className="text-xs text-blue-600">{t('clock.break')}</span>
           </div>
         )}
 
         {/* Duration */}
         <div className={cn(
           "flex items-center gap-1 px-2 py-1 rounded-full",
-          statusColor === 'green' && "bg-emerald-500/10 text-emerald-400",
-          statusColor === 'yellow' && "bg-amber-500/10 text-amber-400",
-          statusColor === 'red' && "bg-red-500/10 text-red-400"
+          statusColor === 'green' && "bg-emerald-50 text-emerald-600",
+          statusColor === 'yellow' && "bg-amber-50 text-amber-600",
+          statusColor === 'red' && "bg-red-50 text-red-600"
         )}>
           {statusColor === 'red' && <AlertTriangle className="h-3 w-3" />}
           <Clock className="h-3 w-3" />
           <span className="text-xs font-mono">{duration}</span>
         </div>
       </div>
-    </motion.div>
+    </div>
   );
 }
 
@@ -170,12 +163,13 @@ function EmployeeRow({ entry }: EmployeeRowProps) {
 // ============================================================================
 
 export function LiveAttendanceWidget({ className }: LiveAttendanceWidgetProps) {
-  const { 
-    isConnected, 
-    connectionStatus, 
-    attendanceData, 
-    clockedInCount, 
-    onBreakCount 
+  const { t } = useTranslation();
+  const {
+    isConnected,
+    connectionStatus,
+    attendanceData,
+    clockedInCount,
+    onBreakCount
   } = useWebSocket();
 
   // Convert Map to sorted array (most recent first)
@@ -188,38 +182,37 @@ export function LiveAttendanceWidget({ className }: LiveAttendanceWidgetProps) {
 
   return (
     <div className={cn(
-      "glass-card rounded-2xl p-5",
-      "border border-zinc-800/50",
+      "bg-white border border-zinc-200 shadow-sm rounded-2xl p-5",
       className
     )}>
       {/* Header */}
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-3">
-          <div className="h-10 w-10 rounded-xl bg-primary-500/20 flex items-center justify-center">
-            <Users className="h-5 w-5 text-primary-400" />
+          <div className="h-10 w-10 rounded-xl bg-primary-50 flex items-center justify-center">
+            <Users className="h-5 w-5 text-primary-600" />
           </div>
           <div>
-            <h3 className="text-lg font-semibold text-white">Live Attendance</h3>
-            <p className="text-xs text-zinc-500">Real-time employee status</p>
+            <h3 className="text-lg font-semibold text-zinc-900">{t('dashboard.liveAttendance')}</h3>
+            <p className="text-xs text-zinc-500">{t('dashboard.realtimeStatus')}</p>
           </div>
         </div>
 
         {/* Connection Status */}
         <div className={cn(
           "flex items-center gap-2 px-3 py-1.5 rounded-full text-xs",
-          isConnected 
-            ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/30"
-            : "bg-red-500/10 text-red-400 border border-red-500/30"
+          isConnected
+            ? "bg-emerald-50 text-emerald-600 border border-emerald-200"
+            : "bg-red-50 text-red-600 border border-red-200"
         )}>
           {isConnected ? (
             <>
               <Wifi className="h-3 w-3" />
-              <span>Live</span>
+              <span>{t('common.live')}</span>
             </>
           ) : (
             <>
               <WifiOff className="h-3 w-3" />
-              <span>{connectionStatus === 'connecting' ? 'Connecting...' : 'Offline'}</span>
+              <span>{connectionStatus === 'connecting' ? t('common.connecting') : t('common.offline')}</span>
             </>
           )}
         </div>
@@ -228,59 +221,52 @@ export function LiveAttendanceWidget({ className }: LiveAttendanceWidgetProps) {
       {/* Stats Row */}
       <div className="grid grid-cols-2 gap-3 mb-4">
         {/* Clocked In */}
-        <div className="flex items-center gap-3 p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/20">
-          <div className="h-8 w-8 rounded-lg bg-emerald-500/20 flex items-center justify-center">
-            <Users className="h-4 w-4 text-emerald-400" />
+        <div className="flex items-center gap-3 p-3 rounded-xl bg-emerald-50 border border-emerald-200">
+          <div className="h-8 w-8 rounded-lg bg-emerald-100 flex items-center justify-center">
+            <Users className="h-4 w-4 text-emerald-600" />
           </div>
           <div>
-            <p className="text-2xl font-bold text-emerald-400">{clockedInCount}</p>
-            <p className="text-xs text-emerald-400/70">Clocked In</p>
+            <p className="text-2xl font-bold text-emerald-600">{clockedInCount}</p>
+            <p className="text-xs text-emerald-600/70">{t('dashboard.clockedIn')}</p>
           </div>
         </div>
 
         {/* On Break */}
-        <div className="flex items-center gap-3 p-3 rounded-xl bg-blue-500/10 border border-blue-500/20">
-          <div className="h-8 w-8 rounded-lg bg-blue-500/20 flex items-center justify-center">
-            <Coffee className="h-4 w-4 text-blue-400" />
+        <div className="flex items-center gap-3 p-3 rounded-xl bg-blue-50 border border-blue-200">
+          <div className="h-8 w-8 rounded-lg bg-blue-100 flex items-center justify-center">
+            <Coffee className="h-4 w-4 text-blue-600" />
           </div>
           <div>
-            <p className="text-2xl font-bold text-blue-400">{onBreakCount}</p>
-            <p className="text-xs text-blue-400/70">On Break</p>
+            <p className="text-2xl font-bold text-blue-600">{onBreakCount}</p>
+            <p className="text-xs text-blue-600/70">{t('dashboard.onBreak')}</p>
           </div>
         </div>
       </div>
 
       {/* Employee List */}
       <div className="space-y-2 max-h-80 overflow-y-auto">
-        <AnimatePresence mode="popLayout">
-          {sortedEntries.length > 0 ? (
-            sortedEntries.map(entry => (
-              <EmployeeRow key={entry.userId} entry={entry} />
-            ))
-          ) : (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className="flex flex-col items-center justify-center py-8 text-center"
-            >
-              <div className="h-12 w-12 rounded-full bg-zinc-800/50 flex items-center justify-center mb-3">
-                <Users className="h-6 w-6 text-zinc-600" />
-              </div>
-              <p className="text-sm text-zinc-500">No employees clocked in</p>
-              <p className="text-xs text-zinc-600 mt-1">
-                {isConnected 
-                  ? "Waiting for clock-in events..."
-                  : "Connect to see live attendance"
-                }
-              </p>
-            </motion.div>
-          )}
-        </AnimatePresence>
+        {sortedEntries.length > 0 ? (
+          sortedEntries.map(entry => (
+            <EmployeeRow key={entry.userId} entry={entry} />
+          ))
+        ) : (
+          <div className="flex flex-col items-center justify-center py-8 text-center">
+            <div className="h-12 w-12 rounded-full bg-zinc-100 flex items-center justify-center mb-3">
+              <Users className="h-6 w-6 text-zinc-400" />
+            </div>
+            <p className="text-sm text-zinc-500">{t('dashboard.noEmployeesClockedIn')}</p>
+            <p className="text-xs text-zinc-400 mt-1">
+              {isConnected
+                ? t('dashboard.waitingForEvents')
+                : t('dashboard.connectToSee')
+              }
+            </p>
+          </div>
+        )}
       </div>
 
       {/* Footer - Legend */}
-      <div className="flex items-center justify-center gap-4 mt-4 pt-4 border-t border-zinc-800/50">
+      <div className="flex items-center justify-center gap-4 mt-4 pt-4 border-t border-zinc-200">
         <div className="flex items-center gap-1.5">
           <div className="h-2 w-2 rounded-full bg-emerald-500" />
           <span className="text-xs text-zinc-500">&lt;7.5h</span>

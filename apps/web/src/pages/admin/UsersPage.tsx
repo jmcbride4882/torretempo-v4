@@ -4,7 +4,7 @@
  */
 
 import { useState, useEffect, useCallback } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 import {
   Users,
@@ -72,6 +72,8 @@ import {
 import type { AdminUser } from '@/lib/api/admin';
 
 export default function UsersPage() {
+  const { t } = useTranslation();
+
   // State
   const [users, setUsers] = useState<AdminUser[]>([]);
   const [total, setTotal] = useState(0);
@@ -192,7 +194,7 @@ export default function UsersPage() {
 
     // Validate ban reason if banning
     if (confirmModal.type === 'ban' && !banReason.trim()) {
-      toast.error('Ban reason is required');
+      toast.error(t('admin.users.banReasonRequired'));
       return;
     }
 
@@ -285,7 +287,7 @@ export default function UsersPage() {
       toast.error('Email is already verified');
       return;
     }
-    
+
     try {
       await resendVerificationEmail(user.id);
       toast.success(`Verification email sent to ${user.email}`);
@@ -320,7 +322,7 @@ export default function UsersPage() {
       }
 
       toast.success(`Now impersonating ${user.name}`);
-      
+
       // Redirect to tenant dashboard or refresh to update session
       setTimeout(() => {
         window.location.href = '/';
@@ -358,7 +360,7 @@ export default function UsersPage() {
   // Bulk ban handler
   const handleBulkBan = async () => {
     if (!bulkBanReason.trim()) {
-      toast.error('Ban reason is required');
+      toast.error(t('admin.users.banReasonRequired'));
       return;
     }
     setIsBulkLoading(true);
@@ -414,70 +416,65 @@ export default function UsersPage() {
   return (
     <div className="space-y-6">
       {/* Page header */}
-      <motion.div
-        initial={{ opacity: 0, y: -10 }}
-        animate={{ opacity: 1, y: 0 }}
+      <div
         className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between"
       >
         <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-blue-600/20 to-indigo-600/20 shadow-lg shadow-blue-500/10">
-            <Users className="h-5 w-5 text-blue-400" />
+          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-amber-50 shadow-sm">
+            <Users className="h-5 w-5 text-amber-600" />
           </div>
           <div>
-            <h1 className="text-xl font-bold text-white sm:text-2xl">Users</h1>
-            <p className="text-sm text-neutral-400">
+            <h1 className="text-xl font-bold text-zinc-900 sm:text-2xl">{t('admin.users.title')}</h1>
+            <p className="text-sm text-zinc-500">
               Live monitoring • Updates every 10 seconds
             </p>
           </div>
         </div>
 
         <div className="flex items-center gap-2">
-          <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+          <div>
             <Button
               variant="ghost"
               size="sm"
               onClick={handleExport}
               disabled={isExporting}
-              className="gap-1.5 rounded-lg border border-white/5 bg-white/5 text-neutral-300 hover:bg-white/10"
+              className="gap-1.5 rounded-lg border border-zinc-200 bg-zinc-50 text-zinc-700 hover:bg-zinc-100"
             >
               <Download className={cn('h-4 w-4', isExporting && 'animate-bounce')} />
-              <span className="hidden sm:inline">{isExporting ? 'Exporting...' : 'Export CSV'}</span>
+              <span className="hidden sm:inline">{isExporting ? 'Exporting...' : t('admin.exportCsv')}</span>
             </Button>
-          </motion.div>
-          <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+          </div>
+          <div>
             <Button
               variant="ghost"
               size="sm"
               onClick={handleRefresh}
               disabled={isRefreshing}
-              className="gap-1.5 rounded-lg border border-white/5 bg-white/5 text-neutral-300 hover:bg-white/10"
+              className="gap-1.5 rounded-lg border border-zinc-200 bg-zinc-50 text-zinc-700 hover:bg-zinc-100"
             >
               <RefreshCw className={cn('h-4 w-4', isRefreshing && 'animate-spin')} />
-              <span className="hidden sm:inline">Refresh</span>
+              <span className="hidden sm:inline">{t('admin.refresh')}</span>
             </Button>
-          </motion.div>
+          </div>
         </div>
-      </motion.div>
+      </div>
 
       {/* Filters */}
-      <motion.div
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.1 }}
+      <div
         className="flex flex-col gap-3 sm:flex-row sm:items-center"
       >
         {/* Search */}
         <div className="relative flex-1 sm:max-w-xs">
-          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-neutral-500" />
+          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-500" />
           <Input
             type="text"
-            placeholder="Search by name or email..."
+            placeholder={t('common.search') + '...'}
             value={searchQuery}
             onChange={(e) => {
               setSearchQuery(e.target.value);
               setPage(1);
             }}
-            className="glass-card border-white/10 pl-9 text-white placeholder:text-neutral-500 focus:border-blue-500"
+            className="rounded-xl border border-zinc-200 bg-white shadow-sm pl-9 text-zinc-900 placeholder:text-zinc-400 focus:border-amber-500"
           />
         </div>
 
@@ -489,15 +486,15 @@ export default function UsersPage() {
             setPage(1);
           }}
         >
-          <SelectTrigger className="w-[140px] glass-card border-white/10 text-white">
-            <SelectValue placeholder="Role" />
+          <SelectTrigger className="w-[140px] rounded-xl border border-zinc-200 bg-white shadow-sm text-zinc-900">
+            <SelectValue placeholder={t('common.filter')} />
           </SelectTrigger>
-          <SelectContent className="glass-card border-white/10">
-            <SelectItem value="all" className="text-neutral-200">All Roles</SelectItem>
-            <SelectItem value="owner" className="text-neutral-200">Owner</SelectItem>
-            <SelectItem value="tenantAdmin" className="text-neutral-200">Tenant Admin</SelectItem>
-            <SelectItem value="manager" className="text-neutral-200">Manager</SelectItem>
-            <SelectItem value="employee" className="text-neutral-200">Employee</SelectItem>
+          <SelectContent className="rounded-xl border border-zinc-200 bg-white shadow-sm">
+            <SelectItem value="all" className="text-zinc-700">All Roles</SelectItem>
+            <SelectItem value="owner" className="text-zinc-700">Owner</SelectItem>
+            <SelectItem value="tenantAdmin" className="text-zinc-700">Tenant Admin</SelectItem>
+            <SelectItem value="manager" className="text-zinc-700">Manager</SelectItem>
+            <SelectItem value="employee" className="text-zinc-700">Employee</SelectItem>
           </SelectContent>
         </Select>
 
@@ -509,14 +506,14 @@ export default function UsersPage() {
             setPage(1);
           }}
         >
-          <SelectTrigger className="w-[140px] glass-card border-white/10 text-white">
-            <SelectValue placeholder="Status" />
+          <SelectTrigger className="w-[140px] rounded-xl border border-zinc-200 bg-white shadow-sm text-zinc-900">
+            <SelectValue placeholder={t('common.filter')} />
           </SelectTrigger>
-          <SelectContent className="glass-card border-white/10">
-            <SelectItem value="all" className="text-neutral-200">All Status</SelectItem>
-            <SelectItem value="active" className="text-neutral-200">Active</SelectItem>
-            <SelectItem value="banned" className="text-neutral-200">Banned</SelectItem>
-            <SelectItem value="admin" className="text-neutral-200">Admins Only</SelectItem>
+          <SelectContent className="rounded-xl border border-zinc-200 bg-white shadow-sm">
+            <SelectItem value="all" className="text-zinc-700">All Status</SelectItem>
+            <SelectItem value="active" className="text-zinc-700">{t('admin.active')}</SelectItem>
+            <SelectItem value="banned" className="text-zinc-700">{t('admin.banned')}</SelectItem>
+            <SelectItem value="admin" className="text-zinc-700">{t('admin.admins')}</SelectItem>
           </SelectContent>
         </Select>
 
@@ -538,70 +535,63 @@ export default function UsersPage() {
             setPage(1);
           }}
         />
-      </motion.div>
+      </div>
 
       {/* Stats bar */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.15 }}
+      <div
         className="flex flex-wrap items-center gap-4 text-sm sm:gap-6"
       >
         {/* Select All checkbox */}
         {users.length > 0 && (
           <button
             onClick={toggleSelectAll}
-            className="flex items-center gap-2 rounded-lg border border-white/10 bg-white/5 px-3 py-1.5 text-neutral-300 transition-colors hover:bg-white/10"
+            className="flex items-center gap-2 rounded-lg border border-zinc-200 bg-zinc-50 px-3 py-1.5 text-zinc-700 transition-colors hover:bg-zinc-100"
           >
             {allSelected ? (
-              <CheckSquare className="h-4 w-4 text-blue-400" />
+              <CheckSquare className="h-4 w-4 text-amber-600" />
             ) : someSelected ? (
               <div className="relative">
-                <Square className="h-4 w-4 text-blue-400" />
+                <Square className="h-4 w-4 text-amber-600" />
                 <div className="absolute inset-0 flex items-center justify-center">
-                  <div className="h-2 w-2 rounded-sm bg-blue-400" />
+                  <div className="h-2 w-2 rounded-sm bg-amber-600" />
                 </div>
               </div>
             ) : (
               <Square className="h-4 w-4" />
             )}
-            <span className="text-xs font-medium">Select All</span>
+            <span className="text-xs font-medium">{t('admin.selectAll')}</span>
           </button>
         )}
         <div className="flex items-center gap-2">
           <div className="h-2 w-2 rounded-full bg-blue-500" />
-          <span className="text-neutral-400">
-            <span className="font-medium text-neutral-200">{total}</span> total
+          <span className="text-zinc-500">
+            <span className="font-medium text-zinc-700">{total}</span> {t('admin.total')}
           </span>
         </div>
         <div className="flex items-center gap-2">
           <div className="h-2 w-2 rounded-full bg-amber-500" />
-          <span className="text-neutral-400">
-            <span className="font-medium text-neutral-200">{adminCount}</span> admins
+          <span className="text-zinc-500">
+            <span className="font-medium text-zinc-700">{adminCount}</span> {t('admin.admins')}
           </span>
         </div>
         <div className="flex items-center gap-2">
           <div className="h-2 w-2 rounded-full bg-emerald-500" />
-          <span className="text-neutral-400">
-            <span className="font-medium text-neutral-200">{verifiedCount}</span> verified
+          <span className="text-zinc-500">
+            <span className="font-medium text-zinc-700">{verifiedCount}</span> {t('admin.verified')}
           </span>
         </div>
         {bannedCount > 0 && (
           <div className="flex items-center gap-2">
             <div className="h-2 w-2 rounded-full bg-red-500" />
-            <span className="text-neutral-400">
-              <span className="font-medium text-neutral-200">{bannedCount}</span> banned
+            <span className="text-zinc-500">
+              <span className="font-medium text-zinc-700">{bannedCount}</span> {t('admin.banned')}
             </span>
           </div>
         )}
-      </motion.div>
+      </div>
 
       {/* Users grid */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.2 }}
-      >
+      <div>
         {isLoading ? (
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {[...Array(6)].map((_, i) => (
@@ -619,90 +609,84 @@ export default function UsersPage() {
           />
         ) : (
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            <AnimatePresence mode="popLayout">
-              {users.map((user, index) => (
-                <UserCard
-                  key={user.id}
-                  user={user}
-                  index={index}
-                  isSelected={selectedIds.has(user.id)}
-                  onToggleSelect={() => toggleSelection(user.id)}
-                  onEdit={() => openEditModal(user)}
-                  onBan={() => setConfirmModal({ type: 'ban', user })}
-                  onUnban={() => setConfirmModal({ type: 'unban', user })}
-                  onGrantAdmin={() => setConfirmModal({ type: 'grant-admin', user })}
-                  onRevokeAdmin={() => setConfirmModal({ type: 'revoke-admin', user })}
-                  onSendPasswordReset={() => handleSendPasswordReset(user)}
-                  onResendVerification={() => handleResendVerification(user)}
-                  onImpersonate={() => handleImpersonate(user)}
-                />
-              ))}
-            </AnimatePresence>
+            {users.map((user, index) => (
+              <UserCard
+                key={user.id}
+                user={user}
+                index={index}
+                isSelected={selectedIds.has(user.id)}
+                onToggleSelect={() => toggleSelection(user.id)}
+                onEdit={() => openEditModal(user)}
+                onBan={() => setConfirmModal({ type: 'ban', user })}
+                onUnban={() => setConfirmModal({ type: 'unban', user })}
+                onGrantAdmin={() => setConfirmModal({ type: 'grant-admin', user })}
+                onRevokeAdmin={() => setConfirmModal({ type: 'revoke-admin', user })}
+                onSendPasswordReset={() => handleSendPasswordReset(user)}
+                onResendVerification={() => handleResendVerification(user)}
+                onImpersonate={() => handleImpersonate(user)}
+              />
+            ))}
           </div>
         )}
-      </motion.div>
+      </div>
 
       {/* Confirmation Modal */}
       <Dialog open={!!confirmModal} onOpenChange={() => { setConfirmModal(null); setBanReason(''); }}>
         <DialogContent>
           <DialogHeader>
             <DialogTitle>
-              {confirmModal?.type === 'ban' && 'Ban User'}
-              {confirmModal?.type === 'unban' && 'Unban User'}
-              {confirmModal?.type === 'grant-admin' && 'Grant Admin Access'}
-              {confirmModal?.type === 'revoke-admin' && 'Revoke Admin Access'}
+              {confirmModal?.type === 'ban' && t('admin.users.ban')}
+              {confirmModal?.type === 'unban' && t('admin.users.unban')}
+              {confirmModal?.type === 'grant-admin' && t('admin.users.grantAdmin')}
+              {confirmModal?.type === 'revoke-admin' && t('admin.users.revokeAdmin')}
             </DialogTitle>
             <DialogDescription>
               {confirmModal?.type === 'ban' && (
                 <>
-                  Are you sure you want to ban <strong>{confirmModal.user.name}</strong>?
-                  They will be logged out and unable to access the platform.
+                  {t('admin.users.banConfirm', { name: confirmModal.user.name })}
                 </>
               )}
               {confirmModal?.type === 'unban' && (
                 <>
-                  Unban <strong>{confirmModal?.user.name}</strong>? They will regain access
-                  to the platform.
+                  {t('admin.users.unbanConfirm', { name: confirmModal?.user.name })}
                 </>
               )}
               {confirmModal?.type === 'grant-admin' && (
                 <>
-                  Grant platform admin access to <strong>{confirmModal?.user.name}</strong>?
-                  They will have full access to all admin features.
+                  {t('admin.users.grantAdminConfirm', { name: confirmModal?.user.name })}
                 </>
               )}
               {confirmModal?.type === 'revoke-admin' && (
                 <>
-                  Revoke admin access from <strong>{confirmModal?.user.name}</strong>?
-                  They will lose access to admin features.
+                  {t('admin.users.revokeAdminConfirm', { name: confirmModal?.user.name })}
                 </>
               )}
             </DialogDescription>
           </DialogHeader>
-          
+
           {/* Ban reason input (only for ban action) */}
           {confirmModal?.type === 'ban' && (
             <div className="space-y-2 py-2">
-              <label className="text-sm font-medium text-neutral-300">
-                Ban Reason <span className="text-red-400">*</span>
+              <label className="text-sm font-medium text-zinc-700">
+                {t('admin.users.banReason')} <span className="text-red-400">*</span>
               </label>
               <Input
                 value={banReason}
                 onChange={(e) => setBanReason(e.target.value)}
-                placeholder="Enter reason for banning..."
-                className="glass-card border-white/10 text-white"
+                placeholder={t('admin.users.banReason') + '...'}
+                className="rounded-xl border border-zinc-200 bg-white shadow-sm text-zinc-900"
                 autoFocus
               />
             </div>
           )}
-          
+
           <DialogFooter>
             <Button
               variant="ghost"
               onClick={() => { setConfirmModal(null); setBanReason(''); }}
               disabled={isActionLoading}
             >
-              Cancel
+              {t('common.cancel')}
             </Button>
             <Button
               variant={confirmModal?.type === 'ban' || confirmModal?.type === 'revoke-admin' ? 'destructive' : 'default'}
@@ -710,7 +694,7 @@ export default function UsersPage() {
               disabled={isActionLoading || (confirmModal?.type === 'ban' && !banReason.trim())}
               className={confirmModal?.type === 'unban' || confirmModal?.type === 'grant-admin' ? 'bg-emerald-600 hover:bg-emerald-500' : ''}
             >
-              {isActionLoading ? 'Processing...' : 'Confirm'}
+              {isActionLoading ? t('common.loading') + '...' : t('common.confirm')}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -720,45 +704,45 @@ export default function UsersPage() {
       <Dialog open={!!editModal} onOpenChange={() => setEditModal(null)}>
         <DialogContent className="sm:max-w-[500px]">
           <DialogHeader>
-            <DialogTitle>Edit User</DialogTitle>
+            <DialogTitle>{t('admin.users.editUser')}</DialogTitle>
             <DialogDescription>
               Update user details, role, and email verification status
             </DialogDescription>
           </DialogHeader>
-          
+
           <div className="space-y-4 py-4">
             {/* Name field */}
             <div className="space-y-2">
-              <label className="text-sm font-medium text-neutral-300">
-                Name
+              <label className="text-sm font-medium text-zinc-700">
+                {t('admin.users.name')}
               </label>
               <Input
                 value={editForm.name}
                 onChange={(e) => setEditForm({ ...editForm, name: e.target.value })}
-                placeholder="Enter user name"
-                className="glass-card border-white/10 text-white"
+                placeholder={t('admin.users.name')}
+                className="rounded-xl border border-zinc-200 bg-white shadow-sm text-zinc-900"
                 autoFocus
               />
             </div>
 
             {/* Email field */}
             <div className="space-y-2">
-              <label className="text-sm font-medium text-neutral-300">
-                Email
+              <label className="text-sm font-medium text-zinc-700">
+                {t('admin.users.email')}
               </label>
               <Input
                 type="email"
                 value={editForm.email}
                 onChange={(e) => setEditForm({ ...editForm, email: e.target.value })}
                 placeholder="user@example.com"
-                className="glass-card border-white/10 text-white"
+                className="rounded-xl border border-zinc-200 bg-white shadow-sm text-zinc-900"
               />
             </div>
 
             {/* Role field */}
             <div className="space-y-2">
-              <label className="text-sm font-medium text-neutral-300">
-                Platform Role
+              <label className="text-sm font-medium text-zinc-700">
+                {t('admin.users.platformRole')}
               </label>
               <Select
                 value={editForm.role || 'user'}
@@ -766,24 +750,24 @@ export default function UsersPage() {
                   setEditForm({ ...editForm, role: value === 'admin' ? 'admin' : null })
                 }
               >
-                <SelectTrigger className="glass-card border-white/10 text-white">
+                <SelectTrigger className="rounded-xl border border-zinc-200 bg-white shadow-sm text-zinc-900">
                   <SelectValue />
                 </SelectTrigger>
-                <SelectContent className="glass-card border-white/10">
-                  <SelectItem value="user" className="text-neutral-200">Regular User</SelectItem>
-                  <SelectItem value="admin" className="text-neutral-200">Platform Admin</SelectItem>
+                <SelectContent className="rounded-xl border border-zinc-200 bg-white shadow-sm">
+                  <SelectItem value="user" className="text-zinc-700">{t('admin.users.regularUser')}</SelectItem>
+                  <SelectItem value="admin" className="text-zinc-700">{t('admin.users.platformAdmin')}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
 
             {/* Email Verified toggle */}
-            <div className="flex items-center justify-between rounded-lg border border-white/10 bg-white/5 p-3">
+            <div className="flex items-center justify-between rounded-lg border border-zinc-200 bg-zinc-50 p-3">
               <div className="space-y-0.5">
-                <label className="text-sm font-medium text-neutral-300">
-                  Email Verified
+                <label className="text-sm font-medium text-zinc-700">
+                  {t('admin.users.emailVerified')}
                 </label>
-                <p className="text-xs text-neutral-500">
-                  Manually verify user's email address
+                <p className="text-xs text-zinc-500">
+                  {t('admin.users.manuallyVerify')}
                 </p>
               </div>
               <Button
@@ -793,83 +777,77 @@ export default function UsersPage() {
                 onClick={() => setEditForm({ ...editForm, emailVerified: !editForm.emailVerified })}
                 className={editForm.emailVerified ? 'bg-emerald-600 hover:bg-emerald-500' : ''}
               >
-                {editForm.emailVerified ? 'Verified' : 'Unverified'}
+                {editForm.emailVerified ? t('admin.users.emailVerified') : t('admin.users.unverified')}
               </Button>
             </div>
           </div>
-          
+
           <DialogFooter>
             <Button
               variant="ghost"
               onClick={() => setEditModal(null)}
               disabled={isEditLoading}
             >
-              Cancel
+              {t('common.cancel')}
             </Button>
             <Button
               onClick={handleEdit}
               disabled={isEditLoading || !editForm.name.trim() || !editForm.email.trim()}
-              className="bg-blue-600 hover:bg-blue-500"
+              className="bg-amber-600 hover:bg-amber-500"
             >
-              {isEditLoading ? 'Saving...' : 'Save Changes'}
+              {isEditLoading ? t('common.loading') + '...' : t('common.save')}
             </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
 
       {/* Floating Bulk Action Bar */}
-      <AnimatePresence>
-        {selectedIds.size > 0 && (
-          <motion.div
-            initial={{ y: 100, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            exit={{ y: 100, opacity: 0 }}
-            transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-            className="fixed inset-x-0 bottom-6 z-50 mx-auto flex w-fit items-center gap-3 rounded-2xl border border-white/10 bg-zinc-900/95 px-5 py-3 shadow-2xl shadow-black/50 backdrop-blur-xl"
+      {selectedIds.size > 0 && (
+        <div
+          className="fixed inset-x-0 bottom-6 z-50 mx-auto flex w-fit items-center gap-3 rounded-2xl border border-zinc-200 bg-white/95 px-5 py-3 shadow-lg"
+        >
+          <span className="text-sm font-medium text-zinc-700">
+            <span className="text-amber-600">{selectedIds.size}</span> {t('admin.selected')}
+          </span>
+          <div className="h-5 w-px bg-zinc-200" />
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => setBulkBanModal(true)}
+            className="gap-1.5 text-amber-600 hover:bg-amber-50 hover:text-amber-700"
           >
-            <span className="text-sm font-medium text-neutral-200">
-              <span className="text-blue-400">{selectedIds.size}</span> selected
-            </span>
-            <div className="h-5 w-px bg-white/10" />
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => setBulkBanModal(true)}
-              className="gap-1.5 text-amber-400 hover:bg-amber-500/10 hover:text-amber-300"
-            >
-              <Ban className="h-4 w-4" />
-              Ban Selected
-            </Button>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => setBulkDeleteModal(true)}
-              className="gap-1.5 text-red-400 hover:bg-red-500/10 hover:text-red-300"
-            >
-              <Trash2 className="h-4 w-4" />
-              Delete Selected
-            </Button>
-            <div className="h-5 w-px bg-white/10" />
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={clearSelection}
-              className="gap-1.5 text-neutral-400 hover:bg-white/5 hover:text-neutral-200"
-            >
-              <X className="h-4 w-4" />
-              Clear
-            </Button>
-          </motion.div>
-        )}
-      </AnimatePresence>
+            <Ban className="h-4 w-4" />
+            {t('admin.users.ban')}
+          </Button>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => setBulkDeleteModal(true)}
+            className="gap-1.5 text-red-500 hover:bg-red-50 hover:text-red-600"
+          >
+            <Trash2 className="h-4 w-4" />
+            {t('common.delete')}
+          </Button>
+          <div className="h-5 w-px bg-zinc-200" />
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={clearSelection}
+            className="gap-1.5 text-zinc-500 hover:bg-zinc-50 hover:text-zinc-700"
+          >
+            <X className="h-4 w-4" />
+            {t('admin.clearSelection')}
+          </Button>
+        </div>
+      )}
 
       {/* Bulk Ban Modal */}
       <Dialog open={bulkBanModal} onOpenChange={() => { setBulkBanModal(false); setBulkBanReason(''); }}>
         <DialogContent>
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
-              <AlertTriangle className="h-5 w-5 text-amber-400" />
-              Ban {selectedIds.size} User{selectedIds.size !== 1 ? 's' : ''}
+              <AlertTriangle className="h-5 w-5 text-amber-600" />
+              {t('admin.users.ban')} {selectedIds.size} User{selectedIds.size !== 1 ? 's' : ''}
             </DialogTitle>
             <DialogDescription>
               These users will be logged out and unable to access the platform.
@@ -877,20 +855,20 @@ export default function UsersPage() {
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-2 py-2">
-            <label className="text-sm font-medium text-neutral-300">
-              Ban Reason <span className="text-red-400">*</span>
+            <label className="text-sm font-medium text-zinc-700">
+              {t('admin.users.banReason')} <span className="text-red-400">*</span>
             </label>
             <Input
               value={bulkBanReason}
               onChange={(e) => setBulkBanReason(e.target.value)}
-              placeholder="Enter reason for banning..."
-              className="glass-card border-white/10 text-white"
+              placeholder={t('admin.users.banReason') + '...'}
+              className="rounded-xl border border-zinc-200 bg-white shadow-sm text-zinc-900"
               autoFocus
             />
           </div>
           <DialogFooter>
             <Button variant="ghost" onClick={() => { setBulkBanModal(false); setBulkBanReason(''); }} disabled={isBulkLoading}>
-              Cancel
+              {t('common.cancel')}
             </Button>
             <Button
               variant="destructive"
@@ -898,7 +876,7 @@ export default function UsersPage() {
               disabled={isBulkLoading || !bulkBanReason.trim()}
               className="bg-amber-600 hover:bg-amber-500"
             >
-              {isBulkLoading ? 'Banning...' : `Ban ${selectedIds.size} User${selectedIds.size !== 1 ? 's' : ''}`}
+              {isBulkLoading ? t('common.loading') + '...' : `${t('admin.users.ban')} ${selectedIds.size} User${selectedIds.size !== 1 ? 's' : ''}`}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -910,7 +888,7 @@ export default function UsersPage() {
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               <AlertTriangle className="h-5 w-5 text-red-400" />
-              Delete {selectedIds.size} User{selectedIds.size !== 1 ? 's' : ''}
+              {t('common.delete')} {selectedIds.size} User{selectedIds.size !== 1 ? 's' : ''}
             </DialogTitle>
             <DialogDescription>
               <span className="text-red-400">This action cannot be undone.</span>{' '}
@@ -918,27 +896,27 @@ export default function UsersPage() {
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-2 py-2">
-            <label className="text-sm text-neutral-300">
-              Type <code className="rounded bg-neutral-800 px-1.5 py-0.5 text-red-400">DELETE</code> to confirm:
+            <label className="text-sm text-zinc-700">
+              Type <code className="rounded bg-zinc-100 px-1.5 py-0.5 text-red-400">DELETE</code> to confirm:
             </label>
             <Input
               value={bulkDeleteConfirm}
               onChange={(e) => setBulkDeleteConfirm(e.target.value)}
               placeholder="DELETE"
-              className="glass-card border-white/10 text-white"
+              className="rounded-xl border border-zinc-200 bg-white shadow-sm text-zinc-900"
               autoFocus
             />
           </div>
           <DialogFooter>
             <Button variant="ghost" onClick={() => { setBulkDeleteModal(false); setBulkDeleteConfirm(''); }} disabled={isBulkLoading}>
-              Cancel
+              {t('common.cancel')}
             </Button>
             <Button
               variant="destructive"
               onClick={handleBulkDelete}
               disabled={isBulkLoading || bulkDeleteConfirm !== 'DELETE'}
             >
-              {isBulkLoading ? 'Deleting...' : `Delete ${selectedIds.size} User${selectedIds.size !== 1 ? 's' : ''}`}
+              {isBulkLoading ? t('common.loading') + '...' : `${t('common.delete')} ${selectedIds.size} User${selectedIds.size !== 1 ? 's' : ''}`}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -963,40 +941,36 @@ interface UserCardProps {
   onImpersonate: () => void;
 }
 
-function UserCard({ user, index, isSelected, onToggleSelect, onEdit, onBan, onUnban, onGrantAdmin, onRevokeAdmin, onSendPasswordReset, onResendVerification, onImpersonate }: UserCardProps) {
+function UserCard({ user, isSelected, onToggleSelect, onEdit, onBan, onUnban, onGrantAdmin, onRevokeAdmin, onSendPasswordReset, onResendVerification, onImpersonate }: UserCardProps) {
+  const { t } = useTranslation();
+
   return (
-    <motion.div
-      layout
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: -20 }}
-      transition={{ delay: index * 0.05 }}
-      whileHover={{ y: -4 }}
+    <div
       className={cn(
-        'group relative overflow-hidden rounded-2xl border border-white/10 bg-white/5 backdrop-blur-xl transition-all duration-300',
-        'hover:border-white/20 hover:bg-white/[0.07] hover:shadow-xl hover:shadow-blue-500/5',
-        user.banned && 'border-red-500/20 bg-red-500/5',
-        isSelected && 'border-blue-500/40 bg-blue-500/10 ring-1 ring-blue-500/20'
+        'group relative overflow-hidden rounded-2xl border border-zinc-200 bg-white shadow-sm transition-all duration-300',
+        'hover:border-zinc-300 hover:shadow-md',
+        user.banned && 'border-red-200 bg-red-50',
+        isSelected && 'border-amber-400 bg-amber-50 ring-1 ring-amber-300'
       )}
     >
       {/* Gradient accent */}
-      <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-blue-500/50 to-transparent opacity-0 transition-opacity group-hover:opacity-100" />
+      <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-amber-400/50 to-transparent opacity-0 transition-opacity group-hover:opacity-100" />
 
-      {/* Selection checkbox — top-left */}
+      {/* Selection checkbox -- top-left */}
       {!user.banned && (
         <button
           onClick={(e) => { e.stopPropagation(); onToggleSelect(); }}
           className={cn(
             'absolute left-3 top-3 z-10 flex h-6 w-6 items-center justify-center rounded-md border transition-all',
             isSelected
-              ? 'border-blue-500 bg-blue-500 text-white'
-              : 'border-white/20 bg-white/5 text-transparent opacity-0 group-hover:opacity-100 hover:border-white/40'
+              ? 'border-amber-500 bg-amber-500 text-white'
+              : 'border-zinc-300 bg-zinc-50 text-transparent opacity-0 group-hover:opacity-100 hover:border-zinc-400'
           )}
         >
           {isSelected ? (
             <CheckSquare className="h-4 w-4" />
           ) : (
-            <Square className="h-4 w-4 text-neutral-400" />
+            <Square className="h-4 w-4 text-zinc-400" />
           )}
         </button>
       )}
@@ -1013,7 +987,7 @@ function UserCard({ user, index, isSelected, onToggleSelect, onEdit, onBan, onUn
                   className="h-11 w-11 rounded-xl object-cover"
                 />
               ) : (
-                <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br from-blue-600/80 to-indigo-600/80 text-sm font-semibold text-white">
+                <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-amber-600 text-sm font-semibold text-white">
                   {user.name.charAt(0).toUpperCase()}
                 </div>
               )}
@@ -1024,64 +998,64 @@ function UserCard({ user, index, isSelected, onToggleSelect, onEdit, onBan, onUn
               )}
             </div>
             <div className="min-w-0">
-              <h3 className="truncate font-semibold text-white">{user.name}</h3>
-              <p className="truncate text-sm text-neutral-500">{user.email}</p>
+              <h3 className="truncate font-semibold text-zinc-900">{user.name}</h3>
+              <p className="truncate text-sm text-zinc-500">{user.email}</p>
             </div>
           </div>
 
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="icon" className="h-8 w-8 text-neutral-400 hover:text-white">
+              <Button variant="ghost" size="icon" className="h-8 w-8 text-zinc-500 hover:text-zinc-900">
                 <MoreVertical className="h-4 w-4" />
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="glass-card border-white/10">
-              <DropdownMenuItem onClick={onEdit} className="gap-2 text-blue-400">
+            <DropdownMenuContent align="end" className="rounded-xl border border-zinc-200 bg-white shadow-sm">
+              <DropdownMenuItem onClick={onEdit} className="gap-2 text-blue-600">
                 <Edit className="h-4 w-4" />
-                Edit
+                {t('common.edit')}
               </DropdownMenuItem>
-              <DropdownMenuSeparator className="bg-white/10" />
+              <DropdownMenuSeparator className="bg-zinc-200" />
               {!user.isAdmin && (
                 <>
-                  <DropdownMenuItem onClick={onImpersonate} className="gap-2 text-purple-400">
+                  <DropdownMenuItem onClick={onImpersonate} className="gap-2 text-purple-600">
                     <User className="h-4 w-4" />
-                    Impersonate User
+                    {t('admin.users.impersonate')}
                   </DropdownMenuItem>
-                  <DropdownMenuSeparator className="bg-white/10" />
+                  <DropdownMenuSeparator className="bg-zinc-200" />
                 </>
               )}
-              <DropdownMenuItem onClick={onSendPasswordReset} className="gap-2 text-orange-400">
+              <DropdownMenuItem onClick={onSendPasswordReset} className="gap-2 text-orange-600">
                 <Key className="h-4 w-4" />
-                Send Password Reset
+                {t('admin.users.sendPasswordReset')}
               </DropdownMenuItem>
               {!user.emailVerified && (
-                <DropdownMenuItem onClick={onResendVerification} className="gap-2 text-cyan-400">
+                <DropdownMenuItem onClick={onResendVerification} className="gap-2 text-cyan-600">
                   <MailCheck className="h-4 w-4" />
-                  Resend Verification
+                  {t('admin.users.resendVerification')}
                 </DropdownMenuItem>
               )}
-              <DropdownMenuSeparator className="bg-white/10" />
+              <DropdownMenuSeparator className="bg-zinc-200" />
               {user.isAdmin ? (
-                <DropdownMenuItem onClick={onRevokeAdmin} className="gap-2 text-amber-400">
+                <DropdownMenuItem onClick={onRevokeAdmin} className="gap-2 text-amber-600">
                   <ShieldOff className="h-4 w-4" />
-                  Revoke Admin
+                  {t('admin.users.revokeAdmin')}
                 </DropdownMenuItem>
               ) : (
-                <DropdownMenuItem onClick={onGrantAdmin} className="gap-2 text-emerald-400">
+                <DropdownMenuItem onClick={onGrantAdmin} className="gap-2 text-emerald-600">
                   <Shield className="h-4 w-4" />
-                  Grant Admin
+                  {t('admin.users.grantAdmin')}
                 </DropdownMenuItem>
               )}
-              <DropdownMenuSeparator className="bg-white/10" />
+              <DropdownMenuSeparator className="bg-zinc-200" />
               {user.banned ? (
-                <DropdownMenuItem onClick={onUnban} className="gap-2 text-emerald-400">
+                <DropdownMenuItem onClick={onUnban} className="gap-2 text-emerald-600">
                   <UserPlus className="h-4 w-4" />
-                  Unban User
+                  {t('admin.users.unban')}
                 </DropdownMenuItem>
               ) : (
-                <DropdownMenuItem onClick={onBan} className="gap-2 text-red-400">
+                <DropdownMenuItem onClick={onBan} className="gap-2 text-red-500">
                   <UserMinus className="h-4 w-4" />
-                  Ban User
+                  {t('admin.users.ban')}
                 </DropdownMenuItem>
               )}
             </DropdownMenuContent>
@@ -1091,25 +1065,25 @@ function UserCard({ user, index, isSelected, onToggleSelect, onEdit, onBan, onUn
         {/* Badges */}
         <div className="mb-4 flex flex-wrap items-center gap-2">
           {user.isAdmin && (
-            <Badge className="border border-amber-500/30 bg-amber-500/20 text-amber-300">
+            <Badge className="border border-amber-300 bg-amber-50 text-amber-700">
               <Shield className="mr-1 h-3 w-3" />
-              Admin
+              {t('admin.users.platformAdmin')}
             </Badge>
           )}
           {user.banned ? (
-            <Badge className="border border-red-500/30 bg-red-500/20 text-red-300">
+            <Badge className="border border-red-300 bg-red-50 text-red-700">
               <Ban className="mr-1 h-3 w-3" />
-              Banned
+              {t('admin.banned')}
             </Badge>
           ) : user.emailVerified ? (
-            <Badge className="border border-emerald-500/30 bg-emerald-500/20 text-emerald-300">
+            <Badge className="border border-emerald-300 bg-emerald-50 text-emerald-700">
               <CheckCircle2 className="mr-1 h-3 w-3" />
-              Verified
+              {t('admin.verified')}
             </Badge>
           ) : (
-            <Badge className="border border-neutral-500/30 bg-neutral-500/20 text-neutral-300">
+            <Badge className="border border-zinc-300 bg-zinc-50 text-zinc-600">
               <Mail className="mr-1 h-3 w-3" />
-              Unverified
+              {t('admin.users.unverified')}
             </Badge>
           )}
         </div>
@@ -1117,21 +1091,21 @@ function UserCard({ user, index, isSelected, onToggleSelect, onEdit, onBan, onUn
         {/* Organizations */}
         {user.organizations.length > 0 && (
           <div className="mb-4">
-            <div className="mb-2 flex items-center gap-1.5 text-neutral-500">
+            <div className="mb-2 flex items-center gap-1.5 text-zinc-500">
               <Building2 className="h-3.5 w-3.5" />
-              <span className="text-[10px] font-medium uppercase tracking-wider">Organizations</span>
+              <span className="text-[10px] font-medium uppercase tracking-wider">{t('admin.users.organizations')}</span>
             </div>
             <div className="flex flex-wrap gap-1.5">
               {user.organizations.slice(0, 3).map((org) => (
                 <span
                   key={org.id}
-                  className="rounded-md bg-white/5 px-2 py-1 text-xs text-neutral-300"
+                  className="rounded-md bg-zinc-50 px-2 py-1 text-xs text-zinc-700"
                 >
                   {org.name}
                 </span>
               ))}
               {user.organizations.length > 3 && (
-                <span className="rounded-md bg-white/5 px-2 py-1 text-xs text-neutral-500">
+                <span className="rounded-md bg-zinc-50 px-2 py-1 text-xs text-zinc-500">
                   +{user.organizations.length - 3} more
                 </span>
               )}
@@ -1140,41 +1114,41 @@ function UserCard({ user, index, isSelected, onToggleSelect, onEdit, onBan, onUn
         )}
 
         {/* Footer */}
-        <div className="flex items-center justify-between border-t border-white/5 pt-4 text-xs text-neutral-500">
-          <span>Joined {new Date(user.createdAt).toLocaleDateString()}</span>
+        <div className="flex items-center justify-between border-t border-zinc-200 pt-4 text-xs text-zinc-500">
+          <span>{t('admin.users.joined')} {new Date(user.createdAt).toLocaleDateString()}</span>
           <span className="capitalize">{user.role}</span>
         </div>
       </div>
-    </motion.div>
+    </div>
   );
 }
 
 // Skeleton
 function UserCardSkeleton() {
   return (
-    <div className="animate-pulse rounded-2xl border border-white/10 bg-white/5 p-5">
+    <div className="animate-pulse rounded-2xl border border-zinc-200 bg-white shadow-sm p-5">
       <div className="mb-4 flex items-start justify-between">
         <div className="flex items-center gap-3">
-          <div className="h-11 w-11 rounded-xl bg-white/10" />
+          <div className="h-11 w-11 rounded-xl bg-zinc-100" />
           <div className="space-y-1.5">
-            <div className="h-5 w-28 rounded bg-white/10" />
-            <div className="h-4 w-36 rounded bg-white/10" />
+            <div className="h-5 w-28 rounded bg-zinc-100" />
+            <div className="h-4 w-36 rounded bg-zinc-100" />
           </div>
         </div>
-        <div className="h-8 w-8 rounded bg-white/10" />
+        <div className="h-8 w-8 rounded bg-zinc-100" />
       </div>
       <div className="mb-4 flex gap-2">
-        <div className="h-6 w-20 rounded-full bg-white/10" />
+        <div className="h-6 w-20 rounded-full bg-zinc-100" />
       </div>
       <div className="mb-4">
-        <div className="mb-2 h-3 w-20 rounded bg-white/10" />
+        <div className="mb-2 h-3 w-20 rounded bg-zinc-100" />
         <div className="flex gap-1.5">
-          <div className="h-6 w-20 rounded bg-white/10" />
-          <div className="h-6 w-16 rounded bg-white/10" />
+          <div className="h-6 w-20 rounded bg-zinc-100" />
+          <div className="h-6 w-16 rounded bg-zinc-100" />
         </div>
       </div>
-      <div className="border-t border-white/5 pt-4">
-        <div className="h-3 w-24 rounded bg-white/10" />
+      <div className="border-t border-zinc-200 pt-4">
+        <div className="h-3 w-24 rounded bg-zinc-100" />
       </div>
     </div>
   );
@@ -1188,49 +1162,44 @@ function EmptyState({
   hasFilters: boolean;
   onClearFilters: () => void;
 }) {
+  const { t } = useTranslation();
+
   if (hasFilters) {
     return (
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-white/10 bg-white/[0.02] px-6 py-16 text-center"
+      <div
+        className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-zinc-200 bg-zinc-50 px-6 py-16 text-center"
       >
-        <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-xl bg-neutral-800/50">
-          <Search className="h-7 w-7 text-neutral-500" />
+        <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-xl bg-zinc-100">
+          <Search className="h-7 w-7 text-zinc-500" />
         </div>
-        <h3 className="mb-1 text-lg font-semibold text-white">No matching users</h3>
-        <p className="mb-4 max-w-sm text-sm text-neutral-400">
-          Try adjusting your filters or search query.
+        <h3 className="mb-1 text-lg font-semibold text-zinc-900">{t('admin.noMatchingResults')}</h3>
+        <p className="mb-4 max-w-sm text-sm text-zinc-500">
+          {t('admin.adjustFilters')}
         </p>
         <Button
           variant="ghost"
           onClick={onClearFilters}
-          className="gap-2 rounded-lg border border-white/10 text-neutral-300 hover:bg-white/5"
+          className="gap-2 rounded-lg border border-zinc-200 text-zinc-700 hover:bg-zinc-50"
         >
-          Clear filters
+          {t('admin.clearFilters')}
         </Button>
-      </motion.div>
+      </div>
     );
   }
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-white/10 bg-white/[0.02] px-6 py-16 text-center"
+    <div
+      className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-zinc-200 bg-zinc-50 px-6 py-16 text-center"
     >
-      <motion.div
-        initial={{ scale: 0.8 }}
-        animate={{ scale: 1 }}
-        transition={{ type: 'spring', stiffness: 200, delay: 0.1 }}
-        className="mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-blue-600/20 to-indigo-600/20"
+      <div
+        className="mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-amber-50"
       >
-        <Users className="h-8 w-8 text-blue-400" />
-      </motion.div>
-      <h3 className="mb-1 text-lg font-semibold text-white">No users yet</h3>
-      <p className="max-w-sm text-sm text-neutral-400">
-        When users sign up, they'll appear here.
+        <Users className="h-8 w-8 text-amber-600" />
+      </div>
+      <h3 className="mb-1 text-lg font-semibold text-zinc-900">{t('admin.users.noUsersYet')}</h3>
+      <p className="max-w-sm text-sm text-zinc-500">
+        {t('admin.users.usersAppearHere')}
       </p>
-    </motion.div>
+    </div>
   );
 }

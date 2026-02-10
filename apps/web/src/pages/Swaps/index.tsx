@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useParams } from 'react-router-dom';
-import { motion, AnimatePresence } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 import {
   ArrowLeftRight,
@@ -43,26 +43,9 @@ import {
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
 
-// Tab configuration
-const tabs: { id: SwapTab; label: string; icon: typeof Inbox }[] = [
-  { id: 'my-requests', label: 'My Requests', icon: ArrowLeftRight },
-  { id: 'pending-for-me', label: 'Pending for Me', icon: Clock },
-  { id: 'all', label: 'All Swaps', icon: CheckCircle2 },
-];
-
-// Status filter options
-const statusOptions: { value: SwapStatus | 'all'; label: string }[] = [
-  { value: 'all', label: 'All Statuses' },
-  { value: 'pending_peer', label: 'Pending Peer' },
-  { value: 'pending_manager', label: 'Pending Manager' },
-  { value: 'approved', label: 'Approved' },
-  { value: 'rejected', label: 'Rejected' },
-  { value: 'cancelled', label: 'Cancelled' },
-  { value: 'completed', label: 'Completed' },
-];
-
 export default function SwapsPage() {
   const { slug } = useParams<{ slug: string }>();
+  const { t } = useTranslation();
   const { user } = useAuth();
 
   // State
@@ -81,6 +64,24 @@ export default function SwapsPage() {
   const [searchQuery, setSearchQuery] = useState('');
 
   const isManager = useIsManager();
+
+  // Tab configuration
+  const tabs: { id: SwapTab; label: string; icon: typeof Inbox }[] = [
+    { id: 'my-requests', label: t('swaps.myRequests'), icon: ArrowLeftRight },
+    { id: 'pending-for-me', label: t('swaps.pendingForMe'), icon: Clock },
+    { id: 'all', label: t('swaps.allSwaps'), icon: CheckCircle2 },
+  ];
+
+  // Status filter options
+  const statusOptions: { value: SwapStatus | 'all'; label: string }[] = [
+    { value: 'all', label: t('swaps.allStatuses') },
+    { value: 'pending_peer', label: t('swaps.pendingPeer') },
+    { value: 'pending_manager', label: t('swaps.pendingManager') },
+    { value: 'approved', label: t('swaps.approved') },
+    { value: 'rejected', label: t('swaps.rejected') },
+    { value: 'cancelled', label: t('swaps.cancelled') },
+    { value: 'completed', label: t('swaps.completed') },
+  ];
 
   // Fetch swaps based on active tab
   const fetchData = useCallback(
@@ -141,7 +142,6 @@ export default function SwapsPage() {
         const data = await response.json();
         const allShifts: Shift[] = data.shifts || [];
 
-        // Separate my shifts from available shifts
         const mine = allShifts.filter((s) => s.user_id === user?.id);
         const others = allShifts.filter((s) => s.user_id && s.user_id !== user?.id);
 
@@ -186,12 +186,10 @@ export default function SwapsPage() {
 
   // Filter swaps
   const filteredSwaps = swaps.filter((swap) => {
-    // Status filter
     if (statusFilter !== 'all' && swap.status !== statusFilter) {
       return false;
     }
 
-    // Search filter
     if (searchQuery) {
       const query = searchQuery.toLowerCase();
       const matchesRequester = swap.requester?.name?.toLowerCase().includes(query);
@@ -280,56 +278,45 @@ export default function SwapsPage() {
   return (
     <div className="space-y-6">
       {/* Page header */}
-      <motion.div
-        initial={{ opacity: 0, y: -10 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between"
-      >
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-primary-600/20 to-violet-600/20 shadow-lg shadow-primary-500/10">
-            <ArrowLeftRight className="h-5 w-5 text-primary-400" />
+          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary-100">
+            <ArrowLeftRight className="h-5 w-5 text-primary-600" />
           </div>
           <div>
-            <h1 className="text-xl font-bold text-white sm:text-2xl">Shift Swaps</h1>
-            <p className="text-sm text-neutral-400">Request and manage shift exchanges</p>
+            <h1 className="text-xl font-bold text-zinc-900 sm:text-2xl">
+              {t('swaps.title')}
+            </h1>
+            <p className="text-sm text-zinc-500">{t('swaps.subtitle')}</p>
           </div>
         </div>
 
         {/* Actions */}
         <div className="flex items-center gap-2">
-          <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={handleRefresh}
-              disabled={isRefreshing}
-              className="gap-1.5 rounded-lg border border-white/5 bg-white/5 text-neutral-300 hover:bg-white/10"
-            >
-              <RefreshCw className={cn('h-4 w-4', isRefreshing && 'animate-spin')} />
-              <span className="hidden sm:inline">Refresh</span>
-            </Button>
-          </motion.div>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={handleRefresh}
+            disabled={isRefreshing}
+            className="gap-1.5 rounded-lg border border-zinc-200 bg-white text-zinc-600 hover:bg-zinc-50"
+          >
+            <RefreshCw className={cn('h-4 w-4', isRefreshing && 'animate-spin')} />
+            <span className="hidden sm:inline">{t('swaps.refresh')}</span>
+          </Button>
 
-          <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
-            <Button
-              onClick={() => setShowCreateModal(true)}
-              size="sm"
-              className="gap-1.5 rounded-lg bg-primary-600 text-white hover:bg-primary-500"
-            >
-              <Plus className="h-4 w-4" />
-              <span className="hidden sm:inline">Request Swap</span>
-            </Button>
-          </motion.div>
+          <Button
+            onClick={() => setShowCreateModal(true)}
+            size="sm"
+            className="gap-1.5 rounded-lg bg-primary-600 text-white hover:bg-primary-700"
+          >
+            <Plus className="h-4 w-4" />
+            <span className="hidden sm:inline">{t('swaps.requestSwap')}</span>
+          </Button>
         </div>
-      </motion.div>
+      </div>
 
       {/* Tabs */}
-      <motion.div
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.1 }}
-        className="glass-card p-1.5"
-      >
+      <div className="rounded-xl border border-zinc-200 bg-white p-1.5">
         <div className="flex gap-1">
           {tabs
             .filter((tab) => tab.id !== 'all' || isManager)
@@ -352,8 +339,8 @@ export default function SwapsPage() {
                   className={cn(
                     'relative flex flex-1 items-center justify-center gap-2 rounded-lg px-4 py-2.5 text-sm font-medium transition-all',
                     isActive
-                      ? 'bg-primary-600/20 text-primary-300'
-                      : 'text-neutral-400 hover:bg-white/5 hover:text-white'
+                      ? 'bg-primary-50 text-primary-600 ring-1 ring-primary-200'
+                      : 'text-zinc-500 hover:bg-zinc-50 hover:text-zinc-900'
                   )}
                 >
                   <Icon className="h-4 w-4" />
@@ -362,40 +349,29 @@ export default function SwapsPage() {
                     <span
                       className={cn(
                         'flex h-5 min-w-[20px] items-center justify-center rounded-full px-1.5 text-[10px] font-bold',
-                        isActive ? 'bg-primary-500 text-white' : 'bg-white/10 text-neutral-300'
+                        isActive ? 'bg-primary-600 text-white' : 'bg-zinc-100 text-zinc-600'
                       )}
                     >
                       {count}
                     </span>
                   )}
-                  {isActive && (
-                    <motion.div
-                      layoutId="tab-indicator"
-                      className="absolute inset-0 rounded-lg bg-primary-500/10 ring-1 ring-primary-500/30"
-                    />
-                  )}
                 </button>
               );
             })}
         </div>
-      </motion.div>
+      </div>
 
       {/* Filters bar */}
-      <motion.div
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.15 }}
-        className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between"
-      >
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         {/* Search */}
         <div className="relative flex-1 sm:max-w-xs">
-          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-neutral-500" />
+          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-400" />
           <Input
             type="text"
-            placeholder="Search swaps..."
+            placeholder={t('swaps.searchPlaceholder')}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="glass-card border-white/10 pl-9 text-white placeholder:text-neutral-500 focus:border-primary-500"
+            className="rounded-xl border-zinc-200 bg-white pl-9 text-zinc-900 placeholder:text-zinc-400 focus:border-primary-500"
           />
         </div>
 
@@ -409,12 +385,12 @@ export default function SwapsPage() {
             className={cn(
               'gap-1.5 rounded-lg border sm:hidden',
               showFilters || statusFilter !== 'all'
-                ? 'border-primary-500/30 bg-primary-500/10 text-primary-300'
-                : 'border-white/5 bg-white/5 text-neutral-300'
+                ? 'border-primary-300 bg-primary-50 text-primary-600'
+                : 'border-zinc-200 bg-white text-zinc-600'
             )}
           >
             <Filter className="h-4 w-4" />
-            Filters
+            {t('common.filters')}
           </Button>
 
           {/* Desktop filters */}
@@ -423,12 +399,12 @@ export default function SwapsPage() {
               value={statusFilter}
               onValueChange={(value) => setStatusFilter(value as SwapStatus | 'all')}
             >
-              <SelectTrigger className="w-[160px] glass-card border-white/10 text-white">
-                <SelectValue placeholder="Filter by status" />
+              <SelectTrigger className="w-[160px] rounded-xl border-zinc-200 bg-white text-zinc-900">
+                <SelectValue placeholder={t('common.status')} />
               </SelectTrigger>
-              <SelectContent className="glass-card border-white/10">
+              <SelectContent className="rounded-xl border-zinc-200 bg-white">
                 {statusOptions.map((option) => (
-                  <SelectItem key={option.value} value={option.value} className="text-neutral-200">
+                  <SelectItem key={option.value} value={option.value} className="text-zinc-700">
                     {option.label}
                   </SelectItem>
                 ))}
@@ -436,100 +412,84 @@ export default function SwapsPage() {
             </Select>
 
             {statusFilter !== 'all' && (
-              <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }}>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => setStatusFilter('all')}
-                  className="gap-1 rounded-lg text-neutral-400 hover:text-white"
-                >
-                  <X className="h-3.5 w-3.5" />
-                  Clear
-                </Button>
-              </motion.div>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setStatusFilter('all')}
+                className="gap-1 rounded-lg text-zinc-500 hover:text-zinc-900"
+              >
+                <X className="h-3.5 w-3.5" />
+                {t('common.clear')}
+              </Button>
             )}
           </div>
         </div>
-      </motion.div>
+      </div>
 
       {/* Mobile filters panel */}
-      <AnimatePresence>
-        {showFilters && (
-          <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: 'auto' }}
-            exit={{ opacity: 0, height: 0 }}
-            className="glass-card overflow-hidden p-4 sm:hidden"
-          >
-            <div className="space-y-3">
-              <div>
-                <label className="mb-1.5 block text-xs font-medium text-neutral-500">Status</label>
-                <Select
-                  value={statusFilter}
-                  onValueChange={(value) => setStatusFilter(value as SwapStatus | 'all')}
-                >
-                  <SelectTrigger className="w-full glass-card border-white/10 text-white">
-                    <SelectValue placeholder="Filter by status" />
-                  </SelectTrigger>
-                  <SelectContent className="glass-card border-white/10">
-                    {statusOptions.map((option) => (
-                      <SelectItem key={option.value} value={option.value} className="text-neutral-200">
-                        {option.label}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-
-              {statusFilter !== 'all' && (
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => setStatusFilter('all')}
-                  className="w-full gap-1 rounded-lg text-neutral-400 hover:text-white"
-                >
-                  <X className="h-3.5 w-3.5" />
-                  Clear filters
-                </Button>
-              )}
+      {showFilters && (
+        <div className="rounded-xl border border-zinc-200 bg-white p-4 sm:hidden">
+          <div className="space-y-3">
+            <div>
+              <label className="mb-1.5 block text-xs font-medium text-zinc-500">
+                {t('common.status')}
+              </label>
+              <Select
+                value={statusFilter}
+                onValueChange={(value) => setStatusFilter(value as SwapStatus | 'all')}
+              >
+                <SelectTrigger className="w-full rounded-xl border-zinc-200 bg-white text-zinc-900">
+                  <SelectValue placeholder={t('common.status')} />
+                </SelectTrigger>
+                <SelectContent className="rounded-xl border-zinc-200 bg-white">
+                  {statusOptions.map((option) => (
+                    <SelectItem key={option.value} value={option.value} className="text-zinc-700">
+                      {option.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+
+            {statusFilter !== 'all' && (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setStatusFilter('all')}
+                className="w-full gap-1 rounded-lg text-zinc-500 hover:text-zinc-900"
+              >
+                <X className="h-3.5 w-3.5" />
+                {t('swaps.clearFilters')}
+              </Button>
+            )}
+          </div>
+        </div>
+      )}
 
       {/* Stats bar */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.2 }}
-        className="flex items-center gap-6 text-sm"
-      >
+      <div className="flex items-center gap-6 text-sm">
         <div className="flex items-center gap-2">
           <div className="h-2 w-2 rounded-full bg-amber-500" />
-          <span className="text-neutral-400">
-            <span className="font-medium text-neutral-200">{pendingCount}</span> pending
+          <span className="text-zinc-500">
+            <span className="font-medium text-zinc-900">{pendingCount}</span> {t('swaps.pending')}
           </span>
         </div>
         <div className="flex items-center gap-2">
           <div className="h-2 w-2 rounded-full bg-emerald-500" />
-          <span className="text-neutral-400">
-            <span className="font-medium text-neutral-200">{approvedCount}</span> approved
+          <span className="text-zinc-500">
+            <span className="font-medium text-zinc-900">{approvedCount}</span> {t('swaps.approved')}
           </span>
         </div>
         <div className="flex items-center gap-2">
-          <div className="h-2 w-2 rounded-full bg-neutral-500" />
-          <span className="text-neutral-400">
-            <span className="font-medium text-neutral-200">{swaps.length}</span> total
+          <div className="h-2 w-2 rounded-full bg-zinc-400" />
+          <span className="text-zinc-500">
+            <span className="font-medium text-zinc-900">{swaps.length}</span> {t('swaps.total')}
           </span>
         </div>
-      </motion.div>
+      </div>
 
       {/* Swaps grid */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.25 }}
-      >
+      <div>
         {isLoading ? (
           <div className="grid gap-4 md:grid-cols-2">
             {[...Array(4)].map((_, i) => (
@@ -548,23 +508,21 @@ export default function SwapsPage() {
           />
         ) : (
           <div className="grid gap-4 md:grid-cols-2">
-            <AnimatePresence mode="popLayout">
-              {filteredSwaps.map((swap) => (
-                <SwapCard
-                  key={swap.id}
-                  swap={swap}
-                  currentUserId={user?.id || ''}
-                  isManager={isManager}
-                  onPeerAction={handlePeerAction}
-                  onManagerAction={handleManagerAction}
-                  onClaim={handleClaim}
-                  onCancel={handleCancel}
-                />
-              ))}
-            </AnimatePresence>
+            {filteredSwaps.map((swap) => (
+              <SwapCard
+                key={swap.id}
+                swap={swap}
+                currentUserId={user?.id || ''}
+                isManager={isManager}
+                onPeerAction={handlePeerAction}
+                onManagerAction={handleManagerAction}
+                onClaim={handleClaim}
+                onCancel={handleCancel}
+              />
+            ))}
           </div>
         )}
-      </motion.div>
+      </div>
 
       {/* Create swap modal */}
       <RequestSwapModal
@@ -593,21 +551,23 @@ function EmptyState({
   onClearFilters: () => void;
   onCreateSwap: () => void;
 }) {
+  const { t } = useTranslation();
+
   const configs: Record<SwapTab, { icon: typeof Inbox; title: string; description: string }> = {
     'my-requests': {
       icon: ArrowLeftRight,
-      title: "You haven't requested any swaps",
-      description: 'Need to trade a shift? Request a swap and find a teammate to cover for you.',
+      title: t('swaps.noRequests'),
+      description: t('swaps.noRequestsDesc'),
     },
     'pending-for-me': {
       icon: Inbox,
-      title: 'No swaps pending your response',
-      description: "When teammates request swaps with you, they'll appear here.",
+      title: t('swaps.noPending'),
+      description: t('swaps.noPendingDesc'),
     },
     all: {
       icon: Calendar,
-      title: 'No swap requests yet',
-      description: "When team members request shift swaps, they'll appear here.",
+      title: t('swaps.noSwaps'),
+      description: t('swaps.noSwapsDesc'),
     },
   };
 
@@ -616,57 +576,42 @@ function EmptyState({
 
   if (hasFilters) {
     return (
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-white/10 bg-white/[0.02] px-6 py-16 text-center"
-      >
-        <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-xl bg-neutral-800/50">
-          <Search className="h-7 w-7 text-neutral-500" />
+      <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-zinc-200 bg-zinc-50 px-6 py-16 text-center">
+        <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-xl bg-zinc-100">
+          <Search className="h-7 w-7 text-zinc-400" />
         </div>
-        <h3 className="mb-1 text-lg font-semibold text-white">No matching swaps</h3>
-        <p className="mb-4 max-w-sm text-sm text-neutral-400">
-          Try adjusting your filters or search query to find what you're looking for.
+        <h3 className="mb-1 text-lg font-semibold text-zinc-900">{t('swaps.noMatching')}</h3>
+        <p className="mb-4 max-w-sm text-sm text-zinc-500">
+          {t('swaps.adjustFilters')}
         </p>
         <Button
           variant="ghost"
           onClick={onClearFilters}
-          className="gap-2 rounded-lg border border-white/10 text-neutral-300 hover:bg-white/5"
+          className="gap-2 rounded-lg border border-zinc-200 text-zinc-600 hover:bg-zinc-50"
         >
           <X className="h-4 w-4" />
-          Clear filters
+          {t('swaps.clearFilters')}
         </Button>
-      </motion.div>
+      </div>
     );
   }
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-white/10 bg-white/[0.02] px-6 py-16 text-center"
-    >
-      <motion.div
-        initial={{ scale: 0.8 }}
-        animate={{ scale: 1 }}
-        transition={{ type: 'spring', stiffness: 200, delay: 0.1 }}
-        className="mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-primary-600/20 to-violet-600/20"
-      >
-        <Icon className="h-8 w-8 text-primary-400" />
-      </motion.div>
-      <h3 className="mb-1 text-lg font-semibold text-white">{config.title}</h3>
-      <p className="mb-6 max-w-sm text-sm text-neutral-400">{config.description}</p>
+    <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-zinc-200 bg-zinc-50 px-6 py-16 text-center">
+      <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-primary-50">
+        <Icon className="h-8 w-8 text-primary-600" />
+      </div>
+      <h3 className="mb-1 text-lg font-semibold text-zinc-900">{config.title}</h3>
+      <p className="mb-6 max-w-sm text-sm text-zinc-500">{config.description}</p>
       {tab === 'my-requests' && (
-        <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
-          <Button
-            onClick={onCreateSwap}
-            className="gap-2 rounded-lg bg-primary-600 text-white hover:bg-primary-500"
-          >
-            <Plus className="h-4 w-4" />
-            Request a Swap
-          </Button>
-        </motion.div>
+        <Button
+          onClick={onCreateSwap}
+          className="gap-2 rounded-lg bg-primary-600 text-white hover:bg-primary-700"
+        >
+          <Plus className="h-4 w-4" />
+          {t('swaps.requestSwap')}
+        </Button>
       )}
-    </motion.div>
+    </div>
   );
 }

@@ -1,12 +1,12 @@
 /**
  * Report Detail Page
  * View single report with tabs: Summary, Variance, Payroll, Compliance
- * Glassmorphism styling with Framer Motion animations
+ * Light theme styling
  */
 
 import { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { motion, AnimatePresence } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 import {
   FileText,
@@ -29,24 +29,13 @@ import { cn } from '@/lib/utils';
 import { fetchReport, downloadReportPDF, emailReport } from '@/lib/api/reports';
 import type { ReportResponse, MonthlyReport } from '@/types/reports';
 
-// Tab types
 type ReportTab = 'summary' | 'variance' | 'payroll' | 'compliance';
 
-// Tab configuration
-const tabs: { id: ReportTab; label: string; icon: typeof BarChart3 }[] = [
-  { id: 'summary', label: 'Summary', icon: FileText },
-  { id: 'variance', label: 'Variance', icon: BarChart3 },
-  { id: 'payroll', label: 'Payroll', icon: DollarSign },
-  { id: 'compliance', label: 'Compliance', icon: ShieldCheck },
-];
-
-// Month names
 const MONTHS = [
   'January', 'February', 'March', 'April', 'May', 'June',
   'July', 'August', 'September', 'October', 'November', 'December',
 ];
 
-// Format hours
 function formatHours(hours: number): string {
   const h = Math.floor(hours);
   const m = Math.round((hours - h) * 60);
@@ -57,15 +46,14 @@ function formatHours(hours: number): string {
 export default function ReportDetailPage() {
   const { slug, id } = useParams<{ slug: string; id: string }>();
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
-  // State
   const [reportData, setReportData] = useState<ReportResponse | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<ReportTab>('summary');
   const [isDownloading, setIsDownloading] = useState(false);
   const [isEmailing, setIsEmailing] = useState(false);
 
-  // Fetch report data
   const loadReport = useCallback(async () => {
     if (!slug || !id) return;
 
@@ -86,12 +74,11 @@ export default function ReportDetailPage() {
     loadReport();
   }, [loadReport]);
 
-  // Handlers
-  const handleBack = () => {
+  function handleBack(): void {
     navigate(`/t/${slug}/reports`);
-  };
+  }
 
-  const handleDownload = async () => {
+  async function handleDownload(): Promise<void> {
     if (!slug || !id) return;
 
     setIsDownloading(true);
@@ -105,9 +92,9 @@ export default function ReportDetailPage() {
     } finally {
       setIsDownloading(false);
     }
-  };
+  }
 
-  const handleEmail = async () => {
+  async function handleEmail(): Promise<void> {
     if (!slug || !id || !reportData?.report.userEmail) return;
 
     setIsEmailing(true);
@@ -120,14 +107,12 @@ export default function ReportDetailPage() {
     } finally {
       setIsEmailing(false);
     }
-  };
+  }
 
-  // Loading state
   if (isLoading) {
     return <LoadingSkeleton />;
   }
 
-  // No data state
   if (!reportData) {
     return null;
   }
@@ -135,94 +120,84 @@ export default function ReportDetailPage() {
   const { report, variance, payroll, compliance } = reportData;
   const monthName = MONTHS[report.month - 1] || 'Unknown';
 
+  const tabItems: { id: ReportTab; labelKey: string; icon: typeof BarChart3 }[] = [
+    { id: 'summary', labelKey: 'reports.summary', icon: FileText },
+    { id: 'variance', labelKey: 'reports.variance', icon: BarChart3 },
+    { id: 'payroll', labelKey: 'reports.payroll', icon: DollarSign },
+    { id: 'compliance', labelKey: 'reports.compliance', icon: ShieldCheck },
+  ];
+
   return (
     <div className="space-y-6">
       {/* Page header */}
-      <motion.div
-        initial={{ opacity: 0, y: -10 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between"
-      >
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center gap-3">
-          <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={handleBack}
-              className="gap-1.5 rounded-lg border border-white/5 bg-white/5 text-neutral-300 hover:bg-white/10"
-            >
-              <ArrowLeft className="h-4 w-4" />
-              <span className="hidden sm:inline">Back</span>
-            </Button>
-          </motion.div>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={handleBack}
+            className="gap-1.5 rounded-lg border border-zinc-200 bg-white text-zinc-700 hover:bg-zinc-50"
+          >
+            <ArrowLeft className="h-4 w-4" />
+            <span className="hidden sm:inline">{t('common.back')}</span>
+          </Button>
 
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-primary-600/20 to-violet-600/20 shadow-lg shadow-primary-500/10">
-            <FileText className="h-5 w-5 text-primary-400" />
+          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-50">
+            <FileText className="h-5 w-5 text-blue-600" />
           </div>
           <div>
-            <h1 className="text-xl font-bold text-white sm:text-2xl">
+            <h1 className="text-xl font-bold text-zinc-900 sm:text-2xl">
               {monthName} {report.year}
             </h1>
-            <p className="text-sm text-neutral-400">
+            <p className="text-sm text-zinc-500">
               {report.userName || 'Monthly Report'}
             </p>
           </div>
         </div>
 
-        {/* Actions */}
         <div className="flex items-center gap-2">
           {report.status === 'ready' && (
             <>
-              <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={handleEmail}
-                  disabled={isEmailing}
-                  className="gap-1.5 rounded-lg border border-white/5 bg-white/5 text-neutral-300 hover:bg-white/10"
-                >
-                  {isEmailing ? (
-                    <Loader2 className="h-4 w-4 animate-spin" />
-                  ) : (
-                    <Mail className="h-4 w-4" />
-                  )}
-                  <span className="hidden sm:inline">Email</span>
-                </Button>
-              </motion.div>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={handleEmail}
+                disabled={isEmailing}
+                className="gap-1.5 rounded-lg border border-zinc-200 bg-white text-zinc-700 hover:bg-zinc-50"
+              >
+                {isEmailing ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                  <Mail className="h-4 w-4" />
+                )}
+                <span className="hidden sm:inline">{t('reports.email')}</span>
+              </Button>
 
-              <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
-                <Button
-                  size="sm"
-                  onClick={handleDownload}
-                  disabled={isDownloading}
-                  className="gap-1.5 rounded-lg bg-primary-600 text-white hover:bg-primary-500"
-                >
-                  {isDownloading ? (
-                    <Loader2 className="h-4 w-4 animate-spin" />
-                  ) : (
-                    <Download className="h-4 w-4" />
-                  )}
-                  <span className="hidden sm:inline">Download PDF</span>
-                </Button>
-              </motion.div>
+              <Button
+                size="sm"
+                onClick={handleDownload}
+                disabled={isDownloading}
+                className="gap-1.5 rounded-lg bg-blue-600 text-white hover:bg-blue-700"
+              >
+                {isDownloading ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                  <Download className="h-4 w-4" />
+                )}
+                <span className="hidden sm:inline">{t('reports.downloadPdf')}</span>
+              </Button>
             </>
           )}
         </div>
-      </motion.div>
+      </div>
 
       {/* Tabs */}
-      <motion.div
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.1 }}
-        className="glass-card p-1.5"
-      >
+      <div className="rounded-xl border border-zinc-200 bg-white p-1.5">
         <div className="flex gap-1 overflow-x-auto scrollbar-hide">
-          {tabs.map((tab) => {
+          {tabItems.map((tab) => {
             const Icon = tab.icon;
             const isActive = activeTab === tab.id;
 
-            // Disable tabs without data
             const isDisabled =
               (tab.id === 'variance' && !variance) ||
               (tab.id === 'payroll' && !payroll) ||
@@ -236,229 +211,186 @@ export default function ReportDetailPage() {
                 className={cn(
                   'relative flex flex-1 items-center justify-center gap-2 whitespace-nowrap rounded-lg px-4 py-2.5 text-sm font-medium transition-all',
                   isActive
-                    ? 'bg-primary-600/20 text-primary-300'
+                    ? 'bg-blue-50 text-blue-700 ring-1 ring-blue-200'
                     : isDisabled
-                    ? 'cursor-not-allowed text-neutral-600'
-                    : 'text-neutral-400 hover:bg-white/5 hover:text-white'
+                    ? 'cursor-not-allowed text-zinc-300'
+                    : 'text-zinc-500 hover:bg-zinc-50 hover:text-zinc-900'
                 )}
               >
                 <Icon className="h-4 w-4" />
-                <span className="hidden sm:inline">{tab.label}</span>
-                {isActive && (
-                  <motion.div
-                    layoutId="report-tab-indicator"
-                    className="absolute inset-0 rounded-lg bg-primary-500/10 ring-1 ring-primary-500/30"
-                  />
-                )}
+                <span className="hidden sm:inline">{t(tab.labelKey)}</span>
               </button>
             );
           })}
         </div>
-      </motion.div>
+      </div>
 
       {/* Tab content */}
-      <AnimatePresence mode="wait">
-        <motion.div
-          key={activeTab}
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -20 }}
-          transition={{ duration: 0.2 }}
-        >
-          {activeTab === 'summary' && <SummaryTab report={report} />}
-          {activeTab === 'variance' && variance && (
-            <VarianceChart data={variance.discrepancies} />
-          )}
-          {activeTab === 'payroll' && payroll && (
-            <PayrollBreakdown report={payroll} />
-          )}
-          {activeTab === 'compliance' && compliance && (
-            <ComplianceStatus
-              violations={compliance.violations}
-              complianceScore={compliance.summary.complianceScore}
-            />
-          )}
-        </motion.div>
-      </AnimatePresence>
+      <div>
+        {activeTab === 'summary' && <SummaryTab report={report} />}
+        {activeTab === 'variance' && variance && (
+          <VarianceChart data={variance.discrepancies} />
+        )}
+        {activeTab === 'payroll' && payroll && (
+          <PayrollBreakdown report={payroll} />
+        )}
+        {activeTab === 'compliance' && compliance && (
+          <ComplianceStatus
+            violations={compliance.violations}
+            complianceScore={compliance.summary.complianceScore}
+          />
+        )}
+      </div>
     </div>
   );
 }
 
-// Summary tab component
 function SummaryTab({ report }: { report: MonthlyReport }) {
+  const { t } = useTranslation();
   const monthName = MONTHS[report.month - 1] || 'Unknown';
   const hasOvertime = report.overtimeHours > 0;
+  const weeklyAvg = report.totalHours / 4;
+  const weeklyBarWidth = Math.min((weeklyAvg / 40) * 100, 100);
 
   return (
     <div className="space-y-6">
       {/* Key metrics */}
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {/* Total Hours */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.1 }}
-          className="glass-card p-4"
-        >
-          <div className="mb-2 flex items-center gap-2 text-neutral-500">
+        <div className="rounded-xl border border-zinc-200 bg-white p-4">
+          <div className="mb-2 flex items-center gap-2 text-zinc-500">
             <Clock className="h-4 w-4" />
-            <span className="text-xs font-medium uppercase tracking-wider">Total Hours</span>
+            <span className="text-xs font-medium uppercase tracking-wider">{t('reports.totalHours')}</span>
           </div>
-          <p className="text-3xl font-bold text-white">{formatHours(report.totalHours)}</p>
-          <p className="mt-1 text-xs text-neutral-500">
+          <p className="text-3xl font-bold text-zinc-900">{formatHours(report.totalHours)}</p>
+          <p className="mt-1 text-xs text-zinc-500">
             {(report.totalHours / report.totalDays).toFixed(1)}h average per day
           </p>
-        </motion.div>
+        </div>
 
         {/* Days Worked */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.15 }}
-          className="glass-card p-4"
-        >
-          <div className="mb-2 flex items-center gap-2 text-neutral-500">
+        <div className="rounded-xl border border-zinc-200 bg-white p-4">
+          <div className="mb-2 flex items-center gap-2 text-zinc-500">
             <Calendar className="h-4 w-4" />
-            <span className="text-xs font-medium uppercase tracking-wider">Days Worked</span>
+            <span className="text-xs font-medium uppercase tracking-wider">{t('reports.daysWorked')}</span>
           </div>
-          <p className="text-3xl font-bold text-white">{report.totalDays}</p>
-          <p className="mt-1 text-xs text-neutral-500">
+          <p className="text-3xl font-bold text-zinc-900">{report.totalDays}</p>
+          <p className="mt-1 text-xs text-zinc-500">
             in {monthName} {report.year}
           </p>
-        </motion.div>
+        </div>
 
         {/* Overtime */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2 }}
+        <div
           className={cn(
-            'glass-card p-4',
-            hasOvertime && 'border-amber-500/20 bg-amber-500/5'
+            'rounded-xl border border-zinc-200 bg-white p-4',
+            hasOvertime && 'border-amber-200 bg-amber-50'
           )}
         >
-          <div className="mb-2 flex items-center gap-2 text-neutral-500">
-            <TrendingUp className={cn('h-4 w-4', hasOvertime && 'text-amber-500')} />
-            <span className="text-xs font-medium uppercase tracking-wider">Overtime</span>
+          <div className="mb-2 flex items-center gap-2 text-zinc-500">
+            <TrendingUp className={cn('h-4 w-4', hasOvertime && 'text-amber-600')} />
+            <span className="text-xs font-medium uppercase tracking-wider">{t('reports.overtimeLabel')}</span>
           </div>
-          <p className={cn('text-3xl font-bold', hasOvertime ? 'text-amber-400' : 'text-white')}>
+          <p className={cn('text-3xl font-bold', hasOvertime ? 'text-amber-600' : 'text-zinc-900')}>
             {formatHours(report.overtimeHours)}
           </p>
-          <p className="mt-1 text-xs text-neutral-500">
+          <p className="mt-1 text-xs text-zinc-500">
             {hasOvertime
               ? `${((report.overtimeHours / report.totalHours) * 100).toFixed(0)}% of total`
-              : 'No overtime recorded'}
+              : t('reports.noOvertimeRecorded')}
           </p>
-        </motion.div>
+        </div>
 
         {/* Status */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.25 }}
-          className="glass-card p-4"
-        >
-          <div className="mb-2 flex items-center gap-2 text-neutral-500">
+        <div className="rounded-xl border border-zinc-200 bg-white p-4">
+          <div className="mb-2 flex items-center gap-2 text-zinc-500">
             <FileText className="h-4 w-4" />
-            <span className="text-xs font-medium uppercase tracking-wider">Status</span>
+            <span className="text-xs font-medium uppercase tracking-wider">{t('reports.statusLabel')}</span>
           </div>
-          <p className="text-lg font-semibold capitalize text-emerald-400">{report.status}</p>
+          <p className="text-lg font-semibold capitalize text-emerald-600">{report.status}</p>
           {report.generatedAt && (
-            <p className="mt-1 text-xs text-neutral-500">
+            <p className="mt-1 text-xs text-zinc-500">
               Generated {new Date(report.generatedAt).toLocaleDateString('es-ES')}
             </p>
           )}
-        </motion.div>
+        </div>
       </div>
 
       {/* Period info */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.3 }}
-        className="glass-card p-4"
-      >
-        <h4 className="mb-3 text-sm font-medium text-neutral-300">Report Period</h4>
+      <div className="rounded-xl border border-zinc-200 bg-white p-4">
+        <h4 className="mb-3 text-sm font-medium text-zinc-700">{t('reports.reportPeriod')}</h4>
         <div className="grid gap-4 sm:grid-cols-2">
-          <div className="flex items-center gap-3 rounded-lg border border-white/5 bg-white/5 p-3">
-            <Calendar className="h-5 w-5 text-neutral-500" />
+          <div className="flex items-center gap-3 rounded-lg border border-zinc-100 bg-zinc-50 p-3">
+            <Calendar className="h-5 w-5 text-zinc-400" />
             <div>
-              <p className="text-sm font-medium text-white">{monthName} 1, {report.year}</p>
-              <p className="text-xs text-neutral-500">Start of period</p>
+              <p className="text-sm font-medium text-zinc-900">{monthName} 1, {report.year}</p>
+              <p className="text-xs text-zinc-500">{t('reports.startPeriod')}</p>
             </div>
           </div>
-          <div className="flex items-center gap-3 rounded-lg border border-white/5 bg-white/5 p-3">
-            <Calendar className="h-5 w-5 text-neutral-500" />
+          <div className="flex items-center gap-3 rounded-lg border border-zinc-100 bg-zinc-50 p-3">
+            <Calendar className="h-5 w-5 text-zinc-400" />
             <div>
-              <p className="text-sm font-medium text-white">
+              <p className="text-sm font-medium text-zinc-900">
                 {monthName} {new Date(report.year, report.month, 0).getDate()}, {report.year}
               </p>
-              <p className="text-xs text-neutral-500">End of period</p>
+              <p className="text-xs text-zinc-500">{t('reports.endPeriod')}</p>
             </div>
           </div>
         </div>
-      </motion.div>
+      </div>
 
-      {/* Weekly breakdown placeholder */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.35 }}
-        className="glass-card p-4"
-      >
-        <h4 className="mb-3 text-sm font-medium text-neutral-300">Weekly Average</h4>
+      {/* Weekly breakdown */}
+      <div className="rounded-xl border border-zinc-200 bg-white p-4">
+        <h4 className="mb-3 text-sm font-medium text-zinc-700">{t('reports.weeklyAverage')}</h4>
         <div className="flex items-end gap-2">
-          <p className="text-4xl font-bold text-white">
-            {(report.totalHours / 4).toFixed(1)}h
+          <p className="text-4xl font-bold text-zinc-900">
+            {weeklyAvg.toFixed(1)}h
           </p>
-          <p className="mb-1 text-sm text-neutral-500">per week (avg)</p>
+          <p className="mb-1 text-sm text-zinc-500">{t('reports.perWeek')}</p>
         </div>
-        <div className="mt-3 h-2 overflow-hidden rounded-full bg-white/10">
-          <motion.div
-            initial={{ width: 0 }}
-            animate={{ width: `${Math.min((report.totalHours / 4 / 40) * 100, 100)}%` }}
-            transition={{ delay: 0.5, duration: 0.8, ease: 'easeOut' }}
+        <div className="mt-3 h-2 overflow-hidden rounded-full bg-zinc-100">
+          <div
+            style={{ width: `${weeklyBarWidth}%` }}
             className={cn(
-              'h-full rounded-full',
-              report.totalHours / 4 > 40 ? 'bg-amber-500' : 'bg-emerald-500'
+              'h-full rounded-full transition-all duration-700',
+              weeklyAvg > 40 ? 'bg-amber-500' : 'bg-emerald-500'
             )}
           />
         </div>
-        <p className="mt-2 text-xs text-neutral-500">
-          {report.totalHours / 4 > 40
-            ? 'Exceeds 40h weekly standard'
-            : 'Within 40h weekly standard'}
+        <p className="mt-2 text-xs text-zinc-500">
+          {weeklyAvg > 40
+            ? t('reports.exceeds40h')
+            : t('reports.within40h')}
         </p>
-      </motion.div>
+      </div>
     </div>
   );
 }
 
-// Loading skeleton
 function LoadingSkeleton() {
   return (
     <div className="space-y-6">
       {/* Header skeleton */}
       <div className="flex items-center gap-3">
-        <div className="h-8 w-8 animate-pulse rounded-lg bg-white/10" />
-        <div className="h-10 w-10 animate-pulse rounded-xl bg-white/10" />
+        <div className="h-8 w-8 animate-pulse rounded-lg bg-zinc-100" />
+        <div className="h-10 w-10 animate-pulse rounded-xl bg-zinc-100" />
         <div className="space-y-1.5">
-          <div className="h-6 w-32 animate-pulse rounded bg-white/10" />
-          <div className="h-4 w-24 animate-pulse rounded bg-white/10" />
+          <div className="h-6 w-32 animate-pulse rounded bg-zinc-100" />
+          <div className="h-4 w-24 animate-pulse rounded bg-zinc-100" />
         </div>
       </div>
 
       {/* Tabs skeleton */}
-      <div className="flex gap-1 rounded-xl border border-white/10 bg-white/5 p-1.5">
+      <div className="flex gap-1 rounded-xl border border-zinc-200 bg-white p-1.5">
         {[...Array(4)].map((_, i) => (
-          <div key={i} className="h-10 flex-1 animate-pulse rounded-lg bg-white/10" />
+          <div key={i} className="h-10 flex-1 animate-pulse rounded-lg bg-zinc-100" />
         ))}
       </div>
 
       {/* Content skeleton */}
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {[...Array(4)].map((_, i) => (
-          <div key={i} className="h-32 animate-pulse rounded-2xl border border-white/10 bg-white/5" />
+          <div key={i} className="h-32 animate-pulse rounded-xl border border-zinc-200 bg-zinc-50" />
         ))}
       </div>
     </div>

@@ -1,14 +1,16 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { motion } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 import { KeyRound, ArrowLeft, CheckCircle2, AlertCircle, Clock } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { LanguageSwitcher } from '@/components/common/LanguageSwitcher';
 
 export default function ResetPassword() {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const token = searchParams.get('token');
 
   const [password, setPassword] = useState('');
@@ -19,26 +21,26 @@ export default function ResetPassword() {
 
   useEffect(() => {
     if (!token) {
-      setError('Invalid or missing reset token. Please request a new password reset.');
+      setError(t('auth.invalidToken'));
     }
-  }, [token]);
+  }, [token, t]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
 
     if (!token) {
-      setError('Invalid reset token');
+      setError(t('auth.invalidToken'));
       return;
     }
 
     if (password.length < 8) {
-      setError('Password must be at least 8 characters');
+      setError(t('auth.minChars'));
       return;
     }
 
     if (password !== confirmPassword) {
-      setError('Passwords do not match');
+      setError(t('auth.passwordsMismatch'));
       return;
     }
 
@@ -55,7 +57,7 @@ export default function ResetPassword() {
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.error || 'Failed to reset password');
+        throw new Error(data.error || t('auth.resetFailed'));
       }
 
       setSuccess(true);
@@ -63,99 +65,81 @@ export default function ResetPassword() {
         navigate('/auth/signin');
       }, 2000);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to reset password');
+      setError(err instanceof Error ? err.message : t('auth.resetFailed'));
     } finally {
       setIsLoading(false);
     }
   };
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center bg-surface-0 px-4">
-      {/* Background glow */}
-      <div className="pointer-events-none absolute inset-0 overflow-hidden">
-        <div className="absolute left-1/2 top-0 -translate-x-1/2 h-[600px] w-[800px] rounded-full bg-primary-600/[0.07] blur-[120px]" />
-      </div>
-
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.4 }}
-        className="relative w-full max-w-sm"
-      >
+    <div className="flex min-h-screen flex-col items-center justify-center bg-zinc-50 px-4">
+      <div className="w-full max-w-sm">
         {/* Logo */}
         <div className="mb-10 flex flex-col items-center gap-3">
-          <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-primary-500 to-primary-600 shadow-xl shadow-primary-500/25">
+          <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-primary-500 shadow-lg shadow-primary-500/20">
             <Clock className="h-7 w-7 text-white" />
           </div>
           <div className="text-center">
-            <h1 className="text-xl font-bold text-white">Torre Tempo</h1>
-            <p className="text-sm text-neutral-500 mt-1">Workforce Management</p>
+            <h1 className="text-xl font-bold text-zinc-900">Torre Tempo</h1>
+            <p className="text-sm text-zinc-500 mt-1">{t('auth.subtitle')}</p>
           </div>
         </div>
 
         {/* Card */}
-        <div className="glass-card p-6 space-y-6">
+        <div className="rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm space-y-6">
           {success ? (
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              className="text-center py-4"
-            >
-              <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-emerald-500/15 border border-emerald-500/20">
-                <CheckCircle2 className="h-7 w-7 text-emerald-400" />
+            <div className="text-center py-4">
+              <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-emerald-50 border border-emerald-200">
+                <CheckCircle2 className="h-7 w-7 text-emerald-600" />
               </div>
-              <h2 className="text-lg font-semibold text-white">Password Reset</h2>
-              <p className="mt-2 text-sm text-neutral-400">
-                Your password has been updated. Redirecting to sign in...
+              <h2 className="text-lg font-semibold text-zinc-900">{t('auth.passwordReset')}</h2>
+              <p className="mt-2 text-sm text-zinc-500">
+                {t('auth.passwordUpdated')}
               </p>
-            </motion.div>
+            </div>
           ) : (
             <>
               <div className="text-center">
-                <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-primary-500/15 border border-primary-500/20">
-                  <KeyRound className="h-6 w-6 text-primary-400" />
+                <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-primary-50 border border-primary-200">
+                  <KeyRound className="h-6 w-6 text-primary-600" />
                 </div>
-                <h2 className="text-lg font-semibold text-white">Reset Password</h2>
-                <p className="text-sm text-neutral-400 mt-1">Enter your new password below</p>
+                <h2 className="text-lg font-semibold text-zinc-900">{t('auth.resetPassword')}</h2>
+                <p className="text-sm text-zinc-500 mt-1">{t('auth.enterNewPassword')}</p>
               </div>
 
               {error && (
-                <motion.div
-                  initial={{ opacity: 0, y: -10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className="flex items-center gap-2 rounded-xl border border-red-500/20 bg-red-500/10 px-4 py-3 text-sm text-red-400"
-                >
+                <div className="flex items-center gap-2 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
                   <AlertCircle className="h-4 w-4 shrink-0" />
                   {error}
-                </motion.div>
+                </div>
               )}
 
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="password" className="text-neutral-300">New Password</Label>
+                  <Label htmlFor="password" className="text-zinc-700">{t('auth.newPassword')}</Label>
                   <Input
                     id="password"
                     type="password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    placeholder="Enter new password"
-                    className="h-11 bg-white/[0.04] border-white/[0.08] rounded-xl"
+                    placeholder={t('auth.enterNewPassword')}
+                    className="h-11"
                     disabled={isLoading || !token}
                     required
                     minLength={8}
                   />
-                  <p className="text-xs text-neutral-500">At least 8 characters</p>
+                  <p className="text-xs text-zinc-500">{t('auth.minChars')}</p>
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="confirmPassword" className="text-neutral-300">Confirm Password</Label>
+                  <Label htmlFor="confirmPassword" className="text-zinc-700">{t('auth.confirmPassword')}</Label>
                   <Input
                     id="confirmPassword"
                     type="password"
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
-                    placeholder="Confirm new password"
-                    className="h-11 bg-white/[0.04] border-white/[0.08] rounded-xl"
+                    placeholder={t('auth.confirmNewPassword')}
+                    className="h-11"
                     disabled={isLoading || !token}
                     required
                     minLength={8}
@@ -165,12 +149,12 @@ export default function ResetPassword() {
                 <Button
                   type="submit"
                   disabled={isLoading || !token || !password || !confirmPassword}
-                  className="w-full h-12 rounded-xl bg-primary-500 hover:bg-primary-600 text-white font-medium min-h-touch"
+                  className="w-full h-12 min-h-touch"
                 >
                   {isLoading ? (
                     <div className="h-4 w-4 animate-spin rounded-full border-2 border-white/20 border-t-white" />
                   ) : (
-                    'Reset Password'
+                    t('auth.resetPassword')
                   )}
                 </Button>
               </form>
@@ -181,13 +165,17 @@ export default function ResetPassword() {
         <div className="mt-6 text-center">
           <button
             onClick={() => navigate('/auth/signin')}
-            className="inline-flex items-center gap-2 text-sm text-neutral-500 transition-colors hover:text-white"
+            className="inline-flex items-center gap-2 text-sm text-zinc-500 transition-colors hover:text-zinc-900"
           >
             <ArrowLeft className="h-4 w-4" />
-            Back to Sign In
+            {t('auth.backToSignIn')}
           </button>
         </div>
-      </motion.div>
+
+        <div className="mt-4 flex justify-center">
+          <LanguageSwitcher />
+        </div>
+      </div>
     </div>
   );
 }

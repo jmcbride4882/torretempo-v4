@@ -1,13 +1,6 @@
-/**
- * Notifications Page
- *
- * Full notification list with filters, mark-as-read, push subscription toggle.
- * Mobile-first glassmorphism dark design per architecture doc.
- */
-
 import { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { motion, AnimatePresence } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 import {
   Bell,
   CheckCheck,
@@ -63,12 +56,12 @@ function getNotificationIcon(type: string) {
   }
 }
 
-function getNotificationColor(type: string) {
-  if (type.startsWith('swap_')) return 'text-primary-400 bg-primary-500/20';
-  if (type.startsWith('shift_')) return 'text-emerald-400 bg-emerald-500/20';
-  if (type === 'compliance_alert') return 'text-amber-400 bg-amber-500/20';
-  if (type === 'approval_needed') return 'text-amber-400 bg-amber-500/20';
-  return 'text-neutral-400 bg-zinc-800/50';
+function getNotificationColor(type: string): string {
+  if (type.startsWith('swap_')) return 'text-primary-600 bg-primary-50';
+  if (type.startsWith('shift_')) return 'text-emerald-600 bg-emerald-50';
+  if (type === 'compliance_alert') return 'text-amber-600 bg-amber-50';
+  if (type === 'approval_needed') return 'text-amber-600 bg-amber-50';
+  return 'text-zinc-500 bg-zinc-100';
 }
 
 function timeAgo(dateStr: string): string {
@@ -91,11 +84,11 @@ function NotificationSkeleton() {
   return (
     <div className="space-y-3 animate-pulse">
       {[1, 2, 3, 4, 5].map((i) => (
-        <div key={i} className="flex gap-3 rounded-xl p-4 border border-zinc-800/50">
-          <div className="h-10 w-10 rounded-lg bg-zinc-800/50 shrink-0" />
+        <div key={i} className="flex gap-3 rounded-xl border border-zinc-200 bg-white p-4">
+          <div className="h-10 w-10 rounded-lg bg-zinc-100 shrink-0" />
           <div className="flex-1 space-y-2">
-            <div className="h-4 w-3/4 rounded bg-zinc-800/50" />
-            <div className="h-3 w-1/2 rounded bg-zinc-800/30" />
+            <div className="h-4 w-3/4 rounded bg-zinc-100" />
+            <div className="h-3 w-1/2 rounded bg-zinc-50" />
           </div>
         </div>
       ))}
@@ -128,16 +121,13 @@ function NotificationItem({
   };
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 5 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, x: -20 }}
+    <div
       onClick={handleClick}
       className={cn(
         'flex gap-3 rounded-xl p-4 border transition-all cursor-pointer',
         notification.read
-          ? 'border-zinc-800/30 bg-transparent hover:bg-white/[0.02]'
-          : 'border-primary-500/20 bg-primary-500/5 hover:bg-primary-500/10'
+          ? 'border-zinc-200 bg-white hover:bg-zinc-50'
+          : 'border-primary-200 bg-primary-50 hover:bg-primary-100'
       )}
     >
       <div className={cn('h-10 w-10 rounded-lg flex items-center justify-center shrink-0', colorClass)}>
@@ -145,17 +135,17 @@ function NotificationItem({
       </div>
       <div className="flex-1 min-w-0">
         <div className="flex items-start justify-between gap-2">
-          <p className={cn('text-sm', notification.read ? 'text-neutral-400' : 'font-medium text-white')}>
+          <p className={cn('text-sm', notification.read ? 'text-zinc-500' : 'font-medium text-zinc-900')}>
             {notification.title}
           </p>
           {!notification.read && (
             <span className="mt-1.5 h-2 w-2 rounded-full bg-primary-500 shrink-0" />
           )}
         </div>
-        <p className="text-xs text-neutral-500 mt-0.5 line-clamp-2">{notification.message}</p>
-        <p className="text-[11px] text-neutral-600 mt-1">{timeAgo(notification.createdAt)}</p>
+        <p className="text-xs text-zinc-400 mt-0.5 line-clamp-2">{notification.message}</p>
+        <p className="text-[11px] text-zinc-400 mt-1">{timeAgo(notification.createdAt)}</p>
       </div>
-    </motion.div>
+    </div>
   );
 }
 
@@ -165,6 +155,7 @@ function NotificationItem({
 
 export default function NotificationsPage() {
   const { slug } = useParams<{ slug: string }>();
+  const { t } = useTranslation();
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isRefreshing, setIsRefreshing] = useState(false);
@@ -235,13 +226,15 @@ export default function NotificationsPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary-500/20">
-            <Bell className="h-5 w-5 text-primary-400" />
+          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary-50">
+            <Bell className="h-5 w-5 text-primary-600" />
           </div>
           <div>
-            <h1 className="text-2xl font-bold text-white">Notifications</h1>
-            <p className="text-sm text-neutral-400">
-              {unreadCount > 0 ? `${unreadCount} unread` : 'All caught up'}
+            <h1 className="text-2xl font-bold text-zinc-900">{t('notifications.title')}</h1>
+            <p className="text-sm text-zinc-500">
+              {unreadCount > 0
+                ? t('notifications.unreadCount', { count: unreadCount })
+                : t('notifications.allCaughtUp')}
             </p>
           </div>
         </div>
@@ -258,18 +251,14 @@ export default function NotificationsPage() {
         </div>
       </div>
 
-      {/* Push notification banner */}
+      {/* Push notification banner - enable */}
       {push.isSupported && !push.isSubscribed && push.permission !== 'denied' && (
-        <motion.div
-          initial={{ opacity: 0, y: -10 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="rounded-xl border border-primary-500/20 bg-primary-500/5 p-4 flex items-center justify-between gap-4"
-        >
+        <div className="rounded-xl border border-primary-200 bg-primary-50 p-4 flex items-center justify-between gap-4">
           <div className="flex items-center gap-3">
-            <Bell className="h-5 w-5 text-primary-400 shrink-0" />
+            <Bell className="h-5 w-5 text-primary-600 shrink-0" />
             <div>
-              <p className="text-sm font-medium text-white">Enable push notifications</p>
-              <p className="text-xs text-neutral-400">Get notified about shifts and swaps even when the app is closed</p>
+              <p className="text-sm font-medium text-zinc-900">{t('notifications.enablePush')}</p>
+              <p className="text-xs text-zinc-500">{t('notifications.enablePushDesc')}</p>
             </div>
           </div>
           <Button
@@ -277,29 +266,49 @@ export default function NotificationsPage() {
             onClick={push.subscribe}
             disabled={push.isLoading}
           >
-            Enable
+            {t('notifications.enable')}
           </Button>
-        </motion.div>
+        </div>
       )}
 
+      {/* Push notification banner - enabled */}
       {push.isSupported && push.isSubscribed && (
-        <div className="rounded-xl border border-emerald-500/20 bg-emerald-500/5 p-3 flex items-center justify-between gap-3">
+        <div className="rounded-xl border border-emerald-200 bg-emerald-50 p-3 flex items-center justify-between gap-3">
           <div className="flex items-center gap-2">
-            <Bell className="h-4 w-4 text-emerald-400" />
-            <span className="text-sm text-emerald-400">Push notifications enabled</span>
+            <Bell className="h-4 w-4 text-emerald-600" />
+            <span className="text-sm text-emerald-600">{t('notifications.pushEnabled')}</span>
           </div>
           <button
             onClick={push.unsubscribe}
-            className="text-xs text-neutral-500 hover:text-neutral-300"
+            className="text-xs text-zinc-500 hover:text-zinc-700"
           >
-            Disable
+            {t('notifications.disable')}
           </button>
+        </div>
+      )}
+
+      {/* Push notification banner - blocked */}
+      {push.isSupported && push.permission === 'denied' && (
+        <div className="rounded-xl border border-red-200 bg-red-50 p-3 flex items-center gap-3">
+          <Bell className="h-4 w-4 text-red-600 shrink-0" />
+          <div>
+            <p className="text-sm font-medium text-red-700">{t('notifications.pushBlocked')}</p>
+            <p className="text-xs text-red-500">{t('notifications.pushBlockedDesc')}</p>
+          </div>
+        </div>
+      )}
+
+      {/* Push not supported */}
+      {!push.isSupported && (
+        <div className="rounded-xl border border-zinc-200 bg-zinc-50 p-3 flex items-center gap-3">
+          <Bell className="h-4 w-4 text-zinc-400 shrink-0" />
+          <span className="text-sm text-zinc-500">{t('notifications.pushNotSupported')}</span>
         </div>
       )}
 
       {/* Filter + Actions Bar */}
       <div className="flex items-center justify-between gap-3">
-        <div className="flex gap-1 rounded-lg border border-zinc-800 bg-zinc-900/50 p-1">
+        <div className="flex gap-1 rounded-lg border border-zinc-200 bg-zinc-50 p-1">
           {(['all', 'unread'] as const).map((f) => (
             <button
               key={f}
@@ -307,18 +316,18 @@ export default function NotificationsPage() {
               className={cn(
                 'px-3 py-1.5 text-sm rounded-md transition-all capitalize',
                 filter === f
-                  ? 'bg-primary-500/20 text-primary-400 font-medium'
-                  : 'text-neutral-400 hover:text-white'
+                  ? 'bg-white text-primary-600 font-medium shadow-sm'
+                  : 'text-zinc-500 hover:text-zinc-900'
               )}
             >
-              {f === 'all' ? 'All' : `Unread (${unreadCount})`}
+              {f === 'all' ? t('notifications.all') : `${t('notifications.unread')} (${unreadCount})`}
             </button>
           ))}
         </div>
         {unreadCount > 0 && (
           <Button variant="ghost" size="sm" onClick={handleMarkAllRead} className="text-xs">
             <CheckCheck className="mr-1 h-3.5 w-3.5" />
-            Mark all read
+            {t('notifications.markAllRead')}
           </Button>
         )}
       </div>
@@ -327,34 +336,39 @@ export default function NotificationsPage() {
       {isLoading ? (
         <NotificationSkeleton />
       ) : notifications.length === 0 ? (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          className="flex flex-col items-center justify-center py-16 text-center"
-        >
-          <div className="h-16 w-16 rounded-2xl bg-zinc-800/30 flex items-center justify-center mb-4">
-            <Inbox className="h-8 w-8 text-neutral-600" />
+        <div className="flex flex-col items-center justify-center py-16 text-center">
+          <div className="h-16 w-16 rounded-2xl bg-zinc-100 flex items-center justify-center mb-4">
+            <Inbox className="h-8 w-8 text-zinc-400" />
           </div>
-          <p className="text-lg font-medium text-neutral-400">
-            {filter === 'unread' ? 'No unread notifications' : 'No notifications yet'}
-          </p>
-          <p className="text-sm text-neutral-600 mt-1">
-            {filter === 'unread'
-              ? 'You\'re all caught up!'
-              : 'Notifications about shifts, swaps, and approvals will appear here'}
-          </p>
-        </motion.div>
+          {filter === 'unread' ? (
+            <>
+              <p className="text-lg font-medium text-zinc-700">
+                {t('notifications.noUnread')}
+              </p>
+              <p className="text-sm text-zinc-500 mt-1">
+                {t('notifications.allCaughtUpMsg')}
+              </p>
+            </>
+          ) : (
+            <>
+              <p className="text-lg font-medium text-zinc-700">
+                {t('notifications.noNotifications')}
+              </p>
+              <p className="text-sm text-zinc-500 mt-1">
+                {t('notifications.noNotificationsDesc')}
+              </p>
+            </>
+          )}
+        </div>
       ) : (
         <div className="space-y-2">
-          <AnimatePresence mode="popLayout">
-            {notifications.map((notification) => (
-              <NotificationItem
-                key={notification.id}
-                notification={notification}
-                onMarkRead={handleMarkRead}
-              />
-            ))}
-          </AnimatePresence>
+          {notifications.map((notification) => (
+            <NotificationItem
+              key={notification.id}
+              notification={notification}
+              onMarkRead={handleMarkRead}
+            />
+          ))}
         </div>
       )}
     </div>

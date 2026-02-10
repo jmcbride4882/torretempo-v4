@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { motion } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 import {
   Settings as SettingsIcon,
   MapPin,
@@ -26,64 +26,38 @@ import { Button } from '@/components/ui/button';
 
 type SettingsTab = 'locations' | 'team' | 'notifications' | 'security';
 
-interface TabItem {
-  id: SettingsTab;
-  label: string;
-  icon: React.ComponentType<{ className?: string }>;
-  description: string;
-}
-
-const tabs: TabItem[] = [
-  {
-    id: 'locations',
-    label: 'Locations',
-    icon: MapPin,
-    description: 'Manage work sites and geofencing',
-  },
-  {
-    id: 'team',
-    label: 'Team',
-    icon: Users,
-    description: 'Manage team members and permissions',
-  },
-  {
-    id: 'notifications',
-    label: 'Notifications',
-    icon: Bell,
-    description: 'Configure notification preferences',
-  },
-  {
-    id: 'security',
-    label: 'Security',
-    icon: Lock,
-    description: 'Security settings and access control',
-  },
-];
-
 export default function SettingsPage() {
   const { slug } = useParams<{ slug: string }>();
+  const { t } = useTranslation();
   const [activeTab, setActiveTab] = useState<SettingsTab>('locations');
 
   if (!slug) {
     return null;
   }
 
+  const tabs: { id: SettingsTab; label: string; icon: React.ComponentType<{ className?: string }>; description: string }[] = [
+    { id: 'locations', label: t('settings.locations'), icon: MapPin, description: t('settings.locationsDesc') },
+    { id: 'team', label: t('settings.team'), icon: Users, description: t('settings.teamDesc') },
+    { id: 'notifications', label: t('nav.notifications'), icon: Bell, description: t('settings.notificationsDesc') },
+    { id: 'security', label: t('settings.security'), icon: Lock, description: t('settings.securityDesc') },
+  ];
+
   return (
     <div className="mx-auto max-w-7xl space-y-6">
       {/* Page header */}
       <div className="flex items-center gap-3">
-        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-white/[0.06]">
-          <SettingsIcon className="h-5 w-5 text-neutral-400" />
+        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-zinc-100">
+          <SettingsIcon className="h-5 w-5 text-zinc-600" />
         </div>
         <div>
-          <h1 className="text-2xl font-bold text-white">Settings</h1>
-          <p className="text-sm text-neutral-400">Manage your workspace configuration</p>
+          <h1 className="text-2xl font-bold text-zinc-900">{t('settings.title')}</h1>
+          <p className="text-sm text-zinc-500">{t('settings.subtitle')}</p>
         </div>
       </div>
 
       {/* Tabs */}
-      <div className="glass-card overflow-hidden">
-        <div className="border-b border-white/[0.06]">
+      <div className="rounded-2xl border border-zinc-200 bg-white overflow-hidden">
+        <div className="border-b border-zinc-200">
           <div className="flex overflow-x-auto scrollbar-hide">
             {tabs.map((tab) => {
               const Icon = tab.icon;
@@ -94,19 +68,12 @@ export default function SettingsPage() {
                   className={cn(
                     'relative flex items-center gap-2 whitespace-nowrap border-b-2 px-6 py-4 text-sm font-medium transition-colors min-h-touch',
                     activeTab === tab.id
-                      ? 'border-primary-500 text-white'
-                      : 'border-transparent text-neutral-400 hover:text-neutral-300'
+                      ? 'border-primary-500 text-primary-600'
+                      : 'border-transparent text-zinc-500 hover:text-zinc-700'
                   )}
                 >
                   <Icon className="h-4 w-4" />
                   <span>{tab.label}</span>
-                  {activeTab === tab.id && (
-                    <motion.div
-                      layoutId="activeTab"
-                      className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary-500"
-                      transition={{ type: 'spring', stiffness: 500, damping: 30 }}
-                    />
-                  )}
                 </button>
               );
             })}
@@ -138,34 +105,35 @@ interface NotifPref {
 }
 
 function NotificationSettings({ slug }: { slug: string }) {
+  const { t } = useTranslation();
   const push = usePushNotifications(slug);
 
   const [prefs, setPrefs] = useState<NotifPref[]>([
     {
       id: 'shift_reminders',
-      label: 'Shift reminders',
-      description: 'Get notified 30 minutes before your shift starts',
+      label: t('settings.shiftReminders'),
+      description: t('settings.shiftRemindersDesc'),
       icon: Clock,
       enabled: true,
     },
     {
       id: 'swap_updates',
-      label: 'Swap updates',
-      description: 'Notifications when swap requests are sent, accepted, or rejected',
+      label: t('settings.swapUpdates'),
+      description: t('settings.swapUpdatesDesc'),
       icon: Users,
       enabled: true,
     },
     {
       id: 'schedule_changes',
-      label: 'Schedule changes',
-      description: 'When your roster is updated or new shifts are published',
+      label: t('settings.scheduleChanges'),
+      description: t('settings.scheduleChangesDesc'),
       icon: Bell,
       enabled: true,
     },
     {
       id: 'email_digest',
-      label: 'Email weekly digest',
-      description: 'Receive a weekly summary of your hours and upcoming shifts',
+      label: t('settings.emailDigest'),
+      description: t('settings.emailDigestDesc'),
       icon: Mail,
       enabled: false,
     },
@@ -186,44 +154,40 @@ function NotificationSettings({ slug }: { slug: string }) {
       {/* Push Notifications */}
       <div className="space-y-4">
         <div>
-          <h3 className="text-lg font-semibold text-white">Push Notifications</h3>
-          <p className="text-sm text-neutral-400">Receive push notifications on this device</p>
+          <h3 className="text-lg font-semibold text-zinc-900">{t('settings.pushNotifications')}</h3>
+          <p className="text-sm text-zinc-500">{t('settings.pushNotificationsDesc')}</p>
         </div>
 
         {!push.isSupported ? (
-          <div className="rounded-xl border border-white/[0.08] bg-white/[0.03] p-4 flex items-center gap-3">
-            <BellOff className="h-5 w-5 text-neutral-500" />
-            <p className="text-sm text-neutral-400">
-              Push notifications are not supported in this browser
-            </p>
+          <div className="rounded-xl border border-zinc-200 bg-zinc-50 p-4 flex items-center gap-3">
+            <BellOff className="h-5 w-5 text-zinc-400" />
+            <p className="text-sm text-zinc-500">{t('settings.pushNotSupported')}</p>
           </div>
         ) : push.permission === 'denied' ? (
-          <div className="rounded-xl border border-red-500/20 bg-red-500/5 p-4 flex items-center gap-3">
-            <BellOff className="h-5 w-5 text-red-400" />
+          <div className="rounded-xl border border-red-200 bg-red-50 p-4 flex items-center gap-3">
+            <BellOff className="h-5 w-5 text-red-600" />
             <div>
-              <p className="text-sm font-medium text-red-400">Notifications blocked</p>
-              <p className="text-xs text-neutral-400">
-                You've blocked notifications for this site. Enable them in your browser settings.
-              </p>
+              <p className="text-sm font-medium text-red-700">{t('settings.pushBlocked')}</p>
+              <p className="text-xs text-red-600">{t('settings.pushBlockedDesc')}</p>
             </div>
           </div>
         ) : (
-          <div className="rounded-xl border border-white/[0.08] bg-white/[0.03] p-4 flex items-center justify-between">
+          <div className="rounded-xl border border-zinc-200 bg-white p-4 flex items-center justify-between">
             <div className="flex items-center gap-3">
               <div className={cn(
                 'h-10 w-10 rounded-xl flex items-center justify-center',
-                push.isSubscribed ? 'bg-emerald-500/15' : 'bg-white/[0.06]'
+                push.isSubscribed ? 'bg-emerald-50' : 'bg-zinc-100'
               )}>
-                <Smartphone className={cn('h-5 w-5', push.isSubscribed ? 'text-emerald-400' : 'text-neutral-500')} />
+                <Smartphone className={cn('h-5 w-5', push.isSubscribed ? 'text-emerald-600' : 'text-zinc-400')} />
               </div>
               <div>
-                <p className="text-sm font-medium text-white">
-                  {push.isSubscribed ? 'Push notifications enabled' : 'Push notifications disabled'}
+                <p className="text-sm font-medium text-zinc-900">
+                  {push.isSubscribed ? t('settings.pushEnabled') : t('settings.pushDisabled')}
                 </p>
-                <p className="text-xs text-neutral-500">
+                <p className="text-xs text-zinc-500">
                   {push.isSubscribed
-                    ? 'You will receive notifications even when the app is closed'
-                    : 'Enable to get notified about shifts and swaps'}
+                    ? t('settings.pushEnabledDesc')
+                    : t('settings.pushDisabledDesc')}
                 </p>
               </div>
             </div>
@@ -232,22 +196,21 @@ function NotificationSettings({ slug }: { slug: string }) {
               size="sm"
               onClick={push.isSubscribed ? push.unsubscribe : push.subscribe}
               disabled={push.isLoading}
-              className="rounded-xl"
             >
-              {push.isSubscribed ? 'Disable' : 'Enable'}
+              {push.isSubscribed ? t('settings.disable') : t('settings.enable')}
             </Button>
           </div>
         )}
         {push.error && (
-          <p className="text-xs text-red-400">{push.error}</p>
+          <p className="text-xs text-red-600">{push.error}</p>
         )}
       </div>
 
       {/* Notification Preferences */}
       <div className="space-y-4">
         <div>
-          <h3 className="text-lg font-semibold text-white">Preferences</h3>
-          <p className="text-sm text-neutral-400">Choose which notifications you receive</p>
+          <h3 className="text-lg font-semibold text-zinc-900">{t('settings.preferences')}</h3>
+          <p className="text-sm text-zinc-500">{t('settings.preferencesDesc')}</p>
         </div>
 
         <div className="space-y-2">
@@ -256,22 +219,22 @@ function NotificationSettings({ slug }: { slug: string }) {
             return (
               <div
                 key={pref.id}
-                className="rounded-xl border border-white/[0.08] bg-white/[0.03] p-4 flex items-center justify-between"
+                className="rounded-xl border border-zinc-200 bg-white p-4 flex items-center justify-between"
               >
                 <div className="flex items-center gap-3">
-                  <div className="h-10 w-10 rounded-xl bg-white/[0.06] flex items-center justify-center">
-                    <Icon className="h-5 w-5 text-neutral-400" />
+                  <div className="h-10 w-10 rounded-xl bg-zinc-100 flex items-center justify-center">
+                    <Icon className="h-5 w-5 text-zinc-500" />
                   </div>
                   <div>
-                    <p className="text-sm font-medium text-white">{pref.label}</p>
-                    <p className="text-xs text-neutral-500">{pref.description}</p>
+                    <p className="text-sm font-medium text-zinc-900">{pref.label}</p>
+                    <p className="text-xs text-zinc-500">{pref.description}</p>
                   </div>
                 </div>
                 <button
                   onClick={() => togglePref(pref.id)}
                   className={cn(
                     'relative h-6 w-11 rounded-full transition-colors shrink-0',
-                    pref.enabled ? 'bg-primary-500' : 'bg-white/[0.12]'
+                    pref.enabled ? 'bg-primary-500' : 'bg-zinc-300'
                   )}
                 >
                   <span
@@ -290,28 +253,24 @@ function NotificationSettings({ slug }: { slug: string }) {
       {/* Do Not Disturb */}
       <div className="space-y-4">
         <div>
-          <h3 className="text-lg font-semibold text-white flex items-center gap-2">
-            <Moon className="h-5 w-5 text-primary-400" />
-            Do Not Disturb
+          <h3 className="text-lg font-semibold text-zinc-900 flex items-center gap-2">
+            <Moon className="h-5 w-5 text-primary-600" />
+            {t('settings.dnd')}
           </h3>
-          <p className="text-sm text-neutral-400">
-            Silence notifications during rest hours (Right to Disconnect — Art. 88 LOPDGDD)
-          </p>
+          <p className="text-sm text-zinc-500">{t('settings.dndDesc')}</p>
         </div>
 
-        <div className="rounded-xl border border-white/[0.08] bg-white/[0.03] p-4 space-y-4">
+        <div className="rounded-xl border border-zinc-200 bg-white p-4 space-y-4">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-white">Enable Do Not Disturb</p>
-              <p className="text-xs text-neutral-500">
-                No notifications will be sent during quiet hours
-              </p>
+              <p className="text-sm font-medium text-zinc-900">{t('settings.enableDnd')}</p>
+              <p className="text-xs text-zinc-500">{t('settings.enableDndDesc')}</p>
             </div>
             <button
               onClick={() => setDndEnabled(!dndEnabled)}
               className={cn(
                 'relative h-6 w-11 rounded-full transition-colors shrink-0',
-                dndEnabled ? 'bg-primary-500' : 'bg-white/[0.12]'
+                dndEnabled ? 'bg-primary-500' : 'bg-zinc-300'
               )}
             >
               <span
@@ -324,30 +283,26 @@ function NotificationSettings({ slug }: { slug: string }) {
           </div>
 
           {dndEnabled && (
-            <motion.div
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: 'auto' }}
-              className="flex items-center gap-4 pt-4 border-t border-white/[0.06]"
-            >
+            <div className="flex items-center gap-4 pt-4 border-t border-zinc-200">
               <div className="flex-1">
-                <label className="text-xs text-neutral-500 block mb-1">From</label>
+                <label className="text-xs text-zinc-500 block mb-1">{t('settings.from')}</label>
                 <input
                   type="time"
                   value={dndStart}
                   onChange={(e) => setDndStart(e.target.value)}
-                  className="w-full rounded-xl border border-white/[0.08] bg-white/[0.04] px-3 py-2 text-sm text-white"
+                  className="w-full rounded-xl border border-zinc-200 bg-white px-3 py-2 text-sm text-zinc-900"
                 />
               </div>
               <div className="flex-1">
-                <label className="text-xs text-neutral-500 block mb-1">To</label>
+                <label className="text-xs text-zinc-500 block mb-1">{t('settings.to')}</label>
                 <input
                   type="time"
                   value={dndEnd}
                   onChange={(e) => setDndEnd(e.target.value)}
-                  className="w-full rounded-xl border border-white/[0.08] bg-white/[0.04] px-3 py-2 text-sm text-white"
+                  className="w-full rounded-xl border border-zinc-200 bg-white px-3 py-2 text-sm text-zinc-900"
                 />
               </div>
-            </motion.div>
+            </div>
           )}
         </div>
       </div>
@@ -369,6 +324,7 @@ interface Session {
 }
 
 function SecuritySettings() {
+  const { t } = useTranslation();
   const { signOut } = useAuth();
 
   const [sessions] = useState<Session[]>([
@@ -410,8 +366,8 @@ function SecuritySettings() {
       {/* Active Sessions */}
       <div className="space-y-4">
         <div>
-          <h3 className="text-lg font-semibold text-white">Active Sessions</h3>
-          <p className="text-sm text-neutral-400">Manage your logged-in devices</p>
+          <h3 className="text-lg font-semibold text-zinc-900">{t('settings.activeSessions')}</h3>
+          <p className="text-sm text-zinc-500">{t('settings.activeSessionsDesc')}</p>
         </div>
 
         <div className="space-y-2">
@@ -421,39 +377,41 @@ function SecuritySettings() {
               className={cn(
                 'rounded-xl border p-4 flex items-center justify-between',
                 session.current
-                  ? 'border-emerald-500/20 bg-emerald-500/5'
-                  : 'border-white/[0.08] bg-white/[0.03]'
+                  ? 'border-emerald-200 bg-emerald-50'
+                  : 'border-zinc-200 bg-white'
               )}
             >
               <div className="flex items-center gap-3">
                 <div className={cn(
                   'h-10 w-10 rounded-xl flex items-center justify-center',
-                  session.current ? 'bg-emerald-500/15' : 'bg-white/[0.06]'
+                  session.current ? 'bg-emerald-100' : 'bg-zinc-100'
                 )}>
                   <Monitor className={cn(
                     'h-5 w-5',
-                    session.current ? 'text-emerald-400' : 'text-neutral-500'
+                    session.current ? 'text-emerald-600' : 'text-zinc-400'
                   )} />
                 </div>
                 <div>
                   <div className="flex items-center gap-2">
-                    <p className="text-sm font-medium text-white">{session.device}</p>
+                    <p className="text-sm font-medium text-zinc-900">{session.device}</p>
                     {session.current && (
-                      <span className="badge-success text-[10px] py-0 px-1.5">Current</span>
+                      <span className="rounded-full bg-emerald-100 text-emerald-700 text-[10px] font-medium px-2 py-0.5">
+                        {t('settings.current')}
+                      </span>
                     )}
                   </div>
-                  <p className="text-xs text-neutral-500">
+                  <p className="text-xs text-zinc-500">
                     {session.browser} &middot; {session.ip}
                   </p>
-                  <p className="text-[11px] text-neutral-600">
-                    Last active: {new Date(session.lastActive).toLocaleString('es-ES')}
+                  <p className="text-[11px] text-zinc-400">
+                    {t('settings.lastActive')}: {new Date(session.lastActive).toLocaleString('es-ES')}
                   </p>
                 </div>
               </div>
               {!session.current && (
-                <Button variant="outline" size="sm" className="text-red-400 border-red-500/20 hover:bg-red-500/10 rounded-xl">
+                <Button variant="outline" size="sm" className="text-red-600 border-red-200 hover:bg-red-50">
                   <LogOut className="mr-1 h-3.5 w-3.5" />
-                  Revoke
+                  {t('settings.revoke')}
                 </Button>
               )}
             </div>
@@ -464,61 +422,56 @@ function SecuritySettings() {
       {/* Change Password */}
       <div className="space-y-4">
         <div>
-          <h3 className="text-lg font-semibold text-white">Change Password</h3>
-          <p className="text-sm text-neutral-400">Update your account password</p>
+          <h3 className="text-lg font-semibold text-zinc-900">{t('settings.changePassword')}</h3>
+          <p className="text-sm text-zinc-500">{t('settings.changePasswordDesc')}</p>
         </div>
 
-        <div className="rounded-xl border border-white/[0.08] bg-white/[0.03] p-4 space-y-4">
+        <div className="rounded-xl border border-zinc-200 bg-white p-4 space-y-4">
           {passwordChanged && (
-            <motion.div
-              initial={{ opacity: 0, y: -10 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="rounded-xl bg-emerald-500/10 border border-emerald-500/20 p-3 flex items-center gap-2"
-            >
-              <Shield className="h-4 w-4 text-emerald-400" />
-              <span className="text-sm text-emerald-400">Password updated successfully</span>
-            </motion.div>
+            <div className="rounded-xl bg-emerald-50 border border-emerald-200 p-3 flex items-center gap-2">
+              <Shield className="h-4 w-4 text-emerald-600" />
+              <span className="text-sm text-emerald-700">{t('settings.passwordUpdated')}</span>
+            </div>
           )}
 
           <div>
-            <label className="text-xs text-neutral-500 block mb-1">Current password</label>
+            <label className="text-xs text-zinc-500 block mb-1">{t('settings.currentPassword')}</label>
             <input
               type="password"
               value={currentPassword}
               onChange={(e) => setCurrentPassword(e.target.value)}
-              className="w-full rounded-xl border border-white/[0.08] bg-white/[0.04] px-3 py-2.5 text-sm text-white"
-              placeholder="Enter current password"
+              className="w-full rounded-xl border border-zinc-200 bg-white px-3 py-2.5 text-sm text-zinc-900"
+              placeholder={t('settings.enterCurrentPassword')}
             />
           </div>
           <div>
-            <label className="text-xs text-neutral-500 block mb-1">New password</label>
+            <label className="text-xs text-zinc-500 block mb-1">{t('settings.newPassword')}</label>
             <input
               type="password"
               value={newPassword}
               onChange={(e) => setNewPassword(e.target.value)}
-              className="w-full rounded-xl border border-white/[0.08] bg-white/[0.04] px-3 py-2.5 text-sm text-white"
-              placeholder="At least 8 characters"
+              className="w-full rounded-xl border border-zinc-200 bg-white px-3 py-2.5 text-sm text-zinc-900"
+              placeholder={t('settings.atLeast8')}
             />
           </div>
           <div>
-            <label className="text-xs text-neutral-500 block mb-1">Confirm new password</label>
+            <label className="text-xs text-zinc-500 block mb-1">{t('settings.confirmPassword')}</label>
             <input
               type="password"
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
-              className="w-full rounded-xl border border-white/[0.08] bg-white/[0.04] px-3 py-2.5 text-sm text-white"
-              placeholder="Re-enter new password"
+              className="w-full rounded-xl border border-zinc-200 bg-white px-3 py-2.5 text-sm text-zinc-900"
+              placeholder={t('settings.reenterPassword')}
             />
           </div>
           {newPassword && confirmPassword && newPassword !== confirmPassword && (
-            <p className="text-xs text-red-400">Passwords do not match</p>
+            <p className="text-xs text-red-600">{t('settings.passwordsNoMatch')}</p>
           )}
           <Button
             onClick={handleChangePassword}
             disabled={!currentPassword || !newPassword || newPassword !== confirmPassword || newPassword.length < 8}
-            className="rounded-xl bg-primary-500 hover:bg-primary-600"
           >
-            Update Password
+            {t('settings.updatePassword')}
           </Button>
         </div>
       </div>
@@ -526,18 +479,16 @@ function SecuritySettings() {
       {/* Sign Out All Devices */}
       <div className="space-y-4">
         <div>
-          <h3 className="text-lg font-semibold text-white">Sign Out Everywhere</h3>
-          <p className="text-sm text-neutral-400">
-            Sign out of all devices including this one
-          </p>
+          <h3 className="text-lg font-semibold text-zinc-900">{t('settings.signOutEverywhere')}</h3>
+          <p className="text-sm text-zinc-500">{t('settings.signOutEverywhereDesc')}</p>
         </div>
         <Button
           variant="outline"
-          className="text-red-400 border-red-500/20 hover:bg-red-500/10 rounded-xl"
+          className="text-red-600 border-red-200 hover:bg-red-50"
           onClick={signOut}
         >
           <LogOut className="mr-2 h-4 w-4" />
-          Sign out all devices
+          {t('settings.signOutAll')}
         </Button>
       </div>
     </div>

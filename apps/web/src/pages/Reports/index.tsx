@@ -1,11 +1,11 @@
 /**
  * Reports Index Page
- * Lists all reports with filters, glassmorphism styling, and mobile-first design
+ * Lists all reports with filters, light theme styling, and mobile-first design
  */
 
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { motion, AnimatePresence } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 import {
   FileText,
@@ -28,9 +28,9 @@ import type { MonthlyReport, ReportFilter, TeamMember } from '@/types/reports';
 export default function ReportsPage() {
   const { slug } = useParams<{ slug: string }>();
   const navigate = useNavigate();
+  const { t } = useTranslation();
   useAuth();
 
-  // State
   const [reports, setReports] = useState<MonthlyReport[]>([]);
   const [teamMembers, setTeamMembers] = useState<TeamMember[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -40,7 +40,6 @@ export default function ReportsPage() {
 
   const isManager = useIsManager();
 
-  // Fetch reports
   const fetchData = useCallback(
     async (silent = false) => {
       if (!slug) return;
@@ -66,7 +65,6 @@ export default function ReportsPage() {
     [slug, filters]
   );
 
-  // Fetch team members for filter
   const loadTeamMembers = useCallback(async () => {
     if (!slug || !isManager) return;
 
@@ -78,7 +76,6 @@ export default function ReportsPage() {
     }
   }, [slug, isManager]);
 
-  // Load data on mount and filter change
   useEffect(() => {
     fetchData();
   }, [fetchData]);
@@ -87,7 +84,6 @@ export default function ReportsPage() {
     loadTeamMembers();
   }, [loadTeamMembers]);
 
-  // Filter reports by search query
   const filteredReports = useMemo(() => {
     if (!searchQuery) return reports;
 
@@ -104,14 +100,15 @@ export default function ReportsPage() {
     });
   }, [reports, searchQuery]);
 
-  // Handlers
-  const handleRefresh = () => fetchData(true);
+  function handleRefresh(): void {
+    fetchData(true);
+  }
 
-  const handleReportClick = (id: string) => {
+  function handleReportClick(id: string): void {
     navigate(`/t/${slug}/reports/${id}`);
-  };
+  }
 
-  const handleDownload = async (id: string) => {
+  async function handleDownload(id: string): Promise<void> {
     if (!slug) return;
 
     try {
@@ -122,17 +119,16 @@ export default function ReportsPage() {
       console.error('Error downloading PDF:', error);
       toast.error('Failed to download PDF');
     }
-  };
+  }
 
-  const handleGenerateReport = () => {
+  function handleGenerateReport(): void {
     navigate(`/t/${slug}/reports/generate`);
-  };
+  }
 
-  const handleFilterChange = (newFilters: ReportFilter) => {
+  function handleFilterChange(newFilters: ReportFilter): void {
     setFilters(newFilters);
-  };
+  }
 
-  // Stats
   const totalHours = reports.reduce((sum, r) => sum + r.totalHours, 0);
   const totalOvertime = reports.reduce((sum, r) => sum + r.overtimeHours, 0);
   const readyCount = reports.filter((r) => r.status === 'ready').length;
@@ -140,218 +136,169 @@ export default function ReportsPage() {
   return (
     <div className="space-y-6">
       {/* Page header */}
-      <motion.div
-        initial={{ opacity: 0, y: -10 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between"
-      >
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-primary-600/20 to-violet-600/20 shadow-lg shadow-primary-500/10">
-            <FileText className="h-5 w-5 text-primary-400" />
+          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-50">
+            <FileText className="h-5 w-5 text-blue-600" />
           </div>
           <div>
-            <h1 className="text-xl font-bold text-white sm:text-2xl">Reports</h1>
-            <p className="text-sm text-neutral-400">Monthly summaries and compliance reports</p>
+            <h1 className="text-xl font-bold text-zinc-900 sm:text-2xl">{t('reports.title')}</h1>
+            <p className="text-sm text-zinc-500">{t('reports.subtitle')}</p>
           </div>
         </div>
 
-        {/* Actions */}
         <div className="flex items-center gap-2">
-          <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={handleRefresh}
-              disabled={isRefreshing}
-              className="gap-1.5 rounded-lg border border-white/5 bg-white/5 text-neutral-300 hover:bg-white/10"
-            >
-              <RefreshCw className={cn('h-4 w-4', isRefreshing && 'animate-spin')} />
-              <span className="hidden sm:inline">Refresh</span>
-            </Button>
-          </motion.div>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={handleRefresh}
+            disabled={isRefreshing}
+            className="gap-1.5 rounded-lg border border-zinc-200 bg-white text-zinc-700 hover:bg-zinc-50"
+          >
+            <RefreshCw className={cn('h-4 w-4', isRefreshing && 'animate-spin')} />
+            <span className="hidden sm:inline">{t('reports.refresh')}</span>
+          </Button>
 
-          <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
-            <Button
-              onClick={handleGenerateReport}
-              size="sm"
-              className="gap-1.5 rounded-lg bg-primary-600 text-white hover:bg-primary-500"
-            >
-              <Plus className="h-4 w-4" />
-              <span className="hidden sm:inline">Generate Report</span>
-            </Button>
-          </motion.div>
+          <Button
+            onClick={handleGenerateReport}
+            size="sm"
+            className="gap-1.5 rounded-lg bg-blue-600 text-white hover:bg-blue-700"
+          >
+            <Plus className="h-4 w-4" />
+            <span className="hidden sm:inline">{t('reports.generate')}</span>
+          </Button>
         </div>
-      </motion.div>
+      </div>
 
       {/* Filters */}
-      <motion.div
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.1 }}
-      >
-        <ReportFilters
-          currentFilters={filters}
-          onFilterChange={handleFilterChange}
-          teamMembers={teamMembers}
-          isManager={isManager}
-        />
-      </motion.div>
+      <ReportFilters
+        currentFilters={filters}
+        onFilterChange={handleFilterChange}
+        teamMembers={teamMembers}
+        isManager={isManager}
+      />
 
       {/* Search bar */}
-      <motion.div
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.15 }}
-        className="relative max-w-md"
-      >
-        <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-neutral-500" />
+      <div className="relative max-w-md">
+        <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-400" />
         <Input
           type="text"
-          placeholder="Search reports..."
+          placeholder={t('reports.searchPlaceholder')}
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          className="glass-card border-white/10 pl-9 text-white placeholder:text-neutral-500 focus:border-primary-500"
+          className="rounded-lg border-zinc-200 bg-white pl-9 text-zinc-900 placeholder:text-zinc-400 focus:border-blue-500"
         />
-      </motion.div>
+      </div>
 
       {/* Stats bar */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.2 }}
-        className="flex flex-wrap items-center gap-4 text-sm sm:gap-6"
-      >
+      <div className="flex flex-wrap items-center gap-4 text-sm sm:gap-6">
         <div className="flex items-center gap-2">
-          <div className="h-2 w-2 rounded-full bg-primary-500" />
-          <span className="text-neutral-400">
-            <span className="font-medium text-neutral-200">{reports.length}</span> reports
+          <div className="h-2 w-2 rounded-full bg-blue-500" />
+          <span className="text-zinc-500">
+            <span className="font-medium text-zinc-900">{reports.length}</span> {t('reports.reports')}
           </span>
         </div>
         <div className="flex items-center gap-2">
           <div className="h-2 w-2 rounded-full bg-emerald-500" />
-          <span className="text-neutral-400">
-            <span className="font-medium text-neutral-200">{readyCount}</span> ready
+          <span className="text-zinc-500">
+            <span className="font-medium text-zinc-900">{readyCount}</span> {t('reports.ready')}
           </span>
         </div>
         <div className="flex items-center gap-2">
-          <Clock className="h-3.5 w-3.5 text-neutral-500" />
-          <span className="text-neutral-400">
-            <span className="font-medium text-neutral-200">{totalHours.toFixed(0)}h</span> total
+          <Clock className="h-3.5 w-3.5 text-zinc-400" />
+          <span className="text-zinc-500">
+            <span className="font-medium text-zinc-900">{totalHours.toFixed(0)}h</span> {t('reports.total')}
           </span>
         </div>
         {totalOvertime > 0 && (
           <div className="flex items-center gap-2">
             <TrendingUp className="h-3.5 w-3.5 text-amber-500" />
-            <span className="text-neutral-400">
-              <span className="font-medium text-amber-400">{totalOvertime.toFixed(0)}h</span>{' '}
-              overtime
+            <span className="text-zinc-500">
+              <span className="font-medium text-amber-600">{totalOvertime.toFixed(0)}h</span>{' '}
+              {t('reports.overtime').toLowerCase()}
             </span>
           </div>
         )}
-      </motion.div>
+      </div>
 
       {/* Reports grid */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.25 }}
-      >
-        {isLoading ? (
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {[...Array(6)].map((_, i) => (
-              <ReportCardSkeleton key={i} />
-            ))}
-          </div>
-        ) : filteredReports.length === 0 ? (
-          <EmptyState
-            hasFilters={!!filters.year || !!filters.month || !!filters.userId || !!searchQuery}
-            onClearFilters={() => {
-              setFilters({});
-              setSearchQuery('');
-            }}
-            onGenerateReport={handleGenerateReport}
-          />
-        ) : (
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            <AnimatePresence mode="popLayout">
-              {filteredReports.map((report) => (
-                <ReportCard
-                  key={report.id}
-                  report={report}
-                  onClick={handleReportClick}
-                  onDownload={handleDownload}
-                />
-              ))}
-            </AnimatePresence>
-          </div>
-        )}
-      </motion.div>
+      {isLoading ? (
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {[...Array(6)].map((_, i) => (
+            <ReportCardSkeleton key={i} />
+          ))}
+        </div>
+      ) : filteredReports.length === 0 ? (
+        <EmptyState
+          hasFilters={!!filters.year || !!filters.month || !!filters.userId || !!searchQuery}
+          onClearFilters={() => {
+            setFilters({});
+            setSearchQuery('');
+          }}
+          onGenerateReport={handleGenerateReport}
+        />
+      ) : (
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {filteredReports.map((report) => (
+            <ReportCard
+              key={report.id}
+              report={report}
+              onClick={handleReportClick}
+              onDownload={handleDownload}
+            />
+          ))}
+        </div>
+      )}
     </div>
   );
 }
 
-// Empty state component
-function EmptyState({
-  hasFilters,
-  onClearFilters,
-  onGenerateReport,
-}: {
+interface EmptyStateProps {
   hasFilters: boolean;
   onClearFilters: () => void;
   onGenerateReport: () => void;
-}) {
+}
+
+function EmptyState({ hasFilters, onClearFilters, onGenerateReport }: EmptyStateProps) {
+  const { t } = useTranslation();
+
   if (hasFilters) {
     return (
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-white/10 bg-white/[0.02] px-6 py-16 text-center"
-      >
-        <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-xl bg-neutral-800/50">
-          <Search className="h-7 w-7 text-neutral-500" />
+      <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-zinc-200 bg-zinc-50 px-6 py-16 text-center">
+        <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-xl bg-white shadow-sm">
+          <Search className="h-7 w-7 text-zinc-400" />
         </div>
-        <h3 className="mb-1 text-lg font-semibold text-white">No matching reports</h3>
-        <p className="mb-4 max-w-sm text-sm text-neutral-400">
-          Try adjusting your filters or search query to find what you're looking for.
+        <h3 className="mb-1 text-lg font-semibold text-zinc-900">{t('reports.noMatching')}</h3>
+        <p className="mb-4 max-w-sm text-sm text-zinc-500">
+          {t('reports.adjustFilters')}
         </p>
         <Button
           variant="ghost"
           onClick={onClearFilters}
-          className="gap-2 rounded-lg border border-white/10 text-neutral-300 hover:bg-white/5"
+          className="gap-2 rounded-lg border border-zinc-200 text-zinc-700 hover:bg-zinc-50"
         >
-          Clear filters
+          {t('reports.clearFilters')}
         </Button>
-      </motion.div>
+      </div>
     );
   }
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-white/10 bg-white/[0.02] px-6 py-16 text-center"
-    >
-      <motion.div
-        initial={{ scale: 0.8 }}
-        animate={{ scale: 1 }}
-        transition={{ type: 'spring', stiffness: 200, delay: 0.1 }}
-        className="mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-primary-600/20 to-violet-600/20"
-      >
-        <FileText className="h-8 w-8 text-primary-400" />
-      </motion.div>
-      <h3 className="mb-1 text-lg font-semibold text-white">No reports yet</h3>
-      <p className="mb-6 max-w-sm text-sm text-neutral-400">
-        Generate your first monthly report to track hours, overtime, and compliance.
+    <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-zinc-200 bg-zinc-50 px-6 py-16 text-center">
+      <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-blue-50">
+        <FileText className="h-8 w-8 text-blue-600" />
+      </div>
+      <h3 className="mb-1 text-lg font-semibold text-zinc-900">{t('reports.noReports')}</h3>
+      <p className="mb-6 max-w-sm text-sm text-zinc-500">
+        {t('reports.noReportsDesc')}
       </p>
-      <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
-        <Button
-          onClick={onGenerateReport}
-          className="gap-2 rounded-lg bg-primary-600 text-white hover:bg-primary-500"
-        >
-          <Plus className="h-4 w-4" />
-          Generate Report
-        </Button>
-      </motion.div>
-    </motion.div>
+      <Button
+        onClick={onGenerateReport}
+        className="gap-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700"
+      >
+        <Plus className="h-4 w-4" />
+        {t('reports.generate')}
+      </Button>
+    </div>
   );
 }

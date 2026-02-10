@@ -1,15 +1,17 @@
 import { useState } from 'react';
 import { useLocation, Link } from 'react-router-dom';
-import { motion } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 import { Mail, Lock, ArrowRight, Clock } from 'lucide-react';
 import { authClient } from '@/lib/auth-client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { LanguageSwitcher } from '@/components/common/LanguageSwitcher';
 
 export default function SignIn() {
   const location = useLocation();
+  const { t } = useTranslation();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -27,63 +29,53 @@ export default function SignIn() {
       });
 
       if (result.error) {
-        toast.error(result.error.message || 'Sign in failed');
+        toast.error(result.error.message || t('errors.signInFailed'));
         return;
       }
 
-      toast.success('Welcome back!');
+      toast.success(t('auth.welcomeBack'));
       await new Promise(resolve => setTimeout(resolve, 300));
       window.location.href = from;
     } catch {
-      toast.error('An unexpected error occurred');
+      toast.error(t('errors.unexpected'));
     } finally {
       setIsLoading(false);
     }
   };
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center bg-surface-0 px-4">
-      {/* Background glow */}
-      <div className="pointer-events-none absolute inset-0 overflow-hidden">
-        <div className="absolute left-1/2 top-0 -translate-x-1/2 h-[600px] w-[800px] rounded-full bg-primary-600/[0.07] blur-[120px]" />
-      </div>
-
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.4 }}
-        className="relative w-full max-w-sm"
-      >
+    <div className="flex min-h-screen flex-col items-center justify-center bg-zinc-50 px-4">
+      <div className="w-full max-w-sm">
         {/* Logo */}
         <div className="mb-10 flex flex-col items-center gap-3">
-          <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-primary-500 to-primary-600 shadow-xl shadow-primary-500/25">
+          <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-primary-500 shadow-lg shadow-primary-500/20">
             <Clock className="h-7 w-7 text-white" />
           </div>
           <div className="text-center">
-            <h1 className="text-xl font-bold text-white">Torre Tempo</h1>
-            <p className="text-sm text-neutral-500 mt-1">Workforce Management</p>
+            <h1 className="text-xl font-bold text-zinc-900">Torre Tempo</h1>
+            <p className="text-sm text-zinc-500 mt-1">{t('auth.subtitle')}</p>
           </div>
         </div>
 
         {/* Card */}
-        <div className="glass-card p-6 space-y-6">
+        <div className="rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm space-y-6">
           <div className="text-center">
-            <h2 className="text-lg font-semibold text-white">Welcome back</h2>
-            <p className="text-sm text-neutral-400 mt-1">Sign in to continue</p>
+            <h2 className="text-lg font-semibold text-zinc-900">{t('auth.welcomeBack')}</h2>
+            <p className="text-sm text-zinc-500 mt-1">{t('auth.signInContinue')}</p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="email" className="text-neutral-300">Email</Label>
+              <Label htmlFor="email" className="text-zinc-700">{t('common.email')}</Label>
               <div className="relative">
-                <Mail className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-neutral-500" />
+                <Mail className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-400" />
                 <Input
                   id="email"
                   type="email"
-                  placeholder="you@company.com"
+                  placeholder="tu@empresa.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="pl-10 h-11 bg-white/[0.04] border-white/[0.08] rounded-xl"
+                  className="pl-10 h-11"
                   required
                   autoComplete="email"
                 />
@@ -92,23 +84,23 @@ export default function SignIn() {
 
             <div className="space-y-2">
               <div className="flex items-center justify-between">
-                <Label htmlFor="password" className="text-neutral-300">Password</Label>
+                <Label htmlFor="password" className="text-zinc-700">{t('auth.password')}</Label>
                 <Link
                   to="/auth/reset-password"
-                  className="text-xs text-primary-400 hover:text-primary-300 transition-colors"
+                  className="text-xs text-primary-600 hover:text-primary-700 transition-colors"
                 >
-                  Forgot password?
+                  {t('auth.forgotPassword')}
                 </Link>
               </div>
               <div className="relative">
-                <Lock className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-neutral-500" />
+                <Lock className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-400" />
                 <Input
                   id="password"
                   type="password"
                   placeholder="••••••••"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="pl-10 h-11 bg-white/[0.04] border-white/[0.08] rounded-xl"
+                  className="pl-10 h-11"
                   required
                   autoComplete="current-password"
                 />
@@ -117,14 +109,14 @@ export default function SignIn() {
 
             <Button
               type="submit"
-              className="w-full h-12 rounded-xl bg-primary-500 hover:bg-primary-600 text-white font-medium min-h-touch"
+              className="w-full h-12 min-h-touch"
               disabled={isLoading}
             >
               {isLoading ? (
                 <div className="h-4 w-4 animate-spin rounded-full border-2 border-white/20 border-t-white" />
               ) : (
                 <>
-                  Sign in
+                  {t('auth.signIn')}
                   <ArrowRight className="ml-2 h-4 w-4" />
                 </>
               )}
@@ -132,13 +124,17 @@ export default function SignIn() {
           </form>
         </div>
 
-        <p className="mt-6 text-center text-sm text-neutral-500">
-          Don't have an account?{' '}
-          <Link to="/auth/signup" className="font-medium text-primary-400 hover:text-primary-300 transition-colors">
-            Sign up
+        <p className="mt-6 text-center text-sm text-zinc-500">
+          {t('auth.noAccount')}{' '}
+          <Link to="/auth/signup" className="font-medium text-primary-600 hover:text-primary-700 transition-colors">
+            {t('auth.signUp')}
           </Link>
         </p>
-      </motion.div>
+
+        <div className="mt-6 flex justify-center">
+          <LanguageSwitcher />
+        </div>
+      </div>
     </div>
   );
 }

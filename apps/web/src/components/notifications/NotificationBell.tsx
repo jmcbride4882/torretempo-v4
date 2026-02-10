@@ -1,6 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { useParams } from 'react-router-dom';
-import { motion, AnimatePresence } from 'framer-motion';
 import { Bell } from 'lucide-react';
 import { Popover, PopoverTrigger } from '@/components/ui/popover';
 import { Button } from '@/components/ui/button';
@@ -52,7 +51,7 @@ export function NotificationBell() {
   const handleOpenChange = (open: boolean) => {
     setIsOpen(open);
     if (!open) {
-      // Small delay to allow animations to complete
+      // Small delay to allow transitions to complete
       setTimeout(loadUnreadCount, 300);
     }
   };
@@ -69,70 +68,46 @@ export function NotificationBell() {
           size="icon"
           className={cn(
             'relative group',
-            isOpen && 'bg-white/10'
+            isOpen && 'bg-zinc-100'
           )}
           aria-label={`Notifications${unreadCount > 0 ? ` (${unreadCount} unread)` : ''}`}
         >
-          {/* Bell icon with subtle animation on hover */}
-          <motion.div
-            whileHover={{ rotate: [0, -15, 15, -10, 10, -5, 5, 0] }}
-            transition={{ duration: 0.5 }}
-          >
+          {/* Bell icon */}
+          <div>
             <Bell
               className={cn(
                 'h-5 w-5 transition-colors duration-200',
-                isOpen ? 'text-white' : 'text-neutral-300 group-hover:text-white'
+                isOpen ? 'text-zinc-900' : 'text-zinc-500 group-hover:text-zinc-900'
               )}
             />
-          </motion.div>
+          </div>
 
           {/* Unread badge */}
-          <AnimatePresence>
-            {!isLoading && unreadCount > 0 && (
-              <motion.div
-                initial={{ scale: 0, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                exit={{ scale: 0, opacity: 0 }}
-                transition={{
-                  type: 'spring',
-                  stiffness: 500,
-                  damping: 25,
-                }}
-                className={cn(
-                  'absolute -top-0.5 -right-0.5',
-                  'flex items-center justify-center',
-                  'min-w-[18px] h-[18px] px-1',
-                  'rounded-full',
-                  'bg-gradient-to-br from-primary-500 to-primary-700',
-                  'text-[10px] font-bold text-white',
-                  'shadow-lg shadow-primary-500/30',
-                  'ring-2 ring-neutral-900'
-                )}
-              >
-                {unreadCount > 99 ? '99+' : unreadCount}
-              </motion.div>
-            )}
-          </AnimatePresence>
+          {!isLoading && unreadCount > 0 && (
+            <div
+              className={cn(
+                'absolute -top-0.5 -right-0.5',
+                'flex items-center justify-center',
+                'min-w-[18px] h-[18px] px-1',
+                'rounded-full',
+                'bg-primary-500',
+                'text-[10px] font-bold text-white',
+                'shadow-sm',
+                'ring-2 ring-white'
+              )}
+            >
+              {unreadCount > 99 ? '99+' : unreadCount}
+            </div>
+          )}
 
           {/* Loading state - subtle pulse */}
           {isLoading && (
-            <span className="absolute right-1.5 top-1.5 h-2 w-2 rounded-full bg-neutral-600 animate-pulse" />
+            <span className="absolute right-1.5 top-1.5 h-2 w-2 rounded-full bg-zinc-300 animate-pulse" />
           )}
 
           {/* Error state - dim indicator */}
           {!isLoading && hasError && (
-            <span className="absolute right-1.5 top-1.5 h-2 w-2 rounded-full bg-amber-500/50" />
-          )}
-
-          {/* Active glow ring when open */}
-          {isOpen && (
-            <motion.div
-              layoutId="notification-glow"
-              className="absolute inset-0 rounded-lg ring-2 ring-primary-500/30"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-            />
+            <span className="absolute right-1.5 top-1.5 h-2 w-2 rounded-full bg-amber-400" />
           )}
         </Button>
       </PopoverTrigger>

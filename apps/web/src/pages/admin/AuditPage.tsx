@@ -4,7 +4,7 @@
  */
 
 import { useState, useEffect, useCallback } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 import {
   FileText,
@@ -36,17 +36,17 @@ import type { AuditLogEntry } from '@/lib/api/admin';
 
 // Action colors
 const actionColors: Record<string, string> = {
-  create: 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30',
-  update: 'bg-blue-500/20 text-blue-300 border-blue-500/30',
-  delete: 'bg-red-500/20 text-red-300 border-red-500/30',
-  login: 'bg-violet-500/20 text-violet-300 border-violet-500/30',
-  logout: 'bg-neutral-500/20 text-neutral-300 border-neutral-500/30',
-  suspend: 'bg-amber-500/20 text-amber-300 border-amber-500/30',
-  unsuspend: 'bg-teal-500/20 text-teal-300 border-teal-500/30',
-  ban: 'bg-red-500/20 text-red-300 border-red-500/30',
-  unban: 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30',
-  grant: 'bg-amber-500/20 text-amber-300 border-amber-500/30',
-  revoke: 'bg-red-500/20 text-red-300 border-red-500/30',
+  create: 'bg-emerald-50 text-emerald-700 border-emerald-200',
+  update: 'bg-blue-50 text-blue-700 border-blue-200',
+  delete: 'bg-red-50 text-red-700 border-red-200',
+  login: 'bg-violet-50 text-violet-700 border-violet-200',
+  logout: 'bg-zinc-100 text-zinc-700 border-zinc-200',
+  suspend: 'bg-amber-50 text-amber-700 border-amber-200',
+  unsuspend: 'bg-teal-50 text-teal-700 border-teal-200',
+  ban: 'bg-red-50 text-red-700 border-red-200',
+  unban: 'bg-emerald-50 text-emerald-700 border-emerald-200',
+  grant: 'bg-amber-50 text-amber-700 border-amber-200',
+  revoke: 'bg-red-50 text-red-700 border-red-200',
 };
 
 // Action options
@@ -73,6 +73,8 @@ const targetTypeOptions = [
 ];
 
 export default function AuditPage() {
+  const { t } = useTranslation();
+
   // State
   const [logs, setLogs] = useState<AuditLogEntry[]>([]);
   const [total, setTotal] = useState(0);
@@ -185,82 +187,67 @@ export default function AuditPage() {
   return (
     <div className="space-y-6">
       {/* Page header */}
-      <motion.div
-        initial={{ opacity: 0, y: -10 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between"
-      >
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-600/20 to-purple-600/20 shadow-lg shadow-indigo-500/10">
-            <FileText className="h-5 w-5 text-indigo-400" />
+          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-amber-50 border border-amber-200">
+            <FileText className="h-5 w-5 text-amber-600" />
           </div>
           <div>
-            <h1 className="text-xl font-bold text-white sm:text-2xl">Audit Log</h1>
-            <p className="text-sm text-neutral-400">Track all administrative actions</p>
+            <h1 className="text-xl font-bold text-zinc-900 sm:text-2xl">{t('admin.audit.title')}</h1>
+            <p className="text-sm text-zinc-500">Track all administrative actions</p>
           </div>
         </div>
 
         <div className="flex items-center gap-2">
-          <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => setShowFilters(!showFilters)}
-              className={cn(
-                'gap-1.5 rounded-lg border sm:hidden',
-                showFilters || hasActiveFilters
-                  ? 'border-indigo-500/30 bg-indigo-500/10 text-indigo-300'
-                  : 'border-white/5 bg-white/5 text-neutral-300'
-              )}
-            >
-              <Filter className="h-4 w-4" />
-              Filters
-            </Button>
-          </motion.div>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => setShowFilters(!showFilters)}
+            className={cn(
+              'gap-1.5 rounded-lg border sm:hidden',
+              showFilters || hasActiveFilters
+                ? 'border-amber-200 bg-amber-50 text-amber-700'
+                : 'border-zinc-200 bg-zinc-50 text-zinc-700'
+            )}
+          >
+            <Filter className="h-4 w-4" />
+            {t('common.filter')}
+          </Button>
 
-          <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={handleExport}
-              disabled={isExporting}
-              className="gap-1.5 rounded-lg border border-white/5 bg-white/5 text-neutral-300 hover:bg-white/10"
-            >
-              <Download className={cn('h-4 w-4', isExporting && 'animate-bounce')} />
-              <span className="hidden sm:inline">{isExporting ? 'Exporting...' : 'Export CSV'}</span>
-            </Button>
-          </motion.div>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={handleExport}
+            disabled={isExporting}
+            className="gap-1.5 rounded-lg border border-zinc-200 bg-zinc-50 text-zinc-700 hover:bg-zinc-100"
+          >
+            <Download className={cn('h-4 w-4', isExporting && 'animate-bounce')} />
+            <span className="hidden sm:inline">{isExporting ? 'Exporting...' : t('admin.exportCsv')}</span>
+          </Button>
 
-          <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={handleRefresh}
-              disabled={isRefreshing}
-              className="gap-1.5 rounded-lg border border-white/5 bg-white/5 text-neutral-300 hover:bg-white/10"
-            >
-              <RefreshCw className={cn('h-4 w-4', isRefreshing && 'animate-spin')} />
-              <span className="hidden sm:inline">Refresh</span>
-            </Button>
-          </motion.div>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={handleRefresh}
+            disabled={isRefreshing}
+            className="gap-1.5 rounded-lg border border-zinc-200 bg-zinc-50 text-zinc-700 hover:bg-zinc-100"
+          >
+            <RefreshCw className={cn('h-4 w-4', isRefreshing && 'animate-spin')} />
+            <span className="hidden sm:inline">{t('admin.refresh')}</span>
+          </Button>
         </div>
-      </motion.div>
+      </div>
 
       {/* Desktop Filters */}
-      <motion.div
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.1 }}
-        className="hidden flex-wrap items-center gap-3 sm:flex"
-      >
+      <div className="hidden flex-wrap items-center gap-3 sm:flex">
         {/* Action filter */}
         <Select value={actionFilter} onValueChange={(v) => { setActionFilter(v); setPage(1); }}>
-          <SelectTrigger className="w-[140px] glass-card border-white/10 text-white">
-            <SelectValue placeholder="Action" />
+          <SelectTrigger className="w-[140px] rounded-xl border border-zinc-200 bg-white shadow-sm text-zinc-900">
+            <SelectValue placeholder={t('admin.audit.action')} />
           </SelectTrigger>
-          <SelectContent className="glass-card border-white/10">
+          <SelectContent className="rounded-xl border border-zinc-200 bg-white shadow-sm">
             {actionOptions.map((opt) => (
-              <SelectItem key={opt.value} value={opt.value} className="text-neutral-200">
+              <SelectItem key={opt.value} value={opt.value} className="text-zinc-700">
                 {opt.label}
               </SelectItem>
             ))}
@@ -269,12 +256,12 @@ export default function AuditPage() {
 
         {/* Target type filter */}
         <Select value={targetTypeFilter} onValueChange={(v) => { setTargetTypeFilter(v); setPage(1); }}>
-          <SelectTrigger className="w-[140px] glass-card border-white/10 text-white">
-            <SelectValue placeholder="Target Type" />
+          <SelectTrigger className="w-[140px] rounded-xl border border-zinc-200 bg-white shadow-sm text-zinc-900">
+            <SelectValue placeholder={t('admin.audit.target')} />
           </SelectTrigger>
-          <SelectContent className="glass-card border-white/10">
+          <SelectContent className="rounded-xl border border-zinc-200 bg-white shadow-sm">
             {targetTypeOptions.map((opt) => (
-              <SelectItem key={opt.value} value={opt.value} className="text-neutral-200">
+              <SelectItem key={opt.value} value={opt.value} className="text-zinc-700">
                 {opt.label}
               </SelectItem>
             ))}
@@ -295,109 +282,92 @@ export default function AuditPage() {
             variant="ghost"
             size="sm"
             onClick={clearFilters}
-            className="gap-1 text-neutral-400 hover:text-white"
+            className="gap-1 text-zinc-500 hover:text-zinc-900"
           >
             <X className="h-3.5 w-3.5" />
             Clear
           </Button>
         )}
-      </motion.div>
+      </div>
 
       {/* Mobile Filters */}
-      <AnimatePresence>
-        {showFilters && (
-          <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: 'auto' }}
-            exit={{ opacity: 0, height: 0 }}
-            className="glass-card overflow-hidden p-4 sm:hidden"
-          >
-            <div className="space-y-3">
-              <div>
-                <label className="mb-1.5 block text-xs font-medium text-neutral-500">Action</label>
-                <Select value={actionFilter} onValueChange={(v) => { setActionFilter(v); setPage(1); }}>
-                  <SelectTrigger className="w-full glass-card border-white/10 text-white">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent className="glass-card border-white/10">
-                    {actionOptions.map((opt) => (
-                      <SelectItem key={opt.value} value={opt.value} className="text-neutral-200">
-                        {opt.label}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-              <div>
-                <label className="mb-1.5 block text-xs font-medium text-neutral-500">Target Type</label>
-                <Select value={targetTypeFilter} onValueChange={(v) => { setTargetTypeFilter(v); setPage(1); }}>
-                  <SelectTrigger className="w-full glass-card border-white/10 text-white">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent className="glass-card border-white/10">
-                    {targetTypeOptions.map((opt) => (
-                      <SelectItem key={opt.value} value={opt.value} className="text-neutral-200">
-                        {opt.label}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-              <div>
-                <label className="mb-1.5 block text-xs font-medium text-neutral-500">Date Range</label>
-                <DateRangePicker
-                  startDate={startDate}
-                  endDate={endDate}
-                  onStartDateChange={(v) => { setStartDate(v); setPage(1); }}
-                  onEndDateChange={(v) => { setEndDate(v); setPage(1); }}
-                  onClear={() => { setStartDate(''); setEndDate(''); setPage(1); }}
-                  className="w-full justify-start"
-                />
-              </div>
-              {hasActiveFilters && (
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={clearFilters}
-                  className="w-full gap-1 text-neutral-400 hover:text-white"
-                >
-                  <X className="h-3.5 w-3.5" />
-                  Clear filters
-                </Button>
-              )}
+      {showFilters && (
+        <div className="rounded-xl border border-zinc-200 bg-white shadow-sm overflow-hidden p-4 sm:hidden">
+          <div className="space-y-3">
+            <div>
+              <label className="mb-1.5 block text-xs font-medium text-zinc-500">{t('admin.audit.action')}</label>
+              <Select value={actionFilter} onValueChange={(v) => { setActionFilter(v); setPage(1); }}>
+                <SelectTrigger className="w-full rounded-xl border border-zinc-200 bg-white shadow-sm text-zinc-900">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent className="rounded-xl border border-zinc-200 bg-white shadow-sm">
+                  {actionOptions.map((opt) => (
+                    <SelectItem key={opt.value} value={opt.value} className="text-zinc-700">
+                      {opt.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+            <div>
+              <label className="mb-1.5 block text-xs font-medium text-zinc-500">{t('admin.audit.target')}</label>
+              <Select value={targetTypeFilter} onValueChange={(v) => { setTargetTypeFilter(v); setPage(1); }}>
+                <SelectTrigger className="w-full rounded-xl border border-zinc-200 bg-white shadow-sm text-zinc-900">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent className="rounded-xl border border-zinc-200 bg-white shadow-sm">
+                  {targetTypeOptions.map((opt) => (
+                    <SelectItem key={opt.value} value={opt.value} className="text-zinc-700">
+                      {opt.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <div>
+              <label className="mb-1.5 block text-xs font-medium text-zinc-500">{t('admin.audit.dateRange')}</label>
+              <DateRangePicker
+                startDate={startDate}
+                endDate={endDate}
+                onStartDateChange={(v) => { setStartDate(v); setPage(1); }}
+                onEndDateChange={(v) => { setEndDate(v); setPage(1); }}
+                onClear={() => { setStartDate(''); setEndDate(''); setPage(1); }}
+                className="w-full justify-start"
+              />
+            </div>
+            {hasActiveFilters && (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={clearFilters}
+                className="w-full gap-1 text-zinc-500 hover:text-zinc-900"
+              >
+                <X className="h-3.5 w-3.5" />
+                Clear filters
+              </Button>
+            )}
+          </div>
+        </div>
+      )}
 
       {/* Stats bar */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.15 }}
-        className="flex items-center gap-4 text-sm"
-      >
+      <div className="flex items-center gap-4 text-sm">
         <div className="flex items-center gap-2">
-          <div className="h-2 w-2 rounded-full bg-indigo-500" />
-          <span className="text-neutral-400">
-            <span className="font-medium text-neutral-200">{total}</span> entries
+          <div className="h-2 w-2 rounded-full bg-amber-500" />
+          <span className="text-zinc-500">
+            <span className="font-medium text-zinc-700">{total}</span> entries
           </span>
         </div>
         {hasActiveFilters && (
           <div className="flex items-center gap-2">
-            <Filter className="h-3.5 w-3.5 text-indigo-400" />
-            <span className="text-neutral-400">Filtered</span>
+            <Filter className="h-3.5 w-3.5 text-amber-600" />
+            <span className="text-zinc-500">Filtered</span>
           </div>
         )}
-      </motion.div>
+      </div>
 
       {/* Audit log table */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.2 }}
-        className="glass-card overflow-hidden"
-      >
+      <div className="rounded-xl border border-zinc-200 bg-white shadow-sm overflow-hidden">
         {isLoading ? (
           <AuditTableSkeleton />
         ) : logs.length === 0 ? (
@@ -406,85 +376,80 @@ export default function AuditPage() {
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead>
-                <tr className="border-b border-white/10 bg-white/5">
-                  <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-neutral-500">
-                    Action
+                <tr className="border-b border-zinc-200 bg-zinc-50">
+                  <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-zinc-500">
+                    {t('admin.audit.action')}
                   </th>
-                  <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-neutral-500">
-                    Actor
+                  <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-zinc-500">
+                    {t('admin.audit.actor')}
                   </th>
-                  <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-neutral-500">
-                    Target
+                  <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-zinc-500">
+                    {t('admin.audit.target')}
                   </th>
-                  <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-neutral-500">
+                  <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-zinc-500">
                     Time
                   </th>
-                  <th className="px-4 py-3 text-right text-xs font-medium uppercase tracking-wider text-neutral-500">
+                  <th className="px-4 py-3 text-right text-xs font-medium uppercase tracking-wider text-zinc-500">
                     Details
                   </th>
                 </tr>
               </thead>
               <tbody>
-                <AnimatePresence>
-                  {logs.map((log, index) => {
-                    const isExpanded = expandedRows.has(log.id);
-                    const actionKey = log.action.split('.')[0] ?? '';
-                    const actionColor = actionColors[actionKey] ?? 'bg-neutral-500/20 text-neutral-300 border-neutral-500/30';
+                {logs.map((log) => {
+                  const isExpanded = expandedRows.has(log.id);
+                  const actionKey = log.action.split('.')[0] ?? '';
+                  const actionColor = actionColors[actionKey] ?? 'bg-zinc-100 text-zinc-700 border-zinc-200';
 
-                    return (
-                      <motion.tr
-                        key={log.id}
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        transition={{ delay: index * 0.02 }}
-                        className="border-b border-white/5 hover:bg-white/[0.02]"
-                      >
-                        <td className="px-4 py-3">
-                          <Badge className={cn('border', actionColor)}>
-                            {log.action}
-                          </Badge>
-                        </td>
-                        <td className="px-4 py-3">
-                          <div className="flex items-center gap-2">
-                            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-indigo-500/80 to-purple-500/80 text-xs font-medium text-white">
-                              {log.actorName.charAt(0).toUpperCase()}
-                            </div>
-                            <div className="min-w-0">
-                              <p className="truncate text-sm font-medium text-white">{log.actorName}</p>
-                              <p className="truncate text-xs text-neutral-500">{log.actorEmail}</p>
-                            </div>
+                  return (
+                    <tr
+                      key={log.id}
+                      className="border-b border-zinc-100 hover:bg-zinc-50"
+                    >
+                      <td className="px-4 py-3">
+                        <Badge className={cn('border', actionColor)}>
+                          {log.action}
+                        </Badge>
+                      </td>
+                      <td className="px-4 py-3">
+                        <div className="flex items-center gap-2">
+                          <div className="flex h-8 w-8 items-center justify-center rounded-full bg-amber-100 text-xs font-medium text-amber-700">
+                            {log.actorName.charAt(0).toUpperCase()}
                           </div>
-                        </td>
-                        <td className="px-4 py-3">
                           <div className="min-w-0">
-                            <p className="text-sm text-white">{log.targetName || log.targetId.slice(0, 8)}</p>
-                            <p className="text-xs capitalize text-neutral-500">{log.targetType}</p>
+                            <p className="truncate text-sm font-medium text-zinc-900">{log.actorName}</p>
+                            <p className="truncate text-xs text-zinc-500">{log.actorEmail}</p>
                           </div>
-                        </td>
-                        <td className="px-4 py-3">
-                          <div className="flex items-center gap-1.5 text-sm text-neutral-400">
-                            <Clock className="h-3.5 w-3.5" />
-                            {new Date(log.createdAt).toLocaleString()}
-                          </div>
-                        </td>
-                        <td className="px-4 py-3 text-right">
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => toggleRow(log.id)}
-                            className="text-neutral-400 hover:text-white"
-                          >
-                            {isExpanded ? (
-                              <ChevronUp className="h-4 w-4" />
-                            ) : (
-                              <ChevronDown className="h-4 w-4" />
-                            )}
-                          </Button>
-                        </td>
-                      </motion.tr>
-                    );
-                  })}
-                </AnimatePresence>
+                        </div>
+                      </td>
+                      <td className="px-4 py-3">
+                        <div className="min-w-0">
+                          <p className="text-sm text-zinc-900">{log.targetName || log.targetId.slice(0, 8)}</p>
+                          <p className="text-xs capitalize text-zinc-500">{log.targetType}</p>
+                        </div>
+                      </td>
+                      <td className="px-4 py-3">
+                        <div className="flex items-center gap-1.5 text-sm text-zinc-500">
+                          <Clock className="h-3.5 w-3.5" />
+                          {new Date(log.createdAt).toLocaleString()}
+                        </div>
+                      </td>
+                      <td className="px-4 py-3 text-right">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => toggleRow(log.id)}
+                          className="text-zinc-500 hover:text-zinc-900"
+                        >
+                          {isExpanded ? (
+                            <ChevronUp className="h-4 w-4" />
+                          ) : (
+                            <ChevronDown className="h-4 w-4" />
+                          )}
+                        </Button>
+                      </td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
 
@@ -494,54 +459,47 @@ export default function AuditPage() {
               if (!isExpanded) return null;
 
               return (
-                <motion.div
+                <div
                   key={`${log.id}-details`}
-                  initial={{ opacity: 0, height: 0 }}
-                  animate={{ opacity: 1, height: 'auto' }}
-                  exit={{ opacity: 0, height: 0 }}
-                  className="border-b border-white/5 bg-white/[0.02] px-4 py-4"
+                  className="border-b border-zinc-100 bg-zinc-50 px-4 py-4"
                 >
                   <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
                     <div>
-                      <div className="mb-1 flex items-center gap-1.5 text-xs text-neutral-500">
+                      <div className="mb-1 flex items-center gap-1.5 text-xs text-zinc-500">
                         <User className="h-3 w-3" />
                         Actor ID
                       </div>
-                      <p className="font-mono text-sm text-neutral-300">{log.actorId}</p>
+                      <p className="font-mono text-sm text-zinc-700">{log.actorId}</p>
                     </div>
                     <div>
-                      <div className="mb-1 flex items-center gap-1.5 text-xs text-neutral-500">
+                      <div className="mb-1 flex items-center gap-1.5 text-xs text-zinc-500">
                         <Globe className="h-3 w-3" />
                         IP Address
                       </div>
-                      <p className="font-mono text-sm text-neutral-300">{log.ipAddress}</p>
+                      <p className="font-mono text-sm text-zinc-700">{log.ipAddress}</p>
                     </div>
                     <div className="sm:col-span-2">
-                      <div className="mb-1 text-xs text-neutral-500">User Agent</div>
-                      <p className="truncate text-sm text-neutral-400">{log.userAgent}</p>
+                      <div className="mb-1 text-xs text-zinc-500">User Agent</div>
+                      <p className="truncate text-sm text-zinc-500">{log.userAgent}</p>
                     </div>
                     {Object.keys(log.metadata).length > 0 && (
                       <div className="sm:col-span-2 lg:col-span-4">
-                        <div className="mb-1 text-xs text-neutral-500">Metadata</div>
-                        <pre className="overflow-x-auto rounded-lg bg-black/30 p-3 text-xs text-neutral-300">
+                        <div className="mb-1 text-xs text-zinc-500">Metadata</div>
+                        <pre className="overflow-x-auto rounded-lg bg-zinc-100 p-3 text-xs text-zinc-700">
                           {JSON.stringify(log.metadata, null, 2)}
                         </pre>
                       </div>
                     )}
                   </div>
-                </motion.div>
+                </div>
               );
             })}
           </div>
         )}
-      </motion.div>
+      </div>
 
       {/* Pagination */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.25 }}
-      >
+      <div>
         <PaginationControls
           page={page}
           totalPages={totalPages}
@@ -549,7 +507,7 @@ export default function AuditPage() {
           limit={limit}
           onPageChange={setPage}
         />
-      </motion.div>
+      </div>
     </div>
   );
 }
@@ -561,14 +519,14 @@ function AuditTableSkeleton() {
       <div className="space-y-3">
         {[...Array(8)].map((_, i) => (
           <div key={i} className="flex animate-pulse items-center gap-4">
-            <div className="h-6 w-20 rounded-full bg-white/10" />
-            <div className="h-8 w-8 rounded-full bg-white/10" />
+            <div className="h-6 w-20 rounded-full bg-zinc-100" />
+            <div className="h-8 w-8 rounded-full bg-zinc-100" />
             <div className="flex-1 space-y-1">
-              <div className="h-4 w-32 rounded bg-white/10" />
-              <div className="h-3 w-24 rounded bg-white/10" />
+              <div className="h-4 w-32 rounded bg-zinc-100" />
+              <div className="h-3 w-24 rounded bg-zinc-100" />
             </div>
-            <div className="h-4 w-24 rounded bg-white/10" />
-            <div className="h-8 w-8 rounded bg-white/10" />
+            <div className="h-4 w-24 rounded bg-zinc-100" />
+            <div className="h-8 w-8 rounded bg-zinc-100" />
           </div>
         ))}
       </div>
@@ -587,17 +545,17 @@ function EmptyState({
   if (hasFilters) {
     return (
       <div className="flex flex-col items-center justify-center px-6 py-16 text-center">
-        <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-xl bg-neutral-800/50">
-          <Search className="h-7 w-7 text-neutral-500" />
+        <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-xl bg-zinc-100">
+          <Search className="h-7 w-7 text-zinc-400" />
         </div>
-        <h3 className="mb-1 text-lg font-semibold text-white">No matching logs</h3>
-        <p className="mb-4 max-w-sm text-sm text-neutral-400">
+        <h3 className="mb-1 text-lg font-semibold text-zinc-900">No matching logs</h3>
+        <p className="mb-4 max-w-sm text-sm text-zinc-500">
           Try adjusting your filters to find what you're looking for.
         </p>
         <Button
           variant="ghost"
           onClick={onClearFilters}
-          className="gap-2 rounded-lg border border-white/10 text-neutral-300 hover:bg-white/5"
+          className="gap-2 rounded-lg border border-zinc-200 text-zinc-700 hover:bg-zinc-50"
         >
           Clear filters
         </Button>
@@ -607,16 +565,11 @@ function EmptyState({
 
   return (
     <div className="flex flex-col items-center justify-center px-6 py-16 text-center">
-      <motion.div
-        initial={{ scale: 0.8 }}
-        animate={{ scale: 1 }}
-        transition={{ type: 'spring', stiffness: 200, delay: 0.1 }}
-        className="mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-indigo-600/20 to-purple-600/20"
-      >
-        <FileText className="h-8 w-8 text-indigo-400" />
-      </motion.div>
-      <h3 className="mb-1 text-lg font-semibold text-white">No audit logs yet</h3>
-      <p className="max-w-sm text-sm text-neutral-400">
+      <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-amber-50">
+        <FileText className="h-8 w-8 text-amber-600" />
+      </div>
+      <h3 className="mb-1 text-lg font-semibold text-zinc-900">No audit logs yet</h3>
+      <p className="max-w-sm text-sm text-zinc-500">
         Administrative actions will be recorded here for compliance.
       </p>
     </div>

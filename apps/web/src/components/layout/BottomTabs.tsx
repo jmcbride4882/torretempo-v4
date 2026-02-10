@@ -1,27 +1,46 @@
 import { useState, useEffect } from 'react';
 import { NavLink, useParams } from 'react-router-dom';
-import { motion } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 import {
   LayoutDashboard,
   Clock,
+  CalendarDays,
   Users,
+  MoreHorizontal,
   ArrowLeftRight,
+  CalendarOff,
+  ClipboardCheck,
   BarChart3,
+  Bell,
+  Settings,
+  CreditCard,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { fetchPendingSwapsCount } from '@/lib/api/swaps';
+import { BottomSheet, useBottomSheet } from '@/components/ui/bottom-sheet';
 
 const tabs = [
-  { icon: LayoutDashboard, label: 'Home', path: 'dashboard' },
-  { icon: Users, label: 'Roster', path: 'roster' },
-  { icon: Clock, label: 'Clock', path: 'clock', primary: true },
-  { icon: ArrowLeftRight, label: 'Swaps', path: 'swaps', badge: true },
-  { icon: BarChart3, label: 'Reports', path: 'reports' },
+  { icon: LayoutDashboard, labelKey: 'nav.dashboard', path: 'dashboard' },
+  { icon: CalendarDays, labelKey: 'nav.roster', path: 'roster' },
+  { icon: Clock, labelKey: 'nav.clock', path: 'clock', primary: true },
+  { icon: Users, labelKey: 'nav.team', path: 'team' },
+];
+
+const moreItems = [
+  { icon: ArrowLeftRight, labelKey: 'nav.swaps', path: 'swaps' },
+  { icon: CalendarOff, labelKey: 'nav.leave', path: 'leave' },
+  { icon: ClipboardCheck, labelKey: 'nav.corrections', path: 'corrections' },
+  { icon: BarChart3, labelKey: 'nav.reportsPage', path: 'reports' },
+  { icon: Bell, labelKey: 'nav.notifications', path: 'notifications' },
+  { icon: Settings, labelKey: 'nav.settings', path: 'settings' },
+  { icon: CreditCard, labelKey: 'nav.billing', path: 'billing' },
 ];
 
 export function BottomTabs() {
   const { slug } = useParams<{ slug: string }>();
+  const { t } = useTranslation();
   const [pendingSwapsCount, setPendingSwapsCount] = useState(0);
+  const moreSheet = useBottomSheet();
 
   useEffect(() => {
     if (!slug) return;
@@ -37,85 +56,98 @@ export function BottomTabs() {
   }, [slug]);
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-50 lg:hidden">
-      {/* Fade gradient */}
-      <div className="absolute inset-x-0 -top-6 h-6 bg-gradient-to-t from-surface-0 to-transparent pointer-events-none" />
-
-      {/* Tab bar — 64px height for large tap targets */}
-      <div className="glass-dark px-1 pb-safe">
-        <div className="flex items-stretch h-16">
-          {tabs.map((tab) => (
-            <NavLink
-              key={tab.path}
-              to={`/t/${slug}/${tab.path}`}
-              className={({ isActive }) =>
-                cn(
-                  'group relative flex flex-1 flex-col items-center justify-center gap-1 transition-colors min-h-touch-lg',
-                  isActive ? 'text-primary-400' : 'text-neutral-500'
-                )
-              }
-            >
-              {({ isActive }) => (
-                <>
-                  {/* Active indicator line */}
-                  {isActive && (
-                    <motion.div
-                      layoutId="bottom-tab-indicator"
-                      className="absolute top-0 left-1/2 h-[2px] w-10 -translate-x-1/2 rounded-full bg-gradient-to-r from-primary-400 to-primary-500"
-                      transition={{ type: 'spring', stiffness: 500, damping: 30 }}
-                    />
-                  )}
-
-                  <motion.div whileTap={{ scale: 0.85 }} className="relative">
-                    {/* Primary tab (Clock) gets special styling */}
+    <>
+      <nav className="fixed bottom-0 left-0 right-0 z-50 lg:hidden">
+        <div className="bg-white border-t border-zinc-200 px-1 pb-safe">
+          <div className="flex items-stretch h-16">
+            {tabs.map((tab) => (
+              <NavLink
+                key={tab.path}
+                to={`/t/${slug}/${tab.path}`}
+                className={({ isActive }) =>
+                  cn(
+                    'group relative flex flex-1 flex-col items-center justify-center gap-1 transition-colors min-h-touch-lg',
+                    isActive ? 'text-primary-600' : 'text-zinc-400'
+                  )
+                }
+              >
+                {({ isActive }) => (
+                  <>
                     {tab.primary ? (
                       <div
                         className={cn(
-                          'flex h-11 w-11 items-center justify-center rounded-2xl transition-all',
+                          'flex h-11 w-11 items-center justify-center rounded-2xl transition-colors',
                           isActive
-                            ? 'bg-primary-500 shadow-lg shadow-primary-500/30'
-                            : 'bg-white/[0.06]'
+                            ? 'bg-primary-500 shadow-md'
+                            : 'bg-zinc-100'
                         )}
                       >
-                        <tab.icon className={cn('h-5 w-5', isActive ? 'text-white' : 'text-neutral-400')} />
+                        <tab.icon className={cn('h-5 w-5', isActive ? 'text-white' : 'text-zinc-500')} />
                       </div>
                     ) : (
                       <tab.icon
                         className={cn(
-                          'h-[22px] w-[22px] transition-all',
-                          isActive ? 'text-primary-400' : 'text-neutral-500 group-hover:text-neutral-300'
+                          'h-[22px] w-[22px] transition-colors',
+                          isActive ? 'text-primary-600' : 'text-zinc-400'
                         )}
                       />
                     )}
 
-                    {/* Badge */}
-                    {'badge' in tab && tab.badge && pendingSwapsCount > 0 && (
-                      <motion.span
-                        initial={{ scale: 0 }}
-                        animate={{ scale: 1 }}
-                        className="absolute -right-2 -top-1 flex h-4 min-w-[16px] items-center justify-center rounded-full bg-primary-500 px-1 text-[8px] font-bold text-white"
+                    {!tab.primary && (
+                      <span
+                        className={cn(
+                          'text-[10px] font-medium transition-colors',
+                          isActive ? 'text-primary-600' : 'text-zinc-400'
+                        )}
                       >
-                        {pendingSwapsCount > 9 ? '9+' : pendingSwapsCount}
-                      </motion.span>
+                        {t(tab.labelKey)}
+                      </span>
                     )}
-                  </motion.div>
+                  </>
+                )}
+              </NavLink>
+            ))}
 
-                  {!tab.primary && (
-                    <span
-                      className={cn(
-                        'text-[10px] font-medium transition-colors',
-                        isActive ? 'text-primary-400' : 'text-neutral-500'
-                      )}
-                    >
-                      {tab.label}
-                    </span>
-                  )}
-                </>
+            {/* More tab */}
+            <button
+              onClick={moreSheet.open}
+              className="group relative flex flex-1 flex-col items-center justify-center gap-1 transition-colors min-h-touch-lg text-zinc-400"
+            >
+              <MoreHorizontal className="h-[22px] w-[22px]" />
+              <span className="text-[10px] font-medium">{t('nav.more')}</span>
+              {pendingSwapsCount > 0 && (
+                <span className="absolute top-2 right-1/4 flex h-4 min-w-[16px] items-center justify-center rounded-full bg-primary-500 px-1 text-[8px] font-bold text-white">
+                  {pendingSwapsCount > 9 ? '9+' : pendingSwapsCount}
+                </span>
               )}
+            </button>
+          </div>
+        </div>
+      </nav>
+
+      {/* More sheet */}
+      <BottomSheet
+        isOpen={moreSheet.isOpen}
+        onClose={moreSheet.close}
+        title={t('nav.more')}
+        snapPoints={[400]}
+      >
+        <div className="grid grid-cols-3 gap-3">
+          {moreItems.map((item) => (
+            <NavLink
+              key={item.path}
+              to={`/t/${slug}/${item.path}`}
+              onClick={moreSheet.close}
+              className="flex flex-col items-center gap-2 rounded-xl p-3 text-zinc-600 hover:bg-zinc-50 transition-colors"
+            >
+              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-zinc-100">
+                <item.icon className="h-5 w-5 text-zinc-600" />
+              </div>
+              <span className="text-xs font-medium text-center">{t(item.labelKey)}</span>
             </NavLink>
           ))}
         </div>
-      </div>
-    </nav>
+      </BottomSheet>
+    </>
   );
 }

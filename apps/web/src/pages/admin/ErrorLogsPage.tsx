@@ -4,7 +4,7 @@
  */
 
 import { useState, useEffect, useCallback } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 import {
   AlertTriangle,
@@ -35,13 +35,11 @@ import { PaginationControls } from '@/components/ui/pagination-controls';
 import { fetchErrorLogs } from '@/lib/api/admin';
 import type { ErrorLog } from '@/lib/api/admin';
 
-// Mock data removed - using real API
-
 // Level badge colors
 const levelColors = {
-  error: 'bg-red-500/20 text-red-300 border-red-500/30',
-  warning: 'bg-amber-500/20 text-amber-300 border-amber-500/30',
-  info: 'bg-blue-500/20 text-blue-300 border-blue-500/30',
+  error: 'bg-red-50 text-red-700 border-red-200',
+  warning: 'bg-amber-50 text-amber-700 border-amber-200',
+  info: 'bg-blue-50 text-blue-700 border-blue-200',
 };
 
 // Level icons
@@ -52,6 +50,8 @@ const levelIcons = {
 };
 
 export default function ErrorLogsPage() {
+  const { t } = useTranslation();
+
   // State
   const [errors, setErrors] = useState<ErrorLog[]>([]);
   const [total, setTotal] = useState(0);
@@ -160,89 +160,80 @@ export default function ErrorLogsPage() {
   return (
     <div className="space-y-6">
       {/* Page header */}
-      <motion.div
-        initial={{ opacity: 0, y: -10 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between"
-      >
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-red-600/20 to-orange-600/20 shadow-lg shadow-red-500/10">
-            <AlertTriangle className="h-5 w-5 text-red-400" />
+          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-red-50 shadow-sm">
+            <AlertTriangle className="h-5 w-5 text-red-600" />
           </div>
           <div>
-            <h1 className="text-xl font-bold text-white sm:text-2xl">Error Logs</h1>
-            <p className="text-sm text-neutral-400">
+            <h1 className="text-xl font-bold text-zinc-900 sm:text-2xl">{t('admin.errors.title')}</h1>
+            <p className="text-sm text-zinc-500">
               Live monitoring • Updates every 10 seconds
             </p>
           </div>
         </div>
 
         <div className="flex items-center gap-2">
-          <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+          <div>
             <Button
               variant="ghost"
               size="sm"
               onClick={handleExport}
               disabled={isExporting}
-              className="gap-1.5 rounded-lg border border-white/5 bg-white/5 text-neutral-300 hover:bg-white/10"
+              className="gap-1.5 rounded-lg border border-zinc-200 bg-zinc-50 text-zinc-700 hover:bg-zinc-100"
             >
               <Download className={cn('h-4 w-4', isExporting && 'animate-bounce')} />
               <span className="hidden sm:inline">{isExporting ? 'Exporting...' : 'Export CSV'}</span>
             </Button>
-          </motion.div>
+          </div>
 
-          <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+          <div>
             <Button
               variant="ghost"
               size="sm"
               onClick={handleRefresh}
               disabled={isRefreshing}
-              className="gap-1.5 rounded-lg border border-white/5 bg-white/5 text-neutral-300 hover:bg-white/10"
+              className="gap-1.5 rounded-lg border border-zinc-200 bg-zinc-50 text-zinc-700 hover:bg-zinc-100"
             >
               <RefreshCw className={cn('h-4 w-4', isRefreshing && 'animate-spin')} />
-              <span className="hidden sm:inline">Refresh</span>
+              <span className="hidden sm:inline">{t('admin.refresh')}</span>
             </Button>
-          </motion.div>
+          </div>
         </div>
-      </motion.div>
+      </div>
 
       {/* Filters */}
-      <motion.div
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.1 }}
-        className="space-y-3"
-      >
+      <div className="space-y-3">
         {/* Row 1: Search + dropdowns */}
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
           {/* Search */}
           <div className="relative flex-1 sm:max-w-xs">
-            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-neutral-500" />
+            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-500" />
             <Input
               type="text"
-              placeholder="Search errors..."
+              placeholder={t('common.search')}
               value={searchQuery}
               onChange={(e) => { setSearchQuery(e.target.value); setPage(1); }}
-              className="glass-card border-white/10 pl-9 text-white placeholder:text-neutral-500 focus:border-red-500"
+              className="rounded-xl border border-zinc-200 bg-white pl-9 text-zinc-900 placeholder:text-zinc-400 focus:border-amber-500"
             />
           </div>
 
           {/* Level filter */}
           <Select value={levelFilter} onValueChange={(v) => { setLevelFilter(v); setPage(1); }}>
-            <SelectTrigger className="w-[140px] glass-card border-white/10 text-white">
-              <SelectValue placeholder="Level" />
+            <SelectTrigger className="w-[140px] rounded-xl border border-zinc-200 bg-white text-zinc-900">
+              <SelectValue placeholder={t('admin.errors.severity')} />
             </SelectTrigger>
-            <SelectContent className="glass-card border-white/10">
-              <SelectItem value="all" className="text-neutral-200">
+            <SelectContent className="rounded-xl border border-zinc-200 bg-white">
+              <SelectItem value="all" className="text-zinc-700">
                 All Levels
               </SelectItem>
-              <SelectItem value="error" className="text-neutral-200">
+              <SelectItem value="error" className="text-zinc-700">
                 Error
               </SelectItem>
-              <SelectItem value="warning" className="text-neutral-200">
+              <SelectItem value="warning" className="text-zinc-700">
                 Warning
               </SelectItem>
-              <SelectItem value="info" className="text-neutral-200">
+              <SelectItem value="info" className="text-zinc-700">
                 Info
               </SelectItem>
             </SelectContent>
@@ -250,15 +241,15 @@ export default function ErrorLogsPage() {
 
           {/* Source filter */}
           <Select value={sourceFilter} onValueChange={(v) => { setSourceFilter(v); setPage(1); }}>
-            <SelectTrigger className="w-[140px] glass-card border-white/10 text-white">
+            <SelectTrigger className="w-[140px] rounded-xl border border-zinc-200 bg-white text-zinc-900">
               <SelectValue placeholder="Source" />
             </SelectTrigger>
-            <SelectContent className="glass-card border-white/10">
-              <SelectItem value="all" className="text-neutral-200">
+            <SelectContent className="rounded-xl border border-zinc-200 bg-white">
+              <SelectItem value="all" className="text-zinc-700">
                 All Sources
               </SelectItem>
               {sources.map((source) => (
-                <SelectItem key={source} value={source} className="text-neutral-200">
+                <SelectItem key={source} value={source} className="text-zinc-700">
                   {source}
                 </SelectItem>
               ))}
@@ -280,120 +271,99 @@ export default function ErrorLogsPage() {
               variant="ghost"
               size="sm"
               onClick={clearFilters}
-              className="gap-1 shrink-0 text-neutral-400 hover:text-white"
+              className="gap-1 shrink-0 text-zinc-500 hover:text-zinc-900"
             >
               <X className="h-3.5 w-3.5" />
               Clear all
             </Button>
           )}
         </div>
-      </motion.div>
+      </div>
 
       {/* Stats bar */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.15 }}
-        className="flex flex-wrap items-center gap-4 text-sm sm:gap-6"
-      >
+      <div className="flex flex-wrap items-center gap-4 text-sm sm:gap-6">
         <div className="flex items-center gap-2">
           <div className="h-2 w-2 rounded-full bg-red-500" />
-          <span className="text-neutral-400">
-            <span className="font-medium text-neutral-200">{errorCount}</span> errors
+          <span className="text-zinc-500">
+            <span className="font-medium text-zinc-700">{errorCount}</span> errors
           </span>
         </div>
         <div className="flex items-center gap-2">
           <div className="h-2 w-2 rounded-full bg-amber-500" />
-          <span className="text-neutral-400">
-            <span className="font-medium text-neutral-200">{warningCount}</span> warnings
+          <span className="text-zinc-500">
+            <span className="font-medium text-zinc-700">{warningCount}</span> warnings
           </span>
         </div>
         <div className="flex items-center gap-2">
-          <div className="h-2 w-2 rounded-full bg-neutral-500" />
-          <span className="text-neutral-400">
-            <span className="font-medium text-neutral-200">{errors.length}</span> total
+          <div className="h-2 w-2 rounded-full bg-zinc-400" />
+          <span className="text-zinc-500">
+            <span className="font-medium text-zinc-700">{errors.length}</span> total
           </span>
         </div>
-      </motion.div>
+      </div>
 
       {/* Error list */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.2 }}
-        className="glass-card p-6"
-      >
-        <h2 className="mb-4 text-lg font-semibold text-white">Recent Errors</h2>
+      <div className="rounded-xl border border-zinc-200 bg-white shadow-sm p-6">
+        <h2 className="mb-4 text-lg font-semibold text-zinc-900">{t('admin.errors.title')}</h2>
 
         {errors.length === 0 ? (
-          <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-white/10 bg-white/[0.02] py-12 text-center">
-            <Filter className="mb-3 h-8 w-8 text-neutral-600" />
-            <p className="text-sm text-neutral-400">No errors match your filters</p>
+          <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-zinc-200 bg-zinc-50 py-12 text-center">
+            <Filter className="mb-3 h-8 w-8 text-zinc-400" />
+            <p className="text-sm text-zinc-500">{t('admin.errors.noErrors')}</p>
           </div>
         ) : (
           <div className="space-y-3">
-            <AnimatePresence mode="popLayout">
-              {errors.map((error, index) => {
-                const Icon = levelIcons[error.level];
-                return (
-                  <motion.div
-                    key={error.id}
-                    layout
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, scale: 0.95 }}
-                    transition={{ delay: index * 0.05 }}
-                    className="rounded-xl border border-white/10 bg-white/5 p-4"
-                  >
-                    <div className="mb-3 flex items-start justify-between gap-4">
-                      <div className="flex items-center gap-3">
-                        <div
-                          className={cn(
-                            'flex h-9 w-9 items-center justify-center rounded-lg',
-                            error.level === 'error' && 'bg-red-500/20',
-                            error.level === 'warning' && 'bg-amber-500/20',
-                            error.level === 'info' && 'bg-blue-500/20'
-                          )}
-                        >
-                          <Icon className="h-4 w-4" />
-                        </div>
-                        <div className="flex-1">
-                          <p className="font-medium text-white">{error.message}</p>
-                          <div className="mt-1 flex items-center gap-2 text-xs text-neutral-500">
-                            <Code className="h-3 w-3" />
-                            <span>{error.source}</span>
-                            <span>•</span>
-                            <Clock className="h-3 w-3" />
-                            <span>{new Date(error.timestamp).toLocaleString()}</span>
-                          </div>
+            {errors.map((error) => {
+              const Icon = levelIcons[error.level];
+              return (
+                <div
+                  key={error.id}
+                  className="rounded-xl border border-zinc-200 bg-zinc-50 p-4"
+                >
+                  <div className="mb-3 flex items-start justify-between gap-4">
+                    <div className="flex items-center gap-3">
+                      <div
+                        className={cn(
+                          'flex h-9 w-9 items-center justify-center rounded-lg',
+                          error.level === 'error' && 'bg-red-100',
+                          error.level === 'warning' && 'bg-amber-100',
+                          error.level === 'info' && 'bg-blue-100'
+                        )}
+                      >
+                        <Icon className="h-4 w-4" />
+                      </div>
+                      <div className="flex-1">
+                        <p className="font-medium text-zinc-900">{t('admin.errors.message')}: {error.message}</p>
+                        <div className="mt-1 flex items-center gap-2 text-xs text-zinc-500">
+                          <Code className="h-3 w-3" />
+                          <span>{error.source}</span>
+                          <span>•</span>
+                          <Clock className="h-3 w-3" />
+                          <span>{t('admin.errors.timestamp')}: {new Date(error.timestamp).toLocaleString()}</span>
                         </div>
                       </div>
-                      <Badge className={cn('border', levelColors[error.level])}>
-                        {error.level}
-                      </Badge>
                     </div>
+                    <Badge className={cn('border', levelColors[error.level])}>
+                      {error.level}
+                    </Badge>
+                  </div>
 
-                    {error.stack && (
-                      <div className="rounded-lg bg-black/30 p-3">
-                        <pre className="overflow-x-auto text-xs text-neutral-400">
-                          <code>{error.stack.split('\n').slice(0, 2).join('\n')}</code>
-                        </pre>
-                      </div>
-                     )}
-                  </motion.div>
-                );
-              })}
-            </AnimatePresence>
+                  {error.stack && (
+                    <div className="rounded-lg bg-zinc-100 p-3">
+                      <pre className="overflow-x-auto text-xs text-zinc-500">
+                        <code>{error.stack.split('\n').slice(0, 2).join('\n')}</code>
+                      </pre>
+                    </div>
+                   )}
+                </div>
+              );
+            })}
           </div>
         )}
-      </motion.div>
+      </div>
 
       {/* Pagination */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.25 }}
-      >
+      <div>
         <PaginationControls
           page={page}
           totalPages={totalPages}
@@ -401,7 +371,7 @@ export default function ErrorLogsPage() {
           limit={limit}
           onPageChange={setPage}
         />
-      </motion.div>
+      </div>
     </div>
   );
 }

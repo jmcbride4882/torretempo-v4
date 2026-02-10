@@ -1,4 +1,4 @@
-import { motion } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 import { Building2, Users, ArrowRight, Crown, Shield, User } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -12,57 +12,47 @@ interface OrganizationCardProps {
   index?: number;
 }
 
-const roleConfig = {
-  owner: {
-    label: 'Owner',
-    icon: Crown,
-    variant: 'default' as const,
-    color: 'text-amber-400',
-  },
-  admin: {
-    label: 'Admin',
-    icon: Shield,
-    variant: 'secondary' as const,
-    color: 'text-primary-400',
-  },
-  member: {
-    label: 'Member',
-    icon: User,
-    variant: 'ghost' as const,
-    color: 'text-neutral-400',
-  },
-};
+function useRoleConfig() {
+  const { t } = useTranslation();
 
-export function OrganizationCard({ organization, onSelect, isLoading, index = 0 }: OrganizationCardProps) {
+  return {
+    owner: {
+      label: t('roles.owner'),
+      icon: Crown,
+      variant: 'default' as const,
+      color: 'text-amber-600',
+    },
+    admin: {
+      label: t('roles.admin'),
+      icon: Shield,
+      variant: 'secondary' as const,
+      color: 'text-primary-600',
+    },
+    member: {
+      label: t('roles.member'),
+      icon: User,
+      variant: 'ghost' as const,
+      color: 'text-zinc-500',
+    },
+  };
+}
+
+export function OrganizationCard({ organization, onSelect, isLoading }: OrganizationCardProps) {
+  const { t } = useTranslation();
+  const roleConfig = useRoleConfig();
   const roleInfo = roleConfig[organization.role] || roleConfig.member;
   const RoleIcon = roleInfo.icon;
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20, scale: 0.95 }}
-      animate={{ opacity: 1, y: 0, scale: 1 }}
-      transition={{ 
-        duration: 0.4, 
-        delay: index * 0.1,
-        ease: [0.23, 1, 0.32, 1]
-      }}
-      whileHover={{ y: -4, scale: 1.02 }}
-      className="group"
-    >
-      <Card className="relative overflow-hidden border-white/10 bg-neutral-900/60 backdrop-blur-xl transition-all duration-300 hover:border-primary-500/40 hover:shadow-lg hover:shadow-primary-600/10">
-        {/* Gradient accent line */}
-        <div className="absolute inset-x-0 top-0 h-0.5 bg-gradient-to-r from-transparent via-primary-500 to-transparent opacity-0 transition-opacity group-hover:opacity-100" />
-        
-        {/* Glow effect on hover */}
-        <div className="pointer-events-none absolute -inset-px rounded-xl bg-gradient-to-r from-primary-600/20 via-transparent to-primary-600/20 opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
-
+    <div className="group">
+      <Card className="relative overflow-hidden border-zinc-200 bg-white transition-all duration-300 hover:border-primary-300 hover:shadow-md">
         <div className="relative p-5">
           <div className="flex items-start justify-between gap-4">
             {/* Left section: Logo and info */}
             <div className="flex items-start gap-4">
               {/* Organization avatar/logo */}
               <div className="relative">
-                <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-gradient-to-br from-primary-500/20 to-primary-600/10 ring-1 ring-white/10 transition-all group-hover:ring-primary-500/30">
+                <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-primary-50 ring-1 ring-primary-200 transition-all group-hover:ring-primary-300">
                   {organization.logo ? (
                     <img
                       src={organization.logo}
@@ -70,38 +60,38 @@ export function OrganizationCard({ organization, onSelect, isLoading, index = 0 
                       className="h-10 w-10 rounded-lg object-cover"
                     />
                   ) : (
-                    <Building2 className="h-6 w-6 text-primary-400" />
+                    <Building2 className="h-6 w-6 text-primary-600" />
                   )}
                 </div>
                 {/* Role indicator dot */}
-                <div className={`absolute -bottom-1 -right-1 h-4 w-4 rounded-full border-2 border-neutral-900 ${
+                <div className={`absolute -bottom-1 -right-1 h-4 w-4 rounded-full border-2 border-white ${
                   organization.role === 'owner' ? 'bg-amber-500' :
-                  organization.role === 'admin' ? 'bg-primary-500' : 'bg-neutral-500'
+                  organization.role === 'admin' ? 'bg-primary-500' : 'bg-zinc-400'
                 }`} />
               </div>
 
               {/* Organization details */}
               <div className="min-w-0 flex-1">
-                <h3 className="line-clamp-2 text-lg font-semibold text-white transition-colors group-hover:text-primary-400 break-words">
+                <h3 className="line-clamp-2 text-lg font-semibold text-zinc-900 transition-colors group-hover:text-primary-600 break-words">
                   {organization.name}
                 </h3>
-                <p className="mt-0.5 text-sm text-neutral-500">
-                  <code className="rounded bg-neutral-800/60 px-1.5 py-0.5 font-mono text-xs text-neutral-400">
+                <p className="mt-0.5 text-sm text-zinc-400">
+                  <code className="rounded bg-zinc-100 px-1.5 py-0.5 font-mono text-xs text-zinc-500">
                     /t/{organization.slug}
                   </code>
                 </p>
-                
+
                 {/* Meta info row */}
                 <div className="mt-3 flex flex-wrap items-center gap-2">
                   <Badge variant={roleInfo.variant} className="gap-1 text-xs">
                     <RoleIcon className={`h-3 w-3 ${roleInfo.color}`} />
                     {roleInfo.label}
                   </Badge>
-                  
+
                   {organization.memberCount !== undefined && (
-                    <span className="flex items-center gap-1 text-xs text-neutral-500">
+                    <span className="flex items-center gap-1 text-xs text-zinc-500">
                       <Users className="h-3 w-3" />
-                      {organization.memberCount} {organization.memberCount === 1 ? 'member' : 'members'}
+                      {organization.memberCount} {organization.memberCount === 1 ? t('team.member') : t('team.members')}
                     </span>
                   )}
                 </div>
@@ -113,13 +103,13 @@ export function OrganizationCard({ organization, onSelect, isLoading, index = 0 
               onClick={() => onSelect(organization)}
               disabled={isLoading}
               size="sm"
-              className="shrink-0 gap-2 bg-white/5 text-white ring-1 ring-white/10 transition-all hover:bg-primary-600 hover:ring-primary-500/50 disabled:opacity-50"
+              className="shrink-0 gap-2 bg-primary-50 text-primary-700 ring-1 ring-primary-200 transition-all hover:bg-primary-600 hover:text-white disabled:opacity-50"
             >
               {isLoading ? (
-                <div className="h-4 w-4 animate-spin rounded-full border-2 border-white/20 border-t-white" />
+                <div className="h-4 w-4 animate-spin rounded-full border-2 border-primary-200 border-t-primary-600" />
               ) : (
                 <>
-                  Enter
+                  {t('common.enter')}
                   <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" />
                 </>
               )}
@@ -127,7 +117,7 @@ export function OrganizationCard({ organization, onSelect, isLoading, index = 0 
           </div>
         </div>
       </Card>
-    </motion.div>
+    </div>
   );
 }
 

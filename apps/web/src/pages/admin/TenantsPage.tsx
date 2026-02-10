@@ -4,7 +4,7 @@
  */
 
 import { useState, useEffect, useCallback } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 import {
   Building2,
@@ -64,21 +64,23 @@ import type { Tenant } from '@/lib/api/admin';
 
 // Tier badge colors
 const tierColors: Record<string, string> = {
-  free: 'bg-neutral-500/20 text-neutral-300 border-neutral-500/30',
-  starter: 'bg-blue-500/20 text-blue-300 border-blue-500/30',
-  pro: 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30',
-  enterprise: 'bg-amber-500/20 text-amber-300 border-amber-500/30',
+  free: 'bg-zinc-100 text-zinc-600 border-zinc-300',
+  starter: 'bg-blue-50 text-blue-700 border-blue-200',
+  pro: 'bg-emerald-50 text-emerald-700 border-emerald-200',
+  enterprise: 'bg-amber-50 text-amber-700 border-amber-200',
 };
 
 // Status badge colors
 const statusColors: Record<string, string> = {
-  active: 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30',
-  suspended: 'bg-red-500/20 text-red-300 border-red-500/30',
-  cancelled: 'bg-neutral-500/20 text-neutral-300 border-neutral-500/30',
-  past_due: 'bg-amber-500/20 text-amber-300 border-amber-500/30',
+  active: 'bg-emerald-50 text-emerald-700 border-emerald-200',
+  suspended: 'bg-red-50 text-red-700 border-red-200',
+  cancelled: 'bg-zinc-100 text-zinc-600 border-zinc-300',
+  past_due: 'bg-amber-50 text-amber-700 border-amber-200',
 };
 
 export default function TenantsPage() {
+  const { t } = useTranslation();
+
   // State
   const [tenants, setTenants] = useState<Tenant[]>([]);
   const [total, setTotal] = useState(0);
@@ -315,70 +317,65 @@ export default function TenantsPage() {
   return (
     <div className="space-y-6">
       {/* Page header */}
-      <motion.div
-        initial={{ opacity: 0, y: -10 }}
-        animate={{ opacity: 1, y: 0 }}
+      <div
         className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between"
       >
         <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-amber-600/20 to-orange-600/20 shadow-lg shadow-amber-500/10">
-            <Building2 className="h-5 w-5 text-amber-400" />
+          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-amber-50 shadow-sm">
+            <Building2 className="h-5 w-5 text-amber-600" />
           </div>
           <div>
-            <h1 className="text-xl font-bold text-white sm:text-2xl">Tenants</h1>
-            <p className="text-sm text-neutral-400">
+            <h1 className="text-xl font-bold text-zinc-900 sm:text-2xl">{t('admin.tenants.title')}</h1>
+            <p className="text-sm text-zinc-500">
               Live monitoring • Updates every 10 seconds
             </p>
           </div>
         </div>
 
         <div className="flex items-center gap-2">
-          <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+          <div>
             <Button
               variant="ghost"
               size="sm"
               onClick={handleExport}
               disabled={isExporting}
-              className="gap-1.5 rounded-lg border border-white/5 bg-white/5 text-neutral-300 hover:bg-white/10"
+              className="gap-1.5 rounded-lg border border-zinc-200 bg-zinc-50 text-zinc-700 hover:bg-zinc-100"
             >
               <Download className={cn('h-4 w-4', isExporting && 'animate-bounce')} />
-              <span className="hidden sm:inline">{isExporting ? 'Exporting...' : 'Export CSV'}</span>
+              <span className="hidden sm:inline">{isExporting ? t('admin.exporting') : t('admin.exportCsv')}</span>
             </Button>
-          </motion.div>
-          <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+          </div>
+          <div>
             <Button
               variant="ghost"
               size="sm"
               onClick={handleRefresh}
               disabled={isRefreshing}
-              className="gap-1.5 rounded-lg border border-white/5 bg-white/5 text-neutral-300 hover:bg-white/10"
+              className="gap-1.5 rounded-lg border border-zinc-200 bg-zinc-50 text-zinc-700 hover:bg-zinc-100"
             >
               <RefreshCw className={cn('h-4 w-4', isRefreshing && 'animate-spin')} />
-              <span className="hidden sm:inline">Refresh</span>
+              <span className="hidden sm:inline">{t('admin.refresh')}</span>
             </Button>
-          </motion.div>
+          </div>
         </div>
-      </motion.div>
+      </div>
 
       {/* Filters */}
-      <motion.div
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.1 }}
+      <div
         className="flex flex-col gap-3 sm:flex-row sm:items-center"
       >
         {/* Search */}
         <div className="relative flex-1 sm:max-w-xs">
-          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-neutral-500" />
+          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-500" />
           <Input
             type="text"
-            placeholder="Search tenants..."
+            placeholder={t('common.search') + '...'}
             value={searchQuery}
             onChange={(e) => {
               setSearchQuery(e.target.value);
               setPage(1);
             }}
-            className="glass-card border-white/10 pl-9 text-white placeholder:text-neutral-500 focus:border-amber-500"
+            className="rounded-xl border border-zinc-200 bg-white shadow-sm pl-9 text-zinc-900 placeholder:text-zinc-400 focus:border-amber-500"
           />
         </div>
 
@@ -390,15 +387,15 @@ export default function TenantsPage() {
             setPage(1);
           }}
         >
-          <SelectTrigger className="w-[140px] glass-card border-white/10 text-white">
+          <SelectTrigger className="w-[140px] rounded-xl border border-zinc-200 bg-white shadow-sm text-zinc-900">
             <SelectValue placeholder="Status" />
           </SelectTrigger>
-          <SelectContent className="glass-card border-white/10">
-            <SelectItem value="all" className="text-neutral-200">All Status</SelectItem>
-            <SelectItem value="active" className="text-neutral-200">Active</SelectItem>
-            <SelectItem value="suspended" className="text-neutral-200">Suspended</SelectItem>
-            <SelectItem value="cancelled" className="text-neutral-200">Cancelled</SelectItem>
-            <SelectItem value="past_due" className="text-neutral-200">Past Due</SelectItem>
+          <SelectContent className="rounded-xl border border-zinc-200 bg-white shadow-sm">
+            <SelectItem value="all" className="text-zinc-700">All Status</SelectItem>
+            <SelectItem value="active" className="text-zinc-700">Active</SelectItem>
+            <SelectItem value="suspended" className="text-zinc-700">Suspended</SelectItem>
+            <SelectItem value="cancelled" className="text-zinc-700">Cancelled</SelectItem>
+            <SelectItem value="past_due" className="text-zinc-700">Past Due</SelectItem>
           </SelectContent>
         </Select>
 
@@ -410,15 +407,15 @@ export default function TenantsPage() {
             setPage(1);
           }}
         >
-          <SelectTrigger className="w-[140px] glass-card border-white/10 text-white">
+          <SelectTrigger className="w-[140px] rounded-xl border border-zinc-200 bg-white shadow-sm text-zinc-900">
             <SelectValue placeholder="Tier" />
           </SelectTrigger>
-          <SelectContent className="glass-card border-white/10">
-            <SelectItem value="all" className="text-neutral-200">All Tiers</SelectItem>
-            <SelectItem value="free" className="text-neutral-200">Free</SelectItem>
-            <SelectItem value="starter" className="text-neutral-200">Starter</SelectItem>
-            <SelectItem value="pro" className="text-neutral-200">Pro</SelectItem>
-            <SelectItem value="enterprise" className="text-neutral-200">Enterprise</SelectItem>
+          <SelectContent className="rounded-xl border border-zinc-200 bg-white shadow-sm">
+            <SelectItem value="all" className="text-zinc-700">All Tiers</SelectItem>
+            <SelectItem value="free" className="text-zinc-700">Free</SelectItem>
+            <SelectItem value="starter" className="text-zinc-700">Starter</SelectItem>
+            <SelectItem value="pro" className="text-zinc-700">Pro</SelectItem>
+            <SelectItem value="enterprise" className="text-zinc-700">Enterprise</SelectItem>
           </SelectContent>
         </Select>
 
@@ -440,64 +437,57 @@ export default function TenantsPage() {
             setPage(1);
           }}
         />
-      </motion.div>
+      </div>
 
       {/* Stats bar */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.15 }}
+      <div
         className="flex flex-wrap items-center gap-4 text-sm sm:gap-6"
       >
         {/* Select All checkbox */}
         {tenants.length > 0 && (
           <button
             onClick={toggleSelectAll}
-            className="flex items-center gap-2 rounded-lg border border-white/10 bg-white/5 px-3 py-1.5 text-neutral-300 transition-colors hover:bg-white/10"
+            className="flex items-center gap-2 rounded-lg border border-zinc-200 bg-zinc-50 px-3 py-1.5 text-zinc-700 transition-colors hover:bg-zinc-100"
           >
             {allSelected ? (
-              <CheckSquare className="h-4 w-4 text-amber-400" />
+              <CheckSquare className="h-4 w-4 text-amber-600" />
             ) : someSelected ? (
               <div className="relative">
-                <Square className="h-4 w-4 text-amber-400" />
+                <Square className="h-4 w-4 text-amber-600" />
                 <div className="absolute inset-0 flex items-center justify-center">
-                  <div className="h-2 w-2 rounded-sm bg-amber-400" />
+                  <div className="h-2 w-2 rounded-sm bg-amber-600" />
                 </div>
               </div>
             ) : (
               <Square className="h-4 w-4" />
             )}
-            <span className="text-xs font-medium">Select All</span>
+            <span className="text-xs font-medium">{t('admin.selectAll')}</span>
           </button>
         )}
         <div className="flex items-center gap-2">
           <div className="h-2 w-2 rounded-full bg-amber-500" />
-          <span className="text-neutral-400">
-            <span className="font-medium text-neutral-200">{total}</span> total
+          <span className="text-zinc-500">
+            <span className="font-medium text-zinc-700">{total}</span> {t('admin.total')}
           </span>
         </div>
         <div className="flex items-center gap-2">
           <div className="h-2 w-2 rounded-full bg-emerald-500" />
-          <span className="text-neutral-400">
-            <span className="font-medium text-neutral-200">{activeCount}</span> active
+          <span className="text-zinc-500">
+            <span className="font-medium text-zinc-700">{activeCount}</span> {t('admin.active')}
           </span>
         </div>
         {suspendedCount > 0 && (
           <div className="flex items-center gap-2">
             <div className="h-2 w-2 rounded-full bg-red-500" />
-            <span className="text-neutral-400">
-              <span className="font-medium text-neutral-200">{suspendedCount}</span> suspended
+            <span className="text-zinc-500">
+              <span className="font-medium text-zinc-700">{suspendedCount}</span> {t('admin.suspended')}
             </span>
           </div>
         )}
-      </motion.div>
+      </div>
 
       {/* Tenants grid */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.2 }}
-      >
+      <div>
         {isLoading ? (
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {[...Array(6)].map((_, i) => (
@@ -515,31 +505,24 @@ export default function TenantsPage() {
           />
         ) : (
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            <AnimatePresence mode="popLayout">
-              {tenants.map((tenant, index) => (
-                <TenantCard
-                  key={tenant.id}
-                  tenant={tenant}
-                  index={index}
-                  isSelected={selectedIds.has(tenant.id)}
-                  onToggleSelect={() => toggleSelection(tenant.id)}
-                  onEdit={() => openEditModal(tenant)}
-                  onSuspend={() => setConfirmModal({ type: 'suspend', tenant })}
-                  onUnsuspend={() => setConfirmModal({ type: 'unsuspend', tenant })}
-                  onDelete={() => setConfirmModal({ type: 'delete', tenant })}
-                />
-              ))}
-            </AnimatePresence>
+            {tenants.map((tenant) => (
+              <TenantCard
+                key={tenant.id}
+                tenant={tenant}
+                isSelected={selectedIds.has(tenant.id)}
+                onToggleSelect={() => toggleSelection(tenant.id)}
+                onEdit={() => openEditModal(tenant)}
+                onSuspend={() => setConfirmModal({ type: 'suspend', tenant })}
+                onUnsuspend={() => setConfirmModal({ type: 'unsuspend', tenant })}
+                onDelete={() => setConfirmModal({ type: 'delete', tenant })}
+              />
+            ))}
           </div>
         )}
-      </motion.div>
+      </div>
 
       {/* Pagination */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.25 }}
-      >
+      <div>
         <PaginationControls
           page={page}
           totalPages={totalPages}
@@ -547,7 +530,7 @@ export default function TenantsPage() {
           limit={limit}
           onPageChange={setPage}
         />
-      </motion.div>
+      </div>
 
       {/* Confirmation Modal */}
       <Dialog open={!!confirmModal} onOpenChange={() => {
@@ -557,55 +540,52 @@ export default function TenantsPage() {
         <DialogContent>
           <DialogHeader>
             <DialogTitle>
-              {confirmModal?.type === 'suspend' && 'Suspend Organization'}
-              {confirmModal?.type === 'unsuspend' && 'Reactivate Organization'}
-              {confirmModal?.type === 'delete' && 'Delete Organization'}
+              {confirmModal?.type === 'suspend' && t('admin.tenants.suspend')}
+              {confirmModal?.type === 'unsuspend' && t('admin.tenants.unsuspend')}
+              {confirmModal?.type === 'delete' && t('common.delete')}
             </DialogTitle>
             <DialogDescription>
               {confirmModal?.type === 'suspend' && (
                 <>
-                  Are you sure you want to suspend <strong>{confirmModal.tenant.name}</strong>?
-                  Users will lose access until reactivated.
+                  {t('admin.tenants.suspendConfirm', { name: confirmModal.tenant.name })}
                 </>
               )}
               {confirmModal?.type === 'unsuspend' && (
                 <>
-                  Reactivate <strong>{confirmModal?.tenant.name}</strong>? Users will regain access
-                  to the platform.
+                  {t('admin.tenants.unsuspendConfirm', { name: confirmModal?.tenant.name })}
                 </>
               )}
               {confirmModal?.type === 'delete' && (
                 <>
-                  <span className="text-red-400">This action cannot be undone.</span> All data for{' '}
-                  <strong>{confirmModal?.tenant.name}</strong> will be permanently deleted.
+                  <span className="text-red-500">{t('admin.tenants.deleteConfirm', { name: confirmModal?.tenant.name })}</span>
                 </>
               )}
             </DialogDescription>
           </DialogHeader>
-          
+
           {/* Delete confirmation input */}
           {confirmModal?.type === 'delete' && (
             <div className="space-y-2">
-              <label className="text-sm text-neutral-300">
-                Type <code className="rounded bg-neutral-800 px-1.5 py-0.5 text-amber-400">{confirmModal.tenant.slug}</code> to confirm:
+              <label className="text-sm text-zinc-700">
+                {t('admin.tenants.typeSlugConfirm', { slug: confirmModal.tenant.slug })}
               </label>
               <Input
                 value={deleteConfirmation}
                 onChange={(e) => setDeleteConfirmation(e.target.value)}
                 placeholder={confirmModal.tenant.slug}
-                className="glass-card border-white/10 text-white"
+                className="rounded-xl border border-zinc-200 bg-white shadow-sm text-zinc-900"
                 autoFocus
               />
             </div>
           )}
-          
+
           <DialogFooter>
             <Button
               variant="ghost"
               onClick={() => setConfirmModal(null)}
               disabled={isActionLoading}
             >
-              Cancel
+              {t('common.cancel')}
             </Button>
             <Button
               variant={confirmModal?.type === 'delete' ? 'destructive' : 'default'}
@@ -613,7 +593,7 @@ export default function TenantsPage() {
               disabled={isActionLoading || (confirmModal?.type === 'delete' && deleteConfirmation !== confirmModal?.tenant.slug)}
               className={confirmModal?.type === 'unsuspend' ? 'bg-emerald-600 hover:bg-emerald-500' : ''}
             >
-              {isActionLoading ? 'Processing...' : confirmModal?.type === 'delete' ? 'Delete' : confirmModal?.type === 'suspend' ? 'Suspend' : 'Reactivate'}
+              {isActionLoading ? t('common.loading') + '...' : confirmModal?.type === 'delete' ? t('common.delete') : confirmModal?.type === 'suspend' ? t('admin.tenants.suspend') : t('admin.tenants.unsuspend')}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -623,44 +603,44 @@ export default function TenantsPage() {
       <Dialog open={!!editModal} onOpenChange={() => setEditModal(null)}>
         <DialogContent className="sm:max-w-[500px]">
           <DialogHeader>
-            <DialogTitle>Edit Organization</DialogTitle>
+            <DialogTitle>{t('admin.tenants.edit')}</DialogTitle>
             <DialogDescription>
-              Update organization details and subscription tier
+              {t('admin.tenants.edit')}
             </DialogDescription>
           </DialogHeader>
-          
+
           <div className="space-y-4 py-4">
             {/* Name field */}
             <div className="space-y-2">
-              <label className="text-sm font-medium text-neutral-300">
-                Organization Name
+              <label className="text-sm font-medium text-zinc-700">
+                {t('admin.tenants.orgName')}
               </label>
               <Input
                 value={editForm.name}
                 onChange={(e) => setEditForm({ ...editForm, name: e.target.value })}
-                placeholder="Enter organization name"
-                className="glass-card border-white/10 text-white"
+                placeholder={t('admin.tenants.orgName')}
+                className="rounded-xl border border-zinc-200 bg-white shadow-sm text-zinc-900"
                 autoFocus
               />
             </div>
 
             {/* Logo field */}
             <div className="space-y-2">
-              <label className="text-sm font-medium text-neutral-300">
-                Logo URL <span className="text-neutral-500">(optional)</span>
+              <label className="text-sm font-medium text-zinc-700">
+                {t('admin.tenants.logoUrl')}
               </label>
               <Input
                 value={editForm.logo}
                 onChange={(e) => setEditForm({ ...editForm, logo: e.target.value })}
                 placeholder="https://example.com/logo.png"
-                className="glass-card border-white/10 text-white"
+                className="rounded-xl border border-zinc-200 bg-white shadow-sm text-zinc-900"
               />
             </div>
 
             {/* Subscription tier field */}
             <div className="space-y-2">
-              <label className="text-sm font-medium text-neutral-300">
-                Subscription Tier
+              <label className="text-sm font-medium text-zinc-700">
+                {t('admin.tenants.subscriptionTier')}
               </label>
               <Select
                 value={editForm.subscriptionTier}
@@ -668,110 +648,104 @@ export default function TenantsPage() {
                   setEditForm({ ...editForm, subscriptionTier: value })
                 }
               >
-                <SelectTrigger className="glass-card border-white/10 text-white">
+                <SelectTrigger className="rounded-xl border border-zinc-200 bg-white shadow-sm text-zinc-900">
                   <SelectValue />
                 </SelectTrigger>
-                <SelectContent className="glass-card border-white/10">
-                  <SelectItem value="free" className="text-neutral-200">Free</SelectItem>
-                  <SelectItem value="starter" className="text-neutral-200">Starter</SelectItem>
-                  <SelectItem value="pro" className="text-neutral-200">Pro</SelectItem>
-                  <SelectItem value="enterprise" className="text-neutral-200">Enterprise</SelectItem>
+                <SelectContent className="rounded-xl border border-zinc-200 bg-white shadow-sm">
+                  <SelectItem value="free" className="text-zinc-700">Free</SelectItem>
+                  <SelectItem value="starter" className="text-zinc-700">Starter</SelectItem>
+                  <SelectItem value="pro" className="text-zinc-700">Pro</SelectItem>
+                  <SelectItem value="enterprise" className="text-zinc-700">Enterprise</SelectItem>
                 </SelectContent>
               </Select>
             </div>
           </div>
-          
+
           <DialogFooter>
             <Button
               variant="ghost"
               onClick={() => setEditModal(null)}
               disabled={isEditLoading}
             >
-              Cancel
+              {t('common.cancel')}
             </Button>
             <Button
               onClick={handleEdit}
               disabled={isEditLoading || !editForm.name.trim()}
               className="bg-blue-600 hover:bg-blue-500"
             >
-              {isEditLoading ? 'Saving...' : 'Save Changes'}
+              {isEditLoading ? t('common.loading') + '...' : t('common.save')}
             </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
 
       {/* Floating Bulk Action Bar */}
-      <AnimatePresence>
-        {selectedIds.size > 0 && (
-          <motion.div
-            initial={{ y: 100, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            exit={{ y: 100, opacity: 0 }}
-            transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-            className="fixed inset-x-0 bottom-6 z-50 mx-auto flex w-fit items-center gap-3 rounded-2xl border border-white/10 bg-zinc-900/95 px-5 py-3 shadow-2xl shadow-black/50 backdrop-blur-xl"
+      {selectedIds.size > 0 && (
+        <div
+          className="fixed inset-x-0 bottom-6 z-50 mx-auto flex w-fit items-center gap-3 rounded-2xl border border-zinc-200 bg-white px-5 py-3 shadow-lg"
+        >
+          <span className="text-sm font-medium text-zinc-700">
+            <span className="text-amber-600">{selectedIds.size}</span> {t('admin.selected')}
+          </span>
+          <div className="h-5 w-px bg-zinc-200" />
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => setBulkDeleteModal(true)}
+            className="gap-1.5 text-red-500 hover:bg-red-50 hover:text-red-600"
           >
-            <span className="text-sm font-medium text-neutral-200">
-              <span className="text-amber-400">{selectedIds.size}</span> selected
-            </span>
-            <div className="h-5 w-px bg-white/10" />
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => setBulkDeleteModal(true)}
-              className="gap-1.5 text-red-400 hover:bg-red-500/10 hover:text-red-300"
-            >
-              <Trash2 className="h-4 w-4" />
-              Delete Selected
-            </Button>
-            <div className="h-5 w-px bg-white/10" />
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={clearSelection}
-              className="gap-1.5 text-neutral-400 hover:bg-white/5 hover:text-neutral-200"
-            >
-              <X className="h-4 w-4" />
-              Clear
-            </Button>
-          </motion.div>
-        )}
-      </AnimatePresence>
+            <Trash2 className="h-4 w-4" />
+            {t('common.delete')}
+          </Button>
+          <div className="h-5 w-px bg-zinc-200" />
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={clearSelection}
+            className="gap-1.5 text-zinc-500 hover:bg-zinc-50 hover:text-zinc-700"
+          >
+            <X className="h-4 w-4" />
+            {t('admin.clearSelection')}
+          </Button>
+        </div>
+      )}
 
       {/* Bulk Delete Modal */}
       <Dialog open={bulkDeleteModal} onOpenChange={() => { setBulkDeleteModal(false); setBulkDeleteConfirm(''); }}>
         <DialogContent>
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
-              <AlertTriangle className="h-5 w-5 text-red-400" />
-              Delete {selectedIds.size} Tenant{selectedIds.size !== 1 ? 's' : ''}
+              <AlertTriangle className="h-5 w-5 text-red-500" />
+              {t('common.delete')} {selectedIds.size} Tenant{selectedIds.size !== 1 ? 's' : ''}
             </DialogTitle>
             <DialogDescription>
-              <span className="text-red-400">This action cannot be undone.</span>{' '}
+              <span className="text-red-500">This action cannot be undone.</span>{' '}
               All data for these organizations including members, invitations, and subscriptions will be permanently deleted.
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-2 py-2">
-            <label className="text-sm text-neutral-300">
-              Type <code className="rounded bg-neutral-800 px-1.5 py-0.5 text-red-400">DELETE</code> to confirm:
+            <label className="text-sm text-zinc-700">
+              Type <code className="rounded bg-zinc-100 px-1.5 py-0.5 text-red-500">DELETE</code> to confirm:
             </label>
             <Input
               value={bulkDeleteConfirm}
               onChange={(e) => setBulkDeleteConfirm(e.target.value)}
               placeholder="DELETE"
-              className="glass-card border-white/10 text-white"
+              className="rounded-xl border border-zinc-200 bg-white shadow-sm text-zinc-900"
               autoFocus
             />
           </div>
           <DialogFooter>
             <Button variant="ghost" onClick={() => { setBulkDeleteModal(false); setBulkDeleteConfirm(''); }} disabled={isBulkLoading}>
-              Cancel
+              {t('common.cancel')}
             </Button>
             <Button
               variant="destructive"
               onClick={handleBulkDelete}
               disabled={isBulkLoading || bulkDeleteConfirm !== 'DELETE'}
             >
-              {isBulkLoading ? 'Deleting...' : `Delete ${selectedIds.size} Tenant${selectedIds.size !== 1 ? 's' : ''}`}
+              {isBulkLoading ? t('common.loading') + '...' : `${t('common.delete')} ${selectedIds.size} Tenant${selectedIds.size !== 1 ? 's' : ''}`}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -783,7 +757,6 @@ export default function TenantsPage() {
 // Tenant Card Component
 interface TenantCardProps {
   tenant: Tenant;
-  index: number;
   isSelected: boolean;
   onToggleSelect: () => void;
   onEdit: () => void;
@@ -792,26 +765,21 @@ interface TenantCardProps {
   onDelete: () => void;
 }
 
-function TenantCard({ tenant, index, isSelected, onToggleSelect, onEdit, onSuspend, onUnsuspend, onDelete }: TenantCardProps) {
+function TenantCard({ tenant, isSelected, onToggleSelect, onEdit, onSuspend, onUnsuspend, onDelete }: TenantCardProps) {
+  const { t } = useTranslation();
   const isSuspended = tenant.subscriptionStatus === 'suspended';
 
   return (
-    <motion.div
-      layout
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: -20 }}
-      transition={{ delay: index * 0.05 }}
-      whileHover={{ y: -4 }}
+    <div
       className={cn(
-        'group relative overflow-hidden rounded-2xl border border-white/10 bg-white/5 backdrop-blur-xl transition-all duration-300',
-        'hover:border-white/20 hover:bg-white/[0.07] hover:shadow-xl hover:shadow-amber-500/5',
-        isSuspended && 'border-red-500/20 bg-red-500/5',
-        isSelected && 'border-amber-500/40 bg-amber-500/10 ring-1 ring-amber-500/20'
+        'group relative overflow-hidden rounded-2xl border border-zinc-200 bg-white shadow-sm transition-all duration-300',
+        'hover:border-zinc-300 hover:bg-zinc-50/50 hover:shadow-md',
+        isSuspended && 'border-red-200 bg-red-50/50',
+        isSelected && 'border-amber-400 bg-amber-50 ring-1 ring-amber-300'
       )}
     >
       {/* Gradient accent */}
-      <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-amber-500/50 to-transparent opacity-0 transition-opacity group-hover:opacity-100" />
+      <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-amber-400 to-transparent opacity-0 transition-opacity group-hover:opacity-100" />
 
       {/* Selection checkbox — top-left */}
       <button
@@ -820,13 +788,13 @@ function TenantCard({ tenant, index, isSelected, onToggleSelect, onEdit, onSuspe
           'absolute left-3 top-3 z-10 flex h-6 w-6 items-center justify-center rounded-md border transition-all',
           isSelected
             ? 'border-amber-500 bg-amber-500 text-white'
-            : 'border-white/20 bg-white/5 text-transparent opacity-0 group-hover:opacity-100 hover:border-white/40'
+            : 'border-zinc-300 bg-zinc-50 text-transparent opacity-0 group-hover:opacity-100 hover:border-zinc-400'
         )}
       >
         {isSelected ? (
           <CheckSquare className="h-4 w-4" />
         ) : (
-          <Square className="h-4 w-4 text-neutral-400" />
+          <Square className="h-4 w-4 text-zinc-500" />
         )}
       </button>
 
@@ -834,49 +802,49 @@ function TenantCard({ tenant, index, isSelected, onToggleSelect, onEdit, onSuspe
         {/* Header */}
         <div className="mb-4 flex items-start justify-between gap-3">
           <div className="flex items-center gap-3">
-            <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br from-amber-600/20 to-orange-600/20 shadow-lg">
+            <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-amber-50 shadow-sm">
               {tenant.logo ? (
                 <img src={tenant.logo} alt={tenant.name} className="h-6 w-6 rounded" />
               ) : (
-                <Building2 className="h-5 w-5 text-amber-400" />
+                <Building2 className="h-5 w-5 text-amber-600" />
               )}
             </div>
             <div className="min-w-0">
-              <h3 className="truncate font-semibold text-white">{tenant.name}</h3>
-              <p className="truncate text-sm text-neutral-500">/{tenant.slug}</p>
+              <h3 className="truncate font-semibold text-zinc-900">{tenant.name}</h3>
+              <p className="truncate text-sm text-zinc-500">/{tenant.slug}</p>
             </div>
           </div>
 
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="icon" className="h-8 w-8 text-neutral-400 hover:text-white">
+              <Button variant="ghost" size="icon" className="h-8 w-8 text-zinc-500 hover:text-zinc-900">
                 <MoreVertical className="h-4 w-4" />
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="glass-card border-white/10">
-              <DropdownMenuItem className="gap-2 text-neutral-200">
+            <DropdownMenuContent align="end" className="rounded-xl border border-zinc-200 bg-white shadow-sm">
+              <DropdownMenuItem className="gap-2 text-zinc-700">
                 <ExternalLink className="h-4 w-4" />
                 View Details
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={onEdit} className="gap-2 text-blue-400">
+              <DropdownMenuItem onClick={onEdit} className="gap-2 text-blue-600">
                 <Edit className="h-4 w-4" />
-                Edit
+                {t('common.edit')}
               </DropdownMenuItem>
-              <DropdownMenuSeparator className="bg-white/10" />
+              <DropdownMenuSeparator className="bg-zinc-200" />
               {isSuspended ? (
-                <DropdownMenuItem onClick={onUnsuspend} className="gap-2 text-emerald-400">
+                <DropdownMenuItem onClick={onUnsuspend} className="gap-2 text-emerald-600">
                   <CheckCircle2 className="h-4 w-4" />
-                  Reactivate
+                  {t('admin.tenants.unsuspend')}
                 </DropdownMenuItem>
               ) : (
-                <DropdownMenuItem onClick={onSuspend} className="gap-2 text-amber-400">
+                <DropdownMenuItem onClick={onSuspend} className="gap-2 text-amber-600">
                   <Ban className="h-4 w-4" />
-                  Suspend
+                  {t('admin.tenants.suspend')}
                 </DropdownMenuItem>
               )}
-              <DropdownMenuItem onClick={onDelete} className="gap-2 text-red-400">
+              <DropdownMenuItem onClick={onDelete} className="gap-2 text-red-500">
                 <Trash2 className="h-4 w-4" />
-                Delete
+                {t('common.delete')}
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
@@ -894,69 +862,69 @@ function TenantCard({ tenant, index, isSelected, onToggleSelect, onEdit, onSuspe
 
         {/* Stats */}
         <div className="mb-4 grid grid-cols-2 gap-3">
-          <div className="rounded-xl border border-white/5 bg-white/5 p-3">
-            <div className="mb-1 flex items-center gap-1.5 text-neutral-500">
+          <div className="rounded-xl border border-zinc-200 bg-zinc-50 p-3">
+            <div className="mb-1 flex items-center gap-1.5 text-zinc-500">
               <Users className="h-3.5 w-3.5" />
-              <span className="text-[10px] font-medium uppercase tracking-wider">Members</span>
+              <span className="text-[10px] font-medium uppercase tracking-wider">{t('admin.tenants.members')}</span>
             </div>
-            <p className="text-xl font-bold text-white">{tenant.memberCount}</p>
+            <p className="text-xl font-bold text-zinc-900">{tenant.memberCount}</p>
           </div>
-          <div className="rounded-xl border border-white/5 bg-white/5 p-3">
-            <div className="mb-1 flex items-center gap-1.5 text-neutral-500">
+          <div className="rounded-xl border border-zinc-200 bg-zinc-50 p-3">
+            <div className="mb-1 flex items-center gap-1.5 text-zinc-500">
               <Crown className="h-3.5 w-3.5" />
-              <span className="text-[10px] font-medium uppercase tracking-wider">Owner</span>
+              <span className="text-[10px] font-medium uppercase tracking-wider">{t('admin.tenants.owner')}</span>
             </div>
-            <p className="truncate text-sm font-medium text-white">
+            <p className="truncate text-sm font-medium text-zinc-900">
               {tenant.owner?.name || 'Unknown'}
             </p>
           </div>
         </div>
 
         {/* Footer */}
-        <div className="flex items-center justify-between border-t border-white/5 pt-4 text-xs text-neutral-500">
-          <span>Created {new Date(tenant.createdAt).toLocaleDateString()}</span>
+        <div className="flex items-center justify-between border-t border-zinc-200 pt-4 text-xs text-zinc-500">
+          <span>{t('admin.tenants.created')} {new Date(tenant.createdAt).toLocaleDateString()}</span>
           {isSuspended && (
-            <span className="flex items-center gap-1 text-red-400">
+            <span className="flex items-center gap-1 text-red-500">
               <AlertTriangle className="h-3 w-3" />
-              Suspended
+              {t('admin.suspended')}
             </span>
           )}
         </div>
       </div>
-    </motion.div>
+    </div>
   );
 }
 
 // Skeleton
 function TenantCardSkeleton() {
   return (
-    <div className="animate-pulse rounded-2xl border border-white/10 bg-white/5 p-5">
+    <div className="animate-pulse rounded-2xl border border-zinc-200 bg-zinc-50 p-5">
       <div className="mb-4 flex items-start justify-between">
         <div className="flex items-center gap-3">
-          <div className="h-11 w-11 rounded-xl bg-white/10" />
+          <div className="h-11 w-11 rounded-xl bg-zinc-100" />
           <div className="space-y-1.5">
-            <div className="h-5 w-32 rounded bg-white/10" />
-            <div className="h-4 w-20 rounded bg-white/10" />
+            <div className="h-5 w-32 rounded bg-zinc-100" />
+            <div className="h-4 w-20 rounded bg-zinc-100" />
           </div>
         </div>
-        <div className="h-8 w-8 rounded bg-white/10" />
+        <div className="h-8 w-8 rounded bg-zinc-100" />
       </div>
       <div className="mb-4 flex gap-2">
-        <div className="h-6 w-16 rounded-full bg-white/10" />
-        <div className="h-6 w-16 rounded-full bg-white/10" />
+        <div className="h-6 w-16 rounded-full bg-zinc-100" />
+        <div className="h-6 w-16 rounded-full bg-zinc-100" />
       </div>
       <div className="mb-4 grid grid-cols-2 gap-3">
-        <div className="space-y-2 rounded-xl border border-white/5 bg-white/5 p-3">
-          <div className="h-3 w-16 rounded bg-white/10" />
-          <div className="h-6 w-12 rounded bg-white/10" />
+        <div className="space-y-2 rounded-xl border border-zinc-200 bg-zinc-50 p-3">
+          <div className="h-3 w-16 rounded bg-zinc-100" />
+          <div className="h-6 w-12 rounded bg-zinc-100" />
         </div>
-        <div className="space-y-2 rounded-xl border border-white/5 bg-white/5 p-3">
-          <div className="h-3 w-16 rounded bg-white/10" />
-          <div className="h-4 w-20 rounded bg-white/10" />
+        <div className="space-y-2 rounded-xl border border-zinc-200 bg-zinc-50 p-3">
+          <div className="h-3 w-16 rounded bg-zinc-100" />
+          <div className="h-4 w-20 rounded bg-zinc-100" />
         </div>
       </div>
-      <div className="border-t border-white/5 pt-4">
-        <div className="h-3 w-24 rounded bg-white/10" />
+      <div className="border-t border-zinc-200 pt-4">
+        <div className="h-3 w-24 rounded bg-zinc-100" />
       </div>
     </div>
   );
@@ -970,49 +938,44 @@ function EmptyState({
   hasFilters: boolean;
   onClearFilters: () => void;
 }) {
+  const { t } = useTranslation();
+
   if (hasFilters) {
     return (
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-white/10 bg-white/[0.02] px-6 py-16 text-center"
+      <div
+        className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-zinc-200 bg-zinc-50 px-6 py-16 text-center"
       >
-        <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-xl bg-neutral-800/50">
-          <Search className="h-7 w-7 text-neutral-500" />
+        <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-xl bg-zinc-100">
+          <Search className="h-7 w-7 text-zinc-500" />
         </div>
-        <h3 className="mb-1 text-lg font-semibold text-white">No matching tenants</h3>
-        <p className="mb-4 max-w-sm text-sm text-neutral-400">
-          Try adjusting your filters or search query.
+        <h3 className="mb-1 text-lg font-semibold text-zinc-900">{t('admin.noMatchingResults')}</h3>
+        <p className="mb-4 max-w-sm text-sm text-zinc-500">
+          {t('admin.adjustFilters')}
         </p>
         <Button
           variant="ghost"
           onClick={onClearFilters}
-          className="gap-2 rounded-lg border border-white/10 text-neutral-300 hover:bg-white/5"
+          className="gap-2 rounded-lg border border-zinc-200 text-zinc-700 hover:bg-zinc-50"
         >
-          Clear filters
+          {t('admin.clearFilters')}
         </Button>
-      </motion.div>
+      </div>
     );
   }
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-white/10 bg-white/[0.02] px-6 py-16 text-center"
+    <div
+      className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-zinc-200 bg-zinc-50 px-6 py-16 text-center"
     >
-      <motion.div
-        initial={{ scale: 0.8 }}
-        animate={{ scale: 1 }}
-        transition={{ type: 'spring', stiffness: 200, delay: 0.1 }}
-        className="mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-amber-600/20 to-orange-600/20"
+      <div
+        className="mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-amber-50"
       >
-        <Building2 className="h-8 w-8 text-amber-400" />
-      </motion.div>
-      <h3 className="mb-1 text-lg font-semibold text-white">No tenants yet</h3>
-      <p className="max-w-sm text-sm text-neutral-400">
-        When organizations sign up, they'll appear here.
+        <Building2 className="h-8 w-8 text-amber-600" />
+      </div>
+      <h3 className="mb-1 text-lg font-semibold text-zinc-900">{t('admin.tenants.noTenantsYet')}</h3>
+      <p className="max-w-sm text-sm text-zinc-500">
+        {t('admin.tenants.tenantsAppearHere')}
       </p>
-    </motion.div>
+    </div>
   );
 }

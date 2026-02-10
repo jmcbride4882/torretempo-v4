@@ -8,7 +8,7 @@
 
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { motion } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 import {
   Clock,
   Calendar,
@@ -82,13 +82,13 @@ function formatDay(dateStr: string): string {
 function DashboardSkeleton() {
   return (
     <div className="space-y-6 animate-pulse">
-      <div className="h-8 w-48 rounded-lg bg-zinc-800/50" />
+      <div className="h-8 w-48 rounded-lg bg-zinc-200" />
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {[1, 2, 3].map((i) => (
-          <div key={i} className="h-36 rounded-2xl bg-zinc-800/30 border border-zinc-800/50" />
+          <div key={i} className="h-36 rounded-2xl bg-zinc-100 border border-zinc-200" />
         ))}
       </div>
-      <div className="h-64 rounded-2xl bg-zinc-800/30 border border-zinc-800/50" />
+      <div className="h-64 rounded-2xl bg-zinc-100 border border-zinc-200" />
     </div>
   );
 }
@@ -113,22 +113,20 @@ function StatCard({
   onClick?: () => void;
 }) {
   const colorMap = {
-    primary: { bg: 'bg-primary-500/10', border: 'border-primary-500/20', text: 'text-primary-400', icon: 'bg-primary-500/20' },
-    emerald: { bg: 'bg-emerald-500/10', border: 'border-emerald-500/20', text: 'text-emerald-400', icon: 'bg-emerald-500/20' },
-    amber: { bg: 'bg-amber-500/10', border: 'border-amber-500/20', text: 'text-amber-400', icon: 'bg-amber-500/20' },
-    red: { bg: 'bg-red-500/10', border: 'border-red-500/20', text: 'text-red-400', icon: 'bg-red-500/20' },
+    primary: { bg: 'bg-primary-50', border: 'border-primary-200', text: 'text-primary-600', icon: 'bg-primary-100' },
+    emerald: { bg: 'bg-emerald-50', border: 'border-emerald-200', text: 'text-emerald-600', icon: 'bg-emerald-100' },
+    amber: { bg: 'bg-amber-50', border: 'border-amber-200', text: 'text-amber-600', icon: 'bg-amber-100' },
+    red: { bg: 'bg-red-50', border: 'border-red-200', text: 'text-red-600', icon: 'bg-red-100' },
   };
   const c = colorMap[color];
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 10 }}
-      animate={{ opacity: 1, y: 0 }}
+    <div
       className={cn(
-        'glass-card rounded-2xl p-5 border',
+        'rounded-2xl p-5 border',
         c.bg,
         c.border,
-        onClick && 'cursor-pointer hover:brightness-110 transition-all'
+        onClick && 'cursor-pointer hover:shadow-md transition-all'
       )}
       onClick={onClick}
     >
@@ -136,17 +134,17 @@ function StatCard({
         <div className={cn('h-10 w-10 rounded-xl flex items-center justify-center', c.icon)}>
           <Icon className={cn('h-5 w-5', c.text)} />
         </div>
-        <span className="text-sm text-neutral-400">{label}</span>
+        <span className="text-sm text-zinc-500">{label}</span>
       </div>
       <p className={cn('text-3xl font-bold', c.text)}>{value}</p>
-      {sub && <p className="text-xs text-neutral-500 mt-1">{sub}</p>}
+      {sub && <p className="text-xs text-zinc-500 mt-1">{sub}</p>}
       {onClick && (
         <div className={cn('flex items-center gap-1 mt-2 text-xs', c.text)}>
-          <span>View</span>
+          <span>Ver</span>
           <ArrowRight className="h-3 w-3" />
         </div>
       )}
-    </motion.div>
+    </div>
   );
 }
 
@@ -157,6 +155,7 @@ function StatCard({
 export default function DashboardPage() {
   const { slug } = useParams<{ slug: string }>();
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const { user } = useAuth();
   const isManager = useIsManager();
 
@@ -230,19 +229,21 @@ export default function DashboardPage() {
 
   const greeting = (() => {
     const hour = new Date().getHours();
-    if (hour < 12) return 'Good morning';
-    if (hour < 18) return 'Good afternoon';
-    return 'Good evening';
+    if (hour < 12) return t('dashboard.goodMorning');
+    if (hour < 18) return t('dashboard.goodAfternoon');
+    return t('dashboard.goodEvening');
   })();
+
+  const weekProgress = Math.min(100, (data.weeklyHours.totalHours / 40) * 100);
 
   return (
     <div className="mx-auto max-w-7xl space-y-6">
       {/* Greeting */}
-      <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}>
-        <h1 className="text-2xl font-bold text-white">
+      <div>
+        <h1 className="text-2xl font-bold text-zinc-900">
           {greeting}, {user?.name?.split(' ')[0]}
         </h1>
-        <p className="text-sm text-neutral-400">
+        <p className="text-sm text-zinc-500">
           {new Date().toLocaleDateString('es-ES', {
             weekday: 'long',
             day: 'numeric',
@@ -250,75 +251,93 @@ export default function DashboardPage() {
             year: 'numeric',
           })}
         </p>
-      </motion.div>
+      </div>
 
       {/* Today's Shift Card */}
       {data.todayShifts.length > 0 ? (
-        <motion.div
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="glass-card rounded-2xl p-5 border border-primary-500/20 bg-primary-500/5 cursor-pointer hover:brightness-110 transition-all"
+        <div
+          className="rounded-2xl p-5 border border-primary-200 bg-primary-50 cursor-pointer hover:shadow-md transition-all"
           onClick={() => navigate(`/t/${slug}/clock`)}
         >
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
-              <div className="h-12 w-12 rounded-xl bg-primary-500/20 flex items-center justify-center">
-                <Clock className="h-6 w-6 text-primary-400" />
+              <div className="h-12 w-12 rounded-xl bg-primary-100 flex items-center justify-center">
+                <Clock className="h-6 w-6 text-primary-600" />
               </div>
               <div>
-                <p className="text-sm text-neutral-400">Today's Shift</p>
-                <p className="text-xl font-bold text-white">
+                <p className="text-sm text-zinc-500">{t('dashboard.todayShift')}</p>
+                <p className="text-xl font-bold text-zinc-900">
                   {formatTime(data.todayShifts[0]!.start_time)} — {formatTime(data.todayShifts[0]!.end_time)}
                 </p>
                 {data.todayShifts[0]!.location_name && (
-                  <p className="text-xs text-neutral-500">{data.todayShifts[0]!.location_name}</p>
+                  <p className="text-xs text-zinc-500">{data.todayShifts[0]!.location_name}</p>
                 )}
               </div>
             </div>
-            <ArrowRight className="h-5 w-5 text-neutral-500" />
+            <ArrowRight className="h-5 w-5 text-zinc-400" />
           </div>
-        </motion.div>
+        </div>
       ) : (
-        <motion.div
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="glass-card rounded-2xl p-5 border border-zinc-800/50"
-        >
+        <div className="rounded-2xl p-5 border border-zinc-200 bg-white">
           <div className="flex items-center gap-4">
-            <div className="h-12 w-12 rounded-xl bg-zinc-800/50 flex items-center justify-center">
-              <CheckCircle2 className="h-6 w-6 text-emerald-400" />
+            <div className="h-12 w-12 rounded-xl bg-emerald-50 flex items-center justify-center">
+              <CheckCircle2 className="h-6 w-6 text-emerald-600" />
             </div>
             <div>
-              <p className="text-sm text-neutral-400">Today</p>
-              <p className="text-lg font-semibold text-white">No shifts scheduled</p>
-              <p className="text-xs text-neutral-500">Enjoy your day off</p>
+              <p className="text-sm text-zinc-500">{t('dashboard.today')}</p>
+              <p className="text-lg font-semibold text-zinc-900">{t('dashboard.noShifts')}</p>
+              <p className="text-xs text-zinc-500">{t('dashboard.enjoyDayOff')}</p>
             </div>
           </div>
-        </motion.div>
+        </div>
       )}
+
+      {/* Week Hours Progress */}
+      <div className="rounded-2xl border border-zinc-200 bg-white p-5">
+        <div className="flex items-center justify-between mb-2">
+          <span className="text-sm font-medium text-zinc-700">{t('dashboard.hoursThisWeek')}</span>
+          <span className="text-sm text-zinc-500">
+            {data.weeklyHours.totalHours}h / {data.weeklyHours.scheduledHours}h
+          </span>
+        </div>
+        <div className="h-2.5 rounded-full bg-zinc-100 overflow-hidden">
+          <div
+            className={cn(
+              'h-full rounded-full transition-all duration-500',
+              weekProgress > 100 ? 'bg-amber-500' : 'bg-emerald-500'
+            )}
+            style={{ width: `${Math.min(weekProgress, 100)}%` }}
+          />
+        </div>
+        {data.weeklyHours.overtimeHours > 0 && (
+          <p className="text-xs text-amber-600 mt-1.5">
+            {data.weeklyHours.overtimeHours}h {t('dashboard.overtime')}
+          </p>
+        )}
+      </div>
 
       {/* Stats Row */}
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
         <StatCard
           icon={Timer}
-          label="Hours This Week"
+          label={t('dashboard.hoursThisWeek')}
           value={`${data.weeklyHours.totalHours}h`}
-          sub={`of ${data.weeklyHours.scheduledHours}h scheduled`}
+          sub={`${t('dashboard.of')} ${data.weeklyHours.scheduledHours}h ${t('dashboard.scheduled')}`}
           color={data.weeklyHours.overtimeHours > 0 ? 'amber' : 'emerald'}
         />
         <StatCard
           icon={Repeat2}
-          label="Pending Swaps"
+          label={t('dashboard.pendingSwaps')}
           value={data.pendingSwaps}
-          sub="Awaiting response"
+          sub={t('dashboard.awaitingResponse')}
           color={data.pendingSwaps > 0 ? 'amber' : 'primary'}
           onClick={() => navigate(`/t/${slug}/swaps`)}
         />
         <StatCard
           icon={FileText}
-          label="Notifications"
+          label={t('nav.notifications')}
           value={data.unreadNotifications}
-          sub="Unread"
+          sub={t('dashboard.unread')}
           color={data.unreadNotifications > 0 ? 'red' : 'primary'}
           onClick={() => navigate(`/t/${slug}/notifications`)}
         />
@@ -326,72 +345,67 @@ export default function DashboardPage() {
 
       {/* Manager Section */}
       {isManager && (
-        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }}>
-          <h2 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
-            <Users className="h-5 w-5 text-primary-400" />
-            Team Overview
+        <div>
+          <h2 className="text-lg font-semibold text-zinc-900 mb-4 flex items-center gap-2">
+            <Users className="h-5 w-5 text-primary-600" />
+            {t('dashboard.teamOverview')}
           </h2>
           <LiveAttendanceWidget />
-        </motion.div>
+        </div>
       )}
 
       {/* Upcoming Shifts */}
       {data.upcomingShifts.length > 0 && (
-        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.3 }}>
+        <div>
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-semibold text-white flex items-center gap-2">
-              <Calendar className="h-5 w-5 text-primary-400" />
-              Upcoming Shifts
+            <h2 className="text-lg font-semibold text-zinc-900 flex items-center gap-2">
+              <Calendar className="h-5 w-5 text-primary-600" />
+              {t('dashboard.upcomingShifts')}
             </h2>
             <button
               onClick={() => navigate(`/t/${slug}/roster`)}
-              className="text-sm text-primary-400 hover:text-primary-300 flex items-center gap-1"
+              className="text-sm text-primary-600 hover:text-primary-700 flex items-center gap-1"
             >
-              View Roster <ArrowRight className="h-3 w-3" />
+              {t('dashboard.viewRoster')} <ArrowRight className="h-3 w-3" />
             </button>
           </div>
           <div className="space-y-2">
             {data.upcomingShifts.map((shift) => (
               <div
                 key={shift.id}
-                className="glass-card rounded-xl p-4 border border-zinc-800/50 flex items-center justify-between"
+                className="rounded-xl p-4 border border-zinc-200 bg-white flex items-center justify-between"
               >
                 <div className="flex items-center gap-3">
-                  <div className="h-10 w-10 rounded-lg bg-zinc-800/50 flex items-center justify-center">
-                    <Calendar className="h-4 w-4 text-neutral-400" />
+                  <div className="h-10 w-10 rounded-lg bg-zinc-100 flex items-center justify-center">
+                    <Calendar className="h-4 w-4 text-zinc-500" />
                   </div>
                   <div>
-                    <p className="text-sm font-medium text-white">{formatDay(shift.start_time)}</p>
-                    <p className="text-xs text-neutral-500">
+                    <p className="text-sm font-medium text-zinc-900">{formatDay(shift.start_time)}</p>
+                    <p className="text-xs text-zinc-500">
                       {formatTime(shift.start_time)} — {formatTime(shift.end_time)}
                     </p>
                   </div>
                 </div>
                 {shift.location_name && (
-                  <span className="text-xs text-neutral-500">{shift.location_name}</span>
+                  <span className="text-xs text-zinc-500">{shift.location_name}</span>
                 )}
               </div>
             ))}
           </div>
-        </motion.div>
+        </div>
       )}
 
       {/* Compliance Warning (if overtime) */}
       {data.weeklyHours.overtimeHours > 0 && (
-        <motion.div
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="rounded-2xl border border-amber-500/30 bg-amber-500/5 p-4 flex items-start gap-3"
-        >
-          <AlertTriangle className="h-5 w-5 text-amber-400 mt-0.5 shrink-0" />
+        <div className="rounded-2xl border border-amber-200 bg-amber-50 p-4 flex items-start gap-3">
+          <AlertTriangle className="h-5 w-5 text-amber-600 mt-0.5 shrink-0" />
           <div>
-            <p className="text-sm font-medium text-amber-400">Overtime Alert</p>
-            <p className="text-xs text-neutral-400">
-              You have {data.weeklyHours.overtimeHours}h of overtime this week.
-              Spanish law limits weekly hours to 40h regular time.
+            <p className="text-sm font-medium text-amber-700">{t('dashboard.overtimeAlert')}</p>
+            <p className="text-xs text-amber-600">
+              {t('dashboard.overtimeMessage', { hours: data.weeklyHours.overtimeHours })}
             </p>
           </div>
-        </motion.div>
+        </div>
       )}
     </div>
   );
