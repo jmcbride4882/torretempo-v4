@@ -38,10 +38,11 @@ export function NotificationPopover({
       setIsLoading(true);
       setError(null);
       const data = await fetchNotifications(slug, { limit: 10 });
-      setNotifications(data.notifications);
-      
+      const items = data.notifications || data.data || [];
+      setNotifications(items);
+
       // Update unread count
-      const unreadCount = data.notifications.filter((n) => !n.read).length;
+      const unreadCount = items.filter((n) => !n.read).length;
       onUnreadCountChange?.(unreadCount);
       hasLoadedRef.current = true;
     } catch (err) {

@@ -188,7 +188,7 @@ export default function NotificationsPage() {
           }),
           fetchUnreadCount(slug),
         ]);
-        setNotifications(notifRes.notifications || []);
+        setNotifications(notifRes.notifications || notifRes.data || []);
         setUnreadCount(count);
       } catch (err) {
         console.error('Error loading notifications:', err);

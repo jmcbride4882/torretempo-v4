@@ -185,7 +185,8 @@ export default function DashboardPage() {
 
         const pendingSwaps = swapCount.status === 'fulfilled' ? swapCount.value : 0;
         const unreadNotifications = notifCount.status === 'fulfilled' ? notifCount.value : 0;
-        const shifts = shiftsRes.status === 'fulfilled' ? (shiftsRes.value?.data || []) : [];
+        const shiftsVal = shiftsRes.status === 'fulfilled' ? shiftsRes.value : {};
+        const shifts = shiftsVal?.shifts || shiftsVal?.data || [];
 
         // Split shifts
         const today = new Date().toISOString().slice(0, 10);

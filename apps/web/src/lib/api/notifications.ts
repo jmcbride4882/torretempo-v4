@@ -25,9 +25,11 @@ export interface Notification {
 }
 
 export interface NotificationsResponse {
-  notifications: Notification[];
-  total: number;
-  hasMore: boolean;
+  notifications?: Notification[];
+  data?: Notification[];
+  total?: number;
+  hasMore?: boolean;
+  pagination?: { total: number; totalPages: number };
 }
 
 export interface UnreadCountResponse {

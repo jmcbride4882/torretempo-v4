@@ -104,7 +104,7 @@ export default function SwapsPage() {
             break;
         }
 
-        setSwaps(data.swaps || []);
+        setSwaps(data?.swaps || []);
 
         if (silent) {
           toast.success('Swaps refreshed');
