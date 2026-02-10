@@ -18,7 +18,7 @@ vi.mock('stripe', () => {
   };
 });
 
-vi.mock('gocardless-nodejs/client', () => ({
+vi.mock('gocardless-nodejs/client.js', () => ({
   GoCardlessClient: vi.fn().mockImplementation(() => ({
     customers: { create: vi.fn() },
     subscriptions: { create: vi.fn(), cancel: vi.fn() },

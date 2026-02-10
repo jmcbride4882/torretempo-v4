@@ -4,16 +4,16 @@
  */
 
 import Stripe from 'stripe';
-import { GoCardlessClient } from 'gocardless-nodejs/client';
-import { Environments } from 'gocardless-nodejs/constants';
+import { GoCardlessClient } from 'gocardless-nodejs/client.js';
+import { Environments } from 'gocardless-nodejs/constants.js';
 import type {
   SubscriptionIntervalUnit,
   PaymentCurrency,
-} from 'gocardless-nodejs/types/Types';
+} from 'gocardless-nodejs/types/Types.js';
 import 'dotenv/config';
 
 // Re-export GoCardless types for external use
-export { SubscriptionIntervalUnit, PaymentCurrency } from 'gocardless-nodejs/types/Types';
+export { SubscriptionIntervalUnit, PaymentCurrency } from 'gocardless-nodejs/types/Types.js';
 
 // Initialize Stripe
 const stripeKey = process.env.STRIPE_SECRET_KEY || '';
