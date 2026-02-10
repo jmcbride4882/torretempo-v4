@@ -71,22 +71,20 @@ export default function SettingsPage() {
   return (
     <div className="mx-auto max-w-7xl space-y-6">
       {/* Page header */}
-      <div className="space-y-2">
-        <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-zinc-800/50">
-            <SettingsIcon className="h-5 w-5 text-neutral-400" />
-          </div>
-          <div>
-            <h1 className="text-2xl font-bold text-neutral-200">Settings</h1>
-            <p className="text-sm text-neutral-400">Manage your workspace configuration</p>
-          </div>
+      <div className="flex items-center gap-3">
+        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-white/[0.06]">
+          <SettingsIcon className="h-5 w-5 text-neutral-400" />
+        </div>
+        <div>
+          <h1 className="text-2xl font-bold text-white">Settings</h1>
+          <p className="text-sm text-neutral-400">Manage your workspace configuration</p>
         </div>
       </div>
 
       {/* Tabs */}
-      <div className="rounded-xl border border-zinc-800 bg-zinc-900/50 backdrop-blur-sm">
-        <div className="border-b border-zinc-800">
-          <div className="flex overflow-x-auto">
+      <div className="glass-card overflow-hidden">
+        <div className="border-b border-white/[0.06]">
+          <div className="flex overflow-x-auto scrollbar-hide">
             {tabs.map((tab) => {
               const Icon = tab.icon;
               return (
@@ -94,9 +92,9 @@ export default function SettingsPage() {
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id)}
                   className={cn(
-                    'relative flex items-center gap-2 whitespace-nowrap border-b-2 px-6 py-4 text-sm font-medium transition-colors',
+                    'relative flex items-center gap-2 whitespace-nowrap border-b-2 px-6 py-4 text-sm font-medium transition-colors min-h-touch',
                     activeTab === tab.id
-                      ? 'border-primary-500 text-neutral-200'
+                      ? 'border-primary-500 text-white'
                       : 'border-transparent text-neutral-400 hover:text-neutral-300'
                   )}
                 >
@@ -142,7 +140,6 @@ interface NotifPref {
 function NotificationSettings({ slug }: { slug: string }) {
   const push = usePushNotifications(slug);
 
-  // Local preferences state (in a real app these would be fetched/persisted via API)
   const [prefs, setPrefs] = useState<NotifPref[]>([
     {
       id: 'shift_reminders',
@@ -189,12 +186,12 @@ function NotificationSettings({ slug }: { slug: string }) {
       {/* Push Notifications */}
       <div className="space-y-4">
         <div>
-          <h3 className="text-lg font-semibold text-neutral-200">Push Notifications</h3>
+          <h3 className="text-lg font-semibold text-white">Push Notifications</h3>
           <p className="text-sm text-neutral-400">Receive push notifications on this device</p>
         </div>
 
         {!push.isSupported ? (
-          <div className="rounded-xl border border-zinc-800 bg-zinc-900/50 p-4 flex items-center gap-3">
+          <div className="rounded-xl border border-white/[0.08] bg-white/[0.03] p-4 flex items-center gap-3">
             <BellOff className="h-5 w-5 text-neutral-500" />
             <p className="text-sm text-neutral-400">
               Push notifications are not supported in this browser
@@ -211,19 +208,19 @@ function NotificationSettings({ slug }: { slug: string }) {
             </div>
           </div>
         ) : (
-          <div className="rounded-xl border border-zinc-800 bg-zinc-900/50 p-4 flex items-center justify-between">
+          <div className="rounded-xl border border-white/[0.08] bg-white/[0.03] p-4 flex items-center justify-between">
             <div className="flex items-center gap-3">
               <div className={cn(
-                'h-10 w-10 rounded-lg flex items-center justify-center',
-                push.isSubscribed ? 'bg-emerald-500/20' : 'bg-zinc-800/50'
+                'h-10 w-10 rounded-xl flex items-center justify-center',
+                push.isSubscribed ? 'bg-emerald-500/15' : 'bg-white/[0.06]'
               )}>
                 <Smartphone className={cn('h-5 w-5', push.isSubscribed ? 'text-emerald-400' : 'text-neutral-500')} />
               </div>
               <div>
-                <p className="text-sm font-medium text-neutral-200">
+                <p className="text-sm font-medium text-white">
                   {push.isSubscribed ? 'Push notifications enabled' : 'Push notifications disabled'}
                 </p>
-                <p className="text-xs text-neutral-400">
+                <p className="text-xs text-neutral-500">
                   {push.isSubscribed
                     ? 'You will receive notifications even when the app is closed'
                     : 'Enable to get notified about shifts and swaps'}
@@ -235,6 +232,7 @@ function NotificationSettings({ slug }: { slug: string }) {
               size="sm"
               onClick={push.isSubscribed ? push.unsubscribe : push.subscribe}
               disabled={push.isLoading}
+              className="rounded-xl"
             >
               {push.isSubscribed ? 'Disable' : 'Enable'}
             </Button>
@@ -248,7 +246,7 @@ function NotificationSettings({ slug }: { slug: string }) {
       {/* Notification Preferences */}
       <div className="space-y-4">
         <div>
-          <h3 className="text-lg font-semibold text-neutral-200">Preferences</h3>
+          <h3 className="text-lg font-semibold text-white">Preferences</h3>
           <p className="text-sm text-neutral-400">Choose which notifications you receive</p>
         </div>
 
@@ -258,27 +256,27 @@ function NotificationSettings({ slug }: { slug: string }) {
             return (
               <div
                 key={pref.id}
-                className="rounded-xl border border-zinc-800 bg-zinc-900/50 p-4 flex items-center justify-between"
+                className="rounded-xl border border-white/[0.08] bg-white/[0.03] p-4 flex items-center justify-between"
               >
                 <div className="flex items-center gap-3">
-                  <div className="h-10 w-10 rounded-lg bg-zinc-800/50 flex items-center justify-center">
+                  <div className="h-10 w-10 rounded-xl bg-white/[0.06] flex items-center justify-center">
                     <Icon className="h-5 w-5 text-neutral-400" />
                   </div>
                   <div>
-                    <p className="text-sm font-medium text-neutral-200">{pref.label}</p>
+                    <p className="text-sm font-medium text-white">{pref.label}</p>
                     <p className="text-xs text-neutral-500">{pref.description}</p>
                   </div>
                 </div>
                 <button
                   onClick={() => togglePref(pref.id)}
                   className={cn(
-                    'relative h-6 w-11 rounded-full transition-colors',
-                    pref.enabled ? 'bg-primary-500' : 'bg-zinc-700'
+                    'relative h-6 w-11 rounded-full transition-colors shrink-0',
+                    pref.enabled ? 'bg-primary-500' : 'bg-white/[0.12]'
                   )}
                 >
                   <span
                     className={cn(
-                      'absolute top-0.5 left-0.5 h-5 w-5 rounded-full bg-white transition-transform',
+                      'absolute top-0.5 left-0.5 h-5 w-5 rounded-full bg-white transition-transform shadow-sm',
                       pref.enabled && 'translate-x-5'
                     )}
                   />
@@ -292,7 +290,7 @@ function NotificationSettings({ slug }: { slug: string }) {
       {/* Do Not Disturb */}
       <div className="space-y-4">
         <div>
-          <h3 className="text-lg font-semibold text-neutral-200 flex items-center gap-2">
+          <h3 className="text-lg font-semibold text-white flex items-center gap-2">
             <Moon className="h-5 w-5 text-primary-400" />
             Do Not Disturb
           </h3>
@@ -301,10 +299,10 @@ function NotificationSettings({ slug }: { slug: string }) {
           </p>
         </div>
 
-        <div className="rounded-xl border border-zinc-800 bg-zinc-900/50 p-4 space-y-4">
+        <div className="rounded-xl border border-white/[0.08] bg-white/[0.03] p-4 space-y-4">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-neutral-200">Enable Do Not Disturb</p>
+              <p className="text-sm font-medium text-white">Enable Do Not Disturb</p>
               <p className="text-xs text-neutral-500">
                 No notifications will be sent during quiet hours
               </p>
@@ -312,13 +310,13 @@ function NotificationSettings({ slug }: { slug: string }) {
             <button
               onClick={() => setDndEnabled(!dndEnabled)}
               className={cn(
-                'relative h-6 w-11 rounded-full transition-colors',
-                dndEnabled ? 'bg-primary-500' : 'bg-zinc-700'
+                'relative h-6 w-11 rounded-full transition-colors shrink-0',
+                dndEnabled ? 'bg-primary-500' : 'bg-white/[0.12]'
               )}
             >
               <span
                 className={cn(
-                  'absolute top-0.5 left-0.5 h-5 w-5 rounded-full bg-white transition-transform',
+                  'absolute top-0.5 left-0.5 h-5 w-5 rounded-full bg-white transition-transform shadow-sm',
                   dndEnabled && 'translate-x-5'
                 )}
               />
@@ -329,7 +327,7 @@ function NotificationSettings({ slug }: { slug: string }) {
             <motion.div
               initial={{ opacity: 0, height: 0 }}
               animate={{ opacity: 1, height: 'auto' }}
-              className="flex items-center gap-4 pt-2 border-t border-zinc-800"
+              className="flex items-center gap-4 pt-4 border-t border-white/[0.06]"
             >
               <div className="flex-1">
                 <label className="text-xs text-neutral-500 block mb-1">From</label>
@@ -337,7 +335,7 @@ function NotificationSettings({ slug }: { slug: string }) {
                   type="time"
                   value={dndStart}
                   onChange={(e) => setDndStart(e.target.value)}
-                  className="w-full rounded-lg border border-zinc-700 bg-zinc-800 px-3 py-2 text-sm text-white"
+                  className="w-full rounded-xl border border-white/[0.08] bg-white/[0.04] px-3 py-2 text-sm text-white"
                 />
               </div>
               <div className="flex-1">
@@ -346,7 +344,7 @@ function NotificationSettings({ slug }: { slug: string }) {
                   type="time"
                   value={dndEnd}
                   onChange={(e) => setDndEnd(e.target.value)}
-                  className="w-full rounded-lg border border-zinc-700 bg-zinc-800 px-3 py-2 text-sm text-white"
+                  className="w-full rounded-xl border border-white/[0.08] bg-white/[0.04] px-3 py-2 text-sm text-white"
                 />
               </div>
             </motion.div>
@@ -373,7 +371,6 @@ interface Session {
 function SecuritySettings() {
   const { signOut } = useAuth();
 
-  // Mock sessions — in a real app these come from the API
   const [sessions] = useState<Session[]>([
     {
       id: '1',
@@ -401,7 +398,6 @@ function SecuritySettings() {
   const handleChangePassword = () => {
     if (newPassword !== confirmPassword) return;
     if (newPassword.length < 8) return;
-    // In a real app, call API
     setPasswordChanged(true);
     setCurrentPassword('');
     setNewPassword('');
@@ -414,7 +410,7 @@ function SecuritySettings() {
       {/* Active Sessions */}
       <div className="space-y-4">
         <div>
-          <h3 className="text-lg font-semibold text-neutral-200">Active Sessions</h3>
+          <h3 className="text-lg font-semibold text-white">Active Sessions</h3>
           <p className="text-sm text-neutral-400">Manage your logged-in devices</p>
         </div>
 
@@ -426,13 +422,13 @@ function SecuritySettings() {
                 'rounded-xl border p-4 flex items-center justify-between',
                 session.current
                   ? 'border-emerald-500/20 bg-emerald-500/5'
-                  : 'border-zinc-800 bg-zinc-900/50'
+                  : 'border-white/[0.08] bg-white/[0.03]'
               )}
             >
               <div className="flex items-center gap-3">
                 <div className={cn(
-                  'h-10 w-10 rounded-lg flex items-center justify-center',
-                  session.current ? 'bg-emerald-500/20' : 'bg-zinc-800/50'
+                  'h-10 w-10 rounded-xl flex items-center justify-center',
+                  session.current ? 'bg-emerald-500/15' : 'bg-white/[0.06]'
                 )}>
                   <Monitor className={cn(
                     'h-5 w-5',
@@ -441,11 +437,9 @@ function SecuritySettings() {
                 </div>
                 <div>
                   <div className="flex items-center gap-2">
-                    <p className="text-sm font-medium text-neutral-200">{session.device}</p>
+                    <p className="text-sm font-medium text-white">{session.device}</p>
                     {session.current && (
-                      <span className="rounded bg-emerald-500/20 px-1.5 py-0.5 text-[10px] font-semibold text-emerald-400">
-                        Current
-                      </span>
+                      <span className="badge-success text-[10px] py-0 px-1.5">Current</span>
                     )}
                   </div>
                   <p className="text-xs text-neutral-500">
@@ -457,7 +451,7 @@ function SecuritySettings() {
                 </div>
               </div>
               {!session.current && (
-                <Button variant="outline" size="sm" className="text-red-400 border-red-500/20 hover:bg-red-500/10">
+                <Button variant="outline" size="sm" className="text-red-400 border-red-500/20 hover:bg-red-500/10 rounded-xl">
                   <LogOut className="mr-1 h-3.5 w-3.5" />
                   Revoke
                 </Button>
@@ -470,16 +464,16 @@ function SecuritySettings() {
       {/* Change Password */}
       <div className="space-y-4">
         <div>
-          <h3 className="text-lg font-semibold text-neutral-200">Change Password</h3>
+          <h3 className="text-lg font-semibold text-white">Change Password</h3>
           <p className="text-sm text-neutral-400">Update your account password</p>
         </div>
 
-        <div className="rounded-xl border border-zinc-800 bg-zinc-900/50 p-4 space-y-4">
+        <div className="rounded-xl border border-white/[0.08] bg-white/[0.03] p-4 space-y-4">
           {passwordChanged && (
             <motion.div
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
-              className="rounded-lg bg-emerald-500/10 border border-emerald-500/20 p-3 flex items-center gap-2"
+              className="rounded-xl bg-emerald-500/10 border border-emerald-500/20 p-3 flex items-center gap-2"
             >
               <Shield className="h-4 w-4 text-emerald-400" />
               <span className="text-sm text-emerald-400">Password updated successfully</span>
@@ -492,7 +486,7 @@ function SecuritySettings() {
               type="password"
               value={currentPassword}
               onChange={(e) => setCurrentPassword(e.target.value)}
-              className="w-full rounded-lg border border-zinc-700 bg-zinc-800 px-3 py-2 text-sm text-white"
+              className="w-full rounded-xl border border-white/[0.08] bg-white/[0.04] px-3 py-2.5 text-sm text-white"
               placeholder="Enter current password"
             />
           </div>
@@ -502,7 +496,7 @@ function SecuritySettings() {
               type="password"
               value={newPassword}
               onChange={(e) => setNewPassword(e.target.value)}
-              className="w-full rounded-lg border border-zinc-700 bg-zinc-800 px-3 py-2 text-sm text-white"
+              className="w-full rounded-xl border border-white/[0.08] bg-white/[0.04] px-3 py-2.5 text-sm text-white"
               placeholder="At least 8 characters"
             />
           </div>
@@ -512,7 +506,7 @@ function SecuritySettings() {
               type="password"
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
-              className="w-full rounded-lg border border-zinc-700 bg-zinc-800 px-3 py-2 text-sm text-white"
+              className="w-full rounded-xl border border-white/[0.08] bg-white/[0.04] px-3 py-2.5 text-sm text-white"
               placeholder="Re-enter new password"
             />
           </div>
@@ -522,6 +516,7 @@ function SecuritySettings() {
           <Button
             onClick={handleChangePassword}
             disabled={!currentPassword || !newPassword || newPassword !== confirmPassword || newPassword.length < 8}
+            className="rounded-xl bg-primary-500 hover:bg-primary-600"
           >
             Update Password
           </Button>
@@ -531,14 +526,14 @@ function SecuritySettings() {
       {/* Sign Out All Devices */}
       <div className="space-y-4">
         <div>
-          <h3 className="text-lg font-semibold text-neutral-200">Sign Out Everywhere</h3>
+          <h3 className="text-lg font-semibold text-white">Sign Out Everywhere</h3>
           <p className="text-sm text-neutral-400">
             Sign out of all devices including this one
           </p>
         </div>
         <Button
           variant="outline"
-          className="text-red-400 border-red-500/20 hover:bg-red-500/10"
+          className="text-red-400 border-red-500/20 hover:bg-red-500/10 rounded-xl"
           onClick={signOut}
         >
           <LogOut className="mr-2 h-4 w-4" />

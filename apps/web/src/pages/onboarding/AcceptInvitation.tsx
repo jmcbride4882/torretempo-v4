@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Loader2, CheckCircle2, XCircle, Mail, ArrowRight, UserPlus } from 'lucide-react';
+import { CheckCircle2, XCircle, ArrowRight, UserPlus, Clock, Mail } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/hooks/useAuth';
@@ -19,17 +19,13 @@ export default function AcceptInvitation() {
   const [errorMessage, setErrorMessage] = useState('');
 
   useEffect(() => {
-    if (authLoading) {
-      return;
-    }
+    if (authLoading) return;
 
     if (!user) {
-      // User not logged in - show sign up/sign in options
       setState('not-logged-in');
       return;
     }
 
-    // User is logged in - automatically accept invitation
     handleAcceptInvitation();
   }, [user, authLoading, id]);
 
@@ -44,206 +40,189 @@ export default function AcceptInvitation() {
 
     try {
       const result = await acceptInvitation(id);
-      
-      // Set the organization as active
       await setActiveOrganization(result.organizationId);
-      
       setState('success');
-      
-      // Redirect to the organization dashboard after 2 seconds
+
       setTimeout(() => {
-        // Navigate to organization dashboard
-        // Note: We don't have the slug yet, so redirect to onboarding/select
-        // which will redirect to the correct org
         navigate('/dashboard');
       }, 2000);
     } catch (error) {
       setState('error');
       const message = error instanceof Error ? error.message : 'Failed to accept invitation';
-      setErrorMessage(message);
-      
+
       if (message.toLowerCase().includes('expired')) {
         setErrorMessage('This invitation has expired. Please request a new one from your organization admin.');
       } else if (message.toLowerCase().includes('invalid') || message.toLowerCase().includes('not found')) {
         setErrorMessage('Invalid invitation link. Please check the link or request a new invitation.');
       } else if (message.toLowerCase().includes('already')) {
         setErrorMessage('You are already a member of this organization.');
+      } else {
+        setErrorMessage(message);
       }
     }
   };
 
   const handleSignUpWithInvitation = () => {
-    // Store invitation ID in sessionStorage to auto-accept after signup
-    if (id) {
-      sessionStorage.setItem('pendingInvitation', id);
-    }
+    if (id) sessionStorage.setItem('pendingInvitation', id);
     navigate('/auth/signup');
   };
 
   const handleSignInWithInvitation = () => {
-    // Store invitation ID in sessionStorage to auto-accept after signin
-    if (id) {
-      sessionStorage.setItem('pendingInvitation', id);
-    }
+    if (id) sessionStorage.setItem('pendingInvitation', id);
     navigate('/auth/signin');
   };
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-br from-zinc-950 via-zinc-900 to-zinc-950 p-4">
-      {/* Background decorative elements */}
+    <div className="flex min-h-screen flex-col items-center justify-center bg-surface-0 px-4">
+      {/* Background glow */}
       <div className="pointer-events-none absolute inset-0 overflow-hidden">
-        <div className="absolute -top-1/2 left-1/2 h-[800px] w-[800px] -translate-x-1/2 rounded-full bg-blue-600/10 blur-[120px]" />
+        <div className="absolute left-1/2 top-0 -translate-x-1/2 h-[600px] w-[800px] rounded-full bg-primary-600/[0.07] blur-[120px]" />
       </div>
 
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="relative w-full max-w-md"
+        transition={{ duration: 0.4 }}
+        className="relative w-full max-w-sm"
       >
-        <div className="overflow-hidden rounded-2xl border border-zinc-800 bg-zinc-900/50 backdrop-blur-xl">
-          {/* Header gradient */}
-          <div className="h-2 bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700" />
-
-          <div className="p-8">
-            {/* Icon */}
-            <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-blue-500/20 to-blue-600/10 ring-1 ring-white/10">
-              {state === 'loading' || state === 'accepting' ? (
-                <Loader2 className="h-8 w-8 animate-spin text-blue-400" />
-              ) : state === 'success' ? (
-                <CheckCircle2 className="h-8 w-8 text-emerald-400" />
-              ) : state === 'error' ? (
-                <XCircle className="h-8 w-8 text-red-400" />
-              ) : (
-                <UserPlus className="h-8 w-8 text-blue-400" />
-              )}
-            </div>
-
-            {/* Title and description based on state */}
-            {state === 'loading' && (
-              <>
-                <h1 className="mb-2 text-center text-2xl font-bold text-white">
-                  Loading Invitation...
-                </h1>
-                <p className="text-center text-neutral-400">
-                  Please wait while we verify your invitation
-                </p>
-              </>
-            )}
-
-            {state === 'accepting' && (
-              <>
-                <h1 className="mb-2 text-center text-2xl font-bold text-white">
-                  Accepting Invitation...
-                </h1>
-                <p className="text-center text-neutral-400">
-                  Adding you to the organization
-                </p>
-              </>
-            )}
-
-            {state === 'success' && (
-              <>
-                <h1 className="mb-2 text-center text-2xl font-bold text-white">
-                  Welcome Aboard! 🎉
-                </h1>
-                <p className="text-center text-neutral-400">
-                  You've successfully joined the organization. Redirecting to your dashboard...
-                </p>
-                <div className="mt-6 flex justify-center">
-                  <motion.div
-                    initial={{ scale: 0 }}
-                    animate={{ scale: 1 }}
-                    transition={{ delay: 0.2, type: 'spring' }}
-                    className="inline-flex items-center gap-2 rounded-full bg-emerald-500/10 px-4 py-2 text-emerald-400 ring-1 ring-emerald-500/30"
-                  >
-                    <CheckCircle2 className="h-4 w-4" />
-                    Invitation accepted
-                  </motion.div>
-                </div>
-              </>
-            )}
-
-            {state === 'error' && (
-              <>
-                <h1 className="mb-2 text-center text-2xl font-bold text-white">
-                  Invitation Error
-                </h1>
-                <div className="mb-6 rounded-lg border border-red-500/20 bg-red-500/10 p-4">
-                  <p className="flex items-center gap-2 text-sm text-red-400">
-                    <XCircle className="h-4 w-4 shrink-0" />
-                    {errorMessage}
-                  </p>
-                </div>
-                <div className="flex gap-3">
-                  <Button
-                    onClick={() => navigate('/auth/signin')}
-                    variant="outline"
-                    className="flex-1 border-white/10 bg-white/5 hover:bg-white/10"
-                  >
-                    Sign In
-                  </Button>
-                  <Button
-                    onClick={() => navigate('/auth/signup')}
-                    className="flex-1 gap-2 bg-blue-600 hover:bg-blue-700"
-                  >
-                    Sign Up
-                  </Button>
-                </div>
-              </>
-            )}
-
-            {state === 'not-logged-in' && (
-              <>
-                <h1 className="mb-2 text-center text-2xl font-bold text-white">
-                  You're Invited! 🎉
-                </h1>
-                <p className="mb-6 text-center text-neutral-400">
-                  You've been invited to join an organization on Torre Tempo. Sign up or sign in to accept your invitation.
-                </p>
-
-                <div className="space-y-3">
-                  <Button
-                    onClick={handleSignUpWithInvitation}
-                    className="w-full gap-2 bg-blue-600 hover:bg-blue-700"
-                  >
-                    <UserPlus className="h-4 w-4" />
-                    Create Account & Join
-                    <ArrowRight className="h-4 w-4" />
-                  </Button>
-
-                  <div className="relative">
-                    <div className="absolute inset-0 flex items-center">
-                      <div className="w-full border-t border-zinc-800" />
-                    </div>
-                    <div className="relative flex justify-center text-xs uppercase">
-                      <span className="bg-zinc-900 px-2 text-neutral-500">
-                        Already have an account?
-                      </span>
-                    </div>
-                  </div>
-
-                  <Button
-                    onClick={handleSignInWithInvitation}
-                    variant="outline"
-                    className="w-full gap-2 border-white/10 bg-white/5 hover:bg-white/10"
-                  >
-                    <Mail className="h-4 w-4" />
-                    Sign In & Join
-                  </Button>
-                </div>
-
-                <p className="mt-6 text-center text-xs text-neutral-500">
-                  Your invitation will be automatically accepted after you sign in or create an account.
-                </p>
-              </>
-            )}
+        {/* Logo */}
+        <div className="mb-10 flex flex-col items-center gap-3">
+          <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-primary-500 to-primary-600 shadow-xl shadow-primary-500/25">
+            <Clock className="h-7 w-7 text-white" />
           </div>
         </div>
 
-        {/* Footer link */}
-        <p className="mt-4 text-center text-sm text-neutral-500">
+        {/* Card */}
+        <div className="glass-card p-6 space-y-6">
+          {/* Icon */}
+          <div className="flex justify-center">
+            <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-primary-500/15 border border-primary-500/20">
+              {(state === 'loading' || state === 'accepting') ? (
+                <div className="h-7 w-7 animate-spin rounded-full border-2 border-primary-500/20 border-t-primary-500" />
+              ) : state === 'success' ? (
+                <CheckCircle2 className="h-7 w-7 text-emerald-400" />
+              ) : state === 'error' ? (
+                <XCircle className="h-7 w-7 text-red-400" />
+              ) : (
+                <UserPlus className="h-7 w-7 text-primary-400" />
+              )}
+            </div>
+          </div>
+
+          {/* Loading */}
+          {state === 'loading' && (
+            <div className="text-center">
+              <h2 className="text-lg font-semibold text-white">Loading Invitation...</h2>
+              <p className="text-sm text-neutral-400 mt-1">Verifying your invitation</p>
+            </div>
+          )}
+
+          {/* Accepting */}
+          {state === 'accepting' && (
+            <div className="text-center">
+              <h2 className="text-lg font-semibold text-white">Accepting Invitation...</h2>
+              <p className="text-sm text-neutral-400 mt-1">Adding you to the organization</p>
+            </div>
+          )}
+
+          {/* Success */}
+          {state === 'success' && (
+            <div className="text-center">
+              <h2 className="text-lg font-semibold text-white">Welcome Aboard!</h2>
+              <p className="text-sm text-neutral-400 mt-1">
+                You've joined the organization. Redirecting...
+              </p>
+              <motion.div
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                transition={{ delay: 0.2, type: 'spring' }}
+                className="mt-4 inline-flex"
+              >
+                <span className="badge-success">
+                  <CheckCircle2 className="h-3.5 w-3.5" />
+                  Invitation accepted
+                </span>
+              </motion.div>
+            </div>
+          )}
+
+          {/* Error */}
+          {state === 'error' && (
+            <div className="space-y-4">
+              <div className="text-center">
+                <h2 className="text-lg font-semibold text-white">Invitation Error</h2>
+              </div>
+              <div className="flex items-center gap-2 rounded-xl border border-red-500/20 bg-red-500/10 px-4 py-3 text-sm text-red-400">
+                <XCircle className="h-4 w-4 shrink-0" />
+                {errorMessage}
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                <Button
+                  onClick={() => navigate('/auth/signin')}
+                  variant="outline"
+                  className="h-11 rounded-xl border-white/[0.08] bg-white/[0.04] hover:bg-white/[0.08]"
+                >
+                  Sign In
+                </Button>
+                <Button
+                  onClick={() => navigate('/auth/signup')}
+                  className="h-11 rounded-xl bg-primary-500 hover:bg-primary-600"
+                >
+                  Sign Up
+                </Button>
+              </div>
+            </div>
+          )}
+
+          {/* Not logged in */}
+          {state === 'not-logged-in' && (
+            <div className="space-y-5">
+              <div className="text-center">
+                <h2 className="text-lg font-semibold text-white">You're Invited!</h2>
+                <p className="text-sm text-neutral-400 mt-1">
+                  Sign up or sign in to accept your invitation to Torre Tempo.
+                </p>
+              </div>
+
+              <div className="space-y-3">
+                <Button
+                  onClick={handleSignUpWithInvitation}
+                  className="w-full h-12 gap-2 rounded-xl bg-primary-500 hover:bg-primary-600 text-white font-medium min-h-touch"
+                >
+                  <UserPlus className="h-4 w-4" />
+                  Create Account & Join
+                  <ArrowRight className="h-4 w-4" />
+                </Button>
+
+                <div className="relative py-1">
+                  <div className="absolute inset-0 flex items-center">
+                    <div className="w-full border-t border-white/[0.06]" />
+                  </div>
+                  <div className="relative flex justify-center text-xs">
+                    <span className="bg-surface-0 px-3 text-neutral-600">Already have an account?</span>
+                  </div>
+                </div>
+
+                <Button
+                  onClick={handleSignInWithInvitation}
+                  variant="outline"
+                  className="w-full h-11 gap-2 rounded-xl border-white/[0.08] bg-white/[0.04] hover:bg-white/[0.08]"
+                >
+                  <Mail className="h-4 w-4" />
+                  Sign In & Join
+                </Button>
+              </div>
+
+              <p className="text-center text-xs text-neutral-500">
+                Your invitation will be automatically accepted after you sign in.
+              </p>
+            </div>
+          )}
+        </div>
+
+        <p className="mt-6 text-center text-sm text-neutral-500">
           <Link to="/" className="hover:text-neutral-300 transition-colors">
-            ← Back to home
+            Back to home
           </Link>
         </p>
       </motion.div>

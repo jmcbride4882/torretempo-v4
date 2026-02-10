@@ -18,28 +18,22 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 
-// Roster page
 import RosterPage from '@/pages/Roster';
 import OpenShiftsPage from '@/pages/OpenShifts';
 import SwapsPage from '@/pages/Swaps';
 import TimeEntryList from '@/pages/TimeClock/TimeEntryList';
-
-// Dashboard
 import DashboardPage from '@/pages/Dashboard';
-
-// Reports pages
 import ReportsPage from '@/pages/Reports';
 import ReportDetailPage from '@/pages/Reports/ReportDetail';
 import GenerateReportPage from '@/pages/Reports/GenerateReport';
 import SettingsPage from '@/pages/Settings';
 import NotificationsPage from '@/pages/Notifications';
 
-
 const pageTransition = {
-  initial: { opacity: 0, y: 10 },
+  initial: { opacity: 0, y: 8 },
   animate: { opacity: 1, y: 0 },
-  exit: { opacity: 0, y: -10 },
-  transition: { duration: 0.2 },
+  exit: { opacity: 0, y: -8 },
+  transition: { duration: 0.15, ease: 'easeOut' },
 };
 
 export default function AppShell() {
@@ -50,7 +44,7 @@ export default function AppShell() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   return (
-    <div className="min-h-screen bg-neutral-950">
+    <div className="min-h-screen bg-surface-0">
       {/* Desktop sidebar */}
       <Sidebar />
 
@@ -70,13 +64,13 @@ export default function AppShell() {
               animate={{ x: 0 }}
               exit={{ x: '-100%' }}
               transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-              className="fixed inset-y-0 left-0 z-50 w-64 lg:hidden"
+              className="fixed inset-y-0 left-0 z-50 w-72 lg:hidden"
             >
               <div className="relative h-full">
                 <Sidebar />
                 <button
                   onClick={() => setMobileMenuOpen(false)}
-                  className="absolute right-2 top-4 rounded-lg p-2 text-neutral-400 hover:bg-white/10 hover:text-white"
+                  className="absolute right-3 top-4 rounded-xl p-2 text-neutral-400 hover:bg-white/[0.06] hover:text-white transition-colors"
                 >
                   <X className="h-5 w-5" />
                 </button>
@@ -94,37 +88,33 @@ export default function AppShell() {
         {/* Header */}
         <header className="glass-header sticky top-0 z-30 h-16">
           <div className="flex h-full items-center justify-between px-4 lg:px-6">
-            {/* Mobile menu button and logo */}
+            {/* Mobile: menu + brand */}
             <div className="flex items-center gap-3 lg:hidden">
-              <Button
-                variant="ghost"
-                size="icon"
-                className="lg:hidden"
+              <button
                 onClick={() => setMobileMenuOpen(true)}
+                className="flex h-10 w-10 items-center justify-center rounded-xl text-neutral-400 hover:bg-white/[0.06] hover:text-white transition-colors min-h-touch"
               >
                 <Menu className="h-5 w-5" />
-              </Button>
-              <div className="flex items-center gap-2">
-                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary-600">
+              </button>
+              <div className="flex items-center gap-2.5">
+                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-primary-500 to-primary-600">
                   <Clock className="h-4 w-4 text-white" />
                 </div>
-                <span className="font-semibold text-white">{organization?.name || 'Tempo'}</span>
+                <span className="font-semibold text-white text-sm">{organization?.name || 'Tempo'}</span>
               </div>
             </div>
 
-            {/* Desktop: Page title area */}
+            {/* Desktop: spacer */}
             <div className="hidden lg:block" />
 
-            {/* Right side actions */}
-            <div className="flex items-center gap-2">
-              {/* Notifications */}
+            {/* Right side */}
+            <div className="flex items-center gap-1.5">
               <NotificationBell />
 
-              {/* User menu */}
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" className="gap-2 px-2">
-                    <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-primary-500 to-primary-700 text-sm font-medium text-white">
+                  <Button variant="ghost" className="gap-2 px-2 h-10 min-h-touch">
+                    <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-primary-500 to-primary-700 text-sm font-semibold text-white">
                       {user?.name?.charAt(0).toUpperCase() || 'U'}
                     </div>
                     <span className="hidden text-sm font-medium text-white md:inline">
@@ -138,9 +128,7 @@ export default function AppShell() {
                       <div className="flex items-center gap-2">
                         <span className="text-white">{user?.name}</span>
                         {(user as any)?.role === 'admin' && (
-                          <span className="rounded bg-amber-600/20 px-1.5 py-0.5 text-[10px] font-semibold uppercase text-amber-400">
-                            Admin
-                          </span>
+                          <span className="badge-warning text-[10px] py-0 px-1.5">Admin</span>
                         )}
                       </div>
                       <span className="text-xs font-normal text-neutral-400">{user?.email}</span>

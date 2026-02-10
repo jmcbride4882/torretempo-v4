@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Mail, ArrowLeft, Loader2, CheckCircle2, AlertCircle } from 'lucide-react';
+import { Mail, ArrowLeft, CheckCircle2, AlertCircle, Clock } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 export default function VerifyEmail() {
@@ -52,85 +52,90 @@ export default function VerifyEmail() {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-zinc-900 via-zinc-900 to-zinc-800 px-4">
+    <div className="flex min-h-screen flex-col items-center justify-center bg-surface-0 px-4">
+      {/* Background glow */}
+      <div className="pointer-events-none absolute inset-0 overflow-hidden">
+        <div className="absolute left-1/2 top-0 -translate-x-1/2 h-[600px] w-[800px] rounded-full bg-primary-600/[0.07] blur-[120px]" />
+      </div>
+
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="w-full max-w-md"
+        transition={{ duration: 0.4 }}
+        className="relative w-full max-w-sm"
       >
-        <div className="glass-card rounded-2xl border border-white/10 p-8">
-          {/* Header */}
-          <div className="mb-8 text-center">
-            <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-emerald-600/20 to-teal-600/20">
-              <Mail className="h-8 w-8 text-emerald-400" />
-            </div>
-            <h1 className="text-2xl font-bold text-white">Email Verification</h1>
-            <p className="mt-2 text-sm text-neutral-400">
-              {isVerifying ? 'Verifying your email address...' : 'Email verification status'}
-            </p>
+        {/* Logo */}
+        <div className="mb-10 flex flex-col items-center gap-3">
+          <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-primary-500 to-primary-600 shadow-xl shadow-primary-500/25">
+            <Clock className="h-7 w-7 text-white" />
           </div>
+          <div className="text-center">
+            <h1 className="text-xl font-bold text-white">Torre Tempo</h1>
+            <p className="text-sm text-neutral-500 mt-1">Workforce Management</p>
+          </div>
+        </div>
 
-          {/* Status */}
+        {/* Card */}
+        <div className="glass-card p-6 space-y-6">
           <div className="text-center">
             {isVerifying ? (
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                className="flex flex-col items-center"
-              >
-                <Loader2 className="h-12 w-12 animate-spin text-emerald-400" />
-                <p className="mt-4 text-sm text-neutral-400">Please wait...</p>
-              </motion.div>
+              <>
+                <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-primary-500/15 border border-primary-500/20">
+                  <Mail className="h-6 w-6 text-primary-400" />
+                </div>
+                <h2 className="text-lg font-semibold text-white">Verifying Email</h2>
+                <p className="text-sm text-neutral-400 mt-1">Please wait...</p>
+                <div className="mt-6 flex justify-center">
+                  <div className="h-8 w-8 animate-spin rounded-full border-2 border-primary-500/20 border-t-primary-500" />
+                </div>
+              </>
             ) : success ? (
               <motion.div
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
+                className="py-2"
               >
-                <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-emerald-500/20">
-                  <CheckCircle2 className="h-8 w-8 text-emerald-400" />
+                <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-emerald-500/15 border border-emerald-500/20">
+                  <CheckCircle2 className="h-7 w-7 text-emerald-400" />
                 </div>
-                <h2 className="mb-2 text-xl font-semibold text-white">Email Verified!</h2>
-                <p className="mb-6 text-sm text-neutral-400">
-                  Your email has been successfully verified. Redirecting to sign in...
+                <h2 className="text-lg font-semibold text-white">Email Verified!</h2>
+                <p className="mt-2 text-sm text-neutral-400">
+                  Your email has been verified. Redirecting to sign in...
                 </p>
               </motion.div>
             ) : (
               <motion.div
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
+                className="py-2"
               >
-                <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-red-500/20">
-                  <AlertCircle className="h-8 w-8 text-red-400" />
+                <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-red-500/15 border border-red-500/20">
+                  <AlertCircle className="h-7 w-7 text-red-400" />
                 </div>
-                <h2 className="mb-2 text-xl font-semibold text-white">Verification Failed</h2>
-                <p className="mb-6 text-sm text-neutral-400">{error}</p>
+                <h2 className="text-lg font-semibold text-white">Verification Failed</h2>
+                <p className="mt-2 text-sm text-neutral-400">{error}</p>
                 <Button
                   onClick={() => navigate('/auth/signin')}
-                  className="bg-emerald-600 hover:bg-emerald-500"
+                  className="mt-6 h-11 rounded-xl bg-primary-500 hover:bg-primary-600 text-white font-medium"
                 >
                   Go to Sign In
                 </Button>
               </motion.div>
             )}
           </div>
-
-          {/* Back to sign in */}
-          {!isVerifying && (
-            <div className="mt-6 text-center">
-              <button
-                onClick={() => navigate('/auth/signin')}
-                className="inline-flex items-center gap-2 text-sm text-neutral-400 transition-colors hover:text-white"
-              >
-                <ArrowLeft className="h-4 w-4" />
-                Back to Sign In
-              </button>
-            </div>
-          )}
         </div>
 
-        <p className="mt-6 text-center text-xs text-neutral-500">
-          © {new Date().getFullYear()} Torre Tempo · Workforce Management
-        </p>
+        {!isVerifying && (
+          <div className="mt-6 text-center">
+            <button
+              onClick={() => navigate('/auth/signin')}
+              className="inline-flex items-center gap-2 text-sm text-neutral-500 transition-colors hover:text-white"
+            >
+              <ArrowLeft className="h-4 w-4" />
+              Back to Sign In
+            </button>
+          </div>
+        )}
       </motion.div>
     </div>
   );
