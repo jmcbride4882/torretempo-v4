@@ -48,7 +48,7 @@ router.get('/', async (req: Request, res: Response) => {
 router.post('/:memberId/pin', async (req: Request, res: Response) => {
   try {
     const organizationId = req.organizationId!;
-    const userId = req.userId!; // From session
+    const userId = req.session!.user.id;
     const { memberId } = req.params;
     const { pin } = req.body;
 
@@ -213,7 +213,7 @@ router.get('/:memberId/pin-status', async (req: Request, res: Response) => {
 router.delete('/:memberId/pin', async (req: Request, res: Response) => {
   try {
     const organizationId = req.organizationId!;
-    const userId = req.userId!;
+    const userId = req.session!.user.id;
     const { memberId } = req.params;
 
     // Check if member exists and belongs to organization

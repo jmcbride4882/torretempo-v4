@@ -1,6 +1,13 @@
 /**
  * Time Entries API
  * Frontend API client for time entry operations (clock in/out, breaks, corrections)
+ *
+ * IMPORTANT: This client matches the backend API routes exactly:
+ * - Time entries: apps/api/src/routes/v1/time-entries.ts
+ *   POST /clock-in, POST /clock-out, GET /, GET /:id
+ * - Breaks: apps/api/src/routes/v1/breaks.ts
+ *   POST /start, POST /end, GET /?time_entry_id=...
+ * - Corrections: apps/api/src/routes/v1/correction-requests.ts
  */
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
@@ -28,7 +35,7 @@ export interface TimeEntry {
   entry_date: string; // ISO date
   clock_in: string; // ISO timestamp
   clock_out: string | null; // ISO timestamp
-  clock_in_location: LocationData;
+  clock_in_location: LocationData | null;
   clock_out_location: LocationData | null;
   clock_in_method: ClockMethod;
   clock_out_method: ClockMethod | null;
@@ -48,6 +55,7 @@ export interface BreakEntry {
   break_start: string; // ISO timestamp
   break_end: string | null; // ISO timestamp
   break_type: BreakType;
+  duration_minutes?: number | null; // Calculated by backend
   created_at: string;
   updated_at: string;
 }
@@ -67,26 +75,26 @@ export interface CorrectionRequest {
   updated_at: string;
 }
 
-// Request/Response types
+// Request types — match backend body expectations
 export interface ClockInData {
   linked_shift_id?: string;
-  clock_in_location: LocationData;
-  clock_in_method: ClockMethod;
+  latitude?: number;
+  longitude?: number;
+  accuracy?: number;
+  method?: ClockMethod;
   notes?: string;
 }
 
 export interface ClockOutData {
-  clock_out_location: LocationData;
-  clock_out_method?: ClockMethod;
+  latitude?: number;
+  longitude?: number;
+  accuracy?: number;
+  method?: ClockMethod;
   notes?: string;
 }
 
 export interface CreateBreakData {
   break_type: BreakType;
-}
-
-export interface EndBreakData {
-  // No fields required - server auto-fills break_end
 }
 
 export interface CreateCorrectionData {
@@ -99,27 +107,35 @@ export interface TimeEntryFilters {
   start_date?: string; // ISO date
   end_date?: string; // ISO date
   status?: TimeEntryStatus | TimeEntryStatus[];
+  page?: number;
   limit?: number;
-  offset?: number;
 }
 
+// Response types — match backend response shapes
 export interface TimeEntriesResponse {
-  entries: TimeEntry[];
-  total: number;
+  time_entries: TimeEntry[];
+  page: number;
   limit: number;
-  offset: number;
+  count: number;
 }
 
 export interface TimeEntryResponse {
-  entry: TimeEntry;
+  time_entry: TimeEntry;
+  message?: string;
 }
 
 export interface BreaksResponse {
   breaks: BreakEntry[];
 }
 
-export interface BreakResponse {
+export interface BreakStartResponse {
+  message: string;
   break: BreakEntry;
+}
+
+export interface BreakEndResponse {
+  message: string;
+  duration_minutes: number;
 }
 
 export interface CorrectionsResponse {
@@ -154,7 +170,7 @@ async function handleResponse<T>(response: Response): Promise<T> {
       data
     );
   }
-  
+
   try {
     const data = await response.json();
     return data;
@@ -169,10 +185,13 @@ async function handleResponse<T>(response: Response): Promise<T> {
 
 // ============================================================================
 // Time Entries API
+// Backend: apps/api/src/routes/v1/time-entries.ts
 // ============================================================================
 
 /**
  * Fetch all time entries with optional filters
+ * Backend: GET /api/v1/org/:slug/time-entries?page=1&limit=20&user_id=...&status=...
+ * Response: { time_entries, page, limit, count }
  */
 export async function fetchTimeEntries(
   orgSlug: string,
@@ -187,8 +206,8 @@ export async function fetchTimeEntries(
     const statuses = Array.isArray(filters.status) ? filters.status : [filters.status];
     statuses.forEach(s => params.append('status', s));
   }
+  if (filters?.page) params.append('page', filters.page.toString());
   if (filters?.limit) params.append('limit', filters.limit.toString());
-  if (filters?.offset) params.append('offset', filters.offset.toString());
 
   const url = `${API_URL}/api/v1/org/${orgSlug}/time-entries?${params.toString()}`;
 
@@ -197,49 +216,47 @@ export async function fetchTimeEntries(
   });
 
   const data = await handleResponse<TimeEntriesResponse>(response);
-  
+
   // Validate response structure
   if (!data || typeof data !== 'object') {
     throw new TimeEntryApiError('Invalid API response: not an object', 500, { data });
   }
-  
-  if (!Array.isArray(data.entries)) {
-    console.error('fetchTimeEntries: entries is not an array', data);
+
+  if (!Array.isArray(data.time_entries)) {
+    console.error('fetchTimeEntries: time_entries is not an array', data);
     // Return a valid structure with empty entries
     return {
-      entries: [],
-      total: 0,
-      limit: filters?.limit ?? 50,
-      offset: filters?.offset ?? 0,
+      time_entries: [],
+      page: filters?.page ?? 1,
+      limit: filters?.limit ?? 20,
+      count: 0,
     };
   }
-  
+
   return data;
 }
 
 /**
  * Fetch the active time entry for the current user
+ * Uses the list endpoint with status=active filter
  * Returns null if no active entry
  */
 export async function fetchActiveTimeEntry(
   orgSlug: string
 ): Promise<TimeEntry | null> {
-  const url = `${API_URL}/api/v1/org/${orgSlug}/time-entries/active`;
+  const data = await fetchTimeEntries(orgSlug, { status: 'active', limit: 1 });
 
-  const response = await fetch(url, {
-    credentials: 'include',
-  });
-
-  if (response.status === 404) {
+  if (data.time_entries.length === 0) {
     return null;
   }
 
-  const data = await handleResponse<TimeEntryResponse>(response);
-  return data.entry;
+  return data.time_entries[0] ?? null;
 }
 
 /**
  * Fetch a single time entry by ID
+ * Backend: GET /api/v1/org/:slug/time-entries/:id
+ * Response: { time_entry }
  */
 export async function fetchTimeEntry(
   orgSlug: string,
@@ -256,12 +273,15 @@ export async function fetchTimeEntry(
 
 /**
  * Clock in - Create a new time entry
+ * Backend: POST /api/v1/org/:slug/time-entries/clock-in
+ * Body: { linked_shift_id?, latitude?, longitude?, accuracy?, method? }
+ * Response: { message, time_entry }
  */
 export async function clockIn(
   orgSlug: string,
   data: ClockInData
 ): Promise<TimeEntryResponse> {
-  const url = `${API_URL}/api/v1/org/${orgSlug}/time-entries`;
+  const url = `${API_URL}/api/v1/org/${orgSlug}/time-entries/clock-in`;
 
   const response = await fetch(url, {
     method: 'POST',
@@ -274,17 +294,20 @@ export async function clockIn(
 }
 
 /**
- * Clock out - Complete an active time entry
+ * Clock out - Complete the active time entry
+ * Backend: POST /api/v1/org/:slug/time-entries/clock-out
+ * Body: { latitude?, longitude?, accuracy?, method? }
+ * Response: { message, time_entry, compliance }
  */
 export async function clockOut(
   orgSlug: string,
-  entryId: string,
+  _entryId: string, // Kept for API compatibility but not used in URL
   data: ClockOutData
 ): Promise<TimeEntryResponse> {
-  const url = `${API_URL}/api/v1/org/${orgSlug}/time-entries/${entryId}`;
+  const url = `${API_URL}/api/v1/org/${orgSlug}/time-entries/clock-out`;
 
   const response = await fetch(url, {
-    method: 'PATCH',
+    method: 'POST',
     credentials: 'include',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(data),
@@ -293,59 +316,21 @@ export async function clockOut(
   return handleResponse<TimeEntryResponse>(response);
 }
 
-/**
- * Verify a time entry (manager only)
- */
-export async function verifyTimeEntry(
-  orgSlug: string,
-  entryId: string
-): Promise<TimeEntryResponse> {
-  const url = `${API_URL}/api/v1/org/${orgSlug}/time-entries/${entryId}/verify`;
-
-  const response = await fetch(url, {
-    method: 'PUT',
-    credentials: 'include',
-  });
-
-  return handleResponse<TimeEntryResponse>(response);
-}
-
-/**
- * Delete a time entry (unverified only)
- */
-export async function deleteTimeEntry(
-  orgSlug: string,
-  entryId: string
-): Promise<void> {
-  const url = `${API_URL}/api/v1/org/${orgSlug}/time-entries/${entryId}`;
-
-  const response = await fetch(url, {
-    method: 'DELETE',
-    credentials: 'include',
-  });
-
-  if (!response.ok) {
-    const data = await response.json().catch(() => ({}));
-    throw new TimeEntryApiError(
-      data.message || data.error || `Failed to delete time entry`,
-      response.status,
-      data
-    );
-  }
-}
-
 // ============================================================================
 // Breaks API
+// Backend: apps/api/src/routes/v1/breaks.ts
 // ============================================================================
 
 /**
  * Fetch all breaks for a time entry
+ * Backend: GET /api/v1/org/:slug/breaks?time_entry_id=...
+ * Response: { breaks: [..., duration_minutes] }
  */
 export async function fetchBreaks(
   orgSlug: string,
   timeEntryId: string
 ): Promise<BreaksResponse> {
-  const url = `${API_URL}/api/v1/org/${orgSlug}/time-entries/${timeEntryId}/breaks`;
+  const url = `${API_URL}/api/v1/org/${orgSlug}/breaks?time_entry_id=${timeEntryId}`;
 
   const response = await fetch(url, {
     credentials: 'include',
@@ -356,13 +341,17 @@ export async function fetchBreaks(
 
 /**
  * Start a break
+ * Backend: POST /api/v1/org/:slug/breaks/start
+ * Body: { break_type }
+ * Response: { message, break }
+ * Note: Backend auto-detects active time entry, no need to pass timeEntryId
  */
 export async function startBreak(
   orgSlug: string,
-  timeEntryId: string,
+  _timeEntryId: string, // Kept for API compatibility but not used in URL
   data: CreateBreakData
-): Promise<BreakResponse> {
-  const url = `${API_URL}/api/v1/org/${orgSlug}/time-entries/${timeEntryId}/breaks`;
+): Promise<BreakStartResponse> {
+  const url = `${API_URL}/api/v1/org/${orgSlug}/breaks/start`;
 
   const response = await fetch(url, {
     method: 'POST',
@@ -371,54 +360,33 @@ export async function startBreak(
     body: JSON.stringify(data),
   });
 
-  return handleResponse<BreakResponse>(response);
+  return handleResponse<BreakStartResponse>(response);
 }
 
 /**
- * End a break
+ * End the active break
+ * Backend: POST /api/v1/org/:slug/breaks/end
+ * Response: { message, duration_minutes }
+ * Note: Backend auto-detects active break, no need to pass breakId
  */
 export async function endBreak(
   orgSlug: string,
-  timeEntryId: string,
-  breakId: string
-): Promise<BreakResponse> {
-  const url = `${API_URL}/api/v1/org/${orgSlug}/time-entries/${timeEntryId}/breaks/${breakId}`;
+  _timeEntryId: string, // Kept for API compatibility but not used in URL
+  _breakId: string // Kept for API compatibility but not used in URL
+): Promise<BreakEndResponse> {
+  const url = `${API_URL}/api/v1/org/${orgSlug}/breaks/end`;
 
   const response = await fetch(url, {
-    method: 'PATCH',
+    method: 'POST',
     credentials: 'include',
   });
 
-  return handleResponse<BreakResponse>(response);
-}
-
-/**
- * Delete a break
- */
-export async function deleteBreak(
-  orgSlug: string,
-  timeEntryId: string,
-  breakId: string
-): Promise<void> {
-  const url = `${API_URL}/api/v1/org/${orgSlug}/time-entries/${timeEntryId}/breaks/${breakId}`;
-
-  const response = await fetch(url, {
-    method: 'DELETE',
-    credentials: 'include',
-  });
-
-  if (!response.ok) {
-    const data = await response.json().catch(() => ({}));
-    throw new TimeEntryApiError(
-      data.message || data.error || `Failed to delete break`,
-      response.status,
-      data
-    );
-  }
+  return handleResponse<BreakEndResponse>(response);
 }
 
 // ============================================================================
 // Corrections API
+// Backend: apps/api/src/routes/v1/correction-requests.ts
 // ============================================================================
 
 /**

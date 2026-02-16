@@ -97,6 +97,43 @@ router.get('/unread-count', async (req: Request, res: Response) => {
 });
 
 /**
+ * PATCH /api/v1/org/:slug/notifications/read-all
+ * Mark all unread notifications as read
+ * NOTE: This route MUST be defined before /:id/read to avoid Express matching "read-all" as :id
+ */
+router.patch('/read-all', async (req: Request, res: Response) => {
+  try {
+    const userId = req.session!.user.id;
+    const organizationId = req.organizationId!;
+
+    // Mark all unread as read
+    await db
+      .update(notifications)
+      .set({ read: true })
+      .where(
+        and(
+          eq(notifications.user_id, userId),
+          eq(notifications.read, false)
+        )
+      );
+
+    // Log audit
+    await logAudit({
+      orgId: organizationId,
+      actorId: userId,
+      action: 'notification.read_all',
+      entityType: 'notifications',
+      newData: { read: true },
+    });
+
+    res.json({ message: 'All notifications marked as read' });
+  } catch (error) {
+    console.error('Error marking all notifications as read:', error);
+    res.status(500).json({ message: 'Failed to mark all notifications as read' });
+  }
+});
+
+/**
  * PATCH /api/v1/org/:slug/notifications/:id/read
  * Mark single notification as read
  */
@@ -144,42 +181,6 @@ router.patch('/:id/read', async (req: Request, res: Response) => {
   } catch (error) {
     console.error('Error marking notification as read:', error);
     res.status(500).json({ message: 'Failed to mark notification as read' });
-  }
-});
-
-/**
- * PATCH /api/v1/org/:slug/notifications/read-all
- * Mark all unread notifications as read
- */
-router.patch('/read-all', async (req: Request, res: Response) => {
-  try {
-    const userId = req.session!.user.id;
-    const organizationId = req.organizationId!;
-
-    // Mark all unread as read
-    await db
-      .update(notifications)
-      .set({ read: true })
-      .where(
-        and(
-          eq(notifications.user_id, userId),
-          eq(notifications.read, false)
-        )
-      );
-
-    // Log audit
-    await logAudit({
-      orgId: organizationId,
-      actorId: userId,
-      action: 'notification.read_all',
-      entityType: 'notifications',
-      newData: { read: true },
-    });
-
-    res.json({ message: 'All notifications marked as read' });
-  } catch (error) {
-    console.error('Error marking all notifications as read:', error);
-    res.status(500).json({ message: 'Failed to mark all notifications as read' });
   }
 });
 

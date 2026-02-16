@@ -827,35 +827,20 @@ router.put(
       await logAudit({
         orgId: organizationId,
         actorId: actor.id,
-        action: 'swap.peer_accept',
+        action: 'swap.cancelled',
         entityType: 'swap_requests',
         entityId: id,
         oldData: swap,
         newData: updated[0],
       });
 
-      // Notify requester that peer accepted
-      await sendSwapNotification('swap_accepted', swap.requester_id, {
-        organizationId,
-        swapId: id,
-        title: 'Swap Request Accepted',
-        message: 'Your shift swap request was accepted and is awaiting manager approval',
-        link: `/t/${organizationId}/swaps`,
-      });
-
-      // Notify managers that approval is needed
-      const managers = await db
-        .select({ userId: member.userId })
-        .from(member)
-        .where(and(eq(member.organizationId, organizationId), inArray(member.role, MANAGER_ROLES)));
-
-      const managerIds = managers.map((m) => m.userId);
-      if (managerIds.length > 0) {
-        await sendSwapNotification('swap_manager_needed', managerIds, {
+      // Notify the recipient (if any) that the swap was cancelled
+      if (swap.recipient_id) {
+        await sendSwapNotification('swap_rejected', swap.recipient_id, {
           organizationId,
           swapId: id,
-          title: 'Manager Approval Needed',
-          message: 'A shift swap request requires your approval',
+          title: 'Swap Request Cancelled',
+          message: 'A shift swap request you were involved in has been cancelled by the requester',
           link: `/t/${organizationId}/swaps`,
         });
       }

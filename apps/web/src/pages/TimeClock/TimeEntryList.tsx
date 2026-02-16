@@ -671,7 +671,7 @@ export default function TimeEntryList() {
         }
 
         const response = await fetchTimeEntries(orgSlug, filters);
-        setEntries(Array.isArray(response?.entries) ? response.entries : []);
+        setEntries(Array.isArray(response?.time_entries) ? response.time_entries : []);
       } catch {
         setError(t('clock.loadError'));
       } finally {
