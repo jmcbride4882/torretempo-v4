@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'framer-motion';
 import { MapPin, Check, ChevronDown, Building2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -24,8 +25,9 @@ export function LocationFilter({
   onLocationChange,
   isLoading = false,
 }: LocationFilterProps) {
+  const { t } = useTranslation();
   const selectedLocation = locations.find((l) => l.id === selectedLocationId);
-  
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -41,7 +43,7 @@ export function LocationFilter({
         >
           <MapPin className="h-4 w-4" />
           <span className="max-w-[150px] truncate">
-            {isLoading ? 'Loading...' : selectedLocation?.name || 'All locations'}
+            {isLoading ? t('common.loading') : selectedLocation?.name || t('roster.allLocations')}
           </span>
           <ChevronDown className="h-3.5 w-3.5 opacity-50" />
         </Button>
@@ -68,7 +70,7 @@ export function LocationFilter({
               )}
             >
               <Building2 className="h-4 w-4" />
-              <span className="flex-1">All locations</span>
+              <span className="flex-1">{t('roster.allLocations')}</span>
               {!selectedLocationId && (
                 <motion.div
                   initial={{ scale: 0 }}
@@ -130,8 +132,8 @@ export function LocationFilter({
               className="px-3 py-4 text-center"
             >
               <MapPin className="mx-auto h-8 w-8 text-zinc-400" />
-              <p className="mt-2 text-sm text-zinc-500">No locations found</p>
-              <p className="text-xs text-zinc-400">Add locations in settings</p>
+              <p className="mt-2 text-sm text-zinc-500">{t('roster.noLocationsFound')}</p>
+              <p className="text-xs text-zinc-400">{t('roster.addLocationsInSettings')}</p>
             </motion.div>
           )}
         </AnimatePresence>

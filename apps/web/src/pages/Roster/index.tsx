@@ -75,7 +75,7 @@ export default function RosterPage() {
       const data = await response.json();
       const staffList: StaffMember[] = (data.members || []).map((member: any) => ({
         id: member.userId,
-        name: member.user?.name || member.user?.email || 'Unknown',
+        name: member.user?.name || member.user?.email || t('common.unknown'),
         email: member.user?.email || '',
       }));
       setStaff(staffList);
@@ -118,11 +118,11 @@ export default function RosterPage() {
       setShifts(data.shifts || []);
 
       if (silent) {
-        toast.success('Roster refreshed');
+        toast.success(t('roster.toasts.rosterRefreshed'));
       }
     } catch (error) {
       console.error('Error fetching shifts:', error);
-      toast.error('Failed to load shifts');
+      toast.error(t('roster.toasts.loadShiftsFailed'));
     } finally {
       setIsLoadingShifts(false);
       setIsRefreshing(false);
@@ -157,7 +157,7 @@ export default function RosterPage() {
   };
 
   const handleShiftClick = (shift: Shift) => {
-    toast.info(`Shift: ${shift.id.slice(0, 8)}...`, {
+    toast.info(t('roster.toasts.shiftInfo', { id: shift.id.slice(0, 8) }), {
       description: `${new Date(shift.start_time).toLocaleString()}`,
     });
   };
@@ -168,7 +168,7 @@ export default function RosterPage() {
 
   const handleCreateSuccess = () => {
     fetchShifts(true);
-    toast.success('Shift created successfully');
+    toast.success(t('roster.toasts.shiftCreated'));
   };
 
   const handleShiftDrop = async (shiftId: string, newUserId: string, targetDate: Date) => {
@@ -177,7 +177,7 @@ export default function RosterPage() {
     try {
       const shift = shifts.find((s) => s.id === shiftId);
       if (!shift) {
-        toast.error('Shift not found');
+        toast.error(t('roster.toasts.shiftNotFound'));
         return;
       }
 
@@ -214,7 +214,7 @@ export default function RosterPage() {
 
         if (errorData.violations && Array.isArray(errorData.violations)) {
           const errorMessages = errorData.violations.map((v: any) => v.message).join('\n');
-          toast.error('Compliance Violation', {
+          toast.error(t('roster.toasts.complianceViolation'), {
             description: errorMessages,
             duration: 5000,
           });
@@ -225,7 +225,7 @@ export default function RosterPage() {
       }
 
       await fetchShifts(true);
-      toast.success('Shift moved successfully');
+      toast.success(t('roster.toasts.shiftMoved'));
     } catch (error) {
       console.error('Error moving shift:', error);
       if (error instanceof Error && !error.message.includes('Compliance')) {

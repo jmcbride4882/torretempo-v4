@@ -49,27 +49,27 @@ const actionColors: Record<string, string> = {
   revoke: 'bg-red-50 text-red-700 border-red-200',
 };
 
-// Action options
+// Action options (labelKey resolved at render time via t())
 const actionOptions = [
-  { value: 'all', label: 'All Actions' },
-  { value: 'create', label: 'Create' },
-  { value: 'update', label: 'Update' },
-  { value: 'delete', label: 'Delete' },
-  { value: 'login', label: 'Login' },
-  { value: 'suspend', label: 'Suspend' },
-  { value: 'ban', label: 'Ban' },
-  { value: 'grant', label: 'Grant' },
-  { value: 'revoke', label: 'Revoke' },
+  { value: 'all', labelKey: 'admin.filters.allActions' },
+  { value: 'create', labelKey: 'admin.filters.create' },
+  { value: 'update', labelKey: 'admin.filters.update' },
+  { value: 'delete', labelKey: 'admin.filters.delete' },
+  { value: 'login', labelKey: 'admin.filters.login' },
+  { value: 'suspend', labelKey: 'admin.filters.suspend' },
+  { value: 'ban', labelKey: 'admin.filters.ban' },
+  { value: 'grant', labelKey: 'admin.filters.grant' },
+  { value: 'revoke', labelKey: 'admin.filters.revoke' },
 ];
 
-// Target type options
+// Target type options (labelKey resolved at render time via t())
 const targetTypeOptions = [
-  { value: 'all', label: 'All Types' },
-  { value: 'user', label: 'User' },
-  { value: 'organization', label: 'Organization' },
-  { value: 'subscription', label: 'Subscription' },
-  { value: 'token', label: 'Token' },
-  { value: 'session', label: 'Session' },
+  { value: 'all', labelKey: 'admin.filters.allTypes' },
+  { value: 'user', labelKey: 'admin.filters.user' },
+  { value: 'organization', labelKey: 'admin.filters.organization' },
+  { value: 'subscription', labelKey: 'admin.filters.subscription' },
+  { value: 'token', labelKey: 'admin.filters.token' },
+  { value: 'session', labelKey: 'admin.filters.session' },
 ];
 
 export default function AuditPage() {
@@ -112,10 +112,10 @@ export default function AuditPage() {
       });
       setLogs(response.logs || []);
       setTotal(response.total || 0);
-      if (silent) toast.success('Audit logs refreshed');
+      if (silent) toast.success(t('admin.toasts.auditRefreshed'));
     } catch (error) {
       console.error('Error fetching audit logs:', error);
-      toast.error('Failed to load audit logs');
+      toast.error(t('admin.toasts.failedLoadAudit'));
     } finally {
       setIsLoading(false);
       setIsRefreshing(false);
@@ -152,10 +152,10 @@ export default function AuditPage() {
       a.click();
       document.body.removeChild(a);
       URL.revokeObjectURL(downloadUrl);
-      toast.success('Audit logs exported successfully');
+      toast.success(t('admin.toasts.auditExportSuccess'));
     } catch (error) {
       console.error('Error exporting audit logs:', error);
-      toast.error('Failed to export audit logs');
+      toast.error(t('admin.toasts.failedExportAudit'));
     } finally {
       setIsExporting(false);
     }
@@ -194,7 +194,7 @@ export default function AuditPage() {
           </div>
           <div>
             <h1 className="text-xl font-bold text-zinc-900 sm:text-2xl">{t('admin.audit.title')}</h1>
-            <p className="text-sm text-zinc-500">Track all administrative actions</p>
+            <p className="text-sm text-zinc-500">{t('admin.audit.subtitle')}</p>
           </div>
         </div>
 
@@ -222,7 +222,7 @@ export default function AuditPage() {
             className="gap-1.5 rounded-lg border border-zinc-200 bg-zinc-50 text-zinc-700 hover:bg-zinc-100"
           >
             <Download className={cn('h-4 w-4', isExporting && 'animate-bounce')} />
-            <span className="hidden sm:inline">{isExporting ? 'Exporting...' : t('admin.exportCsv')}</span>
+            <span className="hidden sm:inline">{isExporting ? t('admin.exporting') : t('admin.exportCsv')}</span>
           </Button>
 
           <Button
@@ -248,7 +248,7 @@ export default function AuditPage() {
           <SelectContent className="rounded-xl border border-zinc-200 bg-white shadow-sm">
             {actionOptions.map((opt) => (
               <SelectItem key={opt.value} value={opt.value} className="text-zinc-700">
-                {opt.label}
+                {t(opt.labelKey)}
               </SelectItem>
             ))}
           </SelectContent>
@@ -262,7 +262,7 @@ export default function AuditPage() {
           <SelectContent className="rounded-xl border border-zinc-200 bg-white shadow-sm">
             {targetTypeOptions.map((opt) => (
               <SelectItem key={opt.value} value={opt.value} className="text-zinc-700">
-                {opt.label}
+                {t(opt.labelKey)}
               </SelectItem>
             ))}
           </SelectContent>
@@ -285,7 +285,7 @@ export default function AuditPage() {
             className="gap-1 text-zinc-500 hover:text-zinc-900"
           >
             <X className="h-3.5 w-3.5" />
-            Clear
+            {t('common.clear')}
           </Button>
         )}
       </div>
@@ -303,7 +303,7 @@ export default function AuditPage() {
                 <SelectContent className="rounded-xl border border-zinc-200 bg-white shadow-sm">
                   {actionOptions.map((opt) => (
                     <SelectItem key={opt.value} value={opt.value} className="text-zinc-700">
-                      {opt.label}
+                      {t(opt.labelKey)}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -318,7 +318,7 @@ export default function AuditPage() {
                 <SelectContent className="rounded-xl border border-zinc-200 bg-white shadow-sm">
                   {targetTypeOptions.map((opt) => (
                     <SelectItem key={opt.value} value={opt.value} className="text-zinc-700">
-                      {opt.label}
+                      {t(opt.labelKey)}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -343,7 +343,7 @@ export default function AuditPage() {
                 className="w-full gap-1 text-zinc-500 hover:text-zinc-900"
               >
                 <X className="h-3.5 w-3.5" />
-                Clear filters
+                {t('admin.clearFilters')}
               </Button>
             )}
           </div>
@@ -355,13 +355,13 @@ export default function AuditPage() {
         <div className="flex items-center gap-2">
           <div className="h-2 w-2 rounded-full bg-amber-500" />
           <span className="text-zinc-500">
-            <span className="font-medium text-zinc-700">{total}</span> entries
+            <span className="font-medium text-zinc-700">{total}</span> {t('admin.audit.entries')}
           </span>
         </div>
         {hasActiveFilters && (
           <div className="flex items-center gap-2">
             <Filter className="h-3.5 w-3.5 text-amber-600" />
-            <span className="text-zinc-500">Filtered</span>
+            <span className="text-zinc-500">{t('admin.audit.filtered')}</span>
           </div>
         )}
       </div>
@@ -387,10 +387,10 @@ export default function AuditPage() {
                     {t('admin.audit.target')}
                   </th>
                   <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-zinc-500">
-                    Time
+                    {t('admin.audit.time')}
                   </th>
                   <th className="px-4 py-3 text-right text-xs font-medium uppercase tracking-wider text-zinc-500">
-                    Details
+                    {t('admin.audit.details')}
                   </th>
                 </tr>
               </thead>
@@ -467,24 +467,24 @@ export default function AuditPage() {
                     <div>
                       <div className="mb-1 flex items-center gap-1.5 text-xs text-zinc-500">
                         <User className="h-3 w-3" />
-                        Actor ID
+                        {t('admin.audit.actorId')}
                       </div>
                       <p className="font-mono text-sm text-zinc-700">{log.actorId}</p>
                     </div>
                     <div>
                       <div className="mb-1 flex items-center gap-1.5 text-xs text-zinc-500">
                         <Globe className="h-3 w-3" />
-                        IP Address
+                        {t('admin.audit.ipAddress')}
                       </div>
                       <p className="font-mono text-sm text-zinc-700">{log.ipAddress}</p>
                     </div>
                     <div className="sm:col-span-2">
-                      <div className="mb-1 text-xs text-zinc-500">User Agent</div>
+                      <div className="mb-1 text-xs text-zinc-500">{t('admin.audit.userAgent')}</div>
                       <p className="truncate text-sm text-zinc-500">{log.userAgent}</p>
                     </div>
                     {Object.keys(log.metadata).length > 0 && (
                       <div className="sm:col-span-2 lg:col-span-4">
-                        <div className="mb-1 text-xs text-zinc-500">Metadata</div>
+                        <div className="mb-1 text-xs text-zinc-500">{t('admin.audit.metadata')}</div>
                         <pre className="overflow-x-auto rounded-lg bg-zinc-100 p-3 text-xs text-zinc-700">
                           {JSON.stringify(log.metadata, null, 2)}
                         </pre>
@@ -542,22 +542,24 @@ function EmptyState({
   hasFilters: boolean;
   onClearFilters: () => void;
 }) {
+  const { t } = useTranslation();
+
   if (hasFilters) {
     return (
       <div className="flex flex-col items-center justify-center px-6 py-16 text-center">
         <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-xl bg-zinc-100">
           <Search className="h-7 w-7 text-zinc-400" />
         </div>
-        <h3 className="mb-1 text-lg font-semibold text-zinc-900">No matching logs</h3>
+        <h3 className="mb-1 text-lg font-semibold text-zinc-900">{t('admin.noMatchingResults')}</h3>
         <p className="mb-4 max-w-sm text-sm text-zinc-500">
-          Try adjusting your filters to find what you're looking for.
+          {t('admin.adjustFilters')}
         </p>
         <Button
           variant="ghost"
           onClick={onClearFilters}
           className="gap-2 rounded-lg border border-zinc-200 text-zinc-700 hover:bg-zinc-50"
         >
-          Clear filters
+          {t('admin.clearFilters')}
         </Button>
       </div>
     );
@@ -568,9 +570,9 @@ function EmptyState({
       <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-amber-50">
         <FileText className="h-8 w-8 text-amber-600" />
       </div>
-      <h3 className="mb-1 text-lg font-semibold text-zinc-900">No audit logs yet</h3>
+      <h3 className="mb-1 text-lg font-semibold text-zinc-900">{t('admin.audit.noLogsYet')}</h3>
       <p className="max-w-sm text-sm text-zinc-500">
-        Administrative actions will be recorded here for compliance.
+        {t('admin.audit.logsAppearHere')}
       </p>
     </div>
   );

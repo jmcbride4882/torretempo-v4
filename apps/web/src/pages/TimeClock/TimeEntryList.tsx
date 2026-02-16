@@ -60,13 +60,13 @@ const ENTRIES_PER_PAGE = 50;
 // Helper Functions
 // ============================================================================
 
-function formatDuration(minutes: number): string {
+function formatDuration(minutes: number, t: (key: string, opts?: Record<string, unknown>) => string): string {
   if (minutes < 60) {
-    return `${minutes} min`;
+    return t('clock.durationMin', { count: minutes });
   }
   const hours = Math.floor(minutes / 60);
   const mins = minutes % 60;
-  return mins > 0 ? `${hours}h ${mins}m` : `${hours}h`;
+  return mins > 0 ? t('clock.durationHourMin', { hours, mins }) : t('clock.durationHour', { hours });
 }
 
 function formatLiveDuration(minutes: number): { hours: number; mins: number } {
@@ -443,7 +443,7 @@ function EntryCard({
             <div className="flex items-center gap-3 mt-1">
               <Badge variant="secondary" className="text-xs gap-1">
                 <Timer className="h-3 w-3" />
-                {formatDuration(duration)}
+                {formatDuration(duration, t)}
               </Badge>
               <div className="flex items-center gap-1 text-xs text-zinc-400">
                 {getMethodIcon(entry.clock_in_method)}
@@ -471,7 +471,7 @@ function EntryCard({
             <div className="pt-4">
               <div className="flex items-center gap-2 text-sm text-zinc-500 mb-2">
                 <Coffee className="h-4 w-4" />
-                <span>{t('clock.breaks')}: {formatDuration(entry.break_minutes)}</span>
+                <span>{t('clock.breaks')}: {formatDuration(entry.break_minutes, t)}</span>
               </div>
             </div>
           )}
@@ -490,7 +490,7 @@ function EntryCard({
                 <p className="text-zinc-600 font-mono mt-0.5">
                   {entry.clock_in_location
                     ? `${entry.clock_in_location.lat.toFixed(5)}, ${entry.clock_in_location.lng.toFixed(5)}`
-                    : 'N/A'}
+                    : t('common.notAvailable')}
                 </p>
               </div>
               {entry.clock_out_location && (

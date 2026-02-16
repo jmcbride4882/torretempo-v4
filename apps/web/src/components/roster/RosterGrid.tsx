@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'framer-motion';
 import { CalendarOff, Loader2 } from 'lucide-react';
 import { DndContext, DragEndEvent, DragOverlay, DragStartEvent, useDraggable, useDroppable } from '@dnd-kit/core';
@@ -16,30 +17,30 @@ interface RosterGridProps {
 }
 
 // Generate week days from a date
-function generateWeekDays(date: Date): WeekDay[] {
+function generateWeekDays(date: Date, t: (key: string) => string): WeekDay[] {
   const { start } = getWeekRange(date);
   const today = new Date();
   today.setHours(0, 0, 0, 0);
-  
+
   const days: WeekDay[] = [];
-  const dayNames = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
-  
+  const dayKeys = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'] as const;
+
   for (let i = 0; i < 7; i++) {
     const day = new Date(start);
     day.setDate(start.getDate() + i);
-    
+
     const dayDate = new Date(day);
     dayDate.setHours(0, 0, 0, 0);
-    
+
     days.push({
       date: day,
-      dayName: dayNames[i] ?? 'Day',
+      dayName: t(`common.daysOfWeek.${dayKeys[i]}`),
       dayNumber: day.getDate(),
       isToday: dayDate.getTime() === today.getTime(),
       isWeekend: i >= 5, // Saturday and Sunday
     });
   }
-  
+
   return days;
 }
 
@@ -103,14 +104,16 @@ function MobileShiftList({ shifts, weekDays, onShiftClick }: {
   weekDays: WeekDay[];
   onShiftClick?: (shift: Shift) => void;
 }) {
+  const { t, i18n } = useTranslation();
   const shiftsByDay = groupShiftsByDay(shifts, weekDays);
-  
+  const locale = i18n.language === 'es' ? 'es-ES' : 'en-US';
+
   return (
     <div className="space-y-4 lg:hidden">
       {weekDays.map((day, index) => {
         const dateKey = getDateKey(day.date);
         const dayShifts = shiftsByDay.get(dateKey) || [];
-        
+
         return (
           <motion.div
             key={dateKey}
@@ -126,9 +129,9 @@ function MobileShiftList({ shifts, weekDays, onShiftClick }: {
             <div className="mb-3 flex items-center gap-3">
               <div className={cn(
                 'flex h-10 w-10 flex-col items-center justify-center rounded-lg',
-                day.isToday 
-                  ? 'bg-primary-500 text-white' 
-                  : day.isWeekend 
+                day.isToday
+                  ? 'bg-primary-500 text-white'
+                  : day.isWeekend
                     ? 'bg-zinc-100 text-zinc-500'
                     : 'bg-zinc-100/50 text-zinc-700'
               )}>
@@ -140,14 +143,14 @@ function MobileShiftList({ shifts, weekDays, onShiftClick }: {
                   'font-medium',
                   day.isToday ? 'text-primary-600' : 'text-zinc-900'
                 )}>
-                  {day.date.toLocaleDateString('en-US', { weekday: 'long' })}
+                  {day.date.toLocaleDateString(locale, { weekday: 'long' })}
                 </p>
                 <p className="text-xs text-zinc-400">
-                  {dayShifts.length} shift{dayShifts.length !== 1 ? 's' : ''}
+                  {t('roster.shiftCount', { count: dayShifts.length })}
                 </p>
               </div>
             </div>
-            
+
             {/* Shifts */}
             {dayShifts.length > 0 ? (
               <div className="space-y-2">
@@ -161,7 +164,7 @@ function MobileShiftList({ shifts, weekDays, onShiftClick }: {
               </div>
             ) : (
               <div className="rounded-lg border border-dashed border-zinc-200 bg-zinc-50/50 py-6 text-center">
-                <p className="text-sm text-zinc-400">No shifts scheduled</p>
+                <p className="text-sm text-zinc-400">{t('roster.noShiftsScheduled')}</p>
               </div>
             )}
           </motion.div>
@@ -225,7 +228,8 @@ function DroppableDay({
 }
 
 export function RosterGrid({ shifts, currentDate, isLoading, onShiftClick, onShiftDrop }: RosterGridProps) {
-  const weekDays = useMemo(() => generateWeekDays(currentDate), [currentDate]);
+  const { t } = useTranslation();
+  const weekDays = useMemo(() => generateWeekDays(currentDate, t), [currentDate, t]);
   const shiftsByDay = useMemo(() => groupShiftsByDay(shifts, weekDays), [shifts, weekDays]);
   const [activeShift, setActiveShift] = useState<Shift | null>(null);
   
@@ -266,7 +270,7 @@ export function RosterGrid({ shifts, currentDate, isLoading, onShiftClick, onShi
           className="flex flex-col items-center gap-3"
         >
           <Loader2 className="h-8 w-8 animate-spin text-primary-500" />
-          <p className="text-sm text-zinc-500">Loading roster...</p>
+          <p className="text-sm text-zinc-500">{t('roster.loadingRoster')}</p>
         </motion.div>
       </div>
     );
@@ -297,7 +301,7 @@ export function RosterGrid({ shifts, currentDate, isLoading, onShiftClick, onShi
           <div className="grid grid-cols-[80px_repeat(7,1fr)] border-b border-zinc-100">
             {/* Empty corner cell */}
             <div className="border-r border-zinc-100 bg-zinc-50 p-3">
-              <span className="text-xs font-medium uppercase text-zinc-400">Time</span>
+              <span className="text-xs font-medium uppercase text-zinc-400">{t('roster.timeHeader')}</span>
             </div>
             
             {/* Day headers */}
@@ -436,9 +440,9 @@ export function RosterGrid({ shifts, currentDate, isLoading, onShiftClick, onShi
             <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-zinc-100">
               <CalendarOff className="h-8 w-8 text-zinc-400" />
             </div>
-            <h3 className="mt-4 text-lg font-semibold text-zinc-900">No shifts this week</h3>
+            <h3 className="mt-4 text-lg font-semibold text-zinc-900">{t('roster.noShifts')}</h3>
             <p className="mt-1 max-w-sm text-sm text-zinc-500">
-              There are no shifts scheduled for the selected week. Create a new shift or try a different date range.
+              {t('roster.noShiftsDesc')}
             </p>
           </motion.div>
         )}

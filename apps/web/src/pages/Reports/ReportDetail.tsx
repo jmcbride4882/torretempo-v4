@@ -30,9 +30,9 @@ import type { ReportResponse, MonthlyReport } from '@/types/reports';
 
 type ReportTab = 'summary' | 'variance' | 'payroll' | 'compliance';
 
-const MONTHS = [
-  'January', 'February', 'March', 'April', 'May', 'June',
-  'July', 'August', 'September', 'October', 'November', 'December',
+const MONTH_KEYS = [
+  'january', 'february', 'march', 'april', 'may', 'june',
+  'july', 'august', 'september', 'october', 'november', 'december',
 ];
 
 function formatHours(hours: number): string {
@@ -61,7 +61,7 @@ export default function ReportDetailPage() {
       setReportData(data);
     } catch (error) {
       console.error('Error fetching report:', error);
-      toast.error('Failed to load report');
+      toast.error(t('reports.toasts.reportLoadFailed'));
       navigate(`/t/${slug}/reports`);
     } finally {
       setIsLoading(false);
@@ -83,10 +83,10 @@ export default function ReportDetailPage() {
     try {
       const { pdfUrl } = await downloadReportPDF(slug, id);
       window.open(pdfUrl, '_blank');
-      toast.success('PDF download started');
+      toast.success(t('reports.toasts.pdfStarted'));
     } catch (error) {
       console.error('Error downloading PDF:', error);
-      toast.error('Failed to download PDF');
+      toast.error(t('reports.toasts.pdfFailed'));
     } finally {
       setIsDownloading(false);
     }
@@ -101,7 +101,7 @@ export default function ReportDetailPage() {
   }
 
   const { report, variance, payroll, compliance } = reportData;
-  const monthName = MONTHS[report.month - 1] || 'Unknown';
+  const monthName = t(`common.months.${MONTH_KEYS[report.month - 1]}`) || t('common.unknown');
 
   const tabItems: { id: ReportTab; labelKey: string; icon: typeof BarChart3 }[] = [
     { id: 'summary', labelKey: 'reports.summary', icon: FileText },
@@ -133,7 +133,7 @@ export default function ReportDetailPage() {
               {monthName} {report.year}
             </h1>
             <p className="text-sm text-zinc-500">
-              {report.userName || 'Monthly Report'}
+              {report.userName || t('reports.monthlyReport')}
             </p>
           </div>
         </div>
@@ -213,7 +213,7 @@ export default function ReportDetailPage() {
 
 function SummaryTab({ report }: { report: MonthlyReport }) {
   const { t } = useTranslation();
-  const monthName = MONTHS[report.month - 1] || 'Unknown';
+  const monthName = t(`common.months.${MONTH_KEYS[report.month - 1]}`) || t('common.unknown');
   const hasOvertime = report.overtimeHours > 0;
   const weeklyAvg = report.totalHours / 4;
   const weeklyBarWidth = Math.min((weeklyAvg / 40) * 100, 100);
@@ -230,7 +230,7 @@ function SummaryTab({ report }: { report: MonthlyReport }) {
           </div>
           <p className="text-3xl font-bold text-zinc-900">{formatHours(report.totalHours)}</p>
           <p className="mt-1 text-xs text-zinc-500">
-            {(report.totalHours / report.totalDays).toFixed(1)}h average per day
+            {t('reports.averagePerDay', { hours: (report.totalHours / report.totalDays).toFixed(1) })}
           </p>
         </div>
 
@@ -242,7 +242,7 @@ function SummaryTab({ report }: { report: MonthlyReport }) {
           </div>
           <p className="text-3xl font-bold text-zinc-900">{report.totalDays}</p>
           <p className="mt-1 text-xs text-zinc-500">
-            in {monthName} {report.year}
+            {t('reports.inMonth', { month: monthName, year: report.year })}
           </p>
         </div>
 
@@ -262,7 +262,7 @@ function SummaryTab({ report }: { report: MonthlyReport }) {
           </p>
           <p className="mt-1 text-xs text-zinc-500">
             {hasOvertime
-              ? `${((report.overtimeHours / report.totalHours) * 100).toFixed(0)}% of total`
+              ? t('reports.ofTotal', { percent: ((report.overtimeHours / report.totalHours) * 100).toFixed(0) })
               : t('reports.noOvertimeRecorded')}
           </p>
         </div>
@@ -276,7 +276,7 @@ function SummaryTab({ report }: { report: MonthlyReport }) {
           <p className="text-lg font-semibold capitalize text-emerald-600">{report.status}</p>
           {report.generatedAt && (
             <p className="mt-1 text-xs text-zinc-500">
-              Generated {new Date(report.generatedAt).toLocaleDateString('es-ES')}
+              {t('reports.generated', { date: new Date(report.generatedAt).toLocaleDateString('es-ES') })}
             </p>
           )}
         </div>

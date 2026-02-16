@@ -86,7 +86,7 @@ export default function ErrorLogsPage() {
         setTotal(response.total || 0);
       } catch (error) {
         console.error('Error fetching error logs:', error);
-        toast.error('Failed to load error logs');
+        toast.error(t('admin.toasts.failedLoadErrors'));
       } finally {
         setIsLoading(false);
         setIsRefreshing(false);
@@ -129,9 +129,9 @@ export default function ErrorLogsPage() {
       a.click();
       document.body.removeChild(a);
       URL.revokeObjectURL(downloadUrl);
-      toast.success('Export downloaded');
+      toast.success(t('admin.toasts.exportSuccess'));
     } catch (error) {
-      toast.error('Failed to export error logs');
+      toast.error(t('admin.toasts.failedExportErrors'));
     } finally {
       setIsExporting(false);
     }
@@ -168,7 +168,7 @@ export default function ErrorLogsPage() {
           <div>
             <h1 className="text-xl font-bold text-zinc-900 sm:text-2xl">{t('admin.errors.title')}</h1>
             <p className="text-sm text-zinc-500">
-              Live monitoring • Updates every 10 seconds
+              {t('admin.liveMonitoring')}
             </p>
           </div>
         </div>
@@ -183,7 +183,7 @@ export default function ErrorLogsPage() {
               className="gap-1.5 rounded-lg border border-zinc-200 bg-zinc-50 text-zinc-700 hover:bg-zinc-100"
             >
               <Download className={cn('h-4 w-4', isExporting && 'animate-bounce')} />
-              <span className="hidden sm:inline">{isExporting ? 'Exporting...' : 'Export CSV'}</span>
+              <span className="hidden sm:inline">{isExporting ? t('admin.exporting') : t('admin.exportCsv')}</span>
             </Button>
           </div>
 
@@ -225,16 +225,16 @@ export default function ErrorLogsPage() {
             </SelectTrigger>
             <SelectContent className="rounded-xl border border-zinc-200 bg-white">
               <SelectItem value="all" className="text-zinc-700">
-                All Levels
+                {t('admin.filters.allLevels')}
               </SelectItem>
               <SelectItem value="error" className="text-zinc-700">
-                Error
+                {t('admin.filters.error')}
               </SelectItem>
               <SelectItem value="warning" className="text-zinc-700">
-                Warning
+                {t('admin.filters.warning')}
               </SelectItem>
               <SelectItem value="info" className="text-zinc-700">
-                Info
+                {t('admin.filters.info')}
               </SelectItem>
             </SelectContent>
           </Select>
@@ -246,7 +246,7 @@ export default function ErrorLogsPage() {
             </SelectTrigger>
             <SelectContent className="rounded-xl border border-zinc-200 bg-white">
               <SelectItem value="all" className="text-zinc-700">
-                All Sources
+                {t('admin.filters.allSources')}
               </SelectItem>
               {sources.map((source) => (
                 <SelectItem key={source} value={source} className="text-zinc-700">
@@ -274,7 +274,7 @@ export default function ErrorLogsPage() {
               className="gap-1 shrink-0 text-zinc-500 hover:text-zinc-900"
             >
               <X className="h-3.5 w-3.5" />
-              Clear all
+              {t('admin.clearAll')}
             </Button>
           )}
         </div>
@@ -285,19 +285,19 @@ export default function ErrorLogsPage() {
         <div className="flex items-center gap-2">
           <div className="h-2 w-2 rounded-full bg-red-500" />
           <span className="text-zinc-500">
-            <span className="font-medium text-zinc-700">{errorCount}</span> errors
+            <span className="font-medium text-zinc-700">{errorCount}</span> {t('admin.errors.errorsLabel')}
           </span>
         </div>
         <div className="flex items-center gap-2">
           <div className="h-2 w-2 rounded-full bg-amber-500" />
           <span className="text-zinc-500">
-            <span className="font-medium text-zinc-700">{warningCount}</span> warnings
+            <span className="font-medium text-zinc-700">{warningCount}</span> {t('admin.errors.warningsLabel')}
           </span>
         </div>
         <div className="flex items-center gap-2">
           <div className="h-2 w-2 rounded-full bg-zinc-400" />
           <span className="text-zinc-500">
-            <span className="font-medium text-zinc-700">{errors.length}</span> total
+            <span className="font-medium text-zinc-700">{errors.length}</span> {t('common.total')}
           </span>
         </div>
       </div>

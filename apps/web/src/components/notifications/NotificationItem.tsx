@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import { motion } from 'framer-motion';
 import {
   ArrowLeftRight,
@@ -9,6 +10,7 @@ import {
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import type { Notification, NotificationType } from '@/lib/api/notifications';
+import type { TFunction } from 'i18next';
 
 interface NotificationItemProps {
   notification: Notification;
@@ -76,33 +78,33 @@ function getNotificationMeta(type: NotificationType) {
 /**
  * Format relative time from date string
  */
-function formatRelativeTime(dateString: string): string {
+function formatRelativeTime(dateString: string, t: TFunction): string {
   const date = new Date(dateString);
   const now = new Date();
   const diffInSeconds = Math.floor((now.getTime() - date.getTime()) / 1000);
 
   if (diffInSeconds < 60) {
-    return 'just now';
+    return t('common.timeAgo.justNow');
   }
 
   const diffInMinutes = Math.floor(diffInSeconds / 60);
   if (diffInMinutes < 60) {
-    return `${diffInMinutes}m ago`;
+    return t('common.timeAgo.minutesAgo', { count: diffInMinutes });
   }
 
   const diffInHours = Math.floor(diffInMinutes / 60);
   if (diffInHours < 24) {
-    return `${diffInHours}h ago`;
+    return t('common.timeAgo.hoursAgo', { count: diffInHours });
   }
 
   const diffInDays = Math.floor(diffInHours / 24);
   if (diffInDays < 7) {
-    return `${diffInDays}d ago`;
+    return t('common.timeAgo.daysAgo', { count: diffInDays });
   }
 
   const diffInWeeks = Math.floor(diffInDays / 7);
   if (diffInWeeks < 4) {
-    return `${diffInWeeks}w ago`;
+    return t('common.timeAgo.weeksAgo', { count: diffInWeeks });
   }
 
   return date.toLocaleDateString('es-ES', {
@@ -116,9 +118,10 @@ export function NotificationItem({
   onClick,
   index = 0,
 }: NotificationItemProps) {
+  const { t } = useTranslation();
   const meta = getNotificationMeta(notification.type);
   const Icon = meta.icon;
-  const relativeTime = formatRelativeTime(notification.createdAt);
+  const relativeTime = formatRelativeTime(notification.createdAt, t);
 
   return (
     <motion.button

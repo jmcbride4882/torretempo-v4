@@ -5,6 +5,7 @@
  * Shows green checkmark, yellow warning, or red X based on validation result.
  */
 
+import { useTranslation } from 'react-i18next';
 import { motion } from 'framer-motion';
 import { Check, AlertTriangle, X, Loader2 } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
@@ -39,6 +40,8 @@ export function ValidationIndicator({
   showTooltip = true,
   className,
 }: ValidationIndicatorProps) {
+  const { t } = useTranslation();
+
   // Loading state
   if (isValidating) {
     return (
@@ -119,7 +122,7 @@ export function ValidationIndicator({
         <TooltipContent side="top" className="max-w-xs">
           <div className="space-y-2">
             <p className="font-semibold text-zinc-900">
-              {hasViolations ? 'Compliance Issues' : 'Warnings'}
+              {hasViolations ? t('compliance.issues') : t('compliance.warnings')}
             </p>
             {issues.map((issue, idx) => (
               <div key={idx} className="flex items-start gap-2">
@@ -159,6 +162,8 @@ export function ValidationBadge({
   isValidating = false,
   className,
 }: ValidationBadgeProps) {
+  const { t } = useTranslation();
+
   if (isValidating) {
     return (
       <span className={cn(
@@ -167,7 +172,7 @@ export function ValidationBadge({
         className
       )}>
         <Loader2 className="h-3 w-3 animate-spin" />
-        Validating...
+        {t('compliance.validating')}
       </span>
     );
   }
@@ -187,7 +192,7 @@ export function ValidationBadge({
         className
       )}>
         <X className="h-3 w-3" />
-        {result.violations.length} violation{result.violations.length !== 1 ? 's' : ''}
+        {t('compliance.violationCount', { count: result.violations.length })}
       </span>
     );
   }
@@ -200,7 +205,7 @@ export function ValidationBadge({
         className
       )}>
         <AlertTriangle className="h-3 w-3" />
-        {result.warnings.length} warning{result.warnings.length !== 1 ? 's' : ''}
+        {t('compliance.warningCount', { count: result.warnings.length })}
       </span>
     );
   }
@@ -212,7 +217,7 @@ export function ValidationBadge({
       className
     )}>
       <Check className="h-3 w-3" />
-      Valid
+      {t('compliance.valid')}
     </span>
   );
 }

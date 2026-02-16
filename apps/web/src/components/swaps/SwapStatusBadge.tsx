@@ -8,6 +8,7 @@ import {
   Ban,
   Timer,
 } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { cn } from '@/lib/utils';
 import type { SwapStatus } from '@/types/swaps';
 
@@ -19,10 +20,10 @@ interface SwapStatusBadgeProps {
   className?: string;
 }
 
-// Status configuration with icons and styling
+// Status configuration with icons and styling (labels resolved via i18n)
 const statusConfig: Record<SwapStatus, {
   icon: typeof Clock;
-  label: string;
+  labelKey: string;
   bg: string;
   text: string;
   border: string;
@@ -31,7 +32,7 @@ const statusConfig: Record<SwapStatus, {
 }> = {
   pending_peer: {
     icon: Clock,
-    label: 'Pending Peer',
+    labelKey: 'swaps.statuses.pendingPeer',
     bg: 'bg-amber-50',
     text: 'text-amber-700',
     border: 'border-amber-200',
@@ -40,7 +41,7 @@ const statusConfig: Record<SwapStatus, {
   },
   pending_manager: {
     icon: UserCheck,
-    label: 'Pending Manager',
+    labelKey: 'swaps.statuses.pendingManager',
     bg: 'bg-blue-50',
     text: 'text-blue-700',
     border: 'border-blue-200',
@@ -49,7 +50,7 @@ const statusConfig: Record<SwapStatus, {
   },
   approved: {
     icon: CheckCircle,
-    label: 'Approved',
+    labelKey: 'swaps.statuses.approved',
     bg: 'bg-emerald-50',
     text: 'text-emerald-700',
     border: 'border-emerald-200',
@@ -57,7 +58,7 @@ const statusConfig: Record<SwapStatus, {
   },
   rejected: {
     icon: XCircle,
-    label: 'Rejected',
+    labelKey: 'swaps.statuses.rejected',
     bg: 'bg-red-50',
     text: 'text-red-700',
     border: 'border-red-200',
@@ -65,7 +66,7 @@ const statusConfig: Record<SwapStatus, {
   },
   cancelled: {
     icon: Ban,
-    label: 'Cancelled',
+    labelKey: 'swaps.statuses.cancelled',
     bg: 'bg-zinc-100',
     text: 'text-zinc-500',
     border: 'border-zinc-200',
@@ -73,7 +74,7 @@ const statusConfig: Record<SwapStatus, {
   },
   completed: {
     icon: CheckCircle2,
-    label: 'Completed',
+    labelKey: 'swaps.statuses.completed',
     bg: 'bg-violet-50',
     text: 'text-violet-700',
     border: 'border-violet-200',
@@ -81,7 +82,7 @@ const statusConfig: Record<SwapStatus, {
   },
   expired: {
     icon: Timer,
-    label: 'Expired',
+    labelKey: 'swaps.statuses.expired',
     bg: 'bg-zinc-50',
     text: 'text-zinc-400',
     border: 'border-zinc-200',
@@ -114,6 +115,7 @@ export function SwapStatusBadge({
   animate = true,
   className,
 }: SwapStatusBadgeProps) {
+  const { t } = useTranslation();
   const config = statusConfig[status];
   const sizes = sizeConfig[size];
   const StatusIcon = config.icon;
@@ -132,7 +134,7 @@ export function SwapStatusBadge({
       )}
     >
       <StatusIcon className={cn(sizes.icon, config.text)} />
-      {showLabel && <span>{config.label}</span>}
+      {showLabel && <span>{t(config.labelKey)}</span>}
     </div>
   );
 
@@ -191,14 +193,15 @@ export function SwapStatusBadgeWithTooltip({
   size?: 'sm' | 'md' | 'lg';
   className?: string;
 }) {
+  const { t } = useTranslation();
   const config = statusConfig[status];
-  
+
   return (
     <SwapStatusBadge
       status={status}
       size={size}
       className={cn('cursor-help', className)}
-      aria-label={config.label}
+      aria-label={t(config.labelKey)}
     />
   );
 }

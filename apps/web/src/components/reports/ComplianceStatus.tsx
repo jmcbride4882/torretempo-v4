@@ -16,6 +16,7 @@ import {
   XCircle,
   Info,
 } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { cn } from '@/lib/utils';
 import type { ComplianceViolation, ViolationType } from '@/types/reports';
 
@@ -24,14 +25,6 @@ interface ComplianceStatusProps {
   complianceScore: number;
   className?: string;
 }
-
-// Violation type labels
-const VIOLATION_LABELS: Record<ViolationType, string> = {
-  rest_period: 'Rest Period',
-  daily_limit: 'Daily Limit',
-  weekly_limit: 'Weekly Limit',
-  break_violation: 'Break Violation',
-};
 
 // Violation type icons
 const VIOLATION_ICONS: Record<ViolationType, typeof Clock> = {
@@ -113,13 +106,14 @@ function CircularProgress({ score }: { score: number }) {
 
 // Violation card component
 function ViolationCard({ violation }: { violation: ComplianceViolation }) {
+  const { t } = useTranslation();
   const Icon = VIOLATION_ICONS[violation.violationType];
   const isCritical = violation.severity === 'critical';
 
   const statusConfig = {
-    pending: { icon: AlertCircle, label: 'Pending', className: 'text-amber-400' },
-    corrected: { icon: CheckCircle2, label: 'Corrected', className: 'text-emerald-400' },
-    acknowledged: { icon: Info, label: 'Acknowledged', className: 'text-primary-400' },
+    pending: { icon: AlertCircle, labelKey: 'compliance.correctionStatuses.pending', className: 'text-amber-400' },
+    corrected: { icon: CheckCircle2, labelKey: 'compliance.correctionStatuses.corrected', className: 'text-emerald-400' },
+    acknowledged: { icon: Info, labelKey: 'compliance.correctionStatuses.acknowledged', className: 'text-primary-400' },
   };
 
   const status = statusConfig[violation.correctionStatus];
@@ -150,7 +144,7 @@ function ViolationCard({ violation }: { violation: ComplianceViolation }) {
           </div>
           <div>
             <p className={cn('text-sm font-medium', isCritical ? 'text-red-300' : 'text-amber-300')}>
-              {VIOLATION_LABELS[violation.violationType]}
+              {t(`compliance.violationTypes.${violation.violationType}`)}
             </p>
             <p className="text-[10px] text-zinc-500">{formatDate(violation.affectedDate)}</p>
           </div>
@@ -165,7 +159,7 @@ function ViolationCard({ violation }: { violation: ComplianceViolation }) {
               : 'bg-amber-500/20 text-amber-300'
           )}
         >
-          {violation.severity}
+          {t(`compliance.severities.${violation.severity}`)}
         </span>
       </div>
 
@@ -175,15 +169,15 @@ function ViolationCard({ violation }: { violation: ComplianceViolation }) {
       {/* Details */}
       <div className="mb-3 grid grid-cols-3 gap-2 rounded-lg border border-zinc-100 bg-zinc-50 p-2 text-xs">
         <div className="text-center">
-          <p className="text-zinc-500">Actual</p>
+          <p className="text-zinc-500">{t('compliance.actual')}</p>
           <p className="font-medium text-zinc-900">{violation.details.actualValue}h</p>
         </div>
         <div className="text-center">
-          <p className="text-zinc-500">Limit</p>
+          <p className="text-zinc-500">{t('compliance.limitValue')}</p>
           <p className="font-medium text-zinc-900">{violation.details.limitValue}h</p>
         </div>
         <div className="text-center">
-          <p className="text-zinc-500">Excess</p>
+          <p className="text-zinc-500">{t('compliance.excess')}</p>
           <p className={cn('font-medium', isCritical ? 'text-red-400' : 'text-amber-400')}>
             +{violation.details.excess}h
           </p>
@@ -194,7 +188,7 @@ function ViolationCard({ violation }: { violation: ComplianceViolation }) {
       <div className="flex items-center justify-between border-t border-zinc-100 pt-3">
         <div className="flex items-center gap-1.5">
           <StatusIcon className={cn('h-3.5 w-3.5', status.className)} />
-          <span className={cn('text-xs font-medium', status.className)}>{status.label}</span>
+          <span className={cn('text-xs font-medium', status.className)}>{t(status.labelKey)}</span>
         </div>
         {violation.userName && (
           <span className="text-xs text-zinc-500">{violation.userName}</span>
@@ -212,6 +206,8 @@ function ViolationCard({ violation }: { violation: ComplianceViolation }) {
 }
 
 export function ComplianceStatus({ violations, complianceScore, className }: ComplianceStatusProps) {
+  const { t } = useTranslation();
+
   // Group violations by type
   const groupedViolations = useMemo(() => {
     const groups: Record<ViolationType, ComplianceViolation[]> = {
@@ -243,9 +239,9 @@ export function ComplianceStatus({ violations, complianceScore, className }: Com
         <div className="mx-auto mb-4 flex h-24 w-24 items-center justify-center rounded-2xl bg-gradient-to-br from-emerald-600/20 to-emerald-600/5">
           <ShieldCheck className="h-12 w-12 text-emerald-400" />
         </div>
-        <h3 className="mb-1 text-xl font-bold text-zinc-900">100% Compliant</h3>
+        <h3 className="mb-1 text-xl font-bold text-zinc-900">{t('compliance.perfectTitle')}</h3>
         <p className="text-sm text-zinc-500">
-          No violations detected for this period. Great job!
+          {t('compliance.perfectDesc')}
         </p>
       </motion.div>
     );
@@ -263,7 +259,7 @@ export function ComplianceStatus({ violations, complianceScore, className }: Com
 
         <div className="flex flex-1 flex-col gap-3 sm:ml-6">
           <h3 className="text-lg font-semibold text-zinc-900">
-            Compliance Score:{' '}
+            {t('compliance.complianceScore')}{' '}
             <span
               className={cn(
                 complianceScore >= 90
@@ -273,7 +269,11 @@ export function ComplianceStatus({ violations, complianceScore, className }: Com
                   : 'text-red-400'
               )}
             >
-              {complianceScore >= 90 ? 'Good' : complianceScore >= 70 ? 'Needs Attention' : 'Critical'}
+              {complianceScore >= 90
+                ? t('compliance.scoreGood')
+                : complianceScore >= 70
+                ? t('compliance.scoreNeedsAttention')
+                : t('compliance.scoreCritical')}
             </span>
           </h3>
 
@@ -282,14 +282,14 @@ export function ComplianceStatus({ violations, complianceScore, className }: Com
             <div className="rounded-lg border border-red-500/20 bg-red-500/10 p-2.5">
               <div className="flex items-center gap-1.5">
                 <XCircle className="h-4 w-4 text-red-400" />
-                <span className="text-xs text-zinc-500">Critical</span>
+                <span className="text-xs text-zinc-500">{t('compliance.criticalLabel')}</span>
               </div>
               <p className="mt-1 text-lg font-bold text-red-300">{criticalCount}</p>
             </div>
             <div className="rounded-lg border border-amber-500/20 bg-amber-500/10 p-2.5">
               <div className="flex items-center gap-1.5">
                 <AlertTriangle className="h-4 w-4 text-amber-400" />
-                <span className="text-xs text-zinc-500">Warnings</span>
+                <span className="text-xs text-zinc-500">{t('compliance.warningsLabel')}</span>
               </div>
               <p className="mt-1 text-lg font-bold text-amber-300">{warningCount}</p>
             </div>
@@ -301,7 +301,7 @@ export function ComplianceStatus({ violations, complianceScore, className }: Com
               if (items.length === 0) return null;
               return (
                 <div key={type} className="flex items-center justify-between text-zinc-500">
-                  <span>{VIOLATION_LABELS[type as ViolationType]}</span>
+                  <span>{t(`compliance.violationTypes.${type}`)}</span>
                   <span className="font-medium text-zinc-900">{items.length}</span>
                 </div>
               );
@@ -312,7 +312,7 @@ export function ComplianceStatus({ violations, complianceScore, className }: Com
 
       {/* Violations list */}
       <div className="space-y-3">
-        <h4 className="text-sm font-medium text-zinc-700">Violations ({violations.length})</h4>
+        <h4 className="text-sm font-medium text-zinc-700">{t('compliance.violationsCount', { count: violations.length })}</h4>
         <AnimatePresence mode="popLayout">
           {violations.map((violation) => (
             <ViolationCard key={violation.id} violation={violation} />

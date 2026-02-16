@@ -13,6 +13,7 @@ import {
   Hand,
   Trash2,
 } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { SwapStatusBadge } from './SwapStatusBadge';
@@ -49,8 +50,8 @@ function formatTime(dateString: string): string {
   });
 }
 
-// Format relative time
-function formatRelativeTime(dateString: string): string {
+// Format relative time (accepts t function for i18n)
+function formatRelativeTime(dateString: string, t: (key: string, opts?: Record<string, unknown>) => string): string {
   const date = new Date(dateString);
   const now = new Date();
   const diffMs = now.getTime() - date.getTime();
@@ -58,10 +59,10 @@ function formatRelativeTime(dateString: string): string {
   const diffHours = Math.floor(diffMins / 60);
   const diffDays = Math.floor(diffHours / 24);
 
-  if (diffMins < 1) return 'Just now';
-  if (diffMins < 60) return `${diffMins}m ago`;
-  if (diffHours < 24) return `${diffHours}h ago`;
-  if (diffDays < 7) return `${diffDays}d ago`;
+  if (diffMins < 1) return t('swaps.time.justNow');
+  if (diffMins < 60) return t('swaps.time.minutesAgo', { count: diffMins });
+  if (diffHours < 24) return t('swaps.time.hoursAgo', { count: diffHours });
+  if (diffDays < 7) return t('swaps.time.daysAgo', { count: diffDays });
   return formatDate(dateString);
 }
 
@@ -75,6 +76,8 @@ function ShiftDetail({
   shift?: SwapRequest['offered_shift'];
   isOpen?: boolean;
 }) {
+  const { t } = useTranslation();
+
   if (isOpen) {
     return (
       <div className="flex-1 rounded-xl border border-dashed border-zinc-300 bg-zinc-50 p-3">
@@ -83,10 +86,10 @@ function ShiftDetail({
         </p>
         <div className="flex items-center gap-2 text-zinc-500">
           <Hand className="h-4 w-4" />
-          <span className="text-sm italic">Open Request</span>
+          <span className="text-sm italic">{t('swaps.labels.openRequest')}</span>
         </div>
         <p className="mt-1 text-[10px] text-zinc-400">
-          Anyone can claim this swap
+          {t('swaps.labels.anyoneCanClaim')}
         </p>
       </div>
     );
@@ -135,6 +138,7 @@ export function SwapCard({
   onCancel,
   className,
 }: SwapCardProps) {
+  const { t } = useTranslation();
   const [loadingAction, setLoadingAction] = useState<string | null>(null);
 
   // Determine user's role in this swap
@@ -200,7 +204,7 @@ export function SwapCard({
         <div className="mb-4 flex items-start justify-between gap-3">
           <SwapStatusBadge status={swap.status} size="md" />
           <span className="shrink-0 text-xs text-zinc-400">
-            {formatRelativeTime(swap.created_at)}
+            {formatRelativeTime(swap.created_at, t)}
           </span>
         </div>
 
@@ -213,9 +217,9 @@ export function SwapCard({
             </div>
             <div className="min-w-0">
               <p className="truncate text-sm font-medium text-zinc-900">
-                {swap.requester?.name || 'Unknown'}
+                {swap.requester?.name || t('swaps.labels.unknown')}
               </p>
-              <p className="text-[10px] text-zinc-400">Requester</p>
+              <p className="text-[10px] text-zinc-400">{t('swaps.labels.requester')}</p>
             </div>
           </div>
 
@@ -233,7 +237,7 @@ export function SwapCard({
                   <p className="truncate text-sm font-medium text-zinc-900">
                     {swap.recipient.name}
                   </p>
-                  <p className="text-[10px] text-zinc-400">Recipient</p>
+                  <p className="text-[10px] text-zinc-400">{t('swaps.labels.recipient')}</p>
                 </div>
               </>
             ) : (
@@ -242,8 +246,8 @@ export function SwapCard({
                   <User className="h-4 w-4 text-zinc-400" />
                 </div>
                 <div>
-                  <p className="text-sm italic text-zinc-500">Open</p>
-                  <p className="text-[10px] text-zinc-400">Anyone</p>
+                  <p className="text-sm italic text-zinc-500">{t('swaps.labels.open')}</p>
+                  <p className="text-[10px] text-zinc-400">{t('swaps.labels.anyone')}</p>
                 </div>
               </div>
             )}
@@ -252,9 +256,9 @@ export function SwapCard({
 
         {/* Shift details */}
         <div className="mb-4 flex flex-col gap-3 sm:flex-row">
-          <ShiftDetail label="Offering" shift={swap.offered_shift} />
+          <ShiftDetail label={t('swaps.labels.offering')} shift={swap.offered_shift} />
           <ShiftDetail
-            label="Requesting"
+            label={t('swaps.labels.requesting')}
             shift={swap.desired_shift || undefined}
             isOpen={!swap.desired_shift_id}
           />
@@ -266,7 +270,7 @@ export function SwapCard({
             <div className="mb-1 flex items-center gap-1.5 text-zinc-500">
               <MessageSquare className="h-3 w-3" />
               <span className="text-[10px] font-medium uppercase tracking-wider">
-                Reason
+                {t('swaps.labels.reason')}
               </span>
             </div>
             <p className="text-sm text-zinc-700">{swap.reason}</p>
@@ -279,7 +283,7 @@ export function SwapCard({
             <div className="mb-1 flex items-center gap-1.5 text-red-600">
               <X className="h-3 w-3" />
               <span className="text-[10px] font-medium uppercase tracking-wider">
-                Rejection Reason
+                {t('swaps.labels.rejectionReason')}
               </span>
             </div>
             <p className="text-sm text-red-700">{swap.rejection_reason}</p>
@@ -305,7 +309,7 @@ export function SwapCard({
                   ) : (
                     <Check className="h-3.5 w-3.5" />
                   )}
-                  Accept
+                  {t('swaps.actions.accept')}
                 </Button>
                 <Button
                   size="sm"
@@ -321,7 +325,7 @@ export function SwapCard({
                   ) : (
                     <X className="h-3.5 w-3.5" />
                   )}
-                  Reject
+                  {t('swaps.actions.reject')}
                 </Button>
               </>
             )}
@@ -342,7 +346,7 @@ export function SwapCard({
                   ) : (
                     <Check className="h-3.5 w-3.5" />
                   )}
-                  Approve
+                  {t('swaps.actions.approve')}
                 </Button>
                 <Button
                   size="sm"
@@ -358,7 +362,7 @@ export function SwapCard({
                   ) : (
                     <X className="h-3.5 w-3.5" />
                   )}
-                  Reject
+                  {t('swaps.actions.reject')}
                 </Button>
               </>
             )}
@@ -376,7 +380,7 @@ export function SwapCard({
                 ) : (
                   <Hand className="h-3.5 w-3.5" />
                 )}
-                Claim Swap
+                {t('swaps.actions.claimSwap')}
               </Button>
             )}
 
@@ -394,7 +398,7 @@ export function SwapCard({
                 ) : (
                   <Trash2 className="h-3.5 w-3.5" />
                 )}
-                Cancel
+                {t('swaps.actions.cancel')}
               </Button>
             )}
           </div>

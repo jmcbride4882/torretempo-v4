@@ -138,7 +138,7 @@ export default function TenantsPage() {
         setTotal(response.total || 0);
       } catch (error) {
         console.error('Error fetching tenants:', error);
-        toast.error('Failed to load tenants');
+        toast.error(t('admin.toasts.failedLoadTenants'));
       } finally {
         setIsLoading(false);
         setIsRefreshing(false);
@@ -181,10 +181,10 @@ export default function TenantsPage() {
       a.click();
       document.body.removeChild(a);
       URL.revokeObjectURL(downloadUrl);
-      toast.success('Tenants exported successfully');
+      toast.success(t('admin.toasts.exportSuccess'));
     } catch (error) {
       console.error('Error exporting tenants:', error);
-      toast.error('Failed to export tenants');
+      toast.error(t('admin.toasts.failedExport'));
     } finally {
       setIsExporting(false);
     }
@@ -195,7 +195,7 @@ export default function TenantsPage() {
 
     // Validate delete confirmation
     if (confirmModal.type === 'delete' && deleteConfirmation !== confirmModal.tenant.slug) {
-      toast.error('Confirmation slug does not match');
+      toast.error(t('admin.toasts.confirmationMismatch'));
       return;
     }
 
@@ -204,15 +204,15 @@ export default function TenantsPage() {
       switch (confirmModal.type) {
         case 'suspend':
           await suspendTenant(confirmModal.tenant.id);
-          toast.success(`${confirmModal.tenant.name} has been suspended`);
+          toast.success(t('admin.toasts.tenantSuspended', { name: confirmModal.tenant.name }));
           break;
         case 'unsuspend':
           await unsuspendTenant(confirmModal.tenant.id);
-          toast.success(`${confirmModal.tenant.name} has been reactivated`);
+          toast.success(t('admin.toasts.tenantReactivated', { name: confirmModal.tenant.name }));
           break;
         case 'delete':
           await deleteTenant(confirmModal.tenant.id, deleteConfirmation);
-          toast.success(`${confirmModal.tenant.name} has been deleted`);
+          toast.success(t('admin.toasts.tenantDeleted', { name: confirmModal.tenant.name }));
           break;
       }
       setConfirmModal(null);
@@ -220,7 +220,7 @@ export default function TenantsPage() {
       loadTenants(true);
     } catch (error) {
       console.error('Error performing action:', error);
-      toast.error('Failed to perform action');
+      toast.error(t('admin.toasts.failedAction'));
     } finally {
       setIsActionLoading(false);
     }
@@ -231,7 +231,7 @@ export default function TenantsPage() {
 
     // Validate form
     if (!editForm.name.trim()) {
-      toast.error('Organization name is required');
+      toast.error(t('admin.toasts.orgNameRequired'));
       return;
     }
 
@@ -242,12 +242,12 @@ export default function TenantsPage() {
         logo: editForm.logo.trim() || undefined,
         subscriptionTier: editForm.subscriptionTier,
       });
-      toast.success(`${editForm.name} has been updated`);
+      toast.success(t('admin.toasts.tenantUpdated', { name: editForm.name }));
       setEditModal(null);
       loadTenants(true);
     } catch (error) {
       console.error('Error updating tenant:', error);
-      toast.error('Failed to update tenant');
+      toast.error(t('admin.toasts.failedUpdateTenant'));
     } finally {
       setIsEditLoading(false);
     }
@@ -288,22 +288,22 @@ export default function TenantsPage() {
   // Bulk delete handler
   const handleBulkDelete = async () => {
     if (bulkDeleteConfirm !== 'DELETE') {
-      toast.error('Type DELETE to confirm');
+      toast.error(t('admin.toasts.typeDeleteConfirm'));
       return;
     }
     setIsBulkLoading(true);
     try {
       const result = await bulkDeleteTenants(Array.from(selectedIds));
-      toast.success(`${result.success} tenant(s) deleted successfully`);
+      toast.success(t('admin.toasts.bulkDeleteSuccess', { count: result.success }));
       if (result.failed > 0) {
-        toast.warning(`${result.failed} tenant(s) failed to delete`);
+        toast.warning(t('admin.toasts.bulkDeleteFailed', { count: result.failed }));
       }
       setBulkDeleteModal(false);
       setBulkDeleteConfirm('');
       clearSelection();
       loadTenants(true);
     } catch (error) {
-      toast.error('Failed to delete tenants');
+      toast.error(t('admin.toasts.failedDeleteTenants'));
     } finally {
       setIsBulkLoading(false);
     }
@@ -327,7 +327,7 @@ export default function TenantsPage() {
           <div>
             <h1 className="text-xl font-bold text-zinc-900 sm:text-2xl">{t('admin.tenants.title')}</h1>
             <p className="text-sm text-zinc-500">
-              Live monitoring • Updates every 10 seconds
+              {t('admin.liveMonitoring')}
             </p>
           </div>
         </div>
@@ -391,11 +391,11 @@ export default function TenantsPage() {
             <SelectValue placeholder="Status" />
           </SelectTrigger>
           <SelectContent className="rounded-xl border border-zinc-200 bg-white shadow-sm">
-            <SelectItem value="all" className="text-zinc-700">All Status</SelectItem>
-            <SelectItem value="active" className="text-zinc-700">Active</SelectItem>
-            <SelectItem value="suspended" className="text-zinc-700">Suspended</SelectItem>
-            <SelectItem value="cancelled" className="text-zinc-700">Cancelled</SelectItem>
-            <SelectItem value="past_due" className="text-zinc-700">Past Due</SelectItem>
+            <SelectItem value="all" className="text-zinc-700">{t('admin.filters.allStatus')}</SelectItem>
+            <SelectItem value="active" className="text-zinc-700">{t('admin.filters.active')}</SelectItem>
+            <SelectItem value="suspended" className="text-zinc-700">{t('admin.filters.suspended')}</SelectItem>
+            <SelectItem value="cancelled" className="text-zinc-700">{t('admin.filters.cancelled')}</SelectItem>
+            <SelectItem value="past_due" className="text-zinc-700">{t('admin.filters.pastDue')}</SelectItem>
           </SelectContent>
         </Select>
 
@@ -411,11 +411,11 @@ export default function TenantsPage() {
             <SelectValue placeholder="Tier" />
           </SelectTrigger>
           <SelectContent className="rounded-xl border border-zinc-200 bg-white shadow-sm">
-            <SelectItem value="all" className="text-zinc-700">All Tiers</SelectItem>
-            <SelectItem value="free" className="text-zinc-700">Free</SelectItem>
-            <SelectItem value="starter" className="text-zinc-700">Starter</SelectItem>
-            <SelectItem value="pro" className="text-zinc-700">Pro</SelectItem>
-            <SelectItem value="enterprise" className="text-zinc-700">Enterprise</SelectItem>
+            <SelectItem value="all" className="text-zinc-700">{t('admin.filters.allTiers')}</SelectItem>
+            <SelectItem value="free" className="text-zinc-700">{t('admin.filters.free')}</SelectItem>
+            <SelectItem value="starter" className="text-zinc-700">{t('admin.filters.starter')}</SelectItem>
+            <SelectItem value="pro" className="text-zinc-700">{t('admin.filters.pro')}</SelectItem>
+            <SelectItem value="enterprise" className="text-zinc-700">{t('admin.filters.enterprise')}</SelectItem>
           </SelectContent>
         </Select>
 
@@ -652,10 +652,10 @@ export default function TenantsPage() {
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent className="rounded-xl border border-zinc-200 bg-white shadow-sm">
-                  <SelectItem value="free" className="text-zinc-700">Free</SelectItem>
-                  <SelectItem value="starter" className="text-zinc-700">Starter</SelectItem>
-                  <SelectItem value="pro" className="text-zinc-700">Pro</SelectItem>
-                  <SelectItem value="enterprise" className="text-zinc-700">Enterprise</SelectItem>
+                  <SelectItem value="free" className="text-zinc-700">{t('admin.filters.free')}</SelectItem>
+                  <SelectItem value="starter" className="text-zinc-700">{t('admin.filters.starter')}</SelectItem>
+                  <SelectItem value="pro" className="text-zinc-700">{t('admin.filters.pro')}</SelectItem>
+                  <SelectItem value="enterprise" className="text-zinc-700">{t('admin.filters.enterprise')}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -717,16 +717,16 @@ export default function TenantsPage() {
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               <AlertTriangle className="h-5 w-5 text-red-500" />
-              {t('common.delete')} {selectedIds.size} Tenant{selectedIds.size !== 1 ? 's' : ''}
+              {t('admin.bulkDelete.title', { count: selectedIds.size })}
             </DialogTitle>
             <DialogDescription>
-              <span className="text-red-500">This action cannot be undone.</span>{' '}
-              All data for these organizations including members, invitations, and subscriptions will be permanently deleted.
+              <span className="text-red-500">{t('admin.bulkDelete.cannotUndo')}</span>{' '}
+              {t('admin.bulkDelete.tenantsWarning')}
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-2 py-2">
             <label className="text-sm text-zinc-700">
-              Type <code className="rounded bg-zinc-100 px-1.5 py-0.5 text-red-500">DELETE</code> to confirm:
+              {t('admin.bulkDelete.typeDeleteLabel')} <code className="rounded bg-zinc-100 px-1.5 py-0.5 text-red-500">DELETE</code>:
             </label>
             <Input
               value={bulkDeleteConfirm}
@@ -745,7 +745,7 @@ export default function TenantsPage() {
               onClick={handleBulkDelete}
               disabled={isBulkLoading || bulkDeleteConfirm !== 'DELETE'}
             >
-              {isBulkLoading ? t('common.loading') + '...' : `${t('common.delete')} ${selectedIds.size} Tenant${selectedIds.size !== 1 ? 's' : ''}`}
+              {isBulkLoading ? t('common.loading') + '...' : t('admin.bulkDelete.deleteCount', { count: selectedIds.size })}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -824,7 +824,7 @@ function TenantCard({ tenant, isSelected, onToggleSelect, onEdit, onSuspend, onU
             <DropdownMenuContent align="end" className="rounded-xl border border-zinc-200 bg-white shadow-sm">
               <DropdownMenuItem className="gap-2 text-zinc-700">
                 <ExternalLink className="h-4 w-4" />
-                View Details
+                {t('admin.tenants.viewDetails')}
               </DropdownMenuItem>
               <DropdownMenuItem onClick={onEdit} className="gap-2 text-blue-600">
                 <Edit className="h-4 w-4" />
@@ -853,10 +853,10 @@ function TenantCard({ tenant, isSelected, onToggleSelect, onEdit, onSuspend, onU
         {/* Badges */}
         <div className="mb-4 flex flex-wrap items-center gap-2">
           <Badge className={cn('border', tierColors[tenant.subscriptionTier])}>
-            {tenant.subscriptionTier}
+            {t(`admin.filters.${tenant.subscriptionTier}`)}
           </Badge>
           <Badge className={cn('border', statusColors[tenant.subscriptionStatus])}>
-            {tenant.subscriptionStatus.replace('_', ' ')}
+            {t(`admin.filters.${tenant.subscriptionStatus}`)}
           </Badge>
         </div>
 
@@ -875,7 +875,7 @@ function TenantCard({ tenant, isSelected, onToggleSelect, onEdit, onSuspend, onU
               <span className="text-[10px] font-medium uppercase tracking-wider">{t('admin.tenants.owner')}</span>
             </div>
             <p className="truncate text-sm font-medium text-zinc-900">
-              {tenant.owner?.name || 'Unknown'}
+              {tenant.owner?.name || t('common.unknown')}
             </p>
           </div>
         </div>

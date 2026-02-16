@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Users, Shield, Crown, User, Loader2, AlertCircle, UserPlus } from 'lucide-react';
 import { toast } from 'sonner';
@@ -34,11 +35,11 @@ const ROLE_ICONS = {
   member: User,
 };
 
-const ROLE_LABELS = {
-  owner: 'Owner',
-  admin: 'Admin',
-  member: 'Member',
-};
+const ROLE_LABEL_KEYS = {
+  owner: 'team.roleOwner',
+  admin: 'team.roleAdmin',
+  member: 'team.roleMember',
+} as const;
 
 const ROLE_COLORS = {
   owner: 'bg-amber-50 text-amber-700 border-amber-200',
@@ -47,6 +48,7 @@ const ROLE_COLORS = {
 };
 
 export function TeamManager({ organizationSlug }: TeamManagerProps) {
+  const { t } = useTranslation();
   const [members, setMembers] = useState<TeamMember[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isInviteModalOpen, setIsInviteModalOpen] = useState(false);
@@ -65,14 +67,14 @@ export function TeamManager({ organizationSlug }: TeamManagerProps) {
 
       const data = await response.json();
       setMembers(data.members || []);
-      
+
       // Extract organizationId from first member (all members share same org)
       if (data.members && data.members.length > 0) {
         setOrganizationId(data.members[0].organizationId);
       }
     } catch (error) {
       console.error('Error fetching team members:', error);
-      toast.error('Failed to load team members');
+      toast.error(t('team.failedLoadMembers'));
     } finally {
       setIsLoading(false);
     }
@@ -86,7 +88,7 @@ export function TeamManager({ organizationSlug }: TeamManagerProps) {
     return (
       <div className="flex items-center justify-center py-12">
         <Loader2 className="h-6 w-6 animate-spin text-zinc-400" />
-        <span className="ml-2 text-sm text-zinc-400">Loading team members...</span>
+        <span className="ml-2 text-sm text-zinc-400">{t('team.loadingMembers')}</span>
       </div>
     );
   }
@@ -96,9 +98,9 @@ export function TeamManager({ organizationSlug }: TeamManagerProps) {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h3 className="text-lg font-semibold text-zinc-900">Team Members</h3>
+          <h3 className="text-lg font-semibold text-zinc-900">{t('team.teamMembers')}</h3>
           <p className="text-sm text-zinc-500">
-            {members.length} {members.length === 1 ? 'member' : 'members'} in your organization
+            {t('team.memberInOrg', { count: members.length })}
           </p>
         </div>
         <Button
@@ -106,7 +108,7 @@ export function TeamManager({ organizationSlug }: TeamManagerProps) {
           className="gap-2 bg-blue-600 hover:bg-blue-700"
         >
           <UserPlus className="h-4 w-4" />
-          Invite Member
+          {t('team.inviteMember')}
         </Button>
       </div>
 
@@ -116,9 +118,9 @@ export function TeamManager({ organizationSlug }: TeamManagerProps) {
           <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-zinc-100">
             <Users className="h-8 w-8 text-zinc-400" />
           </div>
-          <h3 className="mb-2 text-lg font-semibold text-zinc-900">No team members yet</h3>
+          <h3 className="mb-2 text-lg font-semibold text-zinc-900">{t('team.noMembersYet')}</h3>
           <p className="text-sm text-zinc-500">
-            Team members will appear here once they're added to your organization
+            {t('team.noMembersDesc')}
           </p>
         </div>
       ) : (
@@ -126,7 +128,7 @@ export function TeamManager({ organizationSlug }: TeamManagerProps) {
           <AnimatePresence mode="popLayout">
             {members.map((member, index) => {
               const RoleIcon = ROLE_ICONS[member.role];
-              
+
               return (
                 <motion.div
                   key={member.id}
@@ -145,7 +147,7 @@ export function TeamManager({ organizationSlug }: TeamManagerProps) {
                       {member.user?.image ? (
                         <img
                           src={member.user.image}
-                          alt={member.user.name || 'User'}
+                          alt={member.user.name || t('team.unknownUser')}
                           className="h-full w-full rounded-full object-cover"
                         />
                       ) : (
@@ -153,7 +155,7 @@ export function TeamManager({ organizationSlug }: TeamManagerProps) {
                           {member.user?.name?.[0]?.toUpperCase() || member.user?.email?.[0]?.toUpperCase() || 'U'}
                         </div>
                       )}
-                      
+
                       {/* Role badge overlay */}
                       <div className="absolute -bottom-1 -right-1 rounded-full bg-white p-1">
                         <RoleIcon className={cn(
@@ -169,20 +171,20 @@ export function TeamManager({ organizationSlug }: TeamManagerProps) {
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2">
                         <h4 className="font-semibold text-zinc-900 truncate">
-                          {member.user?.name || 'Unknown User'}
+                          {member.user?.name || t('team.unknownUser')}
                         </h4>
-                        <Badge 
-                          variant="outline" 
+                        <Badge
+                          variant="outline"
                           className={cn('text-xs', ROLE_COLORS[member.role])}
                         >
-                          {ROLE_LABELS[member.role]}
+                          {t(ROLE_LABEL_KEYS[member.role])}
                         </Badge>
                       </div>
                       <p className="text-sm text-zinc-500 truncate">
-                        {member.user?.email || 'No email'}
+                        {member.user?.email || t('team.noEmail')}
                       </p>
                       <p className="text-xs text-zinc-400 mt-1">
-                        Joined {new Date(member.createdAt).toLocaleDateString()}
+                        {t('team.joined', { date: new Date(member.createdAt).toLocaleDateString() })}
                       </p>
                     </div>
                   </div>
@@ -197,9 +199,9 @@ export function TeamManager({ organizationSlug }: TeamManagerProps) {
       <div className="flex items-start gap-3 rounded-lg border border-blue-200 bg-blue-50 p-4">
         <AlertCircle className="h-5 w-5 shrink-0 text-blue-500 mt-0.5" />
         <div className="text-sm text-blue-700">
-          <p className="font-medium mb-1">Invite team members via email</p>
+          <p className="font-medium mb-1">{t('team.inviteInfoTitle')}</p>
           <p className="text-blue-600">
-            Click "Invite Member" to send an invitation email. New members will receive a link to join your organization.
+            {t('team.inviteInfoDesc')}
           </p>
         </div>
       </div>

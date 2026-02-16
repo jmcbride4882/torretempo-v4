@@ -54,10 +54,10 @@ export default function AnalyticsPage() {
     try {
       const data = await fetchAnalytics();
       setAnalytics(data);
-      if (silent) toast.success('Analytics refreshed');
+      if (silent) toast.success(t('admin.toasts.analyticsRefreshed'));
     } catch (error) {
       console.error('Error fetching analytics:', error);
-      toast.error('Failed to load analytics');
+      toast.error(t('admin.toasts.failedLoadAnalytics'));
     } finally {
       setIsLoading(false);
       setIsRefreshing(false);
@@ -123,18 +123,18 @@ export default function AnalyticsPage() {
           icon={Building2}
           label={t('admin.analytics.totalTenants')}
           value={formatNumber(analytics?.organizationMetrics?.totalOrganizations ?? 0)}
-          subtitle={`${analytics?.organizationMetrics?.activeOrganizations ?? 0} active`}
+          subtitle={`${analytics?.organizationMetrics?.activeOrganizations ?? 0} ${t('admin.active').toLowerCase()}`}
           color="blue"
         />
         <MetricCard
           icon={DollarSign}
-          label="Total Revenue"
+          label={t('admin.analytics.totalRevenue')}
           value={formatCurrency(analytics?.revenueMetrics?.totalRevenue ?? 0)}
           color="emerald"
         />
         <MetricCard
           icon={TrendingUp}
-          label="Avg Members/Org"
+          label={t('admin.analytics.avgMembersOrg')}
           value={(analytics?.organizationMetrics?.avgMembersPerOrg ?? 0).toFixed(1)}
           color="amber"
         />
@@ -151,7 +151,7 @@ export default function AnalyticsPage() {
             </div>
             <div className="flex items-center gap-2">
               <div className="h-3 w-3 rounded-full bg-emerald-500" />
-              <span className="text-zinc-500">New Users</span>
+              <span className="text-zinc-500">{t('admin.analytics.newUsers')}</span>
             </div>
           </div>
         </div>
@@ -187,7 +187,7 @@ export default function AnalyticsPage() {
         ) : (
           <div className="flex h-64 flex-col items-center justify-center text-center">
             <LineChart className="mb-3 h-8 w-8 text-zinc-400" />
-            <p className="text-sm text-zinc-500">No growth data available</p>
+            <p className="text-sm text-zinc-500">{t('admin.analytics.noGrowthData')}</p>
           </div>
         )}
       </div>
@@ -196,7 +196,7 @@ export default function AnalyticsPage() {
       <div className="grid gap-4 lg:grid-cols-2">
         {/* Orgs by tier */}
         <div className="rounded-xl border border-zinc-200 bg-white p-6 shadow-sm">
-          <h2 className="mb-4 text-lg font-semibold text-zinc-900">Organizations by Tier</h2>
+          <h2 className="mb-4 text-lg font-semibold text-zinc-900">{t('admin.analytics.orgsByTier')}</h2>
           {analytics?.organizationMetrics?.orgsByTier && analytics.organizationMetrics.orgsByTier.length > 0 ? (
             <div className="space-y-4">
               {analytics.organizationMetrics.orgsByTier.map((item) => {
@@ -230,14 +230,14 @@ export default function AnalyticsPage() {
           ) : (
             <div className="flex h-48 flex-col items-center justify-center text-center">
               <PieChart className="mb-3 h-8 w-8 text-zinc-400" />
-              <p className="text-sm text-zinc-500">No tier data available</p>
+              <p className="text-sm text-zinc-500">{t('admin.analytics.noTierData')}</p>
             </div>
           )}
         </div>
 
         {/* Usage metrics */}
         <div className="rounded-xl border border-zinc-200 bg-white p-6 shadow-sm">
-          <h2 className="mb-4 text-lg font-semibold text-zinc-900">Platform Usage</h2>
+          <h2 className="mb-4 text-lg font-semibold text-zinc-900">{t('admin.analytics.platformUsage')}</h2>
           <div className="grid gap-4 sm:grid-cols-2">
             <UsageCard
               icon={Clock}
@@ -247,19 +247,19 @@ export default function AnalyticsPage() {
             />
             <UsageCard
               icon={Calendar}
-              label="Shifts Created"
+              label={t('admin.analytics.shiftsCreated')}
               value={formatNumber(analytics?.usageMetrics?.totalShifts ?? 0)}
               color="blue"
             />
             <UsageCard
               icon={ArrowLeftRight}
-              label="Swap Requests"
+              label={t('admin.analytics.swapRequests')}
               value={formatNumber(analytics?.usageMetrics?.totalSwaps ?? 0)}
               color="amber"
             />
             <UsageCard
               icon={TrendingUp}
-              label="Avg Entries/Day"
+              label={t('admin.analytics.avgEntriesDay')}
               value={(analytics?.usageMetrics?.avgEntriesPerDay ?? 0).toFixed(0)}
               color="emerald"
             />
@@ -269,7 +269,7 @@ export default function AnalyticsPage() {
 
       {/* Monthly revenue */}
       <div className="rounded-xl border border-zinc-200 bg-white p-6 shadow-sm">
-        <h2 className="mb-4 text-lg font-semibold text-zinc-900">Monthly Revenue</h2>
+        <h2 className="mb-4 text-lg font-semibold text-zinc-900">{t('admin.analytics.monthlyRevenue')}</h2>
         {analytics?.revenueMetrics?.monthlyRevenue && analytics.revenueMetrics.monthlyRevenue.length > 0 ? (
           <div className="relative h-48">
             <div className="flex h-full items-end gap-2">
@@ -298,7 +298,7 @@ export default function AnalyticsPage() {
         ) : (
           <div className="flex h-48 flex-col items-center justify-center text-center">
             <DollarSign className="mb-3 h-8 w-8 text-zinc-400" />
-            <p className="text-sm text-zinc-500">No revenue data available</p>
+            <p className="text-sm text-zinc-500">{t('admin.analytics.noRevenueData')}</p>
           </div>
         )}
       </div>

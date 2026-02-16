@@ -6,10 +6,11 @@
  */
 
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  Loader2, 
-  CheckCircle2, 
+import {
+  Loader2,
+  CheckCircle2,
   AlertCircle,
   Edit3
 } from 'lucide-react';
@@ -77,13 +78,13 @@ function toLocalDateTimeString(isoString: string): string {
   return `${year}-${month}-${day}T${hours}:${minutes}`;
 }
 
-function calculateTimeDiff(original: string, requested: string): string {
+function calculateTimeDiff(original: string, requested: string): string | null {
   const origDate = new Date(original);
   const reqDate = new Date(requested);
   const diffMs = reqDate.getTime() - origDate.getTime();
   const diffMins = Math.round(diffMs / 60000);
   
-  if (diffMins === 0) return 'No change';
+  if (diffMins === 0) return null;
   const sign = diffMins > 0 ? '+' : '';
   const hours = Math.floor(Math.abs(diffMins) / 60);
   const mins = Math.abs(diffMins) % 60;
@@ -112,6 +113,7 @@ export function CorrectionRequestSheet({
   onSuccess,
 }: CorrectionRequestSheetProps) {
   // Hooks
+  const { t } = useTranslation();
   const haptic = useHaptic();
   const { isOnline, queueAction } = useOfflineQueue();
 
@@ -194,7 +196,7 @@ export function CorrectionRequestSheet({
 
         if (!response.ok) {
           const data = await response.json();
-          throw new Error(data.message || 'Failed to submit correction request');
+          throw new Error(data.message || t('corrections.failedSubmit'));
         }
       } else {
         await queueAction('correction-request', organizationSlug, payload);
@@ -209,7 +211,7 @@ export function CorrectionRequestSheet({
       }, 1500);
     } catch (err) {
       haptic.error();
-      setError(err instanceof Error ? err.message : 'Failed to submit request');
+      setError(err instanceof Error ? err.message : t('corrections.failedSubmitRequest'));
     } finally {
       setSubmitting(false);
     }
@@ -229,7 +231,7 @@ export function CorrectionRequestSheet({
         <div className="text-center">
           <div className="flex items-center justify-center gap-2 mb-2">
             <Edit3 className="h-5 w-5 text-primary-400" />
-            <h2 className="text-xl font-semibold text-zinc-900">Request Correction</h2>
+            <h2 className="text-xl font-semibold text-zinc-900">{t('corrections.requestCorrectionTitle')}</h2>
           </div>
           <p className="text-sm text-zinc-400">
             {formatDate(timeEntry.clockIn)}
@@ -254,9 +256,9 @@ export function CorrectionRequestSheet({
               >
                 <CheckCircle2 className="h-8 w-8 text-emerald-400" />
               </motion.div>
-              <p className="text-lg font-semibold text-zinc-900">Request Submitted!</p>
+              <p className="text-lg font-semibold text-zinc-900">{t('corrections.requestSubmitted')}</p>
               <p className="text-sm text-zinc-400">
-                Your manager will review this request
+                {t('corrections.managerReview')}
               </p>
             </motion.div>
           )}
@@ -268,18 +270,18 @@ export function CorrectionRequestSheet({
             {/* Current Times (Read-only) */}
             <div className="bg-white border border-zinc-200 rounded-xl p-4 space-y-3">
               <Label className="text-zinc-400 text-xs uppercase tracking-wide">
-                Original Times
+                {t('corrections.originalTimes')}
               </Label>
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <span className="text-xs text-zinc-500">Clock In</span>
+                  <span className="text-xs text-zinc-500">{t('corrections.clockIn')}</span>
                   <p className="text-lg font-mono text-zinc-700">
                     {formatTime(timeEntry.clockIn)}
                   </p>
                 </div>
                 {timeEntry.clockOut && (
                   <div>
-                    <span className="text-xs text-zinc-500">Clock Out</span>
+                    <span className="text-xs text-zinc-500">{t('corrections.clockOut')}</span>
                     <p className="text-lg font-mono text-zinc-700">
                       {formatTime(timeEntry.clockOut)}
                     </p>
@@ -291,16 +293,16 @@ export function CorrectionRequestSheet({
             {/* Requested Times */}
             <div className="space-y-4">
               <Label className="text-zinc-400 text-xs uppercase tracking-wide">
-                Requested Times
+                {t('corrections.requestedTimes')}
               </Label>
               
               {/* Clock In */}
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
                   <Label htmlFor="clock-in" className="text-zinc-700">
-                    Clock In
+                    {t('corrections.clockIn')}
                   </Label>
-                  {clockInDiff && clockInDiff !== 'No change' && (
+                  {clockInDiff && (
                     <span className={cn(
                       "text-xs font-mono",
                       clockInDiff.startsWith('+') ? "text-emerald-400" : "text-amber-400"
@@ -323,9 +325,9 @@ export function CorrectionRequestSheet({
                 <div className="space-y-2">
                   <div className="flex items-center justify-between">
                     <Label htmlFor="clock-out" className="text-zinc-700">
-                      Clock Out
+                      {t('corrections.clockOut')}
                     </Label>
-                    {clockOutDiff && clockOutDiff !== 'No change' && (
+                    {clockOutDiff && (
                       <span className={cn(
                         "text-xs font-mono",
                         clockOutDiff.startsWith('+') ? "text-emerald-400" : "text-amber-400"
@@ -349,7 +351,7 @@ export function CorrectionRequestSheet({
             <div className="space-y-2">
               <div className="flex items-center justify-between">
                 <Label htmlFor="reason" className="text-zinc-700">
-                  Reason <span className="text-red-400">*</span>
+                  {t('corrections.reason')} <span className="text-red-400">*</span>
                 </Label>
                 <span className={cn(
                   "text-xs",
@@ -362,7 +364,7 @@ export function CorrectionRequestSheet({
                 id="reason"
                 value={reason}
                 onChange={(e) => setReason(e.target.value)}
-                placeholder="Explain why you need this correction..."
+                placeholder={t('corrections.reasonPlaceholder')}
                 rows={3}
                 className={cn(
                   "w-full px-3 py-2 rounded-xl resize-none",
@@ -380,7 +382,7 @@ export function CorrectionRequestSheet({
               <div className="flex items-center gap-2 p-3 rounded-xl bg-amber-500/10 border border-amber-500/20">
                 <AlertCircle className="h-4 w-4 text-amber-400 flex-shrink-0" />
                 <p className="text-sm text-amber-400">
-                  Times must be within the same day
+                  {t('corrections.sameDayWarning')}
                 </p>
               </div>
             )}
@@ -414,10 +416,10 @@ export function CorrectionRequestSheet({
                 {submitting ? (
                   <span className="flex items-center gap-2">
                     <Loader2 className="h-5 w-5 animate-spin" />
-                    Submitting...
+                    {t('corrections.submitting')}
                   </span>
                 ) : (
-                  'Submit Request'
+                  t('corrections.submitRequest')
                 )}
               </Button>
               
@@ -427,7 +429,7 @@ export function CorrectionRequestSheet({
                 disabled={submitting}
                 className="h-12 text-zinc-500 hover:text-zinc-900"
               >
-                Cancel
+                {t('common.cancel')}
               </Button>
             </div>
           </>
