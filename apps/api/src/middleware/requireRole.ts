@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction, RequestHandler } from 'express';
 import { auth } from '../lib/auth.js';
 import { fromNodeHeaders } from 'better-auth/node';
+import logger from '../lib/logger.js';
 
 /**
  * Role Middleware (T12)
@@ -61,7 +62,7 @@ export function requireRole(
 
       next();
     } catch (error) {
-      console.error('Role middleware error:', error);
+      logger.error('Role middleware error:', error);
       res.status(500).json({ error: 'Internal server error' });
     }
   };

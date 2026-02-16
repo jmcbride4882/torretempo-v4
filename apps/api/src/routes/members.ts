@@ -1,9 +1,9 @@
-// @ts-nocheck - TODO: Fix Drizzle type assertions
 import { Router, Request, Response } from 'express';
 import { eq, and } from 'drizzle-orm';
 import bcrypt from 'bcryptjs';
 import { db } from '../db/index.js';
 import { member, user } from '../db/schema.js';
+import logger from '../lib/logger.js';
 
 const router = Router();
 
@@ -35,7 +35,7 @@ router.get('/', async (req: Request, res: Response) => {
 
     res.json({ members: result });
   } catch (error) {
-    console.error('Error fetching members:', error);
+    logger.error('Error fetching members:', error);
     res.status(500).json({ error: 'Failed to fetch members' });
   }
 });
@@ -48,8 +48,8 @@ router.get('/', async (req: Request, res: Response) => {
 router.post('/:memberId/pin', async (req: Request, res: Response) => {
   try {
     const organizationId = req.organizationId!;
-    const userId = req.userId!; // From session
-    const { memberId } = req.params;
+    const userId = req.session!.user.id;
+    const memberId = req.params.memberId as string;
     const { pin } = req.body;
 
     // Validate PIN format (4 digits)
@@ -98,7 +98,7 @@ router.post('/:memberId/pin', async (req: Request, res: Response) => {
       hasPIN: true 
     });
   } catch (error) {
-    console.error('Error setting PIN:', error);
+    logger.error('Error setting PIN:', error);
     res.status(500).json({ message: 'Failed to set PIN' });
   }
 });
@@ -111,7 +111,7 @@ router.post('/:memberId/pin', async (req: Request, res: Response) => {
 router.post('/:memberId/verify-pin', async (req: Request, res: Response) => {
   try {
     const organizationId = req.organizationId!;
-    const { memberId } = req.params;
+    const memberId = req.params.memberId as string;
     const { pin } = req.body;
 
     // Validate PIN format
@@ -165,7 +165,7 @@ router.post('/:memberId/verify-pin', async (req: Request, res: Response) => {
       userId: existingMember.userId 
     });
   } catch (error) {
-    console.error('Error verifying PIN:', error);
+    logger.error('Error verifying PIN:', error);
     res.status(500).json({ 
       message: 'Failed to verify PIN',
       valid: false 
@@ -180,7 +180,7 @@ router.post('/:memberId/verify-pin', async (req: Request, res: Response) => {
 router.get('/:memberId/pin-status', async (req: Request, res: Response) => {
   try {
     const organizationId = req.organizationId!;
-    const { memberId } = req.params;
+    const memberId = req.params.memberId as string;
 
     const [existingMember] = await db
       .select({ hasPIN: member.clock_in_pin })
@@ -201,7 +201,7 @@ router.get('/:memberId/pin-status', async (req: Request, res: Response) => {
       hasPIN: existingMember.hasPIN !== null 
     });
   } catch (error) {
-    console.error('Error checking PIN status:', error);
+    logger.error('Error checking PIN status:', error);
     res.status(500).json({ message: 'Failed to check PIN status' });
   }
 });
@@ -213,8 +213,8 @@ router.get('/:memberId/pin-status', async (req: Request, res: Response) => {
 router.delete('/:memberId/pin', async (req: Request, res: Response) => {
   try {
     const organizationId = req.organizationId!;
-    const userId = req.userId!;
-    const { memberId } = req.params;
+    const userId = req.session!.user.id;
+    const memberId = req.params.memberId as string;
 
     // Check if member exists and belongs to organization
     const [existingMember] = await db
@@ -250,7 +250,7 @@ router.delete('/:memberId/pin', async (req: Request, res: Response) => {
       hasPIN: false 
     });
   } catch (error) {
-    console.error('Error removing PIN:', error);
+    logger.error('Error removing PIN:', error);
     res.status(500).json({ message: 'Failed to remove PIN' });
   }
 });

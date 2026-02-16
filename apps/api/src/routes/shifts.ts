@@ -5,6 +5,7 @@ import { shifts, locations, shift_templates } from '../db/schema.js';
 import { requireRole } from '../middleware/requireRole.js';
 import { logAudit } from '../services/audit.service.js';
 import { assignUserToShift, unassignUserFromShift } from '../services/shift.service.js';
+import logger from '../lib/logger.js';
 
 const router = Router();
 
@@ -44,7 +45,7 @@ router.get('/', async (req: Request, res: Response) => {
 
     res.json({ shifts: result });
   } catch (error) {
-    console.error('Error fetching shifts:', error);
+    logger.error('Error fetching shifts:', error);
     res.status(500).json({ error: 'Failed to fetch shifts' });
   }
 });
@@ -79,7 +80,7 @@ router.get('/open', async (req: Request, res: Response) => {
 
     res.json({ shifts: openShifts });
   } catch (error) {
-    console.error('Error fetching open shifts:', error);
+    logger.error('Error fetching open shifts:', error);
     res.status(500).json({ error: 'Failed to fetch open shifts' });
   }
 });
@@ -102,7 +103,7 @@ router.get('/:id', async (req: Request, res: Response) => {
 
     res.json({ shift: result[0] });
   } catch (error) {
-    console.error('Error fetching shift:', error);
+    logger.error('Error fetching shift:', error);
     res.status(500).json({ error: 'Failed to fetch shift' });
   }
 });
@@ -168,7 +169,7 @@ router.post('/', requireRole(['manager', 'tenantAdmin', 'owner']), async (req: R
 
      res.status(201).json({ shift: newShift[0] });
    } catch (error) {
-     console.error('Error creating shift:', error);
+     logger.error('Error creating shift:', error);
      res.status(500).json({ error: 'Failed to create shift' });
    }
  });
@@ -293,7 +294,7 @@ router.post('/', requireRole(['manager', 'tenantAdmin', 'owner']), async (req: R
 
      res.status(201).json({ shift: newShift[0] });
    } catch (error) {
-     console.error('Error creating shift from template:', error);
+     logger.error('Error creating shift from template:', error);
      res.status(500).json({ error: 'Failed to create shift from template' });
    }
  });
@@ -343,7 +344,7 @@ router.put('/:id', requireRole(['manager', 'tenantAdmin', 'owner']), async (req:
 
     res.json({ shift: updated[0] });
   } catch (error) {
-    console.error('Error updating shift:', error);
+    logger.error('Error updating shift:', error);
     res.status(500).json({ error: 'Failed to update shift' });
   }
 });
@@ -383,7 +384,7 @@ router.delete('/:id', requireRole(['manager', 'tenantAdmin', 'owner']), async (r
 
     res.status(204).send();
   } catch (error) {
-    console.error('Error deleting shift:', error);
+    logger.error('Error deleting shift:', error);
     res.status(500).json({ error: 'Failed to delete shift' });
   }
 });
@@ -440,7 +441,7 @@ router.post('/publish-many', requireRole(['manager', 'tenantAdmin', 'owner']), a
 
     res.json({ shifts: updated, count: updated.length });
   } catch (error) {
-    console.error('Error publishing shifts:', error);
+    logger.error('Error publishing shifts:', error);
     res.status(500).json({ error: 'Failed to publish shifts' });
   }
 });
@@ -488,7 +489,7 @@ router.post('/:id/publish', requireRole(['manager', 'tenantAdmin', 'owner']), as
 
     res.json({ shift: updated[0] });
   } catch (error) {
-    console.error('Error publishing shift:', error);
+    logger.error('Error publishing shift:', error);
     res.status(500).json({ error: 'Failed to publish shift' });
   }
 });
@@ -534,7 +535,7 @@ router.post('/:id/unpublish', requireRole(['manager', 'tenantAdmin', 'owner']), 
 
     res.json({ shift: updated[0] });
   } catch (error) {
-    console.error('Error unpublishing shift:', error);
+    logger.error('Error unpublishing shift:', error);
     res.status(500).json({ error: 'Failed to unpublish shift' });
   }
 });
@@ -589,7 +590,7 @@ router.post('/:id/acknowledge', async (req: Request, res: Response) => {
 
     res.json({ shift: updated[0] });
   } catch (error) {
-    console.error('Error acknowledging shift:', error);
+    logger.error('Error acknowledging shift:', error);
     res.status(500).json({ error: 'Failed to acknowledge shift' });
   }
 });
@@ -627,7 +628,7 @@ router.post('/:id/assign', requireRole(['manager', 'tenantAdmin', 'owner']), asy
 
     res.json({ success: true, message: 'User assigned to shift' });
   } catch (error) {
-    console.error('Error assigning user to shift:', error);
+    logger.error('Error assigning user to shift:', error);
     res.status(500).json({ error: 'Failed to assign user to shift' });
   }
 });
@@ -657,7 +658,7 @@ router.post('/:id/unassign', requireRole(['manager', 'tenantAdmin', 'owner']), a
 
     res.json({ success: true, message: 'User unassigned from shift' });
   } catch (error) {
-    console.error('Error unassigning user from shift:', error);
+    logger.error('Error unassigning user from shift:', error);
     res.status(500).json({ error: 'Failed to unassign user from shift' });
   }
 });
@@ -713,7 +714,7 @@ router.post('/:id/claim', async (req: Request, res: Response) => {
 
     res.json({ success: true, message: 'Shift claimed successfully' });
   } catch (error) {
-    console.error('Error claiming shift:', error);
+    logger.error('Error claiming shift:', error);
     res.status(500).json({ error: 'Failed to claim shift' });
   }
 });

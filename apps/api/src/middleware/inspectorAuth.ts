@@ -4,6 +4,7 @@ import { db } from '../db/index.js';
 import { inspector_tokens } from '../db/schema.js';
 import { eq } from 'drizzle-orm';
 import { logAdminAction } from '../services/adminAudit.service.js';
+import logger from '../lib/logger.js';
 
 /**
  * Inspector Auth Middleware (T11)
@@ -102,7 +103,7 @@ export const inspectorAuth: RequestHandler = async (
 
     next();
   } catch (error) {
-    console.error('Inspector auth middleware error:', error);
+    logger.error('Inspector auth middleware error:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
 };

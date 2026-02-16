@@ -2,6 +2,7 @@ import { Router, Request, Response } from 'express';
 import { and, desc, eq, sql } from 'drizzle-orm';
 import { db } from '../db/index.js';
 import { notifications } from '../db/schema.js';
+import logger from '../lib/logger.js';
 
 const router = Router();
 
@@ -52,7 +53,7 @@ router.get('/', async (req: Request, res: Response) => {
       pagination: { limit, offset },
     });
   } catch (error) {
-    console.error('Error fetching notifications:', error);
+    logger.error('Error fetching notifications:', error);
     res.status(500).json({ error: 'Failed to fetch notifications' });
   }
 });
@@ -81,7 +82,7 @@ router.get('/unread-count', async (req: Request, res: Response) => {
     const unreadCount = Number(result[0]?.count || 0);
     res.json({ unreadCount });
   } catch (error) {
-    console.error('Error fetching unread notification count:', error);
+    logger.error('Error fetching unread notification count:', error);
     res.status(500).json({ error: 'Failed to fetch unread count' });
   }
 });
@@ -115,7 +116,7 @@ router.put('/:id/read', async (req: Request, res: Response) => {
 
     res.json({ notification: updated[0] });
   } catch (error) {
-    console.error('Error marking notification as read:', error);
+    logger.error('Error marking notification as read:', error);
     res.status(500).json({ error: 'Failed to mark notification as read' });
   }
 });
@@ -144,7 +145,7 @@ router.put('/read-all', async (req: Request, res: Response) => {
 
     res.json({ updated: updated.length });
   } catch (error) {
-    console.error('Error marking all notifications as read:', error);
+    logger.error('Error marking all notifications as read:', error);
     res.status(500).json({ error: 'Failed to mark all notifications as read' });
   }
 });
@@ -177,7 +178,7 @@ router.delete('/:id', async (req: Request, res: Response) => {
 
     res.status(204).send();
   } catch (error) {
-    console.error('Error deleting notification:', error);
+    logger.error('Error deleting notification:', error);
     res.status(500).json({ error: 'Failed to delete notification' });
   }
 });

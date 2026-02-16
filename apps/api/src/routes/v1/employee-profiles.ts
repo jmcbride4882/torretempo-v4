@@ -5,6 +5,7 @@ import { employee_profiles, member } from '../../db/schema.js';
 import { requireRole } from '../../middleware/requireRole.js';
 import { logAudit } from '../../services/audit.service.js';
 import { encryption } from '../../lib/encryption.js';
+import logger from '../../lib/logger.js';
 
 // Types for JSONB structures
 interface EmployeeAddress {
@@ -104,7 +105,7 @@ function decryptPIIFields(profile: any): any {
       delete decrypted.work_permit_number_encrypted;
     }
   } catch (error) {
-    console.error('Error decrypting PII fields:', error);
+    logger.error('Error decrypting PII fields:', error);
     throw new Error('Failed to decrypt sensitive data');
   }
 
@@ -145,7 +146,7 @@ router.get('/', requireRole(['manager', 'tenantAdmin', 'owner']), async (req: Re
 
     res.json({ employees: decryptedProfiles, count: decryptedProfiles.length });
   } catch (error) {
-    console.error('Error fetching employee profiles:', error);
+    logger.error('Error fetching employee profiles:', error);
     res.status(500).json({ message: 'Failed to fetch employee profiles' });
   }
 });
@@ -188,7 +189,7 @@ router.get('/:id', async (req: Request, res: Response) => {
     const decrypted = decryptPIIFields(profile);
     res.json({ employee: decrypted });
   } catch (error) {
-    console.error('Error fetching employee profile:', error);
+    logger.error('Error fetching employee profile:', error);
     res.status(500).json({ message: 'Failed to fetch employee profile' });
   }
 });
@@ -302,7 +303,7 @@ router.post('/', requireRole(['tenantAdmin', 'owner']), async (req: Request, res
     const decrypted = decryptPIIFields(newProfile[0]);
     res.status(201).json({ employee: decrypted });
   } catch (error) {
-    console.error('Error creating employee profile:', error);
+    logger.error('Error creating employee profile:', error);
     res.status(500).json({ message: 'Failed to create employee profile' });
   }
 });
@@ -384,7 +385,7 @@ router.patch('/:id', requireRole(['tenantAdmin', 'owner']), async (req: Request,
     const decrypted = decryptPIIFields(updatedProfile[0]);
     res.json({ employee: decrypted });
   } catch (error) {
-    console.error('Error updating employee profile:', error);
+    logger.error('Error updating employee profile:', error);
     res.status(500).json({ message: 'Failed to update employee profile' });
   }
 });
@@ -434,7 +435,7 @@ router.delete('/:id', requireRole(['tenantAdmin', 'owner']), async (req: Request
 
     res.status(204).send();
   } catch (error) {
-    console.error('Error deleting employee profile:', error);
+    logger.error('Error deleting employee profile:', error);
     res.status(500).json({ message: 'Failed to delete employee profile' });
   }
 });

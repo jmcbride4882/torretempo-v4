@@ -46,12 +46,12 @@ export function ValidationIndicator({
         initial={{ opacity: 0, scale: 0.8 }}
         animate={{ opacity: 1, scale: 1 }}
         className={cn(
-          'flex items-center justify-center rounded-full bg-neutral-800/50',
+          'flex items-center justify-center rounded-full bg-zinc-100',
           containerSizeClasses[size],
           className
         )}
       >
-        <Loader2 className={cn('animate-spin text-neutral-400', sizeClasses[size])} />
+        <Loader2 className={cn('animate-spin text-zinc-400', sizeClasses[size])} />
       </motion.div>
     );
   }
@@ -118,7 +118,7 @@ export function ValidationIndicator({
         </TooltipTrigger>
         <TooltipContent side="top" className="max-w-xs">
           <div className="space-y-2">
-            <p className="font-semibold text-white">
+            <p className="font-semibold text-zinc-900">
               {hasViolations ? 'Compliance Issues' : 'Warnings'}
             </p>
             {issues.map((issue, idx) => (
@@ -129,9 +129,9 @@ export function ValidationIndicator({
                   <AlertTriangle className="h-3 w-3 shrink-0 mt-0.5 text-amber-400" />
                 )}
                 <div>
-                  <p className="text-xs text-neutral-300">{issue.message}</p>
+                  <p className="text-xs text-zinc-600">{issue.message}</p>
                   {issue.ruleReference && (
-                    <p className="text-[10px] text-neutral-500 mt-0.5">
+                    <p className="text-[10px] text-zinc-400 mt-0.5">
                       {issue.ruleReference}
                     </p>
                   )}
@@ -163,7 +163,7 @@ export function ValidationBadge({
     return (
       <span className={cn(
         'inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs',
-        'bg-neutral-800/50 text-neutral-400',
+        'bg-zinc-100 text-zinc-400',
         className
       )}>
         <Loader2 className="h-3 w-3 animate-spin" />
@@ -236,7 +236,7 @@ export function getDropZoneClasses({
   }
 
   if (isValidating) {
-    return 'ring-2 ring-neutral-500 ring-inset bg-neutral-500/5';
+    return 'ring-2 ring-zinc-400 ring-inset bg-zinc-100';
   }
 
   if (!result) {

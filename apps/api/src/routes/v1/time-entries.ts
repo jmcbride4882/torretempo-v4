@@ -6,6 +6,7 @@ import { ComplianceValidator } from '../../services/compliance-validator.js';
 import { logAudit } from '../../services/audit.service.js';
 import { broadcastToOrg } from '../../lib/websocket.js';
 import type { ValidationContext } from '../../services/compliance-validator.js';
+import logger from '../../lib/logger.js';
 
 const router = Router();
 
@@ -102,7 +103,7 @@ async function handleClockIn(req: Request, res: Response) {
       time_entry: timeEntry,
     });
   } catch (error) {
-    console.error('Error clocking in:', error);
+    logger.error('Error clocking in:', error);
     res.status(500).json({ message: 'Internal server error' });
   }
 }
@@ -321,7 +322,7 @@ async function handleClockOut(req: Request, res: Response) {
       warnings: warnings.length > 0 ? warnings.map(w => w.message) : undefined,
     });
   } catch (error) {
-    console.error('Error clocking out:', error);
+    logger.error('Error clocking out:', error);
     res.status(500).json({ message: 'Internal server error' });
   }
 }
@@ -389,7 +390,7 @@ async function handleListTimeEntries(req: Request, res: Response) {
       count: entries.length,
     });
   } catch (error) {
-    console.error('Error listing time entries:', error);
+    logger.error('Error listing time entries:', error);
     res.status(500).json({ message: 'Internal server error' });
   }
 }
@@ -434,7 +435,7 @@ async function handleGetTimeEntry(req: Request, res: Response) {
 
     res.json({ time_entry: timeEntry });
   } catch (error) {
-    console.error('Error getting time entry:', error);
+    logger.error('Error getting time entry:', error);
     res.status(500).json({ message: 'Internal server error' });
   }
 }

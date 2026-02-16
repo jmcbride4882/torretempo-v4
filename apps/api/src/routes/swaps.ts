@@ -6,6 +6,7 @@ import { requireRole } from '../middleware/requireRole.js';
 import { rightToDisconnect } from '../middleware/rightToDisconnect.js';
 import { logAudit } from '../services/audit.service.js';
 import { sendSwapNotification } from '../services/notification.service.js';
+import logger from '../lib/logger.js';
 
 const router = Router();
 
@@ -97,7 +98,7 @@ router.get('/', async (req: Request, res: Response) => {
 
     res.json({ swaps: result });
   } catch (error) {
-    console.error('Error fetching swaps:', error);
+    logger.error('Error fetching swaps:', error);
     res.status(500).json({ error: 'Failed to fetch swaps' });
   }
 });
@@ -152,7 +153,7 @@ router.get('/mine', async (req: Request, res: Response) => {
 
     res.json({ swaps });
   } catch (error) {
-    console.error('Error fetching my swaps:', error);
+    logger.error('Error fetching my swaps:', error);
     res.status(500).json({ error: 'Failed to fetch swaps' });
   }
 });
@@ -213,7 +214,7 @@ router.get('/pending', async (req: Request, res: Response) => {
 
     res.json({ swaps });
   } catch (error) {
-    console.error('Error fetching pending swaps:', error);
+    logger.error('Error fetching pending swaps:', error);
     res.status(500).json({ error: 'Failed to fetch pending swaps' });
   }
 });
@@ -253,7 +254,7 @@ router.get('/pending-count', async (req: Request, res: Response) => {
     const count = Number(result[0]?.count || 0);
     res.json({ count });
   } catch (error) {
-    console.error('Error fetching pending swap count:', error);
+    logger.error('Error fetching pending swap count:', error);
     res.status(500).json({ error: 'Failed to fetch pending swap count' });
   }
 });
@@ -401,7 +402,7 @@ router.post(
 
       res.status(201).json({ swap: created[0] });
     } catch (error) {
-      console.error('Error creating swap request:', error);
+      logger.error('Error creating swap request:', error);
       res.status(500).json({ error: 'Failed to create swap request' });
     }
   }
@@ -501,7 +502,7 @@ router.put(
 
       res.json({ swap: updated[0] });
     } catch (error) {
-      console.error('Error responding to swap request:', error);
+      logger.error('Error responding to swap request:', error);
       res.status(500).json({ error: 'Failed to respond to swap request' });
     }
   }
@@ -672,7 +673,7 @@ router.put(
 
       res.json({ swap: result.completed });
     } catch (error) {
-      console.error('Error responding to swap request:', error);
+      logger.error('Error responding to swap request:', error);
       res.status(500).json({ error: 'Failed to respond to swap request' });
     }
   }
@@ -778,7 +779,7 @@ router.put(
 
       res.json({ swap: updated[0] });
     } catch (error) {
-      console.error('Error claiming swap request:', error);
+      logger.error('Error claiming swap request:', error);
       res.status(500).json({ error: 'Failed to claim swap request' });
     }
   }
@@ -827,42 +828,27 @@ router.put(
       await logAudit({
         orgId: organizationId,
         actorId: actor.id,
-        action: 'swap.peer_accept',
+        action: 'swap.cancelled',
         entityType: 'swap_requests',
         entityId: id,
         oldData: swap,
         newData: updated[0],
       });
 
-      // Notify requester that peer accepted
-      await sendSwapNotification('swap_accepted', swap.requester_id, {
-        organizationId,
-        swapId: id,
-        title: 'Swap Request Accepted',
-        message: 'Your shift swap request was accepted and is awaiting manager approval',
-        link: `/t/${organizationId}/swaps`,
-      });
-
-      // Notify managers that approval is needed
-      const managers = await db
-        .select({ userId: member.userId })
-        .from(member)
-        .where(and(eq(member.organizationId, organizationId), inArray(member.role, MANAGER_ROLES)));
-
-      const managerIds = managers.map((m) => m.userId);
-      if (managerIds.length > 0) {
-        await sendSwapNotification('swap_manager_needed', managerIds, {
+      // Notify the recipient (if any) that the swap was cancelled
+      if (swap.recipient_id) {
+        await sendSwapNotification('swap_rejected', swap.recipient_id, {
           organizationId,
           swapId: id,
-          title: 'Manager Approval Needed',
-          message: 'A shift swap request requires your approval',
+          title: 'Swap Request Cancelled',
+          message: 'A shift swap request you were involved in has been cancelled by the requester',
           link: `/t/${organizationId}/swaps`,
         });
       }
 
       res.json({ swap: updated[0] });
     } catch (error) {
-      console.error('Error cancelling swap request:', error);
+      logger.error('Error cancelling swap request:', error);
       res.status(500).json({ error: 'Failed to cancel swap request' });
     }
   }

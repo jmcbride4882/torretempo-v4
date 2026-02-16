@@ -184,7 +184,8 @@ export interface InspectorToken {
 
 export interface InspectorTokensResponse {
   tokens: InspectorToken[];
-  total: number;
+  count: number;
+  active_count: number;
 }
 
 export interface AuditLogEntry {
@@ -565,40 +566,49 @@ export async function deleteFailedJob(queueName: string, jobId: string): Promise
 // INSPECTOR TOKENS API
 // ============================================================================
 
-export async function fetchInspectorTokens(params?: {
-  organizationId?: string;
-  status?: string;
-}): Promise<InspectorTokensResponse> {
+export async function fetchInspectorTokens(
+  orgSlug: string,
+  params?: {
+    includeRevoked?: boolean;
+  }
+): Promise<InspectorTokensResponse> {
   const searchParams = new URLSearchParams();
-  if (params?.organizationId) searchParams.append('organization_id', params.organizationId);
-  if (params?.status) searchParams.append('status', params.status);
+  if (params?.includeRevoked) searchParams.append('include_revoked', 'true');
 
-  const url = `${API_URL}/api/admin/inspector-tokens?${searchParams.toString()}`;
+  const url = `${API_URL}/api/admin/${orgSlug}/inspector-tokens?${searchParams.toString()}`;
   const response = await fetch(url, { credentials: 'include' });
   return handleResponse<InspectorTokensResponse>(response);
 }
 
 export async function generateInspectorToken(
-  organizationId: string,
-  expiresInDays: number
-): Promise<{ token: InspectorToken }> {
-  const url = `${API_URL}/api/admin/inspector-tokens`;
+  orgSlug: string,
+  options?: {
+    issued_to?: string;
+    expires_in_days?: number;
+    notes?: string;
+  }
+): Promise<{ token: string; expires_at: string; token_id: string; message: string }> {
+  const url = `${API_URL}/api/admin/${orgSlug}/inspector-tokens`;
   const response = await fetch(url, {
     method: 'POST',
     credentials: 'include',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ organizationId, expiresInDays }),
+    body: JSON.stringify({
+      issued_to: options?.issued_to,
+      expires_in_days: options?.expires_in_days ?? 30,
+      notes: options?.notes,
+    }),
   });
-  return handleResponse<{ token: InspectorToken }>(response);
+  return handleResponse<{ token: string; expires_at: string; token_id: string; message: string }>(response);
 }
 
-export async function revokeInspectorToken(tokenId: string): Promise<{ success: boolean }> {
-  const url = `${API_URL}/api/admin/inspector-tokens/${tokenId}/revoke`;
+export async function revokeInspectorToken(orgSlug: string, tokenId: string): Promise<{ message: string }> {
+  const url = `${API_URL}/api/admin/${orgSlug}/inspector-tokens/${tokenId}`;
   const response = await fetch(url, {
-    method: 'POST',
+    method: 'DELETE',
     credentials: 'include',
   });
-  return handleResponse<{ success: boolean }>(response);
+  return handleResponse<{ message: string }>(response);
 }
 
 // ============================================================================

@@ -1,6 +1,7 @@
 import { eq } from 'drizzle-orm';
 import { db } from '../db/index.js';
 import { subscription_details, subscription_plans } from '../db/schema.js';
+import logger from '../lib/logger.js';
 
 /**
  * Organization plan details with current usage
@@ -78,7 +79,7 @@ export async function getOrganizationPlan(
       grandfatheredPlanCode: row.grandfatheredPlanCode || undefined,
     };
   } catch (error) {
-    console.error('Error fetching organization plan:', error);
+    logger.error('Error fetching organization plan:', error);
     return null;
   }
 }
@@ -99,7 +100,7 @@ export async function checkModuleAccess(
 
     return plan.includedModules.includes(moduleName);
   } catch (error) {
-    console.error('Error checking module access:', error);
+    logger.error('Error checking module access:', error);
     return false;
   }
 }
@@ -134,7 +135,7 @@ export async function checkEmployeeLimit(
       atCapacity,
     };
   } catch (error) {
-    console.error('Error checking employee limit:', error);
+    logger.error('Error checking employee limit:', error);
     return {
       withinLimit: false,
       current: 0,
@@ -159,7 +160,7 @@ export async function getAvailableModules(
 
     return plan.includedModules;
   } catch (error) {
-    console.error('Error fetching available modules:', error);
+    logger.error('Error fetching available modules:', error);
     return [];
   }
 }
@@ -188,7 +189,7 @@ export async function updateEmployeeCount(
 
     return { success: true };
   } catch (error) {
-    console.error('Error updating employee count:', error);
+    logger.error('Error updating employee count:', error);
     return { success: false, error: 'Failed to update employee count' };
   }
 }
@@ -224,7 +225,7 @@ export async function incrementEmployeeCount(
 
     return { success: true, newCount };
   } catch (error) {
-    console.error('Error incrementing employee count:', error);
+    logger.error('Error incrementing employee count:', error);
     return { success: false, error: 'Failed to increment employee count' };
   }
 }
@@ -260,7 +261,7 @@ export async function decrementEmployeeCount(
 
     return { success: true, newCount };
   } catch (error) {
-    console.error('Error decrementing employee count:', error);
+    logger.error('Error decrementing employee count:', error);
     return { success: false, error: 'Failed to decrement employee count' };
   }
 }

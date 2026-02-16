@@ -4,6 +4,7 @@ import { db } from '../../db/index.js';
 import { subscription_details, organization } from '../../db/schema.js';
 import { requireAdmin } from '../../middleware/requireAdmin.js';
 import type { SubscriptionMetricsResponse } from '../../types/admin-types.js';
+import logger from '../../lib/logger.js';
 
 /**
  * Admin Subscription Routes
@@ -160,7 +161,7 @@ router.get(
 
       res.json(response);
     } catch (error) {
-      console.error('Error fetching subscription metrics:', error);
+      logger.error('Error fetching subscription metrics:', error);
       res.status(500).json({ 
         error: 'Failed to fetch subscription metrics',
         details: error instanceof Error ? error.message : 'Unknown error'
@@ -257,7 +258,7 @@ router.get(
         pages: Math.ceil(total / limit),
       });
     } catch (error) {
-      console.error('Error fetching organization subscriptions:', error);
+      logger.error('Error fetching organization subscriptions:', error);
       res.status(500).json({ 
         error: 'Failed to fetch organization subscriptions',
         details: error instanceof Error ? error.message : 'Unknown error'

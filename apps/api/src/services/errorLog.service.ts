@@ -1,6 +1,7 @@
 import { Request } from 'express';
 import { db } from '../db/index.js';
 import { error_logs } from '../db/schema.js';
+import logger from '../lib/logger.js';
 
 export interface ErrorLogData {
   level: 'error' | 'warning' | 'info';
@@ -36,7 +37,7 @@ export async function logError(data: ErrorLogData): Promise<void> {
     });
   } catch (err) {
     // Fail silently - don't break the app if error logging fails
-    console.error('[ErrorLog] Failed to log error:', err);
+    logger.error('[ErrorLog] Failed to log error:', err);
   }
 }
 

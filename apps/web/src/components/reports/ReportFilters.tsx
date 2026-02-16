@@ -1,7 +1,7 @@
 /**
  * ReportFilters Component
  * Date range, user, and report type filters for reports page
- * Mobile-first responsive design with glassmorphism
+ * Mobile-first responsive design with light theme
  */
 
 import { useState, useMemo } from 'react';
@@ -104,23 +104,23 @@ export function ReportFilters({
     <>
       {/* Year filter */}
       <div className="flex-1 sm:flex-initial">
-        <label className="mb-1.5 block text-xs font-medium text-neutral-500 sm:hidden">
+        <label className="mb-1.5 block text-xs font-medium text-zinc-500 sm:hidden">
           Year
         </label>
         <Select
           value={currentFilters.year?.toString() || 'all'}
           onValueChange={handleYearChange}
         >
-          <SelectTrigger className="w-full glass-card border-white/10 text-white sm:w-[120px]">
-            <Calendar className="mr-2 h-4 w-4 text-neutral-500 sm:hidden" />
+          <SelectTrigger className="w-full bg-white border-zinc-200 text-zinc-900 sm:w-[120px]">
+            <Calendar className="mr-2 h-4 w-4 text-zinc-500 sm:hidden" />
             <SelectValue placeholder="Year" />
           </SelectTrigger>
-          <SelectContent className="glass-card border-white/10">
-            <SelectItem value="all" className="text-neutral-200">
+          <SelectContent className="bg-white border-zinc-200">
+            <SelectItem value="all" className="text-zinc-700">
               All Years
             </SelectItem>
             {yearOptions.map((year) => (
-              <SelectItem key={year} value={year.toString()} className="text-neutral-200">
+              <SelectItem key={year} value={year.toString()} className="text-zinc-700">
                 {year}
               </SelectItem>
             ))}
@@ -130,26 +130,26 @@ export function ReportFilters({
 
       {/* Month filter */}
       <div className="flex-1 sm:flex-initial">
-        <label className="mb-1.5 block text-xs font-medium text-neutral-500 sm:hidden">
+        <label className="mb-1.5 block text-xs font-medium text-zinc-500 sm:hidden">
           Month
         </label>
         <Select
           value={currentFilters.month?.toString() || 'all'}
           onValueChange={handleMonthChange}
         >
-          <SelectTrigger className="w-full glass-card border-white/10 text-white sm:w-[140px]">
-            <Calendar className="mr-2 h-4 w-4 text-neutral-500 sm:hidden" />
+          <SelectTrigger className="w-full bg-white border-zinc-200 text-zinc-900 sm:w-[140px]">
+            <Calendar className="mr-2 h-4 w-4 text-zinc-500 sm:hidden" />
             <SelectValue placeholder="Month" />
           </SelectTrigger>
-          <SelectContent className="glass-card border-white/10">
-            <SelectItem value="all" className="text-neutral-200">
+          <SelectContent className="bg-white border-zinc-200">
+            <SelectItem value="all" className="text-zinc-700">
               All Months
             </SelectItem>
             {MONTHS.map((month) => (
               <SelectItem
                 key={month.value}
                 value={month.value.toString()}
-                className="text-neutral-200"
+                className="text-zinc-700"
               >
                 {month.label}
               </SelectItem>
@@ -161,23 +161,23 @@ export function ReportFilters({
       {/* User filter (managers only) */}
       {isManager && teamMembers.length > 0 && (
         <div className="flex-1 sm:flex-initial">
-          <label className="mb-1.5 block text-xs font-medium text-neutral-500 sm:hidden">
+          <label className="mb-1.5 block text-xs font-medium text-zinc-500 sm:hidden">
             Team Member
           </label>
           <Select
             value={currentFilters.userId || 'all'}
             onValueChange={handleUserChange}
           >
-            <SelectTrigger className="w-full glass-card border-white/10 text-white sm:w-[180px]">
-              <User className="mr-2 h-4 w-4 text-neutral-500 sm:hidden" />
+            <SelectTrigger className="w-full bg-white border-zinc-200 text-zinc-900 sm:w-[180px]">
+              <User className="mr-2 h-4 w-4 text-zinc-500 sm:hidden" />
               <SelectValue placeholder="Team Member" />
             </SelectTrigger>
-            <SelectContent className="glass-card border-white/10">
-              <SelectItem value="all" className="text-neutral-200">
+            <SelectContent className="bg-white border-zinc-200">
+              <SelectItem value="all" className="text-zinc-700">
                 All Team Members
               </SelectItem>
               {teamMembers.map((member) => (
-                <SelectItem key={member.id} value={member.id} className="text-neutral-200">
+                <SelectItem key={member.id} value={member.id} className="text-zinc-700">
                   {member.name}
                 </SelectItem>
               ))}
@@ -193,7 +193,7 @@ export function ReportFilters({
             variant="ghost"
             size="sm"
             onClick={handleClearFilters}
-            className="w-full gap-1.5 rounded-lg text-neutral-400 hover:bg-white/5 hover:text-white sm:w-auto"
+            className="w-full gap-1.5 rounded-lg text-zinc-500 hover:bg-zinc-100 hover:text-zinc-900 sm:w-auto"
           >
             <X className="h-3.5 w-3.5" />
             Clear
@@ -214,8 +214,8 @@ export function ReportFilters({
           className={cn(
             'gap-1.5 rounded-lg border',
             showMobileFilters || hasActiveFilters
-              ? 'border-primary-500/30 bg-primary-500/10 text-primary-300'
-              : 'border-white/5 bg-white/5 text-neutral-300'
+              ? 'border-primary-500/30 bg-primary-50 text-primary-600'
+              : 'border-zinc-200 bg-white text-zinc-700'
           )}
         >
           <Filter className="h-4 w-4" />
@@ -235,7 +235,7 @@ export function ReportFilters({
             variant="ghost"
             size="sm"
             onClick={handleClearFilters}
-            className="gap-1 rounded-lg text-neutral-400 hover:text-white"
+            className="gap-1 rounded-lg text-zinc-500 hover:text-zinc-900"
           >
             <X className="h-3.5 w-3.5" />
             Clear
@@ -252,7 +252,7 @@ export function ReportFilters({
             exit={{ opacity: 0, height: 0 }}
             className="overflow-hidden sm:hidden"
           >
-            <div className="glass-card space-y-3 p-4">
+            <div className="rounded-xl border border-zinc-200 bg-white p-4 shadow-sm space-y-3">
               <FilterDropdowns />
             </div>
           </motion.div>

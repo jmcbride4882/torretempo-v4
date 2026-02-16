@@ -1,7 +1,7 @@
 /**
  * VarianceChart Component
  * Displays scheduled vs actual hours using recharts BarChart
- * Glassmorphism styling to match Torre Tempo design
+ * Light theme styling to match Torre Tempo design
  */
 
 import { useMemo } from 'react';
@@ -43,24 +43,24 @@ function CustomTooltip({ active, payload, label }: { active?: boolean; payload?:
   const item = data.payload;
 
   return (
-    <div className="rounded-xl border border-white/10 bg-neutral-900/95 p-3 shadow-xl backdrop-blur-lg">
-      <p className="mb-2 font-medium text-white">{label}</p>
+    <div className="rounded-xl border border-zinc-200 bg-white p-3 shadow-sm">
+      <p className="mb-2 font-medium text-zinc-900">{label}</p>
       <div className="space-y-1.5 text-sm">
         <div className="flex items-center justify-between gap-4">
-          <span className="text-neutral-400">Scheduled:</span>
-          <span className="font-medium text-emerald-400">{item.scheduledHours.toFixed(1)}h</span>
+          <span className="text-zinc-500">Scheduled:</span>
+          <span className="font-medium text-emerald-600">{item.scheduledHours.toFixed(1)}h</span>
         </div>
         <div className="flex items-center justify-between gap-4">
-          <span className="text-neutral-400">Actual:</span>
-          <span className="font-medium text-amber-400">{item.actualHours.toFixed(1)}h</span>
+          <span className="text-zinc-500">Actual:</span>
+          <span className="font-medium text-amber-600">{item.actualHours.toFixed(1)}h</span>
         </div>
-        <div className="border-t border-white/10 pt-1.5">
+        <div className="border-t border-zinc-200 pt-1.5">
           <div className="flex items-center justify-between gap-4">
-            <span className="text-neutral-400">Variance:</span>
+            <span className="text-zinc-500">Variance:</span>
             <span
               className={cn(
                 'font-medium',
-                item.difference > 0 ? 'text-amber-400' : item.difference < 0 ? 'text-red-400' : 'text-neutral-400'
+                item.difference > 0 ? 'text-amber-600' : item.difference < 0 ? 'text-red-600' : 'text-zinc-500'
               )}
             >
               {item.difference > 0 ? '+' : ''}
@@ -69,7 +69,7 @@ function CustomTooltip({ active, payload, label }: { active?: boolean; payload?:
           </div>
         </div>
         {item.reason && (
-          <p className="mt-2 text-xs italic text-neutral-500">{item.reason}</p>
+          <p className="mt-2 text-xs italic text-zinc-500">{item.reason}</p>
         )}
       </div>
     </div>
@@ -91,15 +91,15 @@ function StatCard({
   className?: string;
 }) {
   return (
-    <div className={cn('rounded-xl border border-white/5 bg-white/5 p-3', className)}>
-      <div className="mb-1 flex items-center gap-1.5 text-neutral-500">
+    <div className={cn('rounded-xl border border-zinc-200 bg-zinc-50 p-3', className)}>
+      <div className="mb-1 flex items-center gap-1.5 text-zinc-500">
         <Icon className="h-3.5 w-3.5" />
         <span className="text-[10px] font-medium uppercase tracking-wider">{label}</span>
       </div>
       <p
         className={cn(
           'text-lg font-bold',
-          trend === 'up' ? 'text-amber-400' : trend === 'down' ? 'text-red-400' : 'text-white'
+          trend === 'up' ? 'text-amber-600' : trend === 'down' ? 'text-red-600' : 'text-zinc-900'
         )}
       >
         {value}
@@ -143,13 +143,13 @@ export function VarianceChart({ data, className }: VarianceChartProps) {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         className={cn(
-          'flex flex-col items-center justify-center rounded-2xl border border-dashed border-white/10 bg-white/[0.02] px-6 py-12 text-center',
+          'flex flex-col items-center justify-center rounded-2xl border border-dashed border-zinc-200 bg-zinc-50 px-6 py-12 text-center',
           className
         )}
       >
-        <Calendar className="mb-4 h-12 w-12 text-neutral-600" />
-        <h3 className="mb-1 text-lg font-semibold text-white">No Variance Data</h3>
-        <p className="text-sm text-neutral-400">
+        <Calendar className="mb-4 h-12 w-12 text-zinc-400" />
+        <h3 className="mb-1 text-lg font-semibold text-zinc-900">No Variance Data</h3>
+        <p className="text-sm text-zinc-500">
           No discrepancies found for this period.
         </p>
       </motion.div>
@@ -189,28 +189,28 @@ export function VarianceChart({ data, className }: VarianceChartProps) {
       </div>
 
       {/* Chart */}
-      <div className="rounded-2xl border border-white/10 bg-white/5 p-4 backdrop-blur-lg">
-        <h4 className="mb-4 text-sm font-medium text-neutral-300">Daily Variance</h4>
+      <div className="rounded-2xl border border-zinc-200 bg-white p-4 shadow-sm">
+        <h4 className="mb-4 text-sm font-medium text-zinc-700">Daily Variance</h4>
         <div className="h-64 w-full sm:h-80">
           <ResponsiveContainer width="100%" height="100%">
             <BarChart data={chartData} margin={{ top: 10, right: 10, left: -10, bottom: 0 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
+              <CartesianGrid strokeDasharray="3 3" stroke="rgba(0,0,0,0.06)" />
               <XAxis
                 dataKey="date"
-                tick={{ fill: '#a1a1aa', fontSize: 11 }}
-                tickLine={{ stroke: 'rgba(255,255,255,0.1)' }}
-                axisLine={{ stroke: 'rgba(255,255,255,0.1)' }}
+                tick={{ fill: '#71717a', fontSize: 11 }}
+                tickLine={{ stroke: 'rgba(0,0,0,0.1)' }}
+                axisLine={{ stroke: 'rgba(0,0,0,0.1)' }}
               />
               <YAxis
-                tick={{ fill: '#a1a1aa', fontSize: 11 }}
-                tickLine={{ stroke: 'rgba(255,255,255,0.1)' }}
-                axisLine={{ stroke: 'rgba(255,255,255,0.1)' }}
+                tick={{ fill: '#71717a', fontSize: 11 }}
+                tickLine={{ stroke: 'rgba(0,0,0,0.1)' }}
+                axisLine={{ stroke: 'rgba(0,0,0,0.1)' }}
                 tickFormatter={(value) => `${value}h`}
               />
-              <Tooltip content={<CustomTooltip />} cursor={{ fill: 'rgba(255,255,255,0.05)' }} />
+              <Tooltip content={<CustomTooltip />} cursor={{ fill: 'rgba(0,0,0,0.04)' }} />
               <Legend
                 wrapperStyle={{ paddingTop: '16px' }}
-                formatter={(value: string) => <span className="text-sm text-neutral-400">{value}</span>}
+                formatter={(value: string) => <span className="text-sm text-zinc-500">{value}</span>}
               />
               <Bar
                 dataKey="scheduledHours"
@@ -239,7 +239,7 @@ export function VarianceChart({ data, className }: VarianceChartProps) {
       </div>
 
       {/* Variance days note */}
-      <p className="text-center text-xs text-neutral-500">
+      <p className="text-center text-xs text-zinc-500">
         {stats.daysWithVariance} of {stats.totalDays} days had variance between scheduled and actual hours
       </p>
     </motion.div>

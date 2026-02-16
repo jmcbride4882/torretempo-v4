@@ -8,6 +8,7 @@ import { logTimeEntryAudit } from '../../services/audit.service.js';
 import { ComplianceValidator } from '../../services/compliance-validator.js';
 
 import type { TimeEntry, ValidationContext } from '../../services/compliance-validator.js';
+import logger from '../../lib/logger.js';
 
 const router = Router();
 
@@ -167,7 +168,7 @@ async function handleCreateCorrectionRequest(req: Request, res: Response) {
       correction: correctionRequest,
     });
   } catch (error) {
-    console.error('Error creating correction request:', error);
+    logger.error('Error creating correction request:', error);
     res.status(500).json({ message: 'Internal server error' });
   }
 }
@@ -209,7 +210,7 @@ async function handleListCorrectionRequests(req: Request, res: Response) {
       count: corrections.length,
     });
   } catch (error) {
-    console.error('Error listing correction requests:', error);
+    logger.error('Error listing correction requests:', error);
     res.status(500).json({ message: 'Internal server error' });
   }
 }
@@ -394,7 +395,7 @@ async function handleApproveCorrectionRequest(req: Request, res: Response) {
         .map((v) => v.message),
     });
   } catch (error) {
-    console.error('Error approving correction request:', error);
+    logger.error('Error approving correction request:', error);
     res.status(500).json({ message: 'Internal server error' });
   }
 }
@@ -469,7 +470,7 @@ async function handleRejectCorrectionRequest(req: Request, res: Response) {
 
     res.json({ message: 'Correction request rejected' });
   } catch (error) {
-    console.error('Error rejecting correction request:', error);
+    logger.error('Error rejecting correction request:', error);
     res.status(500).json({ message: 'Internal server error' });
   }
 }

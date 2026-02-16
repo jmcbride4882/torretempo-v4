@@ -41,9 +41,9 @@ const ROLE_LABELS = {
 };
 
 const ROLE_COLORS = {
-  owner: 'bg-amber-500/20 text-amber-400 border-amber-500/30',
-  admin: 'bg-blue-500/20 text-blue-400 border-blue-500/30',
-  member: 'bg-zinc-500/20 text-zinc-400 border-zinc-500/30',
+  owner: 'bg-amber-50 text-amber-700 border-amber-200',
+  admin: 'bg-blue-50 text-blue-700 border-blue-200',
+  member: 'bg-zinc-50 text-zinc-600 border-zinc-200',
 };
 
 export function TeamManager({ organizationSlug }: TeamManagerProps) {
@@ -85,8 +85,8 @@ export function TeamManager({ organizationSlug }: TeamManagerProps) {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center py-12">
-        <Loader2 className="h-6 w-6 animate-spin text-neutral-400" />
-        <span className="ml-2 text-sm text-neutral-400">Loading team members...</span>
+        <Loader2 className="h-6 w-6 animate-spin text-zinc-400" />
+        <span className="ml-2 text-sm text-zinc-400">Loading team members...</span>
       </div>
     );
   }
@@ -96,8 +96,8 @@ export function TeamManager({ organizationSlug }: TeamManagerProps) {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h3 className="text-lg font-semibold text-neutral-200">Team Members</h3>
-          <p className="text-sm text-neutral-400">
+          <h3 className="text-lg font-semibold text-zinc-900">Team Members</h3>
+          <p className="text-sm text-zinc-500">
             {members.length} {members.length === 1 ? 'member' : 'members'} in your organization
           </p>
         </div>
@@ -112,12 +112,12 @@ export function TeamManager({ organizationSlug }: TeamManagerProps) {
 
       {/* Members List */}
       {members.length === 0 ? (
-        <div className="rounded-xl border border-zinc-800 bg-zinc-900/50 p-12 text-center backdrop-blur-sm">
-          <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-zinc-800/50">
-            <Users className="h-8 w-8 text-neutral-400" />
+        <div className="rounded-xl border border-zinc-200 bg-zinc-50 p-12 text-center">
+          <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-zinc-100">
+            <Users className="h-8 w-8 text-zinc-400" />
           </div>
-          <h3 className="mb-2 text-lg font-semibold text-neutral-200">No team members yet</h3>
-          <p className="text-sm text-neutral-400">
+          <h3 className="mb-2 text-lg font-semibold text-zinc-900">No team members yet</h3>
+          <p className="text-sm text-zinc-500">
             Team members will appear here once they're added to your organization
           </p>
         </div>
@@ -135,8 +135,8 @@ export function TeamManager({ organizationSlug }: TeamManagerProps) {
                   exit={{ opacity: 0, scale: 0.95 }}
                   transition={{ delay: index * 0.05 }}
                   className={cn(
-                    'group relative overflow-hidden rounded-xl border bg-zinc-900/50 p-4 backdrop-blur-sm transition-all hover:bg-zinc-900/80',
-                    'border-zinc-800 hover:border-zinc-700'
+                    'group relative overflow-hidden rounded-xl border bg-white p-4 transition-all hover:bg-zinc-50',
+                    'border-zinc-200 hover:border-zinc-300'
                   )}
                 >
                   <div className="flex items-center gap-4">
@@ -149,18 +149,18 @@ export function TeamManager({ organizationSlug }: TeamManagerProps) {
                           className="h-full w-full rounded-full object-cover"
                         />
                       ) : (
-                        <div className="flex h-full w-full items-center justify-center rounded-full bg-zinc-800 text-lg font-semibold text-neutral-300">
+                        <div className="flex h-full w-full items-center justify-center rounded-full bg-zinc-100 text-lg font-semibold text-zinc-600">
                           {member.user?.name?.[0]?.toUpperCase() || member.user?.email?.[0]?.toUpperCase() || 'U'}
                         </div>
                       )}
                       
                       {/* Role badge overlay */}
-                      <div className="absolute -bottom-1 -right-1 rounded-full bg-zinc-900 p-1">
+                      <div className="absolute -bottom-1 -right-1 rounded-full bg-white p-1">
                         <RoleIcon className={cn(
                           'h-4 w-4',
-                          member.role === 'owner' && 'text-amber-400',
-                          member.role === 'admin' && 'text-blue-400',
-                          member.role === 'member' && 'text-zinc-400'
+                          member.role === 'owner' && 'text-amber-500',
+                          member.role === 'admin' && 'text-blue-500',
+                          member.role === 'member' && 'text-zinc-500'
                         )} />
                       </div>
                     </div>
@@ -168,7 +168,7 @@ export function TeamManager({ organizationSlug }: TeamManagerProps) {
                     {/* Member Info */}
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2">
-                        <h4 className="font-semibold text-neutral-200 truncate">
+                        <h4 className="font-semibold text-zinc-900 truncate">
                           {member.user?.name || 'Unknown User'}
                         </h4>
                         <Badge 
@@ -178,10 +178,10 @@ export function TeamManager({ organizationSlug }: TeamManagerProps) {
                           {ROLE_LABELS[member.role]}
                         </Badge>
                       </div>
-                      <p className="text-sm text-neutral-400 truncate">
+                      <p className="text-sm text-zinc-500 truncate">
                         {member.user?.email || 'No email'}
                       </p>
-                      <p className="text-xs text-neutral-500 mt-1">
+                      <p className="text-xs text-zinc-400 mt-1">
                         Joined {new Date(member.createdAt).toLocaleDateString()}
                       </p>
                     </div>
@@ -194,11 +194,11 @@ export function TeamManager({ organizationSlug }: TeamManagerProps) {
       )}
 
       {/* Info note */}
-      <div className="flex items-start gap-3 rounded-lg border border-blue-500/20 bg-blue-500/10 p-4">
-        <AlertCircle className="h-5 w-5 shrink-0 text-blue-400 mt-0.5" />
-        <div className="text-sm text-blue-300">
+      <div className="flex items-start gap-3 rounded-lg border border-blue-200 bg-blue-50 p-4">
+        <AlertCircle className="h-5 w-5 shrink-0 text-blue-500 mt-0.5" />
+        <div className="text-sm text-blue-700">
           <p className="font-medium mb-1">Invite team members via email</p>
-          <p className="text-blue-300/80">
+          <p className="text-blue-600">
             Click "Invite Member" to send an invitation email. New members will receive a link to join your organization.
           </p>
         </div>

@@ -228,12 +228,10 @@ export function ClockInSheet({ isOpen, onClose, organizationSlug, shiftId }: Clo
 
     const clockInData = {
       linked_shift_id: shiftId,
-      clock_in_location: {
-        lat: position.coords.latitude,
-        lng: position.coords.longitude,
-        accuracy: position.coords.accuracy,
-      },
-      clock_in_method: selectedMethod,
+      latitude: position.coords.latitude,
+      longitude: position.coords.longitude,
+      accuracy: position.coords.accuracy,
+      method: selectedMethod,
       notes: notes.trim() || undefined,
     };
 

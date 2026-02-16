@@ -5,6 +5,7 @@ import { db } from '../../db/index.js';
 import { leave_requests, employee_profiles, member, user } from '../../db/schema.js';
 import { requireRole } from '../../middleware/requireRole.js';
 import { logAudit } from '../../services/audit.service.js';
+import logger from '../../lib/logger.js';
 
 // Valid enum values
 const VALID_LEAVE_TYPES = ['vacation', 'sick', 'personal', 'unpaid'] as const;
@@ -224,7 +225,7 @@ router.get('/', async (req: Request, res: Response) => {
 
     res.json({ leave_requests: requests, count: requests.length });
   } catch (error) {
-    console.error('Error fetching leave requests:', error);
+    logger.error('Error fetching leave requests:', error);
     res.status(500).json({ message: 'Failed to fetch leave requests' });
   }
 });
@@ -286,7 +287,7 @@ router.get('/:id', async (req: Request, res: Response) => {
 
     res.json({ leave_request: leaveRequest });
   } catch (error) {
-    console.error('Error fetching leave request:', error);
+    logger.error('Error fetching leave request:', error);
     res.status(500).json({ message: 'Failed to fetch leave request' });
   }
 });
@@ -375,7 +376,7 @@ router.post('/', async (req: Request, res: Response) => {
 
     res.status(201).json({ leave_request: newRequest[0] });
   } catch (error) {
-    console.error('Error creating leave request:', error);
+    logger.error('Error creating leave request:', error);
     res.status(500).json({ message: 'Failed to create leave request' });
   }
 });
@@ -529,7 +530,7 @@ router.patch('/:id/approve', requireRole(['manager', 'tenantAdmin', 'owner']), a
       updated_balance: updatedBalance,
     });
   } catch (error) {
-    console.error('Error approving leave request:', error);
+    logger.error('Error approving leave request:', error);
     res.status(500).json({ message: 'Failed to approve leave request' });
   }
 });
@@ -609,7 +610,7 @@ router.patch('/:id/reject', requireRole(['manager', 'tenantAdmin', 'owner']), as
       leave_request: updatedRequest[0],
     });
   } catch (error) {
-    console.error('Error rejecting leave request:', error);
+    logger.error('Error rejecting leave request:', error);
     res.status(500).json({ message: 'Failed to reject leave request' });
   }
 });
@@ -682,7 +683,7 @@ router.delete('/:id', async (req: Request, res: Response) => {
 
     res.status(204).send();
   } catch (error) {
-    console.error('Error cancelling leave request:', error);
+    logger.error('Error cancelling leave request:', error);
     res.status(500).json({ message: 'Failed to cancel leave request' });
   }
 });

@@ -3,6 +3,7 @@ import { requireAdmin } from '../../middleware/requireAdmin.js';
 import { logAdminAction } from '../../services/adminAudit.service.js';
 import * as fs from 'fs/promises';
 import * as path from 'path';
+import logger from '../../lib/logger.js';
 
 /**
  * Admin Settings Routes
@@ -105,7 +106,7 @@ router.get('/', requireAdmin, async (_req: Request, res: Response) => {
 
     res.json({ settings });
   } catch (error) {
-    console.error('Error fetching settings:', error);
+    logger.error('Error fetching settings:', error);
     res.status(500).json({ message: 'Internal server error' });
   }
 });
@@ -123,8 +124,8 @@ router.get('/', requireAdmin, async (_req: Request, res: Response) => {
  */
 router.put('/', requireAdmin, async (req: Request, res: Response) => {
   try {
-    const user = (req as any).user;
-    if (!user?.id) {
+    const actor = req.user;
+    if (!actor?.id) {
       return res.status(401).json({ message: 'Unauthorized' });
     }
 
@@ -302,12 +303,12 @@ router.put('/', requireAdmin, async (req: Request, res: Response) => {
 
     // Log audit entry
     await logAdminAction({
-      adminId: user.id,
+      adminId: actor.id,
       action: 'settings.update',
       targetType: 'system',
       details: {
         changedKeys,
-        admin_email: user.email,
+        admin_email: actor.email,
       },
       ip: (req.headers['x-forwarded-for'] as string)?.split(',')[0] || req.socket.remoteAddress || '',
     });
@@ -318,7 +319,7 @@ router.put('/', requireAdmin, async (req: Request, res: Response) => {
       requiresRestart: true,
     });
   } catch (error) {
-    console.error('Error updating settings:', error);
+    logger.error('Error updating settings:', error);
     res.status(500).json({ message: 'Internal server error' });
   }
 });
@@ -332,18 +333,18 @@ router.put('/', requireAdmin, async (req: Request, res: Response) => {
  */
 router.post('/restart', requireAdmin, async (req: Request, res: Response) => {
   try {
-    const user = (req as any).user;
-    if (!user?.id) {
+    const actor = req.user;
+    if (!actor?.id) {
       return res.status(401).json({ message: 'Unauthorized' });
     }
 
     // Log audit entry
     await logAdminAction({
-      adminId: user.id,
+      adminId: actor.id,
       action: 'system.restart',
       targetType: 'system',
       details: {
-        admin_email: user.email,
+        admin_email: actor.email,
       },
       ip: (req.headers['x-forwarded-for'] as string)?.split(',')[0] || req.socket.remoteAddress || '',
     });
@@ -356,7 +357,7 @@ router.post('/restart', requireAdmin, async (req: Request, res: Response) => {
       process.exit(0);
     }, 500);
   } catch (error) {
-    console.error('Error restarting server:', error);
+    logger.error('Error restarting server:', error);
     res.status(500).json({ message: 'Internal server error' });
   }
 });

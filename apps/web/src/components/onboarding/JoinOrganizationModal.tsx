@@ -83,15 +83,15 @@ export function JoinOrganizationModal({ open, onOpenChange, onSuccess }: JoinOrg
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent className="border-white/10 bg-neutral-900/95 backdrop-blur-xl sm:max-w-md">
+      <DialogContent className="border-zinc-200 bg-white sm:max-w-md">
         {/* Decorative elements */}
-        <div className="pointer-events-none absolute -top-32 left-1/2 h-64 w-64 -translate-x-1/2 rounded-full bg-primary-600/20 blur-[100px]" />
+        <div className="pointer-events-none absolute -top-32 left-1/2 h-64 w-64 -translate-x-1/2 rounded-full bg-primary-100 blur-[100px]" />
         
         <DialogHeader className="relative">
           <motion.div
             initial={{ scale: 0.8, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
-            className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-primary-500/20 to-primary-600/10 ring-1 ring-white/10"
+            className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-primary-50 to-primary-100 ring-1 ring-primary-200"
           >
             <AnimatePresence mode="wait">
               {state === 'success' ? (
@@ -102,7 +102,7 @@ export function JoinOrganizationModal({ open, onOpenChange, onSuccess }: JoinOrg
                   exit={{ scale: 0 }}
                   transition={{ type: 'spring', stiffness: 200 }}
                 >
-                  <CheckCircle2 className="h-8 w-8 text-emerald-400" />
+                  <CheckCircle2 className="h-8 w-8 text-emerald-500" />
                 </motion.div>
               ) : state === 'error' ? (
                 <motion.div
@@ -111,7 +111,7 @@ export function JoinOrganizationModal({ open, onOpenChange, onSuccess }: JoinOrg
                   animate={{ scale: 1 }}
                   exit={{ scale: 0 }}
                 >
-                  <XCircle className="h-8 w-8 text-red-400" />
+                  <XCircle className="h-8 w-8 text-red-500" />
                 </motion.div>
               ) : (
                 <motion.div
@@ -120,16 +120,16 @@ export function JoinOrganizationModal({ open, onOpenChange, onSuccess }: JoinOrg
                   animate={{ scale: 1 }}
                   exit={{ scale: 0 }}
                 >
-                  <Ticket className="h-8 w-8 text-primary-400" />
+                  <Ticket className="h-8 w-8 text-primary-500" />
                 </motion.div>
               )}
             </AnimatePresence>
           </motion.div>
           
-          <DialogTitle className="text-center text-xl text-white">
+          <DialogTitle className="text-center text-xl text-zinc-900">
             {state === 'success' ? 'Welcome aboard!' : 'Join an Organization'}
           </DialogTitle>
-          <DialogDescription className="text-center text-neutral-400">
+          <DialogDescription className="text-center text-zinc-500">
             {state === 'success' 
               ? 'You have successfully joined the organization.'
               : 'Enter the invitation code you received to join an existing organization.'
@@ -150,7 +150,7 @@ export function JoinOrganizationModal({ open, onOpenChange, onSuccess }: JoinOrg
                 initial={{ scale: 0 }}
                 animate={{ scale: 1 }}
                 transition={{ delay: 0.2, type: 'spring' }}
-                className="inline-flex items-center gap-2 rounded-full bg-emerald-500/10 px-4 py-2 text-emerald-400 ring-1 ring-emerald-500/30"
+                className="inline-flex items-center gap-2 rounded-full bg-emerald-50 px-4 py-2 text-emerald-600 ring-1 ring-emerald-200"
               >
                 <CheckCircle2 className="h-4 w-4" />
                 Redirecting to your workspace...
@@ -166,11 +166,11 @@ export function JoinOrganizationModal({ open, onOpenChange, onSuccess }: JoinOrg
               className="relative space-y-6 py-4"
             >
               <div className="space-y-2">
-                <Label htmlFor="invitation-code" className="text-neutral-300">
+                <Label htmlFor="invitation-code" className="text-zinc-700">
                   Invitation Code
                 </Label>
                 <div className="relative">
-                  <Mail className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-neutral-500" />
+                  <Mail className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-400" />
                   <Input
                     id="invitation-code"
                     type="text"
@@ -194,7 +194,7 @@ export function JoinOrganizationModal({ open, onOpenChange, onSuccess }: JoinOrg
                       initial={{ opacity: 0, y: -10, height: 0 }}
                       animate={{ opacity: 1, y: 0, height: 'auto' }}
                       exit={{ opacity: 0, y: -10, height: 0 }}
-                      className="flex items-center gap-2 text-sm text-red-400"
+                      className="flex items-center gap-2 text-sm text-red-500"
                     >
                       <XCircle className="h-3.5 w-3.5" />
                       {errorMessage}
@@ -202,7 +202,7 @@ export function JoinOrganizationModal({ open, onOpenChange, onSuccess }: JoinOrg
                   )}
                 </AnimatePresence>
                 
-                <p className="text-xs text-neutral-500">
+                <p className="text-xs text-zinc-400">
                   Your organization admin would have sent you an invitation code via email.
                 </p>
               </div>
@@ -213,7 +213,7 @@ export function JoinOrganizationModal({ open, onOpenChange, onSuccess }: JoinOrg
                   variant="outline"
                   onClick={handleClose}
                   disabled={state === 'loading'}
-                  className="flex-1 border-white/10 bg-white/5 hover:bg-white/10"
+                  className="flex-1 border-zinc-200 bg-zinc-50 hover:bg-zinc-100"
                 >
                   Cancel
                 </Button>

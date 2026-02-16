@@ -6,9 +6,10 @@ import { organization, member, invitation, subscription_details, user } from '..
 import { requireAdmin } from '../../middleware/requireAdmin.js';
 import { logAdminAction } from '../../services/adminAudit.service.js';
 
-import type { 
+import type {
   TenantDetailResponse
 } from '../../types/admin-types.js';
+import logger from '../../lib/logger.js';
 
 /**
  * Admin Tenants Routes
@@ -190,7 +191,7 @@ router.get(
 
       res.json(response);
     } catch (error) {
-      console.error('Error fetching tenants:', error);
+      logger.error('Error fetching tenants:', error);
       res.status(500).json({
         error: 'Failed to fetch tenants',
         details: error instanceof Error ? error.message : 'Unknown error',
@@ -325,7 +326,7 @@ router.get(
 
       res.send(csvContent);
     } catch (error) {
-      console.error('Error exporting tenants:', error);
+      logger.error('Error exporting tenants:', error);
       res.status(500).json({
         error: 'Failed to export tenants',
         details: error instanceof Error ? error.message : 'Unknown error',
@@ -430,7 +431,7 @@ router.get(
 
       res.json(response);
     } catch (error) {
-      console.error('Error fetching tenant details:', error);
+      logger.error('Error fetching tenant details:', error);
       res.status(500).json({
         error: 'Failed to fetch tenant details',
         details: error instanceof Error ? error.message : 'Unknown error',
@@ -572,7 +573,7 @@ router.patch(
         },
       });
     } catch (error) {
-      console.error('Error updating tenant:', error);
+      logger.error('Error updating tenant:', error);
       res.status(500).json({
         error: 'Failed to update tenant',
         details: error instanceof Error ? error.message : 'Unknown error',
@@ -674,7 +675,7 @@ router.post(
         },
       });
     } catch (error) {
-      console.error('Error suspending tenant:', error);
+      logger.error('Error suspending tenant:', error);
       res.status(500).json({
         error: 'Failed to suspend tenant',
         details: error instanceof Error ? error.message : 'Unknown error',
@@ -769,7 +770,7 @@ router.post(
         },
       });
     } catch (error) {
-      console.error('Error unsuspending tenant:', error);
+      logger.error('Error unsuspending tenant:', error);
       res.status(500).json({
         error: 'Failed to unsuspend tenant',
         details: error instanceof Error ? error.message : 'Unknown error',
@@ -892,7 +893,7 @@ router.delete(
          },
        });
      } catch (error) {
-       console.error('Error deleting tenant:', error);
+       logger.error('Error deleting tenant:', error);
        res.status(500).json({
          error: 'Failed to delete tenant',
          details: error instanceof Error ? error.message : 'Unknown error',
@@ -1008,7 +1009,7 @@ router.post(
          errors,
        });
      } catch (error) {
-       console.error('Error in bulk delete tenants:', error);
+       logger.error('Error in bulk delete tenants:', error);
        res.status(500).json({
          error: 'Failed to process bulk delete',
          details: error instanceof Error ? error.message : 'Unknown error',

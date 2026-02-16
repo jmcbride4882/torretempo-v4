@@ -1,6 +1,7 @@
 import { Router, Request, Response } from 'express';
 import { verifyAuditChain } from '../../services/audit.service.js';
 import { requireRole } from '../../middleware/requireRole.js';
+import logger from '../../lib/logger.js';
 
 const router = Router();
 
@@ -36,7 +37,7 @@ router.get(
 
       res.json(result);
     } catch (error) {
-      console.error('Audit verification failed:', error);
+      logger.error('Audit verification failed:', error);
       
       // Check if error is about target entry not found
       if (error instanceof Error && error.message.includes('not found in audit chain')) {

@@ -25,11 +25,13 @@ export interface Notification {
 }
 
 export interface NotificationsResponse {
-  notifications?: Notification[];
-  data?: Notification[];
-  total?: number;
-  hasMore?: boolean;
-  pagination?: { total: number; totalPages: number };
+  data: Notification[];
+  pagination: {
+    page: number;
+    limit: number;
+    total: number;
+    totalPages: number;
+  };
 }
 
 export interface UnreadCountResponse {
@@ -42,21 +44,25 @@ export interface UnreadCountResponse {
 export async function fetchNotifications(
   orgSlug: string,
   options?: {
-    read?: boolean;
+    status?: 'unread';
+    type?: string;
     limit?: number;
-    offset?: number;
+    page?: number;
   }
 ): Promise<NotificationsResponse> {
   const params = new URLSearchParams();
-  
-  if (options?.read !== undefined) {
-    params.set('read', String(options.read));
+
+  if (options?.status) {
+    params.set('status', options.status);
+  }
+  if (options?.type) {
+    params.set('type', options.type);
   }
   if (options?.limit) {
     params.set('limit', String(options.limit));
   }
-  if (options?.offset) {
-    params.set('offset', String(options.offset));
+  if (options?.page) {
+    params.set('page', String(options.page));
   }
 
   const response = await fetch(
@@ -126,9 +132,9 @@ export async function markAsRead(
  */
 export async function markAllAsRead(orgSlug: string): Promise<void> {
   const response = await fetch(
-    `${API_URL}/api/v1/org/${orgSlug}/notifications/mark-all-read`,
+    `${API_URL}/api/v1/org/${orgSlug}/notifications/read-all`,
     {
-      method: 'POST',
+      method: 'PATCH',
       credentials: 'include',
       headers: {
         'Content-Type': 'application/json',

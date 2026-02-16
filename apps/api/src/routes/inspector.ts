@@ -22,6 +22,7 @@ import {
   user,
   locations,
 } from '../db/schema.js';
+import logger from '../lib/logger.js';
 import { inspectorAuth } from '../middleware/inspectorAuth.js';
 
 const router = Router();
@@ -104,7 +105,7 @@ router.get('/time-entries', async (req: Request, res: Response) => {
       offset,
     });
   } catch (error) {
-    console.error('Inspector API - Error fetching time entries:', error);
+    logger.error('Inspector API - Error fetching time entries:', error);
     res.status(500).json({ error: 'Failed to fetch time entries' });
   }
 });
@@ -184,7 +185,7 @@ router.get('/shifts', async (req: Request, res: Response) => {
       offset,
     });
   } catch (error) {
-    console.error('Inspector API - Error fetching shifts:', error);
+    logger.error('Inspector API - Error fetching shifts:', error);
     res.status(500).json({ error: 'Failed to fetch shifts' });
   }
 });
@@ -267,7 +268,7 @@ router.get('/audit-log', async (req: Request, res: Response) => {
       offset,
     });
   } catch (error) {
-    console.error('Inspector API - Error fetching audit log:', error);
+    logger.error('Inspector API - Error fetching audit log:', error);
     res.status(500).json({ error: 'Failed to fetch audit log' });
   }
 });
@@ -337,7 +338,7 @@ router.get('/monthly-summaries', async (req: Request, res: Response) => {
       offset,
     });
   } catch (error) {
-    console.error('Inspector API - Error fetching monthly summaries:', error);
+    logger.error('Inspector API - Error fetching monthly summaries:', error);
     res.status(500).json({ error: 'Failed to fetch monthly summaries' });
   }
 });
@@ -407,7 +408,7 @@ router.get('/break-entries', async (req: Request, res: Response) => {
       offset,
     });
   } catch (error) {
-    console.error('Inspector API - Error fetching break entries:', error);
+    logger.error('Inspector API - Error fetching break entries:', error);
     res.status(500).json({ error: 'Failed to fetch break entries' });
   }
 });
@@ -475,7 +476,7 @@ router.get('/correction-requests', async (req: Request, res: Response) => {
       offset,
     });
   } catch (error) {
-    console.error('Inspector API - Error fetching correction requests:', error);
+    logger.error('Inspector API - Error fetching correction requests:', error);
     res.status(500).json({ error: 'Failed to fetch correction requests' });
   }
 });
@@ -527,7 +528,7 @@ router.get('/members', async (req: Request, res: Response) => {
       offset,
     });
   } catch (error) {
-    console.error('Inspector API - Error fetching members:', error);
+    logger.error('Inspector API - Error fetching members:', error);
     res.status(500).json({ error: 'Failed to fetch members' });
   }
 });
@@ -571,7 +572,7 @@ router.get('/locations', async (req: Request, res: Response) => {
       offset,
     });
   } catch (error) {
-    console.error('Inspector API - Error fetching locations:', error);
+    logger.error('Inspector API - Error fetching locations:', error);
     res.status(500).json({ error: 'Failed to fetch locations' });
   }
 });

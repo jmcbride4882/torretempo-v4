@@ -22,42 +22,42 @@ const statusConfig: Record<ShiftStatus, {
 }> = {
   draft: {
     icon: FileEdit,
-    bg: 'bg-amber-500/10',
-    text: 'text-amber-300',
-    border: 'border-amber-500/20',
-    glow: 'shadow-amber-500/5',
+    bg: 'bg-amber-50',
+    text: 'text-amber-700',
+    border: 'border-amber-200',
+    glow: '',
     label: 'Draft',
   },
   published: {
     icon: AlertCircle,
-    bg: 'bg-sky-500/10',
-    text: 'text-sky-300',
-    border: 'border-sky-500/20',
-    glow: 'shadow-sky-500/5',
+    bg: 'bg-sky-50',
+    text: 'text-sky-700',
+    border: 'border-sky-200',
+    glow: '',
     label: 'Published',
   },
   acknowledged: {
     icon: CheckCircle2,
-    bg: 'bg-emerald-500/10',
-    text: 'text-emerald-300',
-    border: 'border-emerald-500/20',
-    glow: 'shadow-emerald-500/5',
+    bg: 'bg-emerald-50',
+    text: 'text-emerald-700',
+    border: 'border-emerald-200',
+    glow: '',
     label: 'Confirmed',
   },
   completed: {
     icon: CheckCircle2,
-    bg: 'bg-violet-500/10',
-    text: 'text-violet-300',
-    border: 'border-violet-500/20',
-    glow: 'shadow-violet-500/5',
+    bg: 'bg-violet-50',
+    text: 'text-violet-700',
+    border: 'border-violet-200',
+    glow: '',
     label: 'Completed',
   },
   cancelled: {
     icon: AlertCircle,
-    bg: 'bg-red-500/10',
-    text: 'text-red-300',
-    border: 'border-red-500/20',
-    glow: 'shadow-red-500/5',
+    bg: 'bg-red-50',
+    text: 'text-red-700',
+    border: 'border-red-200',
+    glow: '',
     label: 'Cancelled',
   },
 };
@@ -103,8 +103,8 @@ export function ShiftCard({ shift, style, onClick, compact = false }: ShiftCardP
       style={style}
       onClick={onClick}
       className={cn(
-        'group relative cursor-pointer overflow-hidden rounded-lg border backdrop-blur-sm transition-all duration-200',
-        'hover:shadow-lg hover:shadow-black/20',
+        'group relative cursor-pointer overflow-hidden rounded-lg border transition-all duration-200',
+        'hover:shadow-md',
         hasErrors 
           ? 'border-red-500 bg-red-500/10 shadow-red-500/20' 
           : hasViolations 
@@ -143,11 +143,11 @@ export function ShiftCard({ shift, style, onClick, compact = false }: ShiftCardP
           <>
             {/* Duration badge */}
             <div className="mt-1.5 flex items-center gap-2">
-              <span className="rounded-md bg-white/5 px-1.5 py-0.5 text-[10px] font-medium text-neutral-400">
+              <span className="rounded-md bg-zinc-100 px-1.5 py-0.5 text-[10px] font-medium text-zinc-500">
                 {calculateDuration(shift.start_time, shift.end_time)}
               </span>
               {shift.break_minutes && shift.break_minutes > 0 && (
-                <span className="text-[10px] text-neutral-500">
+                <span className="text-[10px] text-zinc-400">
                   +{shift.break_minutes}m break
                 </span>
               )}
@@ -155,7 +155,7 @@ export function ShiftCard({ shift, style, onClick, compact = false }: ShiftCardP
             
             {/* Location */}
             {shift.location && (
-              <div className="mt-2 flex items-center gap-1.5 text-neutral-400">
+              <div className="mt-2 flex items-center gap-1.5 text-zinc-500">
                 <MapPin className="h-3 w-3" />
                 <span className="truncate text-xs">{shift.location.name}</span>
               </div>
@@ -163,11 +163,11 @@ export function ShiftCard({ shift, style, onClick, compact = false }: ShiftCardP
             
             {/* Assigned user or Open shift */}
             <div className="mt-1.5 flex items-center gap-1.5">
-              <User className="h-3 w-3 text-neutral-500" />
+              <User className="h-3 w-3 text-zinc-400" />
               {shift.user ? (
-                <span className="truncate text-xs text-neutral-300">{shift.user.name}</span>
+                <span className="truncate text-xs text-zinc-600">{shift.user.name}</span>
               ) : (
-                <span className="text-xs italic text-neutral-500">Open shift</span>
+                <span className="text-xs italic text-zinc-400">Open shift</span>
               )}
             </div>
             
@@ -197,7 +197,7 @@ export function ShiftCard({ shift, style, onClick, compact = false }: ShiftCardP
         )}
         
         {compact && shift.user && (
-          <div className="mt-0.5 truncate text-[10px] text-neutral-400">
+          <div className="mt-0.5 truncate text-[10px] text-zinc-500">
             {shift.user.name}
           </div>
         )}
@@ -215,7 +215,7 @@ export function ShiftCard({ shift, style, onClick, compact = false }: ShiftCardP
         )}
       >
         {shift.notes && (
-          <p className="line-clamp-2 text-[10px] italic text-neutral-300">
+          <p className="line-clamp-2 text-[10px] italic text-zinc-500">
             "{shift.notes}"
           </p>
         )}
@@ -233,14 +233,14 @@ export function ShiftCard({ shift, style, onClick, compact = false }: ShiftCardP
           </TooltipTrigger>
           <TooltipContent side="top" className="max-w-xs">
             <div className="space-y-1.5">
-              <p className="font-semibold text-white">Compliance Issues:</p>
+              <p className="font-semibold text-zinc-900">Compliance Issues:</p>
               {shift.compliance_warnings!.map((violation, idx) => (
                 <div key={idx} className="flex items-start gap-2">
                   <AlertTriangle className={cn(
                     'h-3 w-3 shrink-0 mt-0.5',
                     violation.severity === 'error' ? 'text-red-400' : 'text-amber-400'
                   )} />
-                  <p className="text-xs text-neutral-300">{violation.message}</p>
+                  <p className="text-xs text-zinc-600">{violation.message}</p>
                 </div>
               ))}
             </div>

@@ -4,6 +4,7 @@ import { db } from '../../db/index.js';
 import { feature_flags } from '../../db/schema.js';
 import { requireAdmin } from '../../middleware/requireAdmin.js';
 import { logAdminAction } from '../../services/adminAudit.service.js';
+import logger from '../../lib/logger.js';
 
 /**
  * Admin Feature Flags Routes
@@ -22,7 +23,7 @@ router.get('/', requireAdmin, async (_req: Request, res: Response) => {
 
     res.json({ flags });
   } catch (error) {
-    console.error('Error fetching feature flags:', error);
+    logger.error('Error fetching feature flags:', error);
     res.status(500).json({ error: 'Failed to fetch feature flags' });
   }
 });
@@ -63,7 +64,7 @@ router.post('/', requireAdmin, async (req: Request, res: Response) => {
 
     res.status(201).json({ flag: created[0] });
   } catch (error) {
-    console.error('Error creating feature flag:', error);
+    logger.error('Error creating feature flag:', error);
     res.status(500).json({ error: 'Failed to create feature flag' });
   }
 });
@@ -112,7 +113,7 @@ router.patch('/:id', requireAdmin, async (req: Request, res: Response) => {
 
     res.json({ flag: updated[0] });
   } catch (error) {
-    console.error('Error updating feature flag:', error);
+    logger.error('Error updating feature flag:', error);
     res.status(500).json({ error: 'Failed to update feature flag' });
   }
 });
@@ -150,7 +151,7 @@ router.delete('/:id', requireAdmin, async (req: Request, res: Response) => {
 
     res.json({ message: 'Feature flag deleted successfully' });
   } catch (error) {
-    console.error('Error deleting feature flag:', error);
+    logger.error('Error deleting feature flag:', error);
     res.status(500).json({ error: 'Failed to delete feature flag' });
   }
 });

@@ -33,19 +33,6 @@ export interface TrialExtension {
   newTrialEndsAt: Date;
 }
 
-export interface TrialGracePeriod {
-  organizationId: string;
-  email: string;
-  trialEndedAt: Date;
-  gracePeriodEndsAt: Date;
-}
-
-export interface TrialExtension {
-  organizationId: string;
-  daysAdded: number;
-  newTrialEndsAt: Date;
-}
-
 /**
  * Check for trial expirations and send notifications
  * Run this daily via scheduled job
@@ -210,7 +197,7 @@ async function downgradeToFreeTier(
     // }
     
     // Use sub variable to avoid unused warning
-    console.log('Processing subscription for organization:', sub.organization_id);
+    logger.info('Processing subscription for organization:', sub.organization_id);
 
     // Update to free tier (tier: 'free', status: 'expired')
     await db
@@ -290,10 +277,18 @@ export async function extendTrialPeriod(
     })
     .where(eq(subscription_details.organization_id, organizationId));
 
+  // Resolve org admin/owner email for extension notification
+  const orgOwner = await db
+    .select({ email: user.email })
+    .from(member)
+    .innerJoin(user, eq(member.userId, user.id))
+    .where(and(eq(member.organizationId, organizationId), eq(member.role, 'owner')))
+    .limit(1);
+  const adminEmail = orgOwner[0]?.email || `admin-${organizationId}@noreply.lsltgroup.es`;
+
   // Send extension notification
-  // Note: sub doesn't have email field, using fallback since we need org admin email
   await emailQueue.add('trial-extended', {
-    to: 'admin@company.com', // TODO: Get org admin email properly
+    to: adminEmail,
     organizationId,
     daysAdded: daysToAdd,
     newTrialEndsAt,

@@ -4,6 +4,7 @@ import { db } from '../../db/index.js';
 import { admin_audit_log, user } from '../../db/schema.js';
 import { requireAdmin } from '../../middleware/requireAdmin.js';
 import type { AdminAuditLogEntry, AdminAuditLogQueryResult } from '../../types/admin-types.js';
+import logger from '../../lib/logger.js';
 
 /**
  * Admin Audit Log Routes
@@ -143,7 +144,7 @@ router.get(
         id: entry.id,
         adminId: entry.adminId,
         adminName: entry.adminName || 'Unknown Admin',
-        adminEmail: entry.adminEmail || 'unknown@unknown.com',
+        adminEmail: entry.adminEmail || '[deleted user]',
         action: entry.action,
         targetType: entry.targetType || null,
         targetId: entry.targetId || null,
@@ -163,7 +164,7 @@ router.get(
 
       res.json(response);
     } catch (error) {
-      console.error('Error querying audit log:', error);
+      logger.error('Error querying audit log:', error);
       res.status(500).json({ 
         error: 'Failed to query audit log',
         details: error instanceof Error ? error.message : 'Unknown error'
@@ -274,7 +275,7 @@ router.get(
 
       for (const entry of entries) {
         const escapedAction = `"${(entry.action || '').replace(/"/g, '""')}"`;
-        const escapedEmail = `"${(entry.adminEmail || 'unknown@unknown.com').replace(/"/g, '""')}"`;
+        const escapedEmail = `"${(entry.adminEmail || '[deleted user]').replace(/"/g, '""')}"`;
         const targetType = entry.targetType || '';
         const targetId = entry.targetId || '';
         const createdAt = entry.createdAt.toISOString();
@@ -295,7 +296,7 @@ router.get(
 
       res.send(csvContent);
     } catch (error) {
-      console.error('Error exporting audit log:', error);
+      logger.error('Error exporting audit log:', error);
       res.status(500).json({
         error: 'Failed to export audit log',
         details: error instanceof Error ? error.message : 'Unknown error',
@@ -331,7 +332,7 @@ router.get(
         count: actions.length,
       });
     } catch (error) {
-      console.error('Error fetching unique actions:', error);
+      logger.error('Error fetching unique actions:', error);
       res.status(500).json({ 
         error: 'Failed to fetch unique actions',
         details: error instanceof Error ? error.message : 'Unknown error'
@@ -370,7 +371,7 @@ router.get(
         count: targetTypes.length,
       });
     } catch (error) {
-      console.error('Error fetching unique target types:', error);
+      logger.error('Error fetching unique target types:', error);
       res.status(500).json({ 
         error: 'Failed to fetch unique target types',
         details: error instanceof Error ? error.message : 'Unknown error'
@@ -459,7 +460,7 @@ router.get(
         topActions,
       });
     } catch (error) {
-      console.error('Error fetching audit log stats:', error);
+      logger.error('Error fetching audit log stats:', error);
       res.status(500).json({ 
         error: 'Failed to fetch audit log stats',
         details: error instanceof Error ? error.message : 'Unknown error'

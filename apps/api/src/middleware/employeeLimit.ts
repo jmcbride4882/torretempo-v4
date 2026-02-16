@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction, RequestHandler } from 'express';
 import { checkEmployeeLimit } from '../services/subscription.service.js';
+import logger from '../lib/logger.js';
 
 /**
  * Employee Limit Middleware
@@ -22,7 +23,7 @@ export function employeeLimit(): RequestHandler {
     try {
       // Get organization ID from request context
       // Assumes tenant middleware has already set req.organizationId
-      const organizationId = (req as any).organizationId;
+      const organizationId = req.organizationId;
 
       if (!organizationId) {
         res.status(400).json({ error: 'Organization ID not found in request' });
@@ -58,7 +59,7 @@ export function employeeLimit(): RequestHandler {
       // Within limit or unlimited - allow request to proceed
       next();
     } catch (error) {
-      console.error('Employee limit middleware error:', error);
+      logger.error('Employee limit middleware error:', error);
       res.status(500).json({ error: 'Internal server error' });
     }
   };

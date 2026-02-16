@@ -1,5 +1,6 @@
 import { db } from '../db/index.js';
 import { admin_audit_log } from '../db/schema.js';
+import logger from '../lib/logger.js';
 
 interface LogAdminActionParams {
   adminId: string;
@@ -28,7 +29,7 @@ export async function logAdminAction(params: LogAdminActionParams): Promise<void
       ip_address: ip ? (ip as any) : null,
     });
   } catch (error) {
-    console.error('Failed to log admin action:', error);
+    logger.error('Failed to log admin action:', error);
     throw error;
   }
 }

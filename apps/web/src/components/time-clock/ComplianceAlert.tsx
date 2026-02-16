@@ -121,7 +121,7 @@ function ViolationItem({ violation }: { violation: ComplianceViolation }) {
       <div className="flex items-start gap-3">
         <Icon className={cn("h-5 w-5 flex-shrink-0 mt-0.5", config.color)} />
         <div className="flex-1 space-y-2">
-          <p className="text-sm font-medium text-white">{violation.message}</p>
+          <p className="text-sm font-medium text-zinc-900">{violation.message}</p>
           
           {violation.ruleReference && (
             <div className="flex items-center gap-2">
@@ -132,7 +132,7 @@ function ViolationItem({ violation }: { violation: ComplianceViolation }) {
           )}
           
           {violation.recommendedAction && (
-            <p className="text-xs text-zinc-400">
+            <p className="text-xs text-zinc-500">
               <span className="font-medium">Recommended:</span> {violation.recommendedAction}
             </p>
           )}
@@ -176,17 +176,17 @@ export function ComplianceAlert({
   if (isBlocking && criticalViolations.length > 0) {
     return (
       <Dialog open={isOpen} onOpenChange={onClose}>
-        <DialogContent className="sm:max-w-lg bg-zinc-900 border-zinc-800">
+        <DialogContent className="sm:max-w-lg bg-white border-zinc-200">
           <DialogHeader>
             <div className="flex items-center gap-3">
               <div className="h-10 w-10 rounded-full bg-red-500/20 flex items-center justify-center">
                 <ShieldAlert className="h-5 w-5 text-red-400" />
               </div>
               <div>
-                <DialogTitle className="text-white">
+                <DialogTitle className="text-zinc-900">
                   Compliance Violation
                 </DialogTitle>
-                <DialogDescription className="text-zinc-400">
+                <DialogDescription className="text-zinc-500">
                   Clock-out blocked due to labor law violations
                 </DialogDescription>
               </div>
@@ -200,7 +200,7 @@ export function ComplianceAlert({
           </div>
 
           {summary && (
-            <div className="flex items-center justify-between text-xs text-zinc-500 py-2 border-t border-zinc-800">
+            <div className="flex items-center justify-between text-xs text-zinc-500 py-2 border-t border-zinc-200">
               <span>{summary.checks} compliance checks performed</span>
               <span className="text-red-400">{summary.violations} violation(s)</span>
             </div>
@@ -211,7 +211,7 @@ export function ComplianceAlert({
               <Button
                 variant="outline"
                 onClick={() => setShowOverrideForm(true)}
-                className="w-full border-zinc-700"
+                className="w-full border-zinc-200"
               >
                 Manager Override
               </Button>
@@ -230,8 +230,8 @@ export function ComplianceAlert({
                   rows={2}
                   className={cn(
                     "w-full px-3 py-2 rounded-lg resize-none",
-                    "bg-zinc-800 border border-zinc-700",
-                    "text-white placeholder:text-zinc-500",
+                    "bg-zinc-50 border border-zinc-200",
+                    "text-zinc-900 placeholder:text-zinc-400",
                     "focus:outline-none focus:ring-2 focus:ring-amber-500/50",
                     "text-sm"
                   )}
@@ -282,17 +282,17 @@ export function ComplianceAlert({
             transition={SPRING_CONFIG}
             className={cn(
               "fixed top-4 left-4 right-4 z-50",
-              "bg-yellow-500/10 border border-yellow-500/20",
-              "rounded-xl p-4 shadow-lg backdrop-blur-sm"
+              "bg-yellow-50 border border-yellow-200",
+              "rounded-xl p-4 shadow-lg"
             )}
           >
             <div className="flex items-start gap-3">
               <AlertTriangle className="h-5 w-5 text-yellow-400 flex-shrink-0 mt-0.5" />
               <div className="flex-1">
-                <p className="text-sm font-medium text-yellow-400">
+                <p className="text-sm font-medium text-yellow-700">
                   Compliance Warning
                 </p>
-                <p className="text-xs text-zinc-300 mt-1">
+                <p className="text-xs text-zinc-700 mt-1">
                   {warnings[0]?.message}
                 </p>
                 {warnings.length > 1 && (
@@ -303,7 +303,7 @@ export function ComplianceAlert({
               </div>
               <button
                 onClick={onClose}
-                className="text-zinc-400 hover:text-white transition-colors"
+                className="text-zinc-400 hover:text-zinc-900 transition-colors"
               >
                 <X className="h-4 w-4" />
               </button>
@@ -325,25 +325,25 @@ export function ComplianceAlert({
           transition={SPRING_CONFIG}
           className={cn(
             "fixed top-4 left-4 right-4 z-50",
-            "bg-emerald-500/10 border border-emerald-500/20",
-            "rounded-xl p-4 shadow-lg backdrop-blur-sm"
+            "bg-emerald-50 border border-emerald-200",
+            "rounded-xl p-4 shadow-lg"
           )}
         >
           <div className="flex items-center gap-3">
             <CheckCircle2 className="h-5 w-5 text-emerald-400" />
             <div className="flex-1">
-              <p className="text-sm font-medium text-emerald-400">
+              <p className="text-sm font-medium text-emerald-700">
                 All Compliance Checks Passed
               </p>
               {summary && (
-                <p className="text-xs text-zinc-400 mt-0.5">
+                <p className="text-xs text-zinc-500 mt-0.5">
                   {summary.checks} checks performed
                 </p>
               )}
             </div>
             <button
               onClick={onClose}
-              className="text-zinc-400 hover:text-white transition-colors"
+              className="text-zinc-400 hover:text-zinc-900 transition-colors"
             >
               <X className="h-4 w-4" />
             </button>

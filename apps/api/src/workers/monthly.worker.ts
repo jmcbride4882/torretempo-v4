@@ -3,6 +3,7 @@ import { and, eq, gte, lte, desc } from 'drizzle-orm';
 import { MonthlyJob, pdfQueue, emailQueue, redisConnection } from '../lib/queue.js';
 import { db } from '../db/index.js';
 import { member, organization, monthly_summaries, time_entries, user } from '../db/schema.js';
+import logger from '../lib/logger.js';
 
 /**
  * Monthly Worker
@@ -90,7 +91,7 @@ async function generateAllMonthlySummaries(
   month: number,
   orgId?: string
 ): Promise<void> {
-  console.log(`📊 Starting monthly summary generation for ${year}-${month}${orgId ? ` (org: ${orgId})` : ''}`);
+  logger.info(`📊 Starting monthly summary generation for ${year}-${month}${orgId ? ` (org: ${orgId})` : ''}`);
 
   try {
     // Query all active organizations (or specific org if orgId provided)
@@ -98,7 +99,7 @@ async function generateAllMonthlySummaries(
       ? [{ id: orgId }]
       : await db.select({ id: organization.id }).from(organization);
 
-    console.log(`📊 Processing ${orgs.length} organization(s)`);
+    logger.info(`📊 Processing ${orgs.length} organization(s)`);
 
     let totalReportsGenerated = 0;
     let totalErrors = 0;
@@ -111,7 +112,7 @@ async function generateAllMonthlySummaries(
           .from(member)
           .where(eq(member.organizationId, org.id));
 
-        console.log(`📊 Organization ${org.id}: ${members.length} members`);
+        logger.info(`📊 Organization ${org.id}: ${members.length} members`);
 
         // Process members in batches
         for (let i = 0; i < members.length; i += BATCH_SIZE) {
@@ -134,7 +135,7 @@ async function generateAllMonthlySummaries(
                 .limit(1);
 
               if (existing.length > 0) {
-                console.log(`⏭️  Report already exists for user ${m.userId} (${year}-${month})`);
+                logger.info(`⏭️  Report already exists for user ${m.userId} (${year}-${month})`);
                 continue;
               }
 
@@ -143,7 +144,7 @@ async function generateAllMonthlySummaries(
 
               // Skip if no time entries (user didn't work this month)
               if (reportData.totalHours === 0) {
-                console.log(`⏭️  Skipping user ${m.userId} (no hours worked in ${year}-${month})`);
+                logger.info(`⏭️  Skipping user ${m.userId} (no hours worked in ${year}-${month})`);
                 continue;
               }
 
@@ -182,10 +183,10 @@ async function generateAllMonthlySummaries(
               });
 
               totalReportsGenerated++;
-              console.log(`✅ Generated report for user ${m.userId} (${year}-${month})`);
+              logger.info(`✅ Generated report for user ${m.userId} (${year}-${month})`);
             } catch (error) {
               totalErrors++;
-              console.error(`❌ Failed to generate report for user ${m.userId}:`, error);
+              logger.error(`❌ Failed to generate report for user ${m.userId}:`, error);
               // Continue to next user (don't fail entire job)
             }
           }
@@ -197,14 +198,14 @@ async function generateAllMonthlySummaries(
         }
       } catch (error) {
         totalErrors++;
-        console.error(`❌ Failed to process organization ${org.id}:`, error);
+        logger.error(`❌ Failed to process organization ${org.id}:`, error);
         // Continue to next organization
       }
     }
 
-    console.log(`📊 Summary generation complete: ${totalReportsGenerated} reports generated, ${totalErrors} errors`);
+    logger.info(`📊 Summary generation complete: ${totalReportsGenerated} reports generated, ${totalErrors} errors`);
   } catch (error) {
-    console.error('❌ Fatal error in generateAllMonthlySummaries:', error);
+    logger.error('❌ Fatal error in generateAllMonthlySummaries:', error);
     throw error;
   }
 }
@@ -214,7 +215,7 @@ async function generateAllMonthlySummaries(
  * Queries reports that have been generated but not yet delivered
  */
 async function sendAllReports(year: number, month: number, orgId?: string): Promise<void> {
-  console.log(`📧 Starting report delivery for ${year}-${month}${orgId ? ` (org: ${orgId})` : ''}`);
+  logger.info(`📧 Starting report delivery for ${year}-${month}${orgId ? ` (org: ${orgId})` : ''}`);
 
   try {
     // Query all generated reports for the month that haven't been delivered
@@ -241,7 +242,7 @@ async function sendAllReports(year: number, month: number, orgId?: string): Prom
       .from(monthly_summaries)
       .where(and(...conditions));
 
-    console.log(`📧 Found ${reports.length} reports to deliver`);
+    logger.info(`📧 Found ${reports.length} reports to deliver`);
 
     let totalEmailsQueued = 0;
     let totalErrors = 0;
@@ -250,13 +251,13 @@ async function sendAllReports(year: number, month: number, orgId?: string): Prom
       try {
         // Skip if already delivered
         if (report.deliveredAt) {
-          console.log(`⏭️  Report ${report.id} already delivered`);
+          logger.info(`⏭️  Report ${report.id} already delivered`);
           continue;
         }
 
         // Skip if PDF not ready yet
         if (!report.pdfUrl) {
-          console.log(`⏭️  Report ${report.id} PDF not ready yet`);
+          logger.info(`⏭️  Report ${report.id} PDF not ready yet`);
           continue;
         }
 
@@ -268,7 +269,7 @@ async function sendAllReports(year: number, month: number, orgId?: string): Prom
           .limit(1);
 
         if (userResult.length === 0) {
-          console.error(`❌ User ${report.userId} not found`);
+          logger.error(`❌ User ${report.userId} not found`);
           continue;
         }
 
@@ -296,17 +297,17 @@ async function sendAllReports(year: number, month: number, orgId?: string): Prom
           .where(eq(monthly_summaries.id, report.id));
 
         totalEmailsQueued++;
-        console.log(`✅ Queued email for user ${report.userId} (${userEmail})`);
+        logger.info(`✅ Queued email for user ${report.userId} (${userEmail})`);
       } catch (error) {
         totalErrors++;
-        console.error(`❌ Failed to queue email for report ${report.id}:`, error);
+        logger.error(`❌ Failed to queue email for report ${report.id}:`, error);
         // Continue to next report
       }
     }
 
-    console.log(`📧 Report delivery complete: ${totalEmailsQueued} emails queued, ${totalErrors} errors`);
+    logger.info(`📧 Report delivery complete: ${totalEmailsQueued} emails queued, ${totalErrors} errors`);
   } catch (error) {
-    console.error('❌ Fatal error in sendAllReports:', error);
+    logger.error('❌ Fatal error in sendAllReports:', error);
     throw error;
   }
 }
@@ -316,7 +317,7 @@ async function sendAllReports(year: number, month: number, orgId?: string): Prom
  * Spanish labor law requires 7-year retention, so we only delete reports older than 7 years
  */
 async function cleanupOldReports(): Promise<void> {
-  console.log(`🧹 Starting cleanup of old reports (retention: ${RETENTION_YEARS} years)`);
+  logger.info(`🧹 Starting cleanup of old reports (retention: ${RETENTION_YEARS} years)`);
 
   try {
     // Calculate cutoff date (7 years ago)
@@ -325,7 +326,7 @@ async function cleanupOldReports(): Promise<void> {
     const cutoffYear = cutoffDate.getFullYear();
     const cutoffMonth = cutoffDate.getMonth() + 1;
 
-    console.log(`🧹 Cutoff date: ${cutoffYear}-${cutoffMonth}`);
+    logger.info(`🧹 Cutoff date: ${cutoffYear}-${cutoffMonth}`);
 
     // Query old reports
     const oldReports = await db
@@ -356,10 +357,10 @@ async function cleanupOldReports(): Promise<void> {
       return false;
     });
 
-    console.log(`🧹 Found ${reportsToDelete.length} reports to archive/delete`);
+    logger.info(`🧹 Found ${reportsToDelete.length} reports to archive/delete`);
 
     if (reportsToDelete.length === 0) {
-      console.log('🧹 No old reports to clean up');
+      logger.info('🧹 No old reports to clean up');
       return;
     }
 
@@ -370,7 +371,7 @@ async function cleanupOldReports(): Promise<void> {
       try {
         // TODO: Archive to cold storage (S3 Glacier, etc.) before deleting
         // For now, we just log the report that would be archived
-        console.log(
+        logger.info(
           `📦 Would archive report ${report.id} (${report.year}-${report.month}) for user ${report.userId}`
         );
 
@@ -380,14 +381,14 @@ async function cleanupOldReports(): Promise<void> {
         totalDeleted++;
       } catch (error) {
         totalErrors++;
-        console.error(`❌ Failed to archive report ${report.id}:`, error);
+        logger.error(`❌ Failed to archive report ${report.id}:`, error);
         // Continue to next report
       }
     }
 
-    console.log(`🧹 Cleanup complete: ${totalDeleted} reports archived, ${totalErrors} errors`);
+    logger.info(`🧹 Cleanup complete: ${totalDeleted} reports archived, ${totalErrors} errors`);
   } catch (error) {
-    console.error('❌ Fatal error in cleanupOldReports:', error);
+    logger.error('❌ Fatal error in cleanupOldReports:', error);
     throw error;
   }
 }
@@ -405,7 +406,7 @@ const monthlyWorker = new Worker<MonthlyJob>(
   async (job: Job<MonthlyJob>) => {
     const { type, organizationId, year, month } = job.data;
 
-    console.log(`🔄 Processing monthly job: ${type} (${year}-${month})`);
+    logger.info(`🔄 Processing monthly job: ${type} (${year}-${month})`);
 
     try {
       switch (type) {
@@ -425,9 +426,9 @@ const monthlyWorker = new Worker<MonthlyJob>(
           throw new Error(`Unknown job type: ${type}`);
       }
 
-      console.log(`✅ Monthly job completed: ${type} (${year}-${month})`);
+      logger.info(`✅ Monthly job completed: ${type} (${year}-${month})`);
     } catch (error) {
-      console.error(`❌ Monthly job failed: ${type} (${year}-${month})`, error);
+      logger.error(`❌ Monthly job failed: ${type} (${year}-${month})`, error);
       throw error;
     }
   },
@@ -442,7 +443,7 @@ const monthlyWorker = new Worker<MonthlyJob>(
 // ============================================================================
 
 monthlyWorker.on('completed', (job) => {
-  console.log(`✅ Monthly job ${job.id} completed`, {
+  logger.info(`✅ Monthly job ${job.id} completed`, {
     type: job.data.type,
     year: job.data.year,
     month: job.data.month,
@@ -451,7 +452,7 @@ monthlyWorker.on('completed', (job) => {
 });
 
 monthlyWorker.on('failed', (job, err) => {
-  console.error(`❌ Monthly job ${job?.id} failed`, {
+  logger.error(`❌ Monthly job ${job?.id} failed`, {
     type: job?.data.type,
     year: job?.data.year,
     month: job?.data.month,
@@ -462,7 +463,7 @@ monthlyWorker.on('failed', (job, err) => {
 });
 
 monthlyWorker.on('error', (err) => {
-  console.error('❌ Monthly worker error:', err);
+  logger.error('❌ Monthly worker error:', err);
 });
 
 // ============================================================================
@@ -470,13 +471,13 @@ monthlyWorker.on('error', (err) => {
 // ============================================================================
 
 process.on('SIGTERM', async () => {
-  console.log('📴 SIGTERM received, closing monthly worker...');
+  logger.info('📴 SIGTERM received, closing monthly worker...');
   await monthlyWorker.close();
   process.exit(0);
 });
 
 process.on('SIGINT', async () => {
-  console.log('📴 SIGINT received, closing monthly worker...');
+  logger.info('📴 SIGINT received, closing monthly worker...');
   await monthlyWorker.close();
   process.exit(0);
 });

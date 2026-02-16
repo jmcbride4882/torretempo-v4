@@ -4,6 +4,7 @@ import { db } from '../db/index.js';
 import { fromNodeHeaders } from 'better-auth/node';
 import { eq, and, sql } from 'drizzle-orm';
 import { organization, member } from '../db/schema.js';
+import logger from '../lib/logger.js';
 
 /**
  * Tenant Middleware (T09)
@@ -81,7 +82,7 @@ export const tenantMiddleware: RequestHandler = async (
 
     next();
   } catch (error) {
-    console.error('Tenant middleware error:', error);
+    logger.error('Tenant middleware error:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
 };

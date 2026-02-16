@@ -191,13 +191,10 @@ export function ClockOutSheet({ isOpen, onClose, organizationSlug, activeEntry }
     setError(null);
 
     const clockOutData = {
-      entryId: activeEntry.id,
-      clock_out_location: {
-        lat: position.coords.latitude,
-        lng: position.coords.longitude,
-        accuracy: position.coords.accuracy,
-      },
-      clock_out_method: 'tap' as const,
+      latitude: position.coords.latitude,
+      longitude: position.coords.longitude,
+      accuracy: position.coords.accuracy,
+      method: 'tap' as const,
       notes: notes.trim() || undefined,
     };
 

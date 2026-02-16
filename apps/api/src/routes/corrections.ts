@@ -4,6 +4,7 @@ import { db } from '../db/index.js';
 import { correction_requests, time_entries } from '../db/schema.js';
 import { requireRole } from '../middleware/requireRole.js';
 import { logAudit } from '../services/audit.service.js';
+import logger from '../lib/logger.js';
 
 const router = Router();
 
@@ -57,7 +58,7 @@ router.get('/', async (req: Request, res: Response) => {
       pagination: { limit, offset, total: result.length },
     });
   } catch (error) {
-    console.error('Error fetching correction requests:', error);
+    logger.error('Error fetching correction requests:', error);
     res.status(500).json({ error: 'Failed to fetch correction requests' });
   }
 });
@@ -97,7 +98,7 @@ router.get('/:id', async (req: Request, res: Response) => {
 
     res.json({ correction });
   } catch (error) {
-    console.error('Error fetching correction request:', error);
+    logger.error('Error fetching correction request:', error);
     res.status(500).json({ error: 'Failed to fetch correction request' });
   }
 });
@@ -203,7 +204,7 @@ router.post(
 
       res.status(201).json({ correction: created[0] });
     } catch (error) {
-      console.error('Error creating correction request:', error);
+      logger.error('Error creating correction request:', error);
       res.status(500).json({ error: 'Failed to create correction request' });
     }
   }
@@ -322,7 +323,7 @@ router.put(
 
       res.json({ correction: updated[0] });
     } catch (error) {
-      console.error('Error approving correction:', error);
+      logger.error('Error approving correction:', error);
       res.status(500).json({ error: 'Failed to approve correction' });
     }
   }
@@ -400,7 +401,7 @@ router.put(
 
       res.json({ correction: updated[0] });
     } catch (error) {
-      console.error('Error rejecting correction:', error);
+      logger.error('Error rejecting correction:', error);
       res.status(500).json({ error: 'Failed to reject correction' });
     }
   }
@@ -464,7 +465,7 @@ router.delete(
 
       res.status(204).send();
     } catch (error) {
-      console.error('Error canceling correction:', error);
+      logger.error('Error canceling correction:', error);
       res.status(500).json({ error: 'Failed to cancel correction' });
     }
   }

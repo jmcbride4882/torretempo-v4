@@ -1,9 +1,9 @@
-// @ts-nocheck - TODO: Fix Drizzle type assertions
 import { Router, Request, Response } from 'express';
 import { eq, and } from 'drizzle-orm';
 import QRCode from 'qrcode';
 import { db } from '../db/index.js';
 import { locations } from '../db/schema.js';
+import logger from '../lib/logger.js';
 
 const router = Router();
 
@@ -26,7 +26,7 @@ router.get('/', async (req: Request, res: Response) => {
       total: allLocations.length,
     });
   } catch (error) {
-    console.error('Error fetching locations:', error);
+    logger.error('Error fetching locations:', error);
     res.status(500).json({ message: 'Failed to fetch locations' });
   }
 });
@@ -52,7 +52,7 @@ router.get('/:id', async (req: Request, res: Response) => {
 
     res.json({ location });
   } catch (error) {
-    console.error('Error fetching location:', error);
+    logger.error('Error fetching location:', error);
     res.status(500).json({ message: 'Failed to fetch location' });
   }
 });
@@ -89,7 +89,7 @@ router.post('/', async (req: Request, res: Response) => {
       location: newLocation,
     });
   } catch (error) {
-    console.error('Error creating location:', error);
+    logger.error('Error creating location:', error);
     res.status(500).json({ message: 'Failed to create location' });
   }
 });
@@ -133,7 +133,7 @@ router.put('/:id', async (req: Request, res: Response) => {
       location: updatedLocation,
     });
   } catch (error) {
-    console.error('Error updating location:', error);
+    logger.error('Error updating location:', error);
     res.status(500).json({ message: 'Failed to update location' });
   }
 });
@@ -167,7 +167,7 @@ router.delete('/:id', async (req: Request, res: Response) => {
 
     res.json({ message: 'Location deleted successfully' });
   } catch (error) {
-    console.error('Error deleting location:', error);
+    logger.error('Error deleting location:', error);
     res.status(500).json({ message: 'Failed to delete location' });
   }
 });
@@ -218,7 +218,7 @@ router.get('/:id/qr', async (req: Request, res: Response) => {
       qrCode: qrCodeDataUrl, // data:image/png;base64,...
     });
   } catch (error) {
-    console.error('Error generating QR code:', error);
+    logger.error('Error generating QR code:', error);
     res.status(500).json({ message: 'Failed to generate QR code' });
   }
 });

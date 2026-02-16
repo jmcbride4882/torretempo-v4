@@ -14,6 +14,8 @@ import {
   Settings,
   CreditCard,
   LogOut,
+  Copy,
+  CalendarPlus,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useAuth } from '@/hooks/useAuth';
@@ -38,8 +40,10 @@ const mainNav: NavItem[] = [
 const managementNav: NavItem[] = [
   { icon: Users, labelKey: 'nav.team', path: 'team' },
   { icon: ArrowLeftRight, labelKey: 'nav.swaps', path: 'swaps', badge: true },
+  { icon: CalendarPlus, labelKey: 'nav.openShifts', path: 'open-shifts' },
   { icon: CalendarOff, labelKey: 'nav.leave', path: 'leave' },
   { icon: ClipboardCheck, labelKey: 'nav.corrections', path: 'corrections' },
+  { icon: Copy, labelKey: 'nav.templates', path: 'shift-templates' },
 ];
 
 const reportsNav: NavItem[] = [

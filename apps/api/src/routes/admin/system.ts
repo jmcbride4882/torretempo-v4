@@ -5,11 +5,12 @@ import { promisify } from 'util';
 import { queues, redisConnection } from '../../lib/queue.js';
 import { requireAdmin } from '../../middleware/requireAdmin.js';
 import { logAdminAction } from '../../services/adminAudit.service.js';
-import type { 
-  SystemHealthResponse, 
-  QueueMetrics, 
-  FailedJobSummary 
+import type {
+  SystemHealthResponse,
+  QueueMetrics,
+  FailedJobSummary
 } from '../../types/admin-types.js';
+import logger from '../../lib/logger.js';
 
 const execAsync = promisify(exec);
 
@@ -104,7 +105,7 @@ async function getDiskUsage(): Promise<{ total: number; used: number; free: numb
       }
     }
   } catch (error) {
-    console.error('Error getting disk usage:', error);
+    logger.error('Error getting disk usage:', error);
   }
   
   return { total: 0, used: 0, free: 0, usagePercent: 0 };
@@ -185,7 +186,7 @@ router.get(
           },
         };
       } catch (error) {
-        console.error('Redis health check failed:', error);
+        logger.error('Redis health check failed:', error);
         healthData.redis = {
           status: 'disconnected',
           ping: 0,
@@ -212,7 +213,7 @@ router.get(
           connectionCount: 0, // Would need pg pool stats for this
         };
       } catch (error) {
-        console.error('Database health check failed:', error);
+        logger.error('Database health check failed:', error);
         healthData.database = {
           status: 'disconnected',
           responseTime: 0,
@@ -265,7 +266,7 @@ router.get(
             });
           }
         } catch (error) {
-          console.error(`Error getting metrics for queue ${queueName}:`, error);
+          logger.error(`Error getting metrics for queue ${queueName}:`, error);
           // Add queue with zero metrics if error
           queueMetrics.push({
             name: queueName as QueueMetrics['name'],
@@ -300,7 +301,7 @@ router.get(
 
       res.json(healthData as SystemHealthResponse);
     } catch (error) {
-      console.error('Error getting system health:', error);
+      logger.error('Error getting system health:', error);
       res.status(500).json({ 
         error: 'Failed to get system health',
         details: error instanceof Error ? error.message : 'Unknown error'
@@ -385,7 +386,7 @@ router.get(
         jobs: validJobDetails,
       });
     } catch (error) {
-      console.error('Error getting failed jobs:', error);
+      logger.error('Error getting failed jobs:', error);
       res.status(500).json({ 
         error: 'Failed to get failed jobs',
         details: error instanceof Error ? error.message : 'Unknown error'
@@ -479,7 +480,7 @@ router.post(
         },
       });
     } catch (error) {
-      console.error('Error retrying job:', error);
+      logger.error('Error retrying job:', error);
       res.status(500).json({ 
         error: 'Failed to retry job',
         details: error instanceof Error ? error.message : 'Unknown error'

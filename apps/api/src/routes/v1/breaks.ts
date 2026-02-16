@@ -5,6 +5,7 @@ import { break_entries, time_entries } from '../../db/schema.js';
 import { requireRole } from '../../middleware/requireRole.js';
 import { logAudit } from '../../services/audit.service.js';
 import { broadcastToOrg } from '../../lib/websocket.js';
+import logger from '../../lib/logger.js';
 
 const router = Router();
 
@@ -109,7 +110,7 @@ router.post(
 
       res.json({ message: 'Break started', break: breakEntry });
     } catch (error) {
-      console.error('Error starting break:', error);
+      logger.error('Error starting break:', error);
       res.status(500).json({ message: 'Internal server error' });
     }
   }
@@ -229,7 +230,7 @@ router.post(
 
       res.json({ message: 'Break ended', duration_minutes: durationMinutes });
     } catch (error) {
-      console.error('Error ending break:', error);
+      logger.error('Error ending break:', error);
       res.status(500).json({ message: 'Internal server error' });
     }
   }
@@ -306,7 +307,7 @@ router.get('/', async (req: Request, res: Response) => {
 
     res.json({ breaks: breaksWithDuration });
   } catch (error) {
-    console.error('Error listing breaks:', error);
+    logger.error('Error listing breaks:', error);
     res.status(500).json({ message: 'Internal server error' });
   }
 });

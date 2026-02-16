@@ -17,7 +17,7 @@ import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
 import { useState } from 'react';
 
-const API_BASE = import.meta.env.VITE_API_URL || '';
+const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:3000';
 
 async function fetchPlan(slug: string) {
   const res = await fetch(`${API_BASE}/api/v1/org/${slug}/billing/plan`, { credentials: 'include' });

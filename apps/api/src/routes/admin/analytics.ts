@@ -3,12 +3,13 @@ import { eq, and, gte, lte, desc, count, sql } from 'drizzle-orm';
 import { db } from '../../db/index.js';
 import { user, organization, session, subscription_details } from '../../db/schema.js';
 import { requireAdmin } from '../../middleware/requireAdmin.js';
-import type { 
-  AnalyticsDashboardResponse, 
+import type {
+  AnalyticsDashboardResponse,
   UserGrowthDataPoint,
   RevenueTrendDataPoint,
   FeatureAdoptionMetric
 } from '../../types/admin-types.js';
+import logger from '../../lib/logger.js';
 
 /**
  * Admin Analytics Routes
@@ -222,7 +223,7 @@ router.get(
 
       res.json(response);
     } catch (error) {
-      console.error('Error fetching analytics dashboard:', error);
+      logger.error('Error fetching analytics dashboard:', error);
       res.status(500).json({ 
         error: 'Failed to fetch analytics dashboard',
         details: error instanceof Error ? error.message : 'Unknown error'
@@ -315,7 +316,7 @@ router.get(
         dayCount,
       });
     } catch (error) {
-      console.error('Error fetching user growth data:', error);
+      logger.error('Error fetching user growth data:', error);
       res.status(500).json({ 
         error: 'Failed to fetch user growth data',
         details: error instanceof Error ? error.message : 'Unknown error'
@@ -439,7 +440,7 @@ router.get(
         dayCount,
       });
     } catch (error) {
-      console.error('Error fetching organization growth data:', error);
+      logger.error('Error fetching organization growth data:', error);
       res.status(500).json({ 
         error: 'Failed to fetch organization growth data',
         details: error instanceof Error ? error.message : 'Unknown error'

@@ -8,8 +8,8 @@ import { Worker, Job } from 'bullmq';
 import { redisConnection } from '../lib/queue.js';
 import type { PaymentJob } from '../lib/queue.js';
 import { db } from '../db/index.js';
-import { subscription_details } from '../db/schema.js';
-import { eq } from 'drizzle-orm';
+import { subscription_details, member, user } from '../db/schema.js';
+import { eq, and } from 'drizzle-orm';
 import { emailQueue } from '../lib/queue.js';
 import logger from '../lib/logger.js';
 import { getRetryDelayMs, getNextRetryDate, isDunningExhausted } from '../lib/dunning.js';
@@ -109,9 +109,18 @@ async function initiateDunningSequence(
     .set({ subscription_status: 'past_due', updated_at: new Date() })
     .where(eq(subscription_details.organization_id, organizationId));
 
+  // Resolve org admin/owner email for dunning notification
+  const orgOwner = await db
+    .select({ email: user.email })
+    .from(member)
+    .innerJoin(user, eq(member.userId, user.id))
+    .where(and(eq(member.organizationId, organizationId), eq(member.role, 'owner')))
+    .limit(1);
+  const adminEmail = orgOwner[0]?.email || `billing-${organizationId}@noreply.lsltgroup.es`;
+
   // Send dunning notification email
   await emailQueue.add('dunning-notification', {
-    to: 'billing@organization.com', // TODO: resolve org admin email
+    to: adminEmail,
     subject: `Payment Failed - Attempt ${attempt} of 3`,
     template: 'dunningNotification.html',
     data: {

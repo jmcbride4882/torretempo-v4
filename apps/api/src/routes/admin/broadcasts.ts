@@ -4,6 +4,7 @@ import { db } from '../../db/index.js';
 import { admin_broadcast_messages } from '../../db/schema.js';
 import { requireAdmin } from '../../middleware/requireAdmin.js';
 import { logAdminAction } from '../../services/adminAudit.service.js';
+import logger from '../../lib/logger.js';
 
 /**
  * Admin Broadcast Messages Routes
@@ -23,7 +24,7 @@ router.get('/', requireAdmin, async (_req: Request, res: Response) => {
 
     res.json({ broadcasts });
   } catch (error) {
-    console.error('Error fetching broadcasts:', error);
+    logger.error('Error fetching broadcasts:', error);
     res.status(500).json({ error: 'Failed to fetch broadcasts' });
   }
 });
@@ -78,7 +79,7 @@ router.post('/', requireAdmin, async (req: Request, res: Response) => {
 
     res.status(201).json({ broadcast: created[0] });
   } catch (error) {
-    console.error('Error creating broadcast:', error);
+    logger.error('Error creating broadcast:', error);
     res.status(500).json({ error: 'Failed to create broadcast' });
   }
 });
@@ -116,7 +117,7 @@ router.delete('/:id', requireAdmin, async (req: Request, res: Response) => {
 
     res.json({ message: 'Broadcast deleted successfully' });
   } catch (error) {
-    console.error('Error deleting broadcast:', error);
+    logger.error('Error deleting broadcast:', error);
     res.status(500).json({ error: 'Failed to delete broadcast' });
   }
 });

@@ -9,6 +9,7 @@ import { PdfJob, redisConnection } from '../lib/queue.js';
 import { db } from '../db/index.js';
 import { monthly_summaries } from '../db/schema.js';
 import { eq } from 'drizzle-orm';
+import logger from '../lib/logger.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -425,7 +426,7 @@ const pdfWorker = new Worker<PdfJob>(
   async (job: Job<PdfJob>) => {
     const { type, organizationId, data } = job.data;
 
-    console.log(`📄 Processing PDF job ${job.id} (type: ${type})`);
+    logger.info(`📄 Processing PDF job ${job.id} (type: ${type})`);
 
     // Generate unique filename
     const timestamp = Date.now();
@@ -465,7 +466,7 @@ const pdfWorker = new Worker<PdfJob>(
               })
               .where(eq(monthly_summaries.id, String(data.summaryId)));
 
-            console.log(`✅ Updated monthly_summary ${data.summaryId} with PDF URL`);
+            logger.info(`✅ Updated monthly_summary ${data.summaryId} with PDF URL`);
           }
 
           break;
@@ -496,10 +497,10 @@ const pdfWorker = new Worker<PdfJob>(
         }
       }
 
-      console.log(`📄 PDF generated successfully: ${pdfUrl}`);
+      logger.info(`📄 PDF generated successfully: ${pdfUrl}`);
       return { pdfUrl, filename };
     } catch (error) {
-      console.error(`❌ PDF generation failed for job ${job.id}:`, error);
+      logger.error(`❌ PDF generation failed for job ${job.id}:`, error);
       throw error;
     }
   },
@@ -510,7 +511,7 @@ const pdfWorker = new Worker<PdfJob>(
 );
 
 pdfWorker.on('completed', (job) => {
-  console.log('✅ PDF job completed', {
+  logger.info('✅ PDF job completed', {
     jobId: job.id,
     type: job.data.type,
     organizationId: job.data.organizationId,
@@ -518,7 +519,7 @@ pdfWorker.on('completed', (job) => {
 });
 
 pdfWorker.on('failed', (job, err) => {
-  console.error('❌ PDF job failed', {
+  logger.error('❌ PDF job failed', {
     jobId: job?.id,
     type: job?.data?.type,
     attemptsMade: job?.attemptsMade,
@@ -528,13 +529,13 @@ pdfWorker.on('failed', (job, err) => {
 
 // Graceful shutdown
 process.on('SIGTERM', async () => {
-  console.log('📄 Shutting down PDF worker...');
+  logger.info('📄 Shutting down PDF worker...');
   await pdfWorker.close();
   process.exit(0);
 });
 
 process.on('SIGINT', async () => {
-  console.log('📄 Shutting down PDF worker...');
+  logger.info('📄 Shutting down PDF worker...');
   await pdfWorker.close();
   process.exit(0);
 });

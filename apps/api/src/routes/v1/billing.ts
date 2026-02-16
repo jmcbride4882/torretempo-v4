@@ -28,7 +28,7 @@ router.get(
   requireRole(['tenantAdmin', 'owner']),
   async (req: Request, res: Response) => {
     try {
-      const organizationId = (req as any).organizationId;
+      const organizationId = req.organizationId;
       if (!organizationId) {
         return res.status(400).json({ error: 'Organization not found' });
       }
@@ -55,7 +55,7 @@ router.get(
   requireRole(['tenantAdmin', 'owner']),
   async (req: Request, res: Response) => {
     try {
-      const organizationId = (req as any).organizationId;
+      const organizationId = req.organizationId;
       if (!organizationId) {
         return res.status(400).json({ error: 'Organization not found' });
       }
@@ -118,8 +118,8 @@ router.post(
   requireRole(['owner']),
   async (req: Request, res: Response) => {
     try {
-      const organizationId = (req as any).organizationId;
-      const actor = (req as any).user;
+      const organizationId = req.organizationId;
+      const actor = req.session?.user as any;
 
       if (!organizationId || !actor) {
         return res.status(400).json({ error: 'Organization or user not found' });
@@ -165,8 +165,8 @@ router.post(
   requireRole(['owner']),
   async (req: Request, res: Response) => {
     try {
-      const organizationId = (req as any).organizationId;
-      const actor = (req as any).user;
+      const organizationId = req.organizationId;
+      const actor = req.session?.user as any;
 
       if (!organizationId || !actor) {
         return res.status(400).json({ error: 'Organization or user not found' });

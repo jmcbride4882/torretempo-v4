@@ -6,6 +6,7 @@ import {
   createStripeRefund,
   applyStripeCredit,
 } from '../../services/payment.service.js';
+import logger from '../../lib/logger.js';
 
 /**
  * Admin Billing Operations Routes
@@ -46,7 +47,7 @@ router.post('/invoice', requireAdmin, async (req: Request, res: Response) => {
 
     res.json({ invoice });
   } catch (error) {
-    console.error('Error creating invoice:', error);
+    logger.error('Error creating invoice:', error);
     res.status(500).json({ error: 'Failed to create invoice' });
   }
 });
@@ -82,7 +83,7 @@ router.post('/refund', requireAdmin, async (req: Request, res: Response) => {
 
     res.json({ refund });
   } catch (error) {
-    console.error('Error processing refund:', error);
+    logger.error('Error processing refund:', error);
     res.status(500).json({ error: 'Failed to process refund' });
   }
 });
@@ -118,7 +119,7 @@ router.post('/credit', requireAdmin, async (req: Request, res: Response) => {
 
     res.json({ success: true, result });
   } catch (error) {
-    console.error('Error applying credit:', error);
+    logger.error('Error applying credit:', error);
     res.status(500).json({ error: 'Failed to apply credit' });
   }
 });

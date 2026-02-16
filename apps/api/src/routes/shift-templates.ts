@@ -4,6 +4,7 @@ import { db } from '../db/index.js';
 import { shift_templates, locations } from '../db/schema.js';
 import { requireRole } from '../middleware/requireRole.js';
 import { logAudit } from '../services/audit.service.js';
+import logger from '../lib/logger.js';
 
 const router = Router();
 
@@ -57,7 +58,7 @@ router.get('/', async (req: Request, res: Response) => {
 
     res.json({ templates: result });
   } catch (error) {
-    console.error('Error fetching shift templates:', error);
+    logger.error('Error fetching shift templates:', error);
     res.status(500).json({ error: 'Failed to fetch shift templates' });
   }
 });
@@ -107,7 +108,7 @@ router.get('/:id', async (req: Request, res: Response) => {
 
     res.json({ template: result[0] });
   } catch (error) {
-    console.error('Error fetching shift template:', error);
+    logger.error('Error fetching shift template:', error);
     res.status(500).json({ error: 'Failed to fetch shift template' });
   }
 });
@@ -197,7 +198,7 @@ router.post(
 
       res.status(201).json({ template: newTemplate[0] });
     } catch (error) {
-      console.error('Error creating shift template:', error);
+      logger.error('Error creating shift template:', error);
       res.status(500).json({ error: 'Failed to create shift template' });
     }
   }
@@ -293,7 +294,7 @@ router.put(
 
       res.json({ template: updated[0] });
     } catch (error) {
-      console.error('Error updating shift template:', error);
+      logger.error('Error updating shift template:', error);
       res.status(500).json({ error: 'Failed to update shift template' });
     }
   }
@@ -350,7 +351,7 @@ router.delete(
 
       res.status(204).send();
     } catch (error) {
-      console.error('Error deleting shift template:', error);
+      logger.error('Error deleting shift template:', error);
       res.status(500).json({ error: 'Failed to delete shift template' });
     }
   }

@@ -110,8 +110,8 @@ export function LocationManager({ organizationSlug }: LocationManagerProps) {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center py-12">
-        <Loader2 className="h-6 w-6 animate-spin text-neutral-400" />
-        <span className="ml-2 text-sm text-neutral-400">Loading locations...</span>
+        <Loader2 className="h-6 w-6 animate-spin text-zinc-400" />
+        <span className="ml-2 text-sm text-zinc-400">Loading locations...</span>
       </div>
     );
   }
@@ -121,8 +121,8 @@ export function LocationManager({ organizationSlug }: LocationManagerProps) {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h3 className="text-lg font-semibold text-neutral-200">Locations</h3>
-          <p className="text-sm text-neutral-400">Manage work sites and geofencing for clock-ins</p>
+          <h3 className="text-lg font-semibold text-zinc-900">Locations</h3>
+          <p className="text-sm text-zinc-500">Manage work sites and geofencing for clock-ins</p>
         </div>
         <Button onClick={() => setShowCreateModal(true)} className="gap-2">
           <Plus className="h-4 w-4" />
@@ -132,12 +132,12 @@ export function LocationManager({ organizationSlug }: LocationManagerProps) {
 
       {/* Locations Grid */}
       {locations.length === 0 ? (
-        <div className="rounded-xl border border-zinc-800 bg-zinc-900/50 p-12 text-center backdrop-blur-sm">
-          <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-zinc-800/50">
-            <MapPin className="h-8 w-8 text-neutral-400" />
+        <div className="rounded-xl border border-zinc-200 bg-zinc-50 p-12 text-center">
+          <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-zinc-100">
+            <MapPin className="h-8 w-8 text-zinc-400" />
           </div>
-          <h3 className="mb-2 text-lg font-semibold text-neutral-200">No locations yet</h3>
-          <p className="mb-6 text-sm text-neutral-400">
+          <h3 className="mb-2 text-lg font-semibold text-zinc-900">No locations yet</h3>
+          <p className="mb-6 text-sm text-zinc-500">
             Add locations to track where employees work and enable geofencing
           </p>
           <Button onClick={() => setShowCreateModal(true)} className="gap-2">
@@ -156,17 +156,17 @@ export function LocationManager({ organizationSlug }: LocationManagerProps) {
                 exit={{ opacity: 0, scale: 0.95 }}
                 transition={{ delay: index * 0.05 }}
                 className={cn(
-                  'group relative overflow-hidden rounded-xl border bg-zinc-900/50 p-4 backdrop-blur-sm transition-all hover:bg-zinc-900/80',
-                  'border-zinc-800 hover:border-zinc-700'
+                  'group relative overflow-hidden rounded-xl border bg-white p-4 transition-all hover:bg-zinc-50',
+                  'border-zinc-200 hover:border-zinc-300'
                 )}
               >
                 <div className="space-y-3">
                   {/* Header */}
                   <div className="flex items-start justify-between">
                     <div className="flex-1">
-                      <h4 className="font-semibold text-neutral-200">{location.name}</h4>
+                      <h4 className="font-semibold text-zinc-900">{location.name}</h4>
                       {location.address && (
-                        <p className="mt-1 text-xs text-neutral-400 line-clamp-2">
+                        <p className="mt-1 text-xs text-zinc-500 line-clamp-2">
                           {location.address}
                         </p>
                       )}
@@ -176,7 +176,7 @@ export function LocationManager({ organizationSlug }: LocationManagerProps) {
                         variant="ghost"
                         size="sm"
                         onClick={() => setEditingLocation(location)}
-                        className="h-8 w-8 p-0 hover:bg-zinc-800"
+                        className="h-8 w-8 p-0 hover:bg-zinc-100"
                       >
                         <Edit className="h-3.5 w-3.5" />
                       </Button>
@@ -184,7 +184,7 @@ export function LocationManager({ organizationSlug }: LocationManagerProps) {
                         variant="ghost"
                         size="sm"
                         onClick={() => setDeletingLocation(location)}
-                        className="h-8 w-8 p-0 text-red-400 hover:bg-red-500/10 hover:text-red-300"
+                        className="h-8 w-8 p-0 text-red-500 hover:bg-red-50 hover:text-red-600"
                       >
                         <Trash2 className="h-3.5 w-3.5" />
                       </Button>
@@ -194,8 +194,8 @@ export function LocationManager({ organizationSlug }: LocationManagerProps) {
                   {/* Details */}
                   <div className="space-y-2">
                     {location.lat && location.lng && (
-                      <div className="flex items-center gap-2 text-xs text-neutral-400">
-                        <Map className="h-3.5 w-3.5 text-neutral-500" />
+                      <div className="flex items-center gap-2 text-xs text-zinc-500">
+                        <Map className="h-3.5 w-3.5 text-zinc-400" />
                         <span>
                           {parseFloat(location.lat).toFixed(6)}, {parseFloat(location.lng).toFixed(6)}
                         </span>
@@ -236,10 +236,10 @@ export function LocationManager({ organizationSlug }: LocationManagerProps) {
 
       {/* Delete Confirmation */}
       <Dialog open={!!deletingLocation} onOpenChange={() => setDeletingLocation(null)}>
-        <DialogContent className="border-zinc-800 bg-zinc-900">
+        <DialogContent className="border-zinc-200 bg-white">
           <DialogHeader>
-            <DialogTitle className="text-neutral-200">Delete Location</DialogTitle>
-            <DialogDescription className="text-neutral-400">
+            <DialogTitle className="text-zinc-900">Delete Location</DialogTitle>
+            <DialogDescription className="text-zinc-500">
               Are you sure you want to delete &quot;{deletingLocation?.name}&quot;? This action cannot be undone.
             </DialogDescription>
           </DialogHeader>
@@ -374,14 +374,14 @@ function LocationFormModal({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="flex max-h-[90vh] flex-col gap-0 border-zinc-800 bg-zinc-900 p-0 sm:max-w-[600px]">
+      <DialogContent className="flex max-h-[90vh] flex-col gap-0 border-zinc-200 bg-white p-0 sm:max-w-[600px]">
         <form onSubmit={handleSubmit} className="flex flex-col overflow-hidden">
           <div className="p-6 pb-4">
             <DialogHeader>
-              <DialogTitle className="text-neutral-200">
+              <DialogTitle className="text-zinc-900">
                 {editingLocation ? 'Edit Location' : 'Create Location'}
               </DialogTitle>
-              <DialogDescription className="text-neutral-400">
+              <DialogDescription className="text-zinc-500">
                 {editingLocation
                   ? 'Update the location details below.'
                   : 'Add a new work site for scheduling and time tracking.'}
@@ -398,13 +398,13 @@ function LocationFormModal({
                 className="flex items-start gap-2 rounded-lg border border-red-500/20 bg-red-500/10 p-3"
               >
                 <AlertCircle className="h-4 w-4 shrink-0 text-red-400" />
-                <p className="text-sm text-red-300">{error}</p>
+                <p className="text-sm text-red-600">{error}</p>
               </motion.div>
             )}
 
             {/* Location name */}
             <div className="space-y-2">
-              <Label htmlFor="name" className="text-neutral-300">
+              <Label htmlFor="name" className="text-zinc-700">
                 Location Name *
               </Label>
               <Input
@@ -412,14 +412,14 @@ function LocationFormModal({
                 placeholder="e.g., Main Office, Warehouse A"
                 value={formData.name}
                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                className="border-zinc-800 bg-zinc-950 text-neutral-200 placeholder:text-neutral-500"
+                className="border-zinc-200 bg-white text-zinc-900 placeholder:text-zinc-400"
                 required
               />
             </div>
 
             {/* Address */}
             <div className="space-y-2">
-              <Label htmlFor="address" className="text-neutral-300">
+              <Label htmlFor="address" className="text-zinc-700">
                 Address (Optional)
               </Label>
               <Input
@@ -427,16 +427,16 @@ function LocationFormModal({
                 placeholder="e.g., 123 Main St, Madrid"
                 value={formData.address}
                 onChange={(e) => setFormData({ ...formData, address: e.target.value })}
-                className="border-zinc-800 bg-zinc-950 text-neutral-200 placeholder:text-neutral-500"
+                className="border-zinc-200 bg-white text-zinc-900 placeholder:text-zinc-400"
               />
             </div>
 
             {/* Map Picker */}
             <div className="space-y-2">
-              <Label className="text-neutral-300">
+              <Label className="text-zinc-700">
                 Location on Map (Optional)
               </Label>
-              <p className="text-xs text-neutral-500">
+              <p className="text-xs text-zinc-500">
                 Tap on the map to set coordinates, or use "Expand Map" for full screen view
               </p>
               <MapPicker
@@ -456,7 +456,7 @@ function LocationFormModal({
             {/* Coordinates */}
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="lat" className="text-neutral-300">
+                <Label htmlFor="lat" className="text-zinc-700">
                   Latitude (Optional)
                 </Label>
                 <Input
@@ -466,12 +466,12 @@ function LocationFormModal({
                   placeholder="e.g., 40.416775"
                   value={formData.lat}
                   onChange={(e) => setFormData({ ...formData, lat: e.target.value })}
-                  className="border-zinc-800 bg-zinc-950 text-neutral-200 placeholder:text-neutral-500"
+                  className="border-zinc-200 bg-white text-zinc-900 placeholder:text-zinc-400"
                 />
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="lng" className="text-neutral-300">
+                <Label htmlFor="lng" className="text-zinc-700">
                   Longitude (Optional)
                 </Label>
                 <Input
@@ -481,14 +481,14 @@ function LocationFormModal({
                   placeholder="e.g., -3.703790"
                   value={formData.lng}
                   onChange={(e) => setFormData({ ...formData, lng: e.target.value })}
-                  className="border-zinc-800 bg-zinc-950 text-neutral-200 placeholder:text-neutral-500"
+                  className="border-zinc-200 bg-white text-zinc-900 placeholder:text-zinc-400"
                 />
               </div>
             </div>
 
             {/* Geofence radius */}
             <div className="space-y-2">
-              <Label htmlFor="geofence_radius" className="text-neutral-300">
+              <Label htmlFor="geofence_radius" className="text-zinc-700">
                 Geofence Radius (meters)
               </Label>
               <Input
@@ -498,15 +498,15 @@ function LocationFormModal({
                 placeholder="e.g., 100"
                 value={formData.geofence_radius}
                 onChange={(e) => setFormData({ ...formData, geofence_radius: e.target.value })}
-                className="border-zinc-800 bg-zinc-950 text-neutral-200 placeholder:text-neutral-500"
+                className="border-zinc-200 bg-white text-zinc-900 placeholder:text-zinc-400"
               />
-              <p className="text-xs text-neutral-500">
+              <p className="text-xs text-zinc-500">
                 Employees must be within this radius to clock in (requires GPS)
               </p>
             </div>
           </div>
 
-          <div className="border-t border-zinc-800 p-6 pt-4">
+          <div className="border-t border-zinc-200 p-6 pt-4">
             <DialogFooter>
               <Button type="button" variant="ghost" onClick={() => onOpenChange(false)} disabled={isSubmitting}>
                 Cancel
