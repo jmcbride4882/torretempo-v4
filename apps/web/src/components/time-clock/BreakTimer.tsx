@@ -180,12 +180,12 @@ export function BreakTimer({
   }
 
   return (
-    <div className="glass-card rounded-xl p-4 space-y-4">
+    <div className="bg-white border border-zinc-200 rounded-xl shadow-sm p-4 space-y-4">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <Coffee className="h-4 w-4 text-zinc-400" />
-          <span className="text-sm font-medium text-zinc-300">Break</span>
+          <Coffee className="h-4 w-4 text-zinc-500" />
+          <span className="text-sm font-medium text-zinc-700">Break</span>
         </div>
         {totalBreakMinutes > 0 && (
           <Badge variant="ghost" className="text-xs">
@@ -274,8 +274,8 @@ export function BreakTimer({
                   "flex-1 py-2 px-3 rounded-lg text-sm font-medium transition-all",
                   "border",
                   breakType === 'unpaid'
-                    ? "bg-zinc-800 border-zinc-700 text-white"
-                    : "bg-transparent border-zinc-800 text-zinc-500 hover:text-zinc-300"
+                    ? "bg-zinc-100 border-zinc-300 text-zinc-900"
+                    : "bg-transparent border-zinc-200 text-zinc-500 hover:text-zinc-700"
                 )}
               >
                 Unpaid
@@ -287,7 +287,7 @@ export function BreakTimer({
                   "border",
                   breakType === 'paid'
                     ? "bg-emerald-500/20 border-emerald-500/50 text-emerald-400"
-                    : "bg-transparent border-zinc-800 text-zinc-500 hover:text-zinc-300"
+                    : "bg-transparent border-zinc-200 text-zinc-500 hover:text-zinc-700"
                 )}
               >
                 Paid
@@ -301,7 +301,7 @@ export function BreakTimer({
               variant="outline"
               className={cn(
                 "w-full h-12 text-base font-medium rounded-xl",
-                "border-zinc-700 hover:bg-zinc-800"
+                "border-zinc-200 hover:bg-zinc-50"
               )}
             >
               {isStarting ? (

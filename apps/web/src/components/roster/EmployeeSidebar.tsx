@@ -92,9 +92,9 @@ function DraggableEmployeeCard({ member, hours }: DraggableEmployeeCardProps) {
       whileHover={{ scale: 1.02 }}
       whileTap={{ scale: 0.98 }}
       className={cn(
-        'cursor-grab rounded-xl border border-white/5 bg-white/[0.02] p-3 transition-all',
-        'hover:border-white/10 hover:bg-white/[0.04]',
-        isDragging && 'cursor-grabbing opacity-50 scale-105 shadow-lg shadow-primary-500/10'
+        'cursor-grab rounded-xl border border-zinc-200 bg-white p-3 transition-all',
+        'hover:border-zinc-300 hover:bg-zinc-50',
+        isDragging && 'cursor-grabbing opacity-50 scale-105 shadow-lg shadow-primary-500/5'
       )}
     >
       <div className="flex items-center gap-3">
@@ -106,7 +106,7 @@ function DraggableEmployeeCard({ member, hours }: DraggableEmployeeCardProps) {
             className="h-10 w-10 rounded-full object-cover"
           />
         ) : (
-          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary-500/20 text-sm font-medium text-primary-300">
+          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary-100 text-sm font-medium text-primary-600">
             {initials}
           </div>
         )}
@@ -114,15 +114,15 @@ function DraggableEmployeeCard({ member, hours }: DraggableEmployeeCardProps) {
         {/* Info */}
         <div className="min-w-0 flex-1">
           <div className="flex items-center gap-2">
-            <p className="truncate text-sm font-medium text-white">{name}</p>
-            <span className="shrink-0 rounded-full bg-white/5 px-1.5 py-0.5 text-[10px] uppercase text-neutral-400">
+            <p className="truncate text-sm font-medium text-zinc-900">{name}</p>
+            <span className="shrink-0 rounded-full bg-zinc-100 px-1.5 py-0.5 text-[10px] uppercase text-zinc-500">
               {member.role}
             </span>
           </div>
 
           {/* Hours Progress */}
           <div className="mt-1.5 flex items-center gap-2">
-            <div className="h-1.5 flex-1 rounded-full bg-neutral-800">
+            <div className="h-1.5 flex-1 rounded-full bg-zinc-200">
               <div
                 className={cn('h-full rounded-full transition-all', getHoursColor(hours))}
                 style={{ width: `${hoursPercent}%` }}
@@ -140,12 +140,12 @@ function DraggableEmployeeCard({ member, hours }: DraggableEmployeeCardProps) {
 
 function EmployeeCardSkeleton() {
   return (
-    <div className="animate-pulse rounded-xl border border-white/5 bg-white/[0.02] p-3">
+    <div className="animate-pulse rounded-xl border border-zinc-200 bg-white p-3">
       <div className="flex items-center gap-3">
-        <div className="h-10 w-10 rounded-full bg-neutral-800" />
+        <div className="h-10 w-10 rounded-full bg-zinc-200" />
         <div className="flex-1 space-y-2">
-          <div className="h-4 w-24 rounded bg-neutral-800" />
-          <div className="h-1.5 w-full rounded-full bg-neutral-800" />
+          <div className="h-4 w-24 rounded bg-zinc-200" />
+          <div className="h-1.5 w-full rounded-full bg-zinc-200" />
         </div>
       </div>
     </div>
@@ -253,22 +253,22 @@ export function EmployeeSidebar({ organizationSlug, weekStart, className }: Empl
     <div className={cn('flex flex-col', className)}>
       {/* Header */}
       <div className="mb-4 flex items-center gap-2">
-        <Users className="h-4 w-4 text-neutral-500" />
-        <h3 className="text-sm font-medium text-neutral-300">Employees</h3>
-        <span className="ml-auto rounded-full bg-white/5 px-2 py-0.5 text-xs text-neutral-500">
+        <Users className="h-4 w-4 text-zinc-400" />
+        <h3 className="text-sm font-medium text-zinc-700">Employees</h3>
+        <span className="ml-auto rounded-full bg-zinc-100 px-2 py-0.5 text-xs text-zinc-400">
           {members.length}
         </span>
       </div>
 
       {/* Search */}
       <div className="relative mb-4">
-        <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-neutral-500" />
+        <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-400" />
         <Input
           type="text"
           placeholder="Search employees..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          className="glass-card border-white/10 pl-9 text-sm text-white placeholder:text-neutral-500 focus:border-primary-500"
+          className="border-zinc-200 bg-white pl-9 text-sm text-zinc-900 placeholder:text-zinc-400 focus:border-primary-500"
         />
       </div>
 
@@ -282,12 +282,12 @@ export function EmployeeSidebar({ organizationSlug, weekStart, className }: Empl
           </>
         ) : error ? (
           <div className="rounded-lg border border-red-500/20 bg-red-500/10 p-3 text-center">
-            <p className="text-sm text-red-300">{error}</p>
+            <p className="text-sm text-red-600">{error}</p>
           </div>
         ) : filteredMembers.length === 0 ? (
-          <div className="rounded-lg border border-white/5 bg-white/[0.02] p-6 text-center">
-            <User className="mx-auto h-8 w-8 text-neutral-600" />
-            <p className="mt-2 text-sm text-neutral-500">
+          <div className="rounded-lg border border-zinc-200 bg-white p-6 text-center">
+            <User className="mx-auto h-8 w-8 text-zinc-400" />
+            <p className="mt-2 text-sm text-zinc-400">
               {searchQuery ? 'No employees match your search' : 'No employees found'}
             </p>
           </div>
@@ -303,20 +303,20 @@ export function EmployeeSidebar({ organizationSlug, weekStart, className }: Empl
       </div>
 
       {/* Footer - Hours Legend */}
-      <div className="mt-4 border-t border-white/5 pt-4">
-        <p className="mb-2 text-xs font-medium text-neutral-500">Weekly Hours</p>
+      <div className="mt-4 border-t border-zinc-200 pt-4">
+        <p className="mb-2 text-xs font-medium text-zinc-400">Weekly Hours</p>
         <div className="flex items-center gap-3 text-[10px]">
           <div className="flex items-center gap-1">
             <div className="h-2 w-2 rounded-full bg-emerald-500" />
-            <span className="text-neutral-500">&lt;32h</span>
+            <span className="text-zinc-400">&lt;32h</span>
           </div>
           <div className="flex items-center gap-1">
             <div className="h-2 w-2 rounded-full bg-amber-500" />
-            <span className="text-neutral-500">32-38h</span>
+            <span className="text-zinc-400">32-38h</span>
           </div>
           <div className="flex items-center gap-1">
             <div className="h-2 w-2 rounded-full bg-red-500" />
-            <span className="text-neutral-500">&gt;38h</span>
+            <span className="text-zinc-400">&gt;38h</span>
           </div>
         </div>
       </div>

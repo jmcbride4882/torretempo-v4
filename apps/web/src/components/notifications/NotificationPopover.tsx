@@ -116,12 +116,12 @@ export function NotificationPopover({
     <PopoverContent
       align="end"
       sideOffset={8}
-      className="w-[380px] p-0 overflow-hidden border-white/10 bg-neutral-900/95 backdrop-blur-xl shadow-2xl"
+      className="w-[380px] p-0 overflow-hidden border-zinc-200 bg-white shadow-2xl"
     >
       {/* Header */}
-      <div className="flex items-center justify-between px-4 py-3 border-b border-white/10">
+      <div className="flex items-center justify-between px-4 py-3 border-b border-zinc-200">
         <div className="flex items-center gap-2">
-          <h2 className="text-sm font-semibold text-white">Notifications</h2>
+          <h2 className="text-sm font-semibold text-zinc-900">Notifications</h2>
           {unreadCount > 0 && (
             <motion.span
               initial={{ scale: 0 }}
@@ -138,7 +138,7 @@ export function NotificationPopover({
             size="sm"
             onClick={handleMarkAllAsRead}
             disabled={isMarkingAll}
-            className="h-7 text-xs text-neutral-400 hover:text-white gap-1.5"
+            className="h-7 text-xs text-zinc-500 hover:text-zinc-900 gap-1.5"
           >
             {isMarkingAll ? (
               <Loader2 className="h-3.5 w-3.5 animate-spin" />
@@ -163,7 +163,7 @@ export function NotificationPopover({
                 className="flex flex-col items-center justify-center py-12 gap-3"
               >
                 <Loader2 className="h-8 w-8 text-primary-500 animate-spin" />
-                <p className="text-sm text-neutral-500">Loading notifications...</p>
+                <p className="text-sm text-zinc-500">Loading notifications...</p>
               </motion.div>
             ) : error ? (
               <motion.div
@@ -173,10 +173,10 @@ export function NotificationPopover({
                 exit={{ opacity: 0 }}
                 className="flex flex-col items-center justify-center py-12 gap-3"
               >
-                <div className="w-12 h-12 rounded-full bg-red-500/20 flex items-center justify-center">
-                  <BellOff className="h-6 w-6 text-red-400" />
+                <div className="w-12 h-12 rounded-full bg-red-50 flex items-center justify-center">
+                  <BellOff className="h-6 w-6 text-red-500" />
                 </div>
-                <p className="text-sm text-neutral-400">{error}</p>
+                <p className="text-sm text-zinc-500">{error}</p>
                 <Button
                   variant="ghost"
                   size="sm"
@@ -198,14 +198,14 @@ export function NotificationPopover({
                 className="flex flex-col items-center justify-center py-12 gap-3"
               >
                 <div className="relative">
-                  <div className="absolute inset-0 bg-primary-500/20 blur-xl rounded-full" />
-                  <div className="relative w-14 h-14 rounded-full bg-neutral-800/80 border border-white/10 flex items-center justify-center">
-                    <BellOff className="h-7 w-7 text-neutral-500" />
+                  <div className="absolute inset-0 bg-primary-100 blur-xl rounded-full" />
+                  <div className="relative w-14 h-14 rounded-full bg-zinc-50 border border-zinc-200 flex items-center justify-center">
+                    <BellOff className="h-7 w-7 text-zinc-400" />
                   </div>
                 </div>
                 <div className="text-center">
-                  <p className="text-sm font-medium text-neutral-300">All caught up!</p>
-                  <p className="text-xs text-neutral-500 mt-1">
+                  <p className="text-sm font-medium text-zinc-700">All caught up!</p>
+                  <p className="text-xs text-zinc-500 mt-1">
                     No notifications at the moment
                   </p>
                 </div>
@@ -233,12 +233,12 @@ export function NotificationPopover({
       </ScrollArea>
 
       {/* Footer */}
-      <div className="border-t border-white/10">
+      <div className="border-t border-zinc-200">
         <Button
           variant="ghost"
           onClick={handleViewAll}
           className={cn(
-            'w-full h-11 rounded-none text-sm text-neutral-400 hover:text-white',
+            'w-full h-11 rounded-none text-sm text-zinc-500 hover:text-zinc-900',
             'flex items-center justify-center gap-2 group'
           )}
         >

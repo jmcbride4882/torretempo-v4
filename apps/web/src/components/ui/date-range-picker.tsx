@@ -1,7 +1,7 @@
 /**
  * DateRangePicker
  * Reusable date range selection with start/end date inputs
- * Matches the glass morphism design system (zinc/neutral colors, border-white/10)
+ * Light theme design system (zinc colors, orange primary)
  */
 
 import * as React from 'react';
@@ -102,8 +102,8 @@ export function DateRangePicker({
           className={cn(
             'h-10 gap-2 rounded-lg border px-3 text-sm font-normal transition-all duration-200',
             hasRange
-              ? 'border-indigo-500/30 bg-indigo-500/10 text-indigo-200 hover:bg-indigo-500/15'
-              : 'border-white/10 bg-white/5 text-neutral-400 hover:bg-white/10 hover:text-neutral-200',
+              ? 'border-primary-300 bg-primary-50 text-primary-700 hover:bg-primary-100'
+              : 'border-zinc-200 bg-white text-zinc-600 hover:bg-zinc-50 hover:text-zinc-900',
             className,
           )}
         >
@@ -113,7 +113,7 @@ export function DateRangePicker({
             <span
               role="button"
               tabIndex={0}
-              className="ml-1 flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-white/10 hover:bg-white/20 transition-colors"
+              className="ml-1 flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-primary-200 hover:bg-primary-300 transition-colors"
               onClick={(e) => {
                 e.stopPropagation();
                 handleClear();
@@ -134,11 +134,11 @@ export function DateRangePicker({
       <PopoverContent
         align="start"
         sideOffset={8}
-        className="w-[320px] glass-card border-white/10 p-0"
+        className="w-[320px] border-zinc-200 bg-white p-0"
       >
         {/* Presets */}
-        <div className="border-b border-white/5 px-3 py-2.5">
-          <p className="mb-2 text-[11px] font-medium uppercase tracking-wider text-neutral-500">
+        <div className="border-b border-zinc-100 px-3 py-2.5">
+          <p className="mb-2 text-[11px] font-medium uppercase tracking-wider text-zinc-400">
             Quick select
           </p>
           <div className="flex flex-wrap gap-1.5">
@@ -149,8 +149,8 @@ export function DateRangePicker({
                 onClick={() => applyPreset(preset.days)}
                 className={cn(
                   'rounded-md px-2.5 py-1 text-xs font-medium transition-all duration-150',
-                  'border border-white/5 bg-white/[0.03] text-neutral-400',
-                  'hover:border-indigo-500/30 hover:bg-indigo-500/10 hover:text-indigo-300',
+                  'border border-zinc-200 bg-zinc-50 text-zinc-600',
+                  'hover:border-primary-300 hover:bg-primary-50 hover:text-primary-700',
                   'active:scale-[0.97]',
                 )}
               >
@@ -162,12 +162,12 @@ export function DateRangePicker({
 
         {/* Custom range inputs */}
         <div className="p-3">
-          <p className="mb-2.5 text-[11px] font-medium uppercase tracking-wider text-neutral-500">
+          <p className="mb-2.5 text-[11px] font-medium uppercase tracking-wider text-zinc-400">
             Custom range
           </p>
           <div className="flex items-center gap-2">
             <div className="flex-1">
-              <label className="mb-1 block text-[10px] font-medium text-neutral-500">From</label>
+              <label className="mb-1 block text-[10px] font-medium text-zinc-500">From</label>
               <input
                 ref={startRef}
                 type="date"
@@ -175,26 +175,24 @@ export function DateRangePicker({
                 max={endDate || undefined}
                 onChange={(e) => onStartDateChange(e.target.value)}
                 className={cn(
-                  'flex h-9 w-full rounded-lg border border-white/10 bg-neutral-900 px-2.5 text-xs text-white',
+                  'flex h-9 w-full rounded-lg border border-zinc-200 bg-white px-2.5 text-xs text-zinc-900',
                   'transition-all duration-200',
-                  'focus:border-indigo-500/50 focus:outline-none focus:ring-1 focus:ring-indigo-500/30',
-                  '[color-scheme:dark]',
+                  'focus:border-primary-400 focus:outline-none focus:ring-1 focus:ring-primary-200',
                 )}
               />
             </div>
-            <ChevronRight className="mt-4 h-3.5 w-3.5 shrink-0 text-neutral-600" />
+            <ChevronRight className="mt-4 h-3.5 w-3.5 shrink-0 text-zinc-400" />
             <div className="flex-1">
-              <label className="mb-1 block text-[10px] font-medium text-neutral-500">To</label>
+              <label className="mb-1 block text-[10px] font-medium text-zinc-500">To</label>
               <input
                 type="date"
                 value={endDate}
                 min={startDate || undefined}
                 onChange={(e) => onEndDateChange(e.target.value)}
                 className={cn(
-                  'flex h-9 w-full rounded-lg border border-white/10 bg-neutral-900 px-2.5 text-xs text-white',
+                  'flex h-9 w-full rounded-lg border border-zinc-200 bg-white px-2.5 text-xs text-zinc-900',
                   'transition-all duration-200',
-                  'focus:border-indigo-500/50 focus:outline-none focus:ring-1 focus:ring-indigo-500/30',
-                  '[color-scheme:dark]',
+                  'focus:border-primary-400 focus:outline-none focus:ring-1 focus:ring-primary-200',
                 )}
               />
             </div>
@@ -203,11 +201,11 @@ export function DateRangePicker({
 
         {/* Footer */}
         {hasRange && (
-          <div className="border-t border-white/5 px-3 py-2 flex justify-between items-center">
+          <div className="border-t border-zinc-100 px-3 py-2 flex justify-between items-center">
             <button
               type="button"
               onClick={handleClear}
-              className="text-xs text-neutral-500 hover:text-neutral-300 transition-colors"
+              className="text-xs text-zinc-500 hover:text-zinc-700 transition-colors"
             >
               Clear dates
             </button>
@@ -216,7 +214,7 @@ export function DateRangePicker({
               onClick={() => setOpen(false)}
               className={cn(
                 'rounded-md px-3 py-1 text-xs font-medium transition-all duration-150',
-                'bg-indigo-600/80 text-white hover:bg-indigo-600',
+                'bg-primary-600 text-white hover:bg-primary-700',
                 'active:scale-[0.97]',
               )}
             >

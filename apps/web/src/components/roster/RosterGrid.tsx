@@ -118,7 +118,7 @@ function MobileShiftList({ shifts, weekDays, onShiftClick }: {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: index * 0.05 }}
             className={cn(
-              'rounded-xl border border-white/5 bg-white/[0.02] p-4',
+              'rounded-xl border border-zinc-100 bg-white p-4',
               day.isToday && 'border-primary-500/30 bg-primary-500/5'
             )}
           >
@@ -129,8 +129,8 @@ function MobileShiftList({ shifts, weekDays, onShiftClick }: {
                 day.isToday 
                   ? 'bg-primary-500 text-white' 
                   : day.isWeekend 
-                    ? 'bg-neutral-800 text-neutral-400'
-                    : 'bg-neutral-800/50 text-neutral-300'
+                    ? 'bg-zinc-100 text-zinc-500'
+                    : 'bg-zinc-100/50 text-zinc-700'
               )}>
                 <span className="text-[10px] font-medium uppercase leading-none">{day.dayName}</span>
                 <span className="text-lg font-bold leading-tight">{day.dayNumber}</span>
@@ -138,11 +138,11 @@ function MobileShiftList({ shifts, weekDays, onShiftClick }: {
               <div>
                 <p className={cn(
                   'font-medium',
-                  day.isToday ? 'text-primary-300' : 'text-neutral-200'
+                  day.isToday ? 'text-primary-600' : 'text-zinc-900'
                 )}>
                   {day.date.toLocaleDateString('en-US', { weekday: 'long' })}
                 </p>
-                <p className="text-xs text-neutral-500">
+                <p className="text-xs text-zinc-400">
                   {dayShifts.length} shift{dayShifts.length !== 1 ? 's' : ''}
                 </p>
               </div>
@@ -160,8 +160,8 @@ function MobileShiftList({ shifts, weekDays, onShiftClick }: {
                 ))}
               </div>
             ) : (
-              <div className="rounded-lg border border-dashed border-white/10 bg-white/[0.01] py-6 text-center">
-                <p className="text-sm text-neutral-500">No shifts scheduled</p>
+              <div className="rounded-lg border border-dashed border-zinc-200 bg-zinc-50/50 py-6 text-center">
+                <p className="text-sm text-zinc-400">No shifts scheduled</p>
               </div>
             )}
           </motion.div>
@@ -266,7 +266,7 @@ export function RosterGrid({ shifts, currentDate, isLoading, onShiftClick, onShi
           className="flex flex-col items-center gap-3"
         >
           <Loader2 className="h-8 w-8 animate-spin text-primary-500" />
-          <p className="text-sm text-neutral-400">Loading roster...</p>
+          <p className="text-sm text-zinc-500">Loading roster...</p>
         </motion.div>
       </div>
     );
@@ -292,12 +292,12 @@ export function RosterGrid({ shifts, currentDate, isLoading, onShiftClick, onShi
       
       {/* Desktop grid view */}
       <div className="hidden lg:block">
-        <div className="overflow-hidden rounded-xl border border-white/5 bg-white/[0.02]">
+        <div className="overflow-hidden rounded-xl border border-zinc-100 bg-white">
           {/* Header row with day names */}
-          <div className="grid grid-cols-[80px_repeat(7,1fr)] border-b border-white/5">
+          <div className="grid grid-cols-[80px_repeat(7,1fr)] border-b border-zinc-100">
             {/* Empty corner cell */}
-            <div className="border-r border-white/5 bg-neutral-900/50 p-3">
-              <span className="text-xs font-medium uppercase text-neutral-500">Time</span>
+            <div className="border-r border-zinc-100 bg-zinc-50 p-3">
+              <span className="text-xs font-medium uppercase text-zinc-400">Time</span>
             </div>
             
             {/* Day headers */}
@@ -308,14 +308,14 @@ export function RosterGrid({ shifts, currentDate, isLoading, onShiftClick, onShi
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.03 }}
                 className={cn(
-                  'flex flex-col items-center justify-center border-r border-white/5 p-3 last:border-r-0',
+                  'flex flex-col items-center justify-center border-r border-zinc-100 p-3 last:border-r-0',
                   day.isToday && 'bg-primary-500/5',
-                  day.isWeekend && !day.isToday && 'bg-neutral-900/30'
+                  day.isWeekend && !day.isToday && 'bg-zinc-50/50'
                 )}
               >
                 <span className={cn(
                   'text-xs font-medium uppercase',
-                  day.isToday ? 'text-primary-400' : day.isWeekend ? 'text-neutral-500' : 'text-neutral-400'
+                  day.isToday ? 'text-primary-500' : day.isWeekend ? 'text-zinc-400' : 'text-zinc-500'
                 )}>
                   {day.dayName}
                 </span>
@@ -324,8 +324,8 @@ export function RosterGrid({ shifts, currentDate, isLoading, onShiftClick, onShi
                   day.isToday 
                     ? 'bg-primary-500 text-white' 
                     : day.isWeekend 
-                      ? 'text-neutral-500' 
-                      : 'text-neutral-200'
+                      ? 'text-zinc-400' 
+                      : 'text-zinc-900'
                 )}>
                   {day.dayNumber}
                 </span>
@@ -336,13 +336,13 @@ export function RosterGrid({ shifts, currentDate, isLoading, onShiftClick, onShi
           {/* Grid body */}
           <div className="relative grid grid-cols-[80px_repeat(7,1fr)]">
             {/* Time column */}
-            <div className="border-r border-white/5 bg-neutral-900/30">
+            <div className="border-r border-zinc-100 bg-zinc-50/50">
               {TIME_SLOTS.map((slot) => (
                 <div
                   key={slot.hour}
-                  className="flex h-[60px] items-start justify-end border-b border-white/5 pr-3 pt-1 last:border-b-0"
+                  className="flex h-[60px] items-start justify-end border-b border-zinc-100 pr-3 pt-1 last:border-b-0"
                 >
-                  <span className="text-xs font-medium tabular-nums text-neutral-500">
+                  <span className="text-xs font-medium tabular-nums text-zinc-400">
                     {slot.label}
                   </span>
                 </div>
@@ -359,16 +359,16 @@ export function RosterGrid({ shifts, currentDate, isLoading, onShiftClick, onShi
                   key={dateKey}
                   day={day}
                   className={cn(
-                    'relative border-r border-white/5 last:border-r-0',
+                    'relative border-r border-zinc-100 last:border-r-0',
                     day.isToday && 'bg-primary-500/[0.02]',
-                    day.isWeekend && !day.isToday && 'bg-neutral-900/20'
+                    day.isWeekend && !day.isToday && 'bg-zinc-50/30'
                   )}
                 >
                   {/* Hour grid lines */}
                   {TIME_SLOTS.map((slot) => (
                     <div
                       key={slot.hour}
-                      className="h-[60px] border-b border-white/5 last:border-b-0"
+                      className="h-[60px] border-b border-zinc-100 last:border-b-0"
                     />
                   ))}
                   
@@ -433,11 +433,11 @@ export function RosterGrid({ shifts, currentDate, isLoading, onShiftClick, onShi
             animate={{ opacity: 1, y: 0 }}
             className="mt-8 flex flex-col items-center justify-center py-12 text-center"
           >
-            <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-neutral-800/50">
-              <CalendarOff className="h-8 w-8 text-neutral-500" />
+            <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-zinc-100">
+              <CalendarOff className="h-8 w-8 text-zinc-400" />
             </div>
-            <h3 className="mt-4 text-lg font-semibold text-neutral-200">No shifts this week</h3>
-            <p className="mt-1 max-w-sm text-sm text-neutral-400">
+            <h3 className="mt-4 text-lg font-semibold text-zinc-900">No shifts this week</h3>
+            <p className="mt-1 max-w-sm text-sm text-zinc-500">
               There are no shifts scheduled for the selected week. Create a new shift or try a different date range.
             </p>
           </motion.div>

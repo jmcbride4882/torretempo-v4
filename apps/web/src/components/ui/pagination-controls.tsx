@@ -1,6 +1,6 @@
 /**
  * PaginationControls - Reusable pagination UI component
- * Glass morphism styled pagination with icons and responsive design
+ * Light theme pagination with icons and responsive design
  */
 
 import { ChevronLeft, ChevronRight } from 'lucide-react';
@@ -48,13 +48,13 @@ export function PaginationControls({
       )}
     >
       {/* Showing text */}
-      <p className="text-sm text-neutral-400 order-2 sm:order-1">
+      <p className="text-sm text-zinc-500 order-2 sm:order-1">
         Showing{' '}
-        <span className="font-medium text-neutral-200">{startItem}</span>
+        <span className="font-medium text-zinc-700">{startItem}</span>
         {' - '}
-        <span className="font-medium text-neutral-200">{endItem}</span>
+        <span className="font-medium text-zinc-700">{endItem}</span>
         {' of '}
-        <span className="font-medium text-neutral-200">{total}</span>
+        <span className="font-medium text-zinc-700">{total}</span>
         {' results'}
       </p>
 
@@ -67,23 +67,23 @@ export function PaginationControls({
           onClick={() => onPageChange(Math.max(1, page - 1))}
           disabled={isFirstPage}
           className={cn(
-            'gap-1.5 rounded-lg border border-zinc-800 bg-zinc-900/50 backdrop-blur-sm',
-            'text-neutral-400 hover:text-white hover:bg-zinc-800/50',
-            'disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-zinc-900/50'
+            'gap-1.5 rounded-lg border border-zinc-200 bg-white',
+            'text-zinc-600 hover:text-zinc-900 hover:bg-zinc-50',
+            'disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-white'
           )}
         >
           <ChevronLeft className="h-4 w-4" />
           <span className="hidden sm:inline">Previous</span>
         </Button>
 
-        {/* Page indicator with emerald accent */}
-        <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-zinc-800 bg-zinc-900/50 backdrop-blur-sm">
-          <span className="text-sm text-neutral-400">Page</span>
-          <span className="min-w-[2ch] text-center text-sm font-semibold text-emerald-400">
+        {/* Page indicator */}
+        <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-zinc-200 bg-white">
+          <span className="text-sm text-zinc-500">Page</span>
+          <span className="min-w-[2ch] text-center text-sm font-semibold text-primary-600">
             {page}
           </span>
-          <span className="text-sm text-neutral-400">of</span>
-          <span className="min-w-[2ch] text-center text-sm font-medium text-neutral-200">
+          <span className="text-sm text-zinc-500">of</span>
+          <span className="min-w-[2ch] text-center text-sm font-medium text-zinc-700">
             {totalPages}
           </span>
         </div>
@@ -95,9 +95,9 @@ export function PaginationControls({
           onClick={() => onPageChange(Math.min(totalPages, page + 1))}
           disabled={isLastPage}
           className={cn(
-            'gap-1.5 rounded-lg border border-zinc-800 bg-zinc-900/50 backdrop-blur-sm',
-            'text-neutral-400 hover:text-white hover:bg-zinc-800/50',
-            'disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-zinc-900/50'
+            'gap-1.5 rounded-lg border border-zinc-200 bg-white',
+            'text-zinc-600 hover:text-zinc-900 hover:bg-zinc-50',
+            'disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-white'
           )}
         >
           <span className="hidden sm:inline">Next</span>

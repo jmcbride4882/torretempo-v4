@@ -127,47 +127,47 @@ export function PublishDialog({
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent className="glass-card max-w-md border-white/10">
+      <DialogContent className="max-w-md border border-zinc-200 bg-white rounded-xl shadow-sm">
         <DialogHeader>
-          <DialogTitle className="flex items-center gap-2 text-xl text-white">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary-600/20">
-              <Send className="h-4 w-4 text-primary-400" />
+          <DialogTitle className="flex items-center gap-2 text-xl text-zinc-900">
+            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary-50">
+              <Send className="h-4 w-4 text-primary-500" />
             </div>
             Publish Roster
           </DialogTitle>
-          <DialogDescription className="text-neutral-400">
+          <DialogDescription className="text-zinc-500">
             Publish shifts and notify assigned employees.
           </DialogDescription>
         </DialogHeader>
 
         <div className="space-y-4 py-4">
           {/* Week Range */}
-          <div className="flex items-center gap-3 rounded-lg border border-white/5 bg-white/[0.02] p-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary-500/10">
-              <Calendar className="h-5 w-5 text-primary-400" />
+          <div className="flex items-center gap-3 rounded-lg border border-zinc-200 bg-zinc-50 p-3">
+            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary-50">
+              <Calendar className="h-5 w-5 text-primary-500" />
             </div>
             <div>
-              <p className="text-sm font-medium text-white">
+              <p className="text-sm font-medium text-zinc-900">
                 {formatDateRange(weekStart, weekEnd)}
               </p>
-              <p className="text-xs text-neutral-500">Week to publish</p>
+              <p className="text-xs text-zinc-400">Week to publish</p>
             </div>
           </div>
 
           {/* Stats */}
           <div className="grid grid-cols-2 gap-3">
-            <div className="rounded-lg border border-white/5 bg-white/[0.02] p-3 text-center">
-              <p className="text-2xl font-bold text-white">{draftShifts.length}</p>
-              <p className="text-xs text-neutral-500">
+            <div className="rounded-lg border border-zinc-200 bg-zinc-50 p-3 text-center">
+              <p className="text-2xl font-bold text-zinc-900">{draftShifts.length}</p>
+              <p className="text-xs text-zinc-400">
                 Draft shift{draftShifts.length !== 1 ? 's' : ''}
               </p>
             </div>
-            <div className="rounded-lg border border-white/5 bg-white/[0.02] p-3 text-center">
+            <div className="rounded-lg border border-zinc-200 bg-zinc-50 p-3 text-center">
               <div className="flex items-center justify-center gap-1">
-                <Users className="h-4 w-4 text-neutral-400" />
-                <p className="text-2xl font-bold text-white">{employeeCount}</p>
+                <Users className="h-4 w-4 text-zinc-500" />
+                <p className="text-2xl font-bold text-zinc-900">{employeeCount}</p>
               </div>
-              <p className="text-xs text-neutral-500">
+              <p className="text-xs text-zinc-400">
                 Employee{employeeCount !== 1 ? 's' : ''} to notify
               </p>
             </div>
@@ -182,8 +182,8 @@ export function PublishDialog({
             >
               <AlertTriangle className="h-4 w-4 shrink-0 text-amber-400" />
               <div>
-                <p className="text-sm font-medium text-amber-300">Compliance Warnings</p>
-                <p className="text-xs text-amber-400/80">
+                <p className="text-sm font-medium text-amber-700">Compliance Warnings</p>
+                <p className="text-xs text-amber-600">
                   {shiftsWithWarnings.length} shift{shiftsWithWarnings.length !== 1 ? 's have' : ' has'}{' '}
                   compliance warnings. Review before publishing.
                 </p>
@@ -196,12 +196,12 @@ export function PublishDialog({
             <motion.div
               initial={{ opacity: 0, y: -5 }}
               animate={{ opacity: 1, y: 0 }}
-              className="flex items-start gap-2 rounded-lg border border-neutral-500/20 bg-neutral-500/10 p-3"
+              className="flex items-start gap-2 rounded-lg border border-zinc-200 bg-zinc-50 p-3"
             >
-              <AlertTriangle className="h-4 w-4 shrink-0 text-neutral-400" />
+              <AlertTriangle className="h-4 w-4 shrink-0 text-zinc-500" />
               <div>
-                <p className="text-sm font-medium text-neutral-300">No Draft Shifts</p>
-                <p className="text-xs text-neutral-400">
+                <p className="text-sm font-medium text-zinc-700">No Draft Shifts</p>
+                <p className="text-xs text-zinc-500">
                   There are no draft shifts to publish for this week.
                 </p>
               </div>
@@ -231,7 +231,7 @@ export function PublishDialog({
                   <p
                     className={cn(
                       'text-sm font-medium',
-                      publishResult.success ? 'text-emerald-300' : 'text-red-300'
+                      publishResult.success ? 'text-emerald-700' : 'text-red-700'
                     )}
                   >
                     {publishResult.success ? 'Published!' : 'Error'}
@@ -239,7 +239,7 @@ export function PublishDialog({
                   <p
                     className={cn(
                       'text-xs',
-                      publishResult.success ? 'text-emerald-400/80' : 'text-red-400/80'
+                      publishResult.success ? 'text-emerald-600' : 'text-red-600'
                     )}
                   >
                     {publishResult.message}
@@ -264,7 +264,7 @@ export function PublishDialog({
             variant="ghost"
             onClick={handleClose}
             disabled={isPublishing}
-            className="rounded-lg border border-white/5 bg-white/5 text-neutral-300 hover:bg-white/10"
+            className="rounded-lg border border-zinc-200 bg-zinc-50 text-zinc-700 hover:bg-zinc-100"
           >
             Cancel
           </Button>

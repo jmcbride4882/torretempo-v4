@@ -77,15 +77,15 @@ function ShiftDetail({
 }) {
   if (isOpen) {
     return (
-      <div className="flex-1 rounded-xl border border-dashed border-neutral-600 bg-neutral-800/30 p-3">
-        <p className="mb-1.5 text-[10px] font-medium uppercase tracking-wider text-neutral-500">
+      <div className="flex-1 rounded-xl border border-dashed border-zinc-300 bg-zinc-50 p-3">
+        <p className="mb-1.5 text-[10px] font-medium uppercase tracking-wider text-zinc-400">
           {label}
         </p>
-        <div className="flex items-center gap-2 text-neutral-400">
+        <div className="flex items-center gap-2 text-zinc-500">
           <Hand className="h-4 w-4" />
           <span className="text-sm italic">Open Request</span>
         </div>
-        <p className="mt-1 text-[10px] text-neutral-500">
+        <p className="mt-1 text-[10px] text-zinc-400">
           Anyone can claim this swap
         </p>
       </div>
@@ -95,29 +95,29 @@ function ShiftDetail({
   if (!shift) return null;
 
   return (
-    <div className="flex-1 rounded-xl border border-white/10 bg-white/5 p-3 backdrop-blur-sm">
-      <p className="mb-1.5 text-[10px] font-medium uppercase tracking-wider text-neutral-500">
+    <div className="flex-1 rounded-xl border border-zinc-200 bg-zinc-50 p-3">
+      <p className="mb-1.5 text-[10px] font-medium uppercase tracking-wider text-zinc-400">
         {label}
       </p>
-      
+
       {/* Date */}
-      <div className="flex items-center gap-1.5 text-white">
-        <Calendar className="h-3.5 w-3.5 text-neutral-400" />
+      <div className="flex items-center gap-1.5 text-zinc-900">
+        <Calendar className="h-3.5 w-3.5 text-zinc-500" />
         <span className="text-sm font-medium">{formatDate(shift.start_time)}</span>
       </div>
-      
+
       {/* Time */}
-      <div className="mt-1.5 flex items-center gap-1.5 text-neutral-300">
-        <Clock className="h-3.5 w-3.5 text-neutral-500" />
+      <div className="mt-1.5 flex items-center gap-1.5 text-zinc-600">
+        <Clock className="h-3.5 w-3.5 text-zinc-400" />
         <span className="text-xs tabular-nums">
           {formatTime(shift.start_time)} - {formatTime(shift.end_time)}
         </span>
       </div>
-      
+
       {/* Location */}
       {shift.location && (
-        <div className="mt-1.5 flex items-center gap-1.5 text-neutral-400">
-          <MapPin className="h-3.5 w-3.5 text-neutral-500" />
+        <div className="mt-1.5 flex items-center gap-1.5 text-zinc-500">
+          <MapPin className="h-3.5 w-3.5 text-zinc-400" />
           <span className="truncate text-xs">{shift.location.name}</span>
         </div>
       )}
@@ -187,8 +187,8 @@ export function SwapCard({
       exit={{ opacity: 0, y: -20 }}
       whileHover={{ y: -2 }}
       className={cn(
-        'group relative overflow-hidden rounded-2xl border border-white/10 bg-white/5 backdrop-blur-xl transition-all duration-300',
-        'hover:border-white/20 hover:bg-white/[0.07] hover:shadow-lg hover:shadow-black/20',
+        'group relative overflow-hidden rounded-2xl border border-zinc-200 bg-white shadow-sm transition-all duration-300',
+        'hover:border-zinc-300 hover:shadow-md',
         className
       )}
     >
@@ -199,7 +199,7 @@ export function SwapCard({
         {/* Header: Status + Time */}
         <div className="mb-4 flex items-start justify-between gap-3">
           <SwapStatusBadge status={swap.status} size="md" />
-          <span className="shrink-0 text-xs text-neutral-500">
+          <span className="shrink-0 text-xs text-zinc-400">
             {formatRelativeTime(swap.created_at)}
           </span>
         </div>
@@ -208,42 +208,42 @@ export function SwapCard({
         <div className="mb-4 flex items-center gap-3">
           {/* Requester */}
           <div className="flex items-center gap-2">
-            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-primary-500/80 to-primary-700/80 text-sm font-medium text-white shadow-lg shadow-primary-500/20">
+            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-primary-500 to-primary-600 text-sm font-medium text-white shadow-sm">
               {swap.requester?.name?.charAt(0).toUpperCase() || 'R'}
             </div>
             <div className="min-w-0">
-              <p className="truncate text-sm font-medium text-white">
+              <p className="truncate text-sm font-medium text-zinc-900">
                 {swap.requester?.name || 'Unknown'}
               </p>
-              <p className="text-[10px] text-neutral-500">Requester</p>
+              <p className="text-[10px] text-zinc-400">Requester</p>
             </div>
           </div>
 
           {/* Arrow */}
-          <ArrowLeftRight className="mx-1 h-4 w-4 shrink-0 text-neutral-500" />
+          <ArrowLeftRight className="mx-1 h-4 w-4 shrink-0 text-zinc-400" />
 
           {/* Recipient */}
           <div className="flex items-center gap-2">
             {swap.recipient ? (
               <>
-                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-emerald-500/80 to-emerald-700/80 text-sm font-medium text-white shadow-lg shadow-emerald-500/20">
+                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-emerald-500 to-emerald-600 text-sm font-medium text-white shadow-sm">
                   {swap.recipient.name.charAt(0).toUpperCase()}
                 </div>
                 <div className="min-w-0">
-                  <p className="truncate text-sm font-medium text-white">
+                  <p className="truncate text-sm font-medium text-zinc-900">
                     {swap.recipient.name}
                   </p>
-                  <p className="text-[10px] text-neutral-500">Recipient</p>
+                  <p className="text-[10px] text-zinc-400">Recipient</p>
                 </div>
               </>
             ) : (
               <div className="flex items-center gap-2">
-                <div className="flex h-8 w-8 items-center justify-center rounded-full border border-dashed border-neutral-600 bg-neutral-800/50">
-                  <User className="h-4 w-4 text-neutral-500" />
+                <div className="flex h-8 w-8 items-center justify-center rounded-full border border-dashed border-zinc-300 bg-zinc-50">
+                  <User className="h-4 w-4 text-zinc-400" />
                 </div>
                 <div>
-                  <p className="text-sm italic text-neutral-400">Open</p>
-                  <p className="text-[10px] text-neutral-500">Anyone</p>
+                  <p className="text-sm italic text-zinc-500">Open</p>
+                  <p className="text-[10px] text-zinc-400">Anyone</p>
                 </div>
               </div>
             )}
@@ -262,33 +262,33 @@ export function SwapCard({
 
         {/* Reason/Notes */}
         {swap.reason && (
-          <div className="mb-4 rounded-lg border border-white/5 bg-white/5 p-3">
-            <div className="mb-1 flex items-center gap-1.5 text-neutral-400">
+          <div className="mb-4 rounded-lg border border-zinc-200 bg-zinc-50 p-3">
+            <div className="mb-1 flex items-center gap-1.5 text-zinc-500">
               <MessageSquare className="h-3 w-3" />
               <span className="text-[10px] font-medium uppercase tracking-wider">
                 Reason
               </span>
             </div>
-            <p className="text-sm text-neutral-300">{swap.reason}</p>
+            <p className="text-sm text-zinc-700">{swap.reason}</p>
           </div>
         )}
 
         {/* Rejection reason if rejected */}
         {swap.status === 'rejected' && swap.rejection_reason && (
-          <div className="mb-4 rounded-lg border border-red-500/20 bg-red-500/10 p-3">
-            <div className="mb-1 flex items-center gap-1.5 text-red-400">
+          <div className="mb-4 rounded-lg border border-red-200 bg-red-50 p-3">
+            <div className="mb-1 flex items-center gap-1.5 text-red-600">
               <X className="h-3 w-3" />
               <span className="text-[10px] font-medium uppercase tracking-wider">
                 Rejection Reason
               </span>
             </div>
-            <p className="text-sm text-red-300">{swap.rejection_reason}</p>
+            <p className="text-sm text-red-700">{swap.rejection_reason}</p>
           </div>
         )}
 
         {/* Actions */}
         {(canAcceptReject || canApproveReject || canClaim || canCancel) && (
-          <div className="flex flex-wrap items-center gap-2 border-t border-white/5 pt-4">
+          <div className="flex flex-wrap items-center gap-2 border-t border-zinc-100 pt-4">
             {/* Peer actions: Accept/Reject */}
             {canAcceptReject && (
               <>
@@ -314,7 +314,7 @@ export function SwapCard({
                     handleAction('reject', () => onPeerAction!(swap.id, 'reject'))
                   }
                   disabled={!!loadingAction}
-                  className="gap-1.5 rounded-lg border border-red-500/30 text-red-400 hover:bg-red-500/10"
+                  className="gap-1.5 rounded-lg border border-red-200 text-red-600 hover:bg-red-50"
                 >
                   {loadingAction === 'reject' ? (
                     <Loader2 className="h-3.5 w-3.5 animate-spin" />
@@ -351,7 +351,7 @@ export function SwapCard({
                     handleAction('reject', () => onManagerAction!(swap.id, 'reject'))
                   }
                   disabled={!!loadingAction}
-                  className="gap-1.5 rounded-lg border border-red-500/30 text-red-400 hover:bg-red-500/10"
+                  className="gap-1.5 rounded-lg border border-red-200 text-red-600 hover:bg-red-50"
                 >
                   {loadingAction === 'reject' ? (
                     <Loader2 className="h-3.5 w-3.5 animate-spin" />
@@ -387,7 +387,7 @@ export function SwapCard({
                 variant="ghost"
                 onClick={() => handleAction('cancel', () => onCancel!(swap.id))}
                 disabled={!!loadingAction}
-                className="ml-auto gap-1.5 rounded-lg text-neutral-400 hover:bg-neutral-800 hover:text-white"
+                className="ml-auto gap-1.5 rounded-lg text-zinc-500 hover:bg-zinc-100 hover:text-zinc-900"
               >
                 {loadingAction === 'cancel' ? (
                   <Loader2 className="h-3.5 w-3.5 animate-spin" />
@@ -407,50 +407,50 @@ export function SwapCard({
 // Skeleton loader for swap cards
 export function SwapCardSkeleton() {
   return (
-    <div className="animate-pulse rounded-2xl border border-white/10 bg-white/5 p-4 sm:p-5">
+    <div className="animate-pulse rounded-2xl border border-zinc-200 bg-white p-4 sm:p-5">
       {/* Header */}
       <div className="mb-4 flex items-start justify-between">
-        <div className="h-6 w-28 rounded-full bg-white/10" />
-        <div className="h-4 w-16 rounded bg-white/10" />
+        <div className="h-6 w-28 rounded-full bg-zinc-200" />
+        <div className="h-4 w-16 rounded bg-zinc-200" />
       </div>
 
       {/* Users */}
       <div className="mb-4 flex items-center gap-3">
         <div className="flex items-center gap-2">
-          <div className="h-8 w-8 rounded-full bg-white/10" />
+          <div className="h-8 w-8 rounded-full bg-zinc-200" />
           <div className="space-y-1">
-            <div className="h-4 w-20 rounded bg-white/10" />
-            <div className="h-3 w-14 rounded bg-white/10" />
+            <div className="h-4 w-20 rounded bg-zinc-200" />
+            <div className="h-3 w-14 rounded bg-zinc-200" />
           </div>
         </div>
-        <div className="h-4 w-4 rounded bg-white/10" />
+        <div className="h-4 w-4 rounded bg-zinc-200" />
         <div className="flex items-center gap-2">
-          <div className="h-8 w-8 rounded-full bg-white/10" />
+          <div className="h-8 w-8 rounded-full bg-zinc-200" />
           <div className="space-y-1">
-            <div className="h-4 w-20 rounded bg-white/10" />
-            <div className="h-3 w-14 rounded bg-white/10" />
+            <div className="h-4 w-20 rounded bg-zinc-200" />
+            <div className="h-3 w-14 rounded bg-zinc-200" />
           </div>
         </div>
       </div>
 
       {/* Shifts */}
       <div className="mb-4 flex flex-col gap-3 sm:flex-row">
-        <div className="flex-1 space-y-2 rounded-xl border border-white/10 bg-white/5 p-3">
-          <div className="h-3 w-16 rounded bg-white/10" />
-          <div className="h-4 w-24 rounded bg-white/10" />
-          <div className="h-3 w-20 rounded bg-white/10" />
+        <div className="flex-1 space-y-2 rounded-xl border border-zinc-200 bg-zinc-50 p-3">
+          <div className="h-3 w-16 rounded bg-zinc-200" />
+          <div className="h-4 w-24 rounded bg-zinc-200" />
+          <div className="h-3 w-20 rounded bg-zinc-200" />
         </div>
-        <div className="flex-1 space-y-2 rounded-xl border border-white/10 bg-white/5 p-3">
-          <div className="h-3 w-16 rounded bg-white/10" />
-          <div className="h-4 w-24 rounded bg-white/10" />
-          <div className="h-3 w-20 rounded bg-white/10" />
+        <div className="flex-1 space-y-2 rounded-xl border border-zinc-200 bg-zinc-50 p-3">
+          <div className="h-3 w-16 rounded bg-zinc-200" />
+          <div className="h-4 w-24 rounded bg-zinc-200" />
+          <div className="h-3 w-20 rounded bg-zinc-200" />
         </div>
       </div>
 
       {/* Actions */}
-      <div className="flex gap-2 border-t border-white/5 pt-4">
-        <div className="h-8 w-20 rounded-lg bg-white/10" />
-        <div className="h-8 w-20 rounded-lg bg-white/10" />
+      <div className="flex gap-2 border-t border-zinc-100 pt-4">
+        <div className="h-8 w-20 rounded-lg bg-zinc-200" />
+        <div className="h-8 w-20 rounded-lg bg-zinc-200" />
       </div>
     </div>
   );

@@ -75,7 +75,7 @@ export function MapPicker({ lat, lng, onLocationSelect, height = '400px' }: MapP
       {/* Inline map view */}
       <div className="relative">
         <div 
-          className="overflow-hidden rounded-lg border border-zinc-800" 
+          className="overflow-hidden rounded-lg border border-zinc-200" 
           style={{ height }}
         >
           <MapView />
@@ -96,12 +96,12 @@ export function MapPicker({ lat, lng, onLocationSelect, height = '400px' }: MapP
 
       {/* Fullscreen map modal */}
       {isFullscreen && (
-        <div className="fixed inset-0 z-[9999] bg-zinc-950">
+        <div className="fixed inset-0 z-[9999] bg-white">
           {/* Header */}
-          <div className="absolute left-0 right-0 top-0 z-[10000] flex items-center justify-between border-b border-zinc-800 bg-zinc-900/95 p-4 backdrop-blur-sm">
+          <div className="absolute left-0 right-0 top-0 z-[10000] flex items-center justify-between border-b border-zinc-200 bg-white p-4">
             <div>
-              <h3 className="font-semibold text-neutral-200">Select Location</h3>
-              <p className="text-xs text-neutral-400">Tap on the map to set coordinates</p>
+              <h3 className="font-semibold text-zinc-900">Select Location</h3>
+              <p className="text-xs text-zinc-500">Tap on the map to set coordinates</p>
             </div>
             <Button
               type="button"
@@ -122,10 +122,10 @@ export function MapPicker({ lat, lng, onLocationSelect, height = '400px' }: MapP
 
           {/* Coordinates display */}
           {position && (
-            <div className="absolute bottom-0 left-0 right-0 z-[10000] border-t border-zinc-800 bg-zinc-900/95 p-4 backdrop-blur-sm">
+            <div className="absolute bottom-0 left-0 right-0 z-[10000] border-t border-zinc-200 bg-white p-4">
               <div className="text-center">
-                <p className="text-xs text-neutral-400">Selected Coordinates</p>
-                <p className="font-mono text-sm text-neutral-200">
+                <p className="text-xs text-zinc-500">Selected Coordinates</p>
+                <p className="font-mono text-sm text-zinc-900">
                   {position[0].toFixed(6)}, {position[1].toFixed(6)}
                 </p>
               </div>

@@ -229,7 +229,7 @@ export function CorrectionRequestSheet({
         <div className="text-center">
           <div className="flex items-center justify-center gap-2 mb-2">
             <Edit3 className="h-5 w-5 text-primary-400" />
-            <h2 className="text-xl font-semibold text-white">Request Correction</h2>
+            <h2 className="text-xl font-semibold text-zinc-900">Request Correction</h2>
           </div>
           <p className="text-sm text-zinc-400">
             {formatDate(timeEntry.clockIn)}
@@ -254,7 +254,7 @@ export function CorrectionRequestSheet({
               >
                 <CheckCircle2 className="h-8 w-8 text-emerald-400" />
               </motion.div>
-              <p className="text-lg font-semibold text-white">Request Submitted!</p>
+              <p className="text-lg font-semibold text-zinc-900">Request Submitted!</p>
               <p className="text-sm text-zinc-400">
                 Your manager will review this request
               </p>
@@ -266,21 +266,21 @@ export function CorrectionRequestSheet({
         {!success && (
           <>
             {/* Current Times (Read-only) */}
-            <div className="glass-card rounded-xl p-4 space-y-3">
+            <div className="bg-white border border-zinc-200 rounded-xl p-4 space-y-3">
               <Label className="text-zinc-400 text-xs uppercase tracking-wide">
                 Original Times
               </Label>
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <span className="text-xs text-zinc-500">Clock In</span>
-                  <p className="text-lg font-mono text-zinc-300">
+                  <p className="text-lg font-mono text-zinc-700">
                     {formatTime(timeEntry.clockIn)}
                   </p>
                 </div>
                 {timeEntry.clockOut && (
                   <div>
                     <span className="text-xs text-zinc-500">Clock Out</span>
-                    <p className="text-lg font-mono text-zinc-300">
+                    <p className="text-lg font-mono text-zinc-700">
                       {formatTime(timeEntry.clockOut)}
                     </p>
                   </div>
@@ -297,7 +297,7 @@ export function CorrectionRequestSheet({
               {/* Clock In */}
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
-                  <Label htmlFor="clock-in" className="text-zinc-300">
+                  <Label htmlFor="clock-in" className="text-zinc-700">
                     Clock In
                   </Label>
                   {clockInDiff && clockInDiff !== 'No change' && (
@@ -314,7 +314,7 @@ export function CorrectionRequestSheet({
                   type="datetime-local"
                   value={requestedClockIn}
                   onChange={(e) => setRequestedClockIn(e.target.value)}
-                  className="bg-zinc-900/50 border-zinc-800 text-white"
+                  className="bg-zinc-50 border-zinc-200 text-zinc-900"
                 />
               </div>
 
@@ -322,7 +322,7 @@ export function CorrectionRequestSheet({
               {timeEntry.clockOut && (
                 <div className="space-y-2">
                   <div className="flex items-center justify-between">
-                    <Label htmlFor="clock-out" className="text-zinc-300">
+                    <Label htmlFor="clock-out" className="text-zinc-700">
                       Clock Out
                     </Label>
                     {clockOutDiff && clockOutDiff !== 'No change' && (
@@ -339,7 +339,7 @@ export function CorrectionRequestSheet({
                     type="datetime-local"
                     value={requestedClockOut}
                     onChange={(e) => setRequestedClockOut(e.target.value)}
-                    className="bg-zinc-900/50 border-zinc-800 text-white"
+                    className="bg-zinc-50 border-zinc-200 text-zinc-900"
                   />
                 </div>
               )}
@@ -348,7 +348,7 @@ export function CorrectionRequestSheet({
             {/* Reason */}
             <div className="space-y-2">
               <div className="flex items-center justify-between">
-                <Label htmlFor="reason" className="text-zinc-300">
+                <Label htmlFor="reason" className="text-zinc-700">
                   Reason <span className="text-red-400">*</span>
                 </Label>
                 <span className={cn(
@@ -366,8 +366,8 @@ export function CorrectionRequestSheet({
                 rows={3}
                 className={cn(
                   "w-full px-3 py-2 rounded-xl resize-none",
-                  "bg-zinc-900/50 border border-zinc-800",
-                  "text-white placeholder:text-zinc-600",
+                  "bg-zinc-50 border border-zinc-200",
+                  "text-zinc-900 placeholder:text-zinc-400",
                   "focus:outline-none focus:ring-2 focus:ring-primary-500/50",
                   "text-sm"
                 )}
@@ -408,7 +408,7 @@ export function CorrectionRequestSheet({
                 className={cn(
                   "h-14 text-lg font-semibold rounded-xl",
                   "bg-primary-600 hover:bg-primary-700",
-                  "disabled:bg-zinc-800 disabled:text-zinc-500"
+                  "disabled:bg-zinc-200 disabled:text-zinc-400"
                 )}
               >
                 {submitting ? (
@@ -425,7 +425,7 @@ export function CorrectionRequestSheet({
                 variant="ghost"
                 onClick={onClose}
                 disabled={submitting}
-                className="h-12 text-zinc-400 hover:text-white"
+                className="h-12 text-zinc-500 hover:text-zinc-900"
               >
                 Cancel
               </Button>

@@ -98,15 +98,15 @@ export function InviteMemberModal({ open, onOpenChange, onSuccess, organizationI
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent className="border-white/10 bg-neutral-900/95 backdrop-blur-xl sm:max-w-md">
+      <DialogContent className="border-zinc-200 bg-white sm:max-w-md">
         {/* Decorative elements */}
-        <div className="pointer-events-none absolute -top-32 left-1/2 h-64 w-64 -translate-x-1/2 rounded-full bg-blue-600/20 blur-[100px]" />
+        <div className="pointer-events-none absolute -top-32 left-1/2 h-64 w-64 -translate-x-1/2 rounded-full bg-blue-100 blur-[100px]" />
         
         <DialogHeader className="relative">
           <motion.div
             initial={{ scale: 0.8, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
-            className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-blue-500/20 to-blue-600/10 ring-1 ring-white/10"
+            className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-blue-50 to-blue-100 ring-1 ring-blue-200"
           >
             <AnimatePresence mode="wait">
               {state === 'success' ? (
@@ -117,7 +117,7 @@ export function InviteMemberModal({ open, onOpenChange, onSuccess, organizationI
                   exit={{ scale: 0 }}
                   transition={{ type: 'spring', stiffness: 200 }}
                 >
-                  <CheckCircle2 className="h-8 w-8 text-emerald-400" />
+                  <CheckCircle2 className="h-8 w-8 text-emerald-500" />
                 </motion.div>
               ) : state === 'error' ? (
                 <motion.div
@@ -126,7 +126,7 @@ export function InviteMemberModal({ open, onOpenChange, onSuccess, organizationI
                   animate={{ scale: 1 }}
                   exit={{ scale: 0 }}
                 >
-                  <XCircle className="h-8 w-8 text-red-400" />
+                  <XCircle className="h-8 w-8 text-red-500" />
                 </motion.div>
               ) : (
                 <motion.div
@@ -135,16 +135,16 @@ export function InviteMemberModal({ open, onOpenChange, onSuccess, organizationI
                   animate={{ scale: 1 }}
                   exit={{ scale: 0 }}
                 >
-                  <UserPlus className="h-8 w-8 text-blue-400" />
+                  <UserPlus className="h-8 w-8 text-blue-500" />
                 </motion.div>
               )}
             </AnimatePresence>
           </motion.div>
           
-          <DialogTitle className="text-center text-xl text-white">
+          <DialogTitle className="text-center text-xl text-zinc-900">
             {state === 'success' ? 'Invitation Sent!' : 'Invite Team Member'}
           </DialogTitle>
-          <DialogDescription className="text-center text-neutral-400">
+          <DialogDescription className="text-center text-zinc-500">
             {state === 'success' 
               ? 'They will receive an email with instructions to join.'
               : 'Send an invitation to add a new member to your team.'
@@ -165,7 +165,7 @@ export function InviteMemberModal({ open, onOpenChange, onSuccess, organizationI
                 initial={{ scale: 0 }}
                 animate={{ scale: 1 }}
                 transition={{ delay: 0.2, type: 'spring' }}
-                className="inline-flex items-center gap-2 rounded-full bg-emerald-500/10 px-4 py-2 text-emerald-400 ring-1 ring-emerald-500/30"
+                className="inline-flex items-center gap-2 rounded-full bg-emerald-50 px-4 py-2 text-emerald-600 ring-1 ring-emerald-200"
               >
                 <CheckCircle2 className="h-4 w-4" />
                 Invitation email sent successfully
@@ -181,11 +181,11 @@ export function InviteMemberModal({ open, onOpenChange, onSuccess, organizationI
               className="relative space-y-6 py-4"
             >
               <div className="space-y-2">
-                <Label htmlFor="email" className="text-neutral-300">
+                <Label htmlFor="email" className="text-zinc-700">
                   Email Address
                 </Label>
                 <div className="relative">
-                  <Mail className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-neutral-500" />
+                  <Mail className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-400" />
                   <Input
                     id="email"
                     type="email"
@@ -209,7 +209,7 @@ export function InviteMemberModal({ open, onOpenChange, onSuccess, organizationI
                       initial={{ opacity: 0, y: -10, height: 0 }}
                       animate={{ opacity: 1, y: 0, height: 'auto' }}
                       exit={{ opacity: 0, y: -10, height: 0 }}
-                      className="flex items-center gap-2 text-sm text-red-400"
+                      className="flex items-center gap-2 text-sm text-red-500"
                     >
                       <XCircle className="h-3.5 w-3.5" />
                       {errorMessage}
@@ -219,24 +219,24 @@ export function InviteMemberModal({ open, onOpenChange, onSuccess, organizationI
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="role" className="text-neutral-300">
+                <Label htmlFor="role" className="text-zinc-700">
                   Role
                 </Label>
                 <div className="relative">
-                  <Shield className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-neutral-500" />
+                  <Shield className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-400" />
                   <select
                     id="role"
                     value={role}
                     onChange={(e) => setRole(e.target.value as MemberRole)}
                     disabled={state === 'loading'}
-                    className="w-full rounded-xl border border-white/10 bg-zinc-900/50 px-10 py-2.5 text-white transition-colors focus:border-blue-500/50 focus:outline-none focus:ring-2 focus:ring-blue-500/20 disabled:opacity-50"
+                    className="w-full rounded-xl border border-zinc-200 bg-white px-10 py-2.5 text-zinc-900 transition-colors focus:border-primary-400 focus:outline-none focus:ring-2 focus:ring-primary-200 disabled:opacity-50"
                   >
                     <option value="member">Member</option>
                     <option value="admin">Admin</option>
                     <option value="owner">Owner</option>
                   </select>
                 </div>
-                <p className="text-xs text-neutral-500">
+                <p className="text-xs text-zinc-400">
                   Members can view schedules and clock in/out. Admins can manage team and settings. Owners have full access.
                 </p>
               </div>
@@ -247,7 +247,7 @@ export function InviteMemberModal({ open, onOpenChange, onSuccess, organizationI
                   variant="outline"
                   onClick={handleClose}
                   disabled={state === 'loading'}
-                  className="flex-1 border-white/10 bg-white/5 hover:bg-white/10"
+                  className="flex-1 border-zinc-200 bg-zinc-50 hover:bg-zinc-100"
                 >
                   Cancel
                 </Button>

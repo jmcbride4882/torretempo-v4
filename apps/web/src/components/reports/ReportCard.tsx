@@ -1,6 +1,6 @@
 /**
  * ReportCard Component
- * Displays a monthly report summary card with glassmorphism styling
+ * Displays a monthly report summary card with light theme styling
  */
 
 import { motion } from 'framer-motion';
@@ -45,7 +45,7 @@ function StatusBadge({ status }: { status: ReportStatus }) {
     pending: {
       icon: Clock,
       label: 'Pending',
-      className: 'bg-neutral-500/20 text-neutral-300 border-neutral-500/30',
+      className: 'bg-zinc-100 text-zinc-700 border-zinc-300',
     },
     generating: {
       icon: Loader2,
@@ -106,8 +106,8 @@ export function ReportCard({ report, onClick, onDownload, className }: ReportCar
       whileTap={{ scale: 0.98 }}
       onClick={() => onClick(report.id)}
       className={cn(
-        'group relative cursor-pointer overflow-hidden rounded-2xl border border-white/10 bg-white/5 backdrop-blur-xl transition-all duration-300',
-        'hover:border-white/20 hover:bg-white/[0.07] hover:shadow-xl hover:shadow-primary-500/5',
+        'group relative cursor-pointer overflow-hidden rounded-2xl border border-zinc-200 bg-white shadow-sm transition-all duration-300',
+        'hover:border-zinc-300 hover:bg-zinc-50/50 hover:shadow-md hover:shadow-zinc-200/50',
         className
       )}
     >
@@ -125,8 +125,8 @@ export function ReportCard({ report, onClick, onDownload, className }: ReportCar
               <FileText className="h-5 w-5 text-primary-400" />
             </div>
             <div>
-              <h3 className="font-semibold text-white">{monthName}</h3>
-              <p className="text-sm text-neutral-400">{report.year}</p>
+              <h3 className="font-semibold text-zinc-900">{monthName}</h3>
+              <p className="text-sm text-zinc-500">{report.year}</p>
             </div>
           </div>
           <StatusBadge status={report.status} />
@@ -135,21 +135,21 @@ export function ReportCard({ report, onClick, onDownload, className }: ReportCar
         {/* Metrics */}
         <div className="mb-4 grid grid-cols-2 gap-3">
           {/* Total Hours */}
-          <div className="rounded-xl border border-white/5 bg-white/5 p-3">
-            <div className="mb-1 flex items-center gap-1.5 text-neutral-500">
+          <div className="rounded-xl border border-zinc-100 bg-zinc-50 p-3">
+            <div className="mb-1 flex items-center gap-1.5 text-zinc-500">
               <Clock className="h-3.5 w-3.5" />
               <span className="text-[10px] font-medium uppercase tracking-wider">Total Hours</span>
             </div>
-            <p className="text-xl font-bold text-white">{formatHours(report.totalHours)}</p>
+            <p className="text-xl font-bold text-zinc-900">{formatHours(report.totalHours)}</p>
           </div>
 
           {/* Days Worked */}
-          <div className="rounded-xl border border-white/5 bg-white/5 p-3">
-            <div className="mb-1 flex items-center gap-1.5 text-neutral-500">
+          <div className="rounded-xl border border-zinc-100 bg-zinc-50 p-3">
+            <div className="mb-1 flex items-center gap-1.5 text-zinc-500">
               <Calendar className="h-3.5 w-3.5" />
               <span className="text-[10px] font-medium uppercase tracking-wider">Days Worked</span>
             </div>
-            <p className="text-xl font-bold text-white">{report.totalDays}</p>
+            <p className="text-xl font-bold text-zinc-900">{report.totalDays}</p>
           </div>
         </div>
 
@@ -165,7 +165,7 @@ export function ReportCard({ report, onClick, onDownload, className }: ReportCar
 
         {/* User info (if available) */}
         {report.userName && (
-          <div className="mb-4 flex items-center gap-2 text-sm text-neutral-400">
+          <div className="mb-4 flex items-center gap-2 text-sm text-zinc-500">
             <div className="flex h-6 w-6 items-center justify-center rounded-full bg-gradient-to-br from-emerald-500/80 to-emerald-700/80 text-[10px] font-medium text-white">
               {report.userName.charAt(0).toUpperCase()}
             </div>
@@ -174,11 +174,11 @@ export function ReportCard({ report, onClick, onDownload, className }: ReportCar
         )}
 
         {/* Actions */}
-        <div className="flex items-center gap-2 border-t border-white/5 pt-4">
+        <div className="flex items-center gap-2 border-t border-zinc-100 pt-4">
           <Button
             size="sm"
             variant="ghost"
-            className="flex-1 gap-1.5 rounded-lg text-neutral-300 hover:bg-white/10 hover:text-white"
+            className="flex-1 gap-1.5 rounded-lg text-zinc-700 hover:bg-zinc-100 hover:text-zinc-900"
             onClick={() => onClick(report.id)}
           >
             View Details
@@ -188,7 +188,7 @@ export function ReportCard({ report, onClick, onDownload, className }: ReportCar
             <Button
               size="sm"
               onClick={handleDownload}
-              className="gap-1.5 rounded-lg bg-primary-600/80 text-white hover:bg-primary-500"
+              className="gap-1.5 rounded-lg bg-primary-600 text-white hover:bg-primary-500"
             >
               <Download className="h-3.5 w-3.5" />
               PDF
@@ -205,35 +205,35 @@ export function ReportCard({ report, onClick, onDownload, className }: ReportCar
  */
 export function ReportCardSkeleton() {
   return (
-    <div className="animate-pulse rounded-2xl border border-white/10 bg-white/5 p-5">
+    <div className="animate-pulse rounded-2xl border border-zinc-200 bg-white p-5">
       {/* Header */}
       <div className="mb-4 flex items-start justify-between">
         <div className="flex items-center gap-3">
-          <div className="h-11 w-11 rounded-xl bg-white/10" />
+          <div className="h-11 w-11 rounded-xl bg-zinc-100" />
           <div className="space-y-1.5">
-            <div className="h-5 w-24 rounded bg-white/10" />
-            <div className="h-4 w-16 rounded bg-white/10" />
+            <div className="h-5 w-24 rounded bg-zinc-100" />
+            <div className="h-4 w-16 rounded bg-zinc-100" />
           </div>
         </div>
-        <div className="h-6 w-20 rounded-full bg-white/10" />
+        <div className="h-6 w-20 rounded-full bg-zinc-100" />
       </div>
 
       {/* Metrics */}
       <div className="mb-4 grid grid-cols-2 gap-3">
-        <div className="space-y-2 rounded-xl border border-white/5 bg-white/5 p-3">
-          <div className="h-3 w-16 rounded bg-white/10" />
-          <div className="h-6 w-20 rounded bg-white/10" />
+        <div className="space-y-2 rounded-xl border border-zinc-100 bg-zinc-50 p-3">
+          <div className="h-3 w-16 rounded bg-zinc-100" />
+          <div className="h-6 w-20 rounded bg-zinc-100" />
         </div>
-        <div className="space-y-2 rounded-xl border border-white/5 bg-white/5 p-3">
-          <div className="h-3 w-16 rounded bg-white/10" />
-          <div className="h-6 w-12 rounded bg-white/10" />
+        <div className="space-y-2 rounded-xl border border-zinc-100 bg-zinc-50 p-3">
+          <div className="h-3 w-16 rounded bg-zinc-100" />
+          <div className="h-6 w-12 rounded bg-zinc-100" />
         </div>
       </div>
 
       {/* Actions */}
-      <div className="flex gap-2 border-t border-white/5 pt-4">
-        <div className="h-8 flex-1 rounded-lg bg-white/10" />
-        <div className="h-8 w-16 rounded-lg bg-white/10" />
+      <div className="flex gap-2 border-t border-zinc-100 pt-4">
+        <div className="h-8 flex-1 rounded-lg bg-zinc-100" />
+        <div className="h-8 w-16 rounded-lg bg-zinc-100" />
       </div>
     </div>
   );

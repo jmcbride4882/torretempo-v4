@@ -69,11 +69,11 @@ function formatTime(dateString: string): string {
 function ShiftPreview({ shift, label }: { shift: Shift | null; label: string }) {
   if (!shift) {
     return (
-      <div className="rounded-xl border border-dashed border-neutral-700 bg-neutral-900/50 p-4">
-        <p className="mb-2 text-[10px] font-medium uppercase tracking-wider text-neutral-500">
+      <div className="rounded-xl border border-dashed border-zinc-200 bg-zinc-50 p-4">
+        <p className="mb-2 text-[10px] font-medium uppercase tracking-wider text-zinc-400">
           {label}
         </p>
-        <p className="text-sm text-neutral-500 italic">No shift selected</p>
+        <p className="text-sm text-zinc-400 italic">No shift selected</p>
       </div>
     );
   }
@@ -82,28 +82,28 @@ function ShiftPreview({ shift, label }: { shift: Shift | null; label: string }) 
     <motion.div
       initial={{ opacity: 0, scale: 0.95 }}
       animate={{ opacity: 1, scale: 1 }}
-      className="rounded-xl border border-white/10 bg-white/5 p-4 backdrop-blur-sm"
+      className="rounded-xl border border-zinc-200 bg-zinc-50 p-4"
     >
-      <p className="mb-2 text-[10px] font-medium uppercase tracking-wider text-neutral-500">
+      <p className="mb-2 text-[10px] font-medium uppercase tracking-wider text-zinc-400">
         {label}
       </p>
       
       <div className="space-y-2">
-        <div className="flex items-center gap-2 text-white">
-          <Calendar className="h-4 w-4 text-primary-400" />
+        <div className="flex items-center gap-2 text-zinc-900">
+          <Calendar className="h-4 w-4 text-primary-500" />
           <span className="font-medium">{formatDate(shift.start_time)}</span>
         </div>
         
-        <div className="flex items-center gap-2 text-neutral-300">
-          <Clock className="h-4 w-4 text-neutral-500" />
+        <div className="flex items-center gap-2 text-zinc-700">
+          <Clock className="h-4 w-4 text-zinc-400" />
           <span className="text-sm tabular-nums">
             {formatTime(shift.start_time)} - {formatTime(shift.end_time)}
           </span>
         </div>
         
         {shift.location && (
-          <div className="flex items-center gap-2 text-neutral-400">
-            <MapPin className="h-4 w-4 text-neutral-500" />
+          <div className="flex items-center gap-2 text-zinc-500">
+            <MapPin className="h-4 w-4 text-zinc-400" />
             <span className="text-sm">{shift.location.name}</span>
           </div>
         )}
@@ -204,15 +204,15 @@ export function RequestSwapModal({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="glass-card max-w-lg border-white/10 sm:max-w-xl">
+      <DialogContent className="max-w-lg border border-zinc-200 bg-white rounded-xl shadow-sm sm:max-w-xl">
         <DialogHeader>
-          <DialogTitle className="flex items-center gap-3 text-xl text-white">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-primary-600/30 to-violet-600/30 shadow-lg shadow-primary-500/10">
-              <ArrowLeftRight className="h-5 w-5 text-primary-400" />
+          <DialogTitle className="flex items-center gap-3 text-xl text-zinc-900">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary-50">
+              <ArrowLeftRight className="h-5 w-5 text-primary-500" />
             </div>
             Request Shift Swap
           </DialogTitle>
-          <DialogDescription className="text-neutral-400">
+          <DialogDescription className="text-zinc-500">
             Offer one of your shifts for swap. You can request a specific shift or leave it open for anyone to claim.
           </DialogDescription>
         </DialogHeader>
@@ -231,16 +231,16 @@ export function RequestSwapModal({
             >
               <CheckCircle2 className="h-8 w-8 text-emerald-400" />
             </motion.div>
-            <h3 className="mb-2 text-lg font-semibold text-white">Request Submitted!</h3>
-            <p className="text-sm text-neutral-400">Your swap request is now pending.</p>
+            <h3 className="mb-2 text-lg font-semibold text-zinc-900">Request Submitted!</h3>
+            <p className="text-sm text-zinc-500">Your swap request is now pending.</p>
           </motion.div>
         ) : (
           <form onSubmit={handleSubmit}>
             <div className="space-y-5 py-4">
               {/* My Shift to Offer */}
               <div className="space-y-2">
-                <Label htmlFor="offered-shift" className="flex items-center gap-2 text-sm text-neutral-300">
-                  <Calendar className="h-3.5 w-3.5 text-neutral-500" />
+                <Label htmlFor="offered-shift" className="flex items-center gap-2 text-sm text-zinc-700">
+                  <Calendar className="h-3.5 w-3.5 text-zinc-400" />
                   Shift I'm Offering <span className="text-red-400">*</span>
                 </Label>
                 <Select
@@ -250,25 +250,25 @@ export function RequestSwapModal({
                 >
                   <SelectTrigger
                     id="offered-shift"
-                    className="glass-card border-white/10 text-white focus:border-primary-500"
+                    className="border-zinc-200 bg-white text-zinc-900 focus:border-primary-500"
                   >
                     <SelectValue placeholder={isLoadingShifts ? "Loading shifts..." : "Select a shift to offer"} />
                   </SelectTrigger>
-                  <SelectContent className="glass-card border-white/10">
+                  <SelectContent className="border-zinc-200 bg-white">
                     {upcomingMyShifts.length === 0 ? (
-                      <div className="p-4 text-center text-sm text-neutral-500">
+                      <div className="p-4 text-center text-sm text-zinc-400">
                         No upcoming shifts available
                       </div>
                     ) : (
                       upcomingMyShifts.map((shift) => (
-                        <SelectItem key={shift.id} value={shift.id} className="text-neutral-200">
+                        <SelectItem key={shift.id} value={shift.id} className="text-zinc-900">
                           <div className="flex items-center gap-2">
                             <span className="font-medium">{formatDate(shift.start_time)}</span>
-                            <span className="text-neutral-400">
+                            <span className="text-zinc-500">
                               {formatTime(shift.start_time)} - {formatTime(shift.end_time)}
                             </span>
                             {shift.location && (
-                              <span className="text-neutral-500">@ {shift.location.name}</span>
+                              <span className="text-zinc-400">@ {shift.location.name}</span>
                             )}
                           </div>
                         </SelectItem>
@@ -280,9 +280,9 @@ export function RequestSwapModal({
 
               {/* Desired Shift (Optional) */}
               <div className="space-y-2">
-                <Label htmlFor="desired-shift" className="flex items-center gap-2 text-sm text-neutral-300">
-                  <Sparkles className="h-3.5 w-3.5 text-neutral-500" />
-                  Desired Shift <span className="text-neutral-500">(optional)</span>
+                <Label htmlFor="desired-shift" className="flex items-center gap-2 text-sm text-zinc-700">
+                  <Sparkles className="h-3.5 w-3.5 text-zinc-400" />
+                  Desired Shift <span className="text-zinc-400">(optional)</span>
                 </Label>
                 <Select
                   value={formData.desired_shift_id}
@@ -290,23 +290,23 @@ export function RequestSwapModal({
                 >
                   <SelectTrigger
                     id="desired-shift"
-                    className="glass-card border-white/10 text-white focus:border-primary-500"
+                    className="border-zinc-200 bg-white text-zinc-900 focus:border-primary-500"
                   >
                     <SelectValue placeholder="Leave open or select specific shift" />
                   </SelectTrigger>
-                  <SelectContent className="glass-card border-white/10">
-                    <SelectItem value="none" className="text-neutral-400 italic">
+                  <SelectContent className="border-zinc-200 bg-white">
+                    <SelectItem value="none" className="text-zinc-500 italic">
                       Open Request (anyone can offer)
                     </SelectItem>
                     {upcomingAvailableShifts.map((shift) => (
-                      <SelectItem key={shift.id} value={shift.id} className="text-neutral-200">
+                      <SelectItem key={shift.id} value={shift.id} className="text-zinc-900">
                         <div className="flex items-center gap-2">
                           <span className="font-medium">{formatDate(shift.start_time)}</span>
-                          <span className="text-neutral-400">
+                          <span className="text-zinc-500">
                             {formatTime(shift.start_time)} - {formatTime(shift.end_time)}
                           </span>
                           {shift.user && (
-                            <span className="text-neutral-500">({shift.user.name})</span>
+                            <span className="text-zinc-400">({shift.user.name})</span>
                           )}
                         </div>
                       </SelectItem>
@@ -318,9 +318,9 @@ export function RequestSwapModal({
               {/* Specific Recipient (Optional) */}
               {teamMembers.length > 0 && (
                 <div className="space-y-2">
-                  <Label htmlFor="recipient" className="flex items-center gap-2 text-sm text-neutral-300">
-                    <User className="h-3.5 w-3.5 text-neutral-500" />
-                    Request from Specific Person <span className="text-neutral-500">(optional)</span>
+                  <Label htmlFor="recipient" className="flex items-center gap-2 text-sm text-zinc-700">
+                    <User className="h-3.5 w-3.5 text-zinc-400" />
+                    Request from Specific Person <span className="text-zinc-400">(optional)</span>
                   </Label>
                   <Select
                     value={formData.recipient_id}
@@ -328,18 +328,18 @@ export function RequestSwapModal({
                   >
                     <SelectTrigger
                       id="recipient"
-                      className="glass-card border-white/10 text-white focus:border-primary-500"
+                      className="border-zinc-200 bg-white text-zinc-900 focus:border-primary-500"
                     >
                       <SelectValue placeholder="Anyone on team" />
                     </SelectTrigger>
-                    <SelectContent className="glass-card border-white/10">
-                      <SelectItem value="none" className="text-neutral-400 italic">
+                    <SelectContent className="border-zinc-200 bg-white">
+                      <SelectItem value="none" className="text-zinc-500 italic">
                         Anyone on team
                       </SelectItem>
                       {teamMembers.map((member) => (
-                        <SelectItem key={member.id} value={member.id} className="text-neutral-200">
+                        <SelectItem key={member.id} value={member.id} className="text-zinc-900">
                           <div className="flex items-center gap-2">
-                            <div className="flex h-5 w-5 items-center justify-center rounded-full bg-primary-600/30 text-[10px] text-primary-300">
+                            <div className="flex h-5 w-5 items-center justify-center rounded-full bg-primary-100 text-[10px] text-primary-600">
                               {member.name.charAt(0).toUpperCase()}
                             </div>
                             <span>{member.name}</span>
@@ -353,20 +353,20 @@ export function RequestSwapModal({
 
               {/* Reason */}
               <div className="space-y-2">
-                <Label htmlFor="reason" className="flex items-center gap-2 text-sm text-neutral-300">
-                  <MessageSquare className="h-3.5 w-3.5 text-neutral-500" />
-                  Reason <span className="text-neutral-500">(optional)</span>
+                <Label htmlFor="reason" className="flex items-center gap-2 text-sm text-zinc-700">
+                  <MessageSquare className="h-3.5 w-3.5 text-zinc-400" />
+                  Reason <span className="text-zinc-400">(optional)</span>
                 </Label>
                 <textarea
                   id="reason"
                   value={formData.reason}
                   onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setFormData({ ...formData, reason: e.target.value })}
-                  className="glass-card w-full min-h-[80px] rounded-lg border border-white/10 bg-transparent px-3 py-2 text-sm text-white placeholder:text-neutral-500 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500 resize-none"
+                  className="w-full min-h-[80px] rounded-lg border border-zinc-200 bg-white px-3 py-2 text-sm text-zinc-900 placeholder:text-zinc-400 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500 resize-none"
                   placeholder="Why are you requesting this swap? (helps with approval)"
                   maxLength={500}
                 />
                 {formData.reason && (
-                  <p className="text-right text-[10px] text-neutral-500">
+                  <p className="text-right text-[10px] text-zinc-400">
                     {formData.reason.length}/500
                   </p>
                 )}
@@ -379,21 +379,21 @@ export function RequestSwapModal({
                   animate={{ opacity: 1, y: 0 }}
                   className="rounded-xl border border-primary-500/20 bg-primary-500/5 p-4"
                 >
-                  <p className="mb-3 text-xs font-medium text-primary-300">Preview</p>
+                  <p className="mb-3 text-xs font-medium text-primary-600">Preview</p>
                   <div className="flex flex-col gap-3 sm:flex-row sm:items-stretch">
                     <ShiftPreview shift={selectedOfferedShift} label="Offering" />
                     <div className="flex items-center justify-center">
-                      <ArrowLeftRight className="h-5 w-5 text-neutral-500" />
+                      <ArrowLeftRight className="h-5 w-5 text-zinc-400" />
                     </div>
                     {selectedDesiredShift ? (
                       <ShiftPreview shift={selectedDesiredShift} label="Requesting" />
                     ) : (
                       <div className="flex-1 rounded-xl border border-dashed border-violet-500/30 bg-violet-500/5 p-4">
-                        <p className="mb-2 text-[10px] font-medium uppercase tracking-wider text-neutral-500">
+                        <p className="mb-2 text-[10px] font-medium uppercase tracking-wider text-zinc-400">
                           Requesting
                         </p>
-                        <p className="text-sm text-violet-300 italic">Open Request</p>
-                        <p className="mt-1 text-[10px] text-neutral-500">
+                        <p className="text-sm text-violet-600 italic">Open Request</p>
+                        <p className="mt-1 text-[10px] text-zinc-400">
                           Anyone can offer a swap
                         </p>
                       </div>
@@ -410,7 +410,7 @@ export function RequestSwapModal({
                   className="flex items-start gap-2 rounded-lg border border-red-500/20 bg-red-500/10 p-3"
                 >
                   <AlertCircle className="h-4 w-4 shrink-0 text-red-400" />
-                  <p className="text-sm text-red-300">{error}</p>
+                  <p className="text-sm text-red-600">{error}</p>
                 </motion.div>
               )}
             </div>
@@ -421,7 +421,7 @@ export function RequestSwapModal({
                 variant="ghost"
                 onClick={() => onOpenChange(false)}
                 disabled={isSubmitting}
-                className="rounded-lg border border-white/5 bg-white/5 text-neutral-300 hover:bg-white/10"
+                className="rounded-lg border border-zinc-200 bg-zinc-50 text-zinc-700 hover:bg-zinc-100"
               >
                 Cancel
               </Button>

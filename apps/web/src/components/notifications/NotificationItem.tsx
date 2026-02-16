@@ -66,9 +66,9 @@ function getNotificationMeta(type: NotificationType) {
     default:
       return {
         icon: ArrowLeftRight,
-        color: 'text-neutral-400',
-        bgColor: 'bg-neutral-500/20',
-        borderColor: 'border-neutral-500/30',
+        color: 'text-zinc-500',
+        bgColor: 'bg-zinc-100',
+        borderColor: 'border-zinc-200',
       };
   }
 }
@@ -128,8 +128,8 @@ export function NotificationItem({
       onClick={onClick}
       className={cn(
         'group relative w-full flex items-start gap-3 p-3 rounded-lg text-left transition-all duration-200',
-        'hover:bg-white/5 active:scale-[0.98]',
-        !notification.read && 'bg-white/[0.03]'
+        'hover:bg-zinc-50 active:scale-[0.98]',
+        !notification.read && 'bg-primary-50/50'
       )}
     >
       {/* Unread indicator */}
@@ -160,15 +160,15 @@ export function NotificationItem({
         <p
           className={cn(
             'text-sm leading-tight line-clamp-1',
-            notification.read ? 'text-neutral-300 font-normal' : 'text-white font-medium'
+            notification.read ? 'text-zinc-500 font-normal' : 'text-zinc-900 font-medium'
           )}
         >
           {notification.title}
         </p>
-        <p className="text-xs text-neutral-500 line-clamp-2 mt-0.5 leading-relaxed">
+        <p className="text-xs text-zinc-500 line-clamp-2 mt-0.5 leading-relaxed">
           {notification.message}
         </p>
-        <p className="text-[10px] text-neutral-600 mt-1.5 uppercase tracking-wider font-medium">
+        <p className="text-[10px] text-zinc-400 mt-1.5 uppercase tracking-wider font-medium">
           {relativeTime}
         </p>
       </div>
