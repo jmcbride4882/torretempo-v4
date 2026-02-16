@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion';
 import { Clock, MapPin, User, AlertCircle, CheckCircle2, FileEdit, AlertTriangle } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { cn } from '@/lib/utils';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import type { Shift, ShiftStatus } from '@/types/roster';
@@ -11,14 +12,14 @@ interface ShiftCardProps {
   compact?: boolean;
 }
 
-// Status configuration with icons and colors
+// Status configuration with icons and colors (labels resolved via i18n)
 const statusConfig: Record<ShiftStatus, {
   icon: typeof Clock;
   bg: string;
   text: string;
   border: string;
   glow: string;
-  label: string;
+  labelKey: string;
 }> = {
   draft: {
     icon: FileEdit,
@@ -26,7 +27,7 @@ const statusConfig: Record<ShiftStatus, {
     text: 'text-amber-700',
     border: 'border-amber-200',
     glow: '',
-    label: 'Draft',
+    labelKey: 'roster.draft',
   },
   published: {
     icon: AlertCircle,
@@ -34,7 +35,7 @@ const statusConfig: Record<ShiftStatus, {
     text: 'text-sky-700',
     border: 'border-sky-200',
     glow: '',
-    label: 'Published',
+    labelKey: 'roster.published',
   },
   acknowledged: {
     icon: CheckCircle2,
@@ -42,7 +43,7 @@ const statusConfig: Record<ShiftStatus, {
     text: 'text-emerald-700',
     border: 'border-emerald-200',
     glow: '',
-    label: 'Confirmed',
+    labelKey: 'roster.acknowledged',
   },
   completed: {
     icon: CheckCircle2,
@@ -50,7 +51,7 @@ const statusConfig: Record<ShiftStatus, {
     text: 'text-violet-700',
     border: 'border-violet-200',
     glow: '',
-    label: 'Completed',
+    labelKey: 'roster.completed',
   },
   cancelled: {
     icon: AlertCircle,
@@ -58,7 +59,7 @@ const statusConfig: Record<ShiftStatus, {
     text: 'text-red-700',
     border: 'border-red-200',
     glow: '',
-    label: 'Cancelled',
+    labelKey: 'roster.cancelled',
   },
 };
 
@@ -77,22 +78,23 @@ function calculateDuration(start: string, end: string): string {
   const diffMs = endDate.getTime() - startDate.getTime();
   const hours = Math.floor(diffMs / (1000 * 60 * 60));
   const minutes = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
-  
+
   if (minutes === 0) return `${hours}h`;
   return `${hours}h ${minutes}m`;
 }
 
 export function ShiftCard({ shift, style, onClick, compact = false }: ShiftCardProps) {
+  const { t } = useTranslation();
   const config = statusConfig[shift.status];
   const StatusIcon = config.icon;
-  
+
   // Use shift's custom color or fallback to status-based styling
   const hasCustomColor = shift.color && shift.color.startsWith('#');
-  
+
   // Check for compliance violations
   const hasViolations = shift.compliance_warnings && shift.compliance_warnings.length > 0;
   const hasErrors = shift.compliance_warnings?.some((v) => v.severity === 'error');
-  
+
   const cardContent = (
     <motion.div
       layout
@@ -105,9 +107,9 @@ export function ShiftCard({ shift, style, onClick, compact = false }: ShiftCardP
       className={cn(
         'group relative cursor-pointer overflow-hidden rounded-lg border transition-all duration-200',
         'hover:shadow-md',
-        hasErrors 
-          ? 'border-red-500 bg-red-500/10 shadow-red-500/20' 
-          : hasViolations 
+        hasErrors
+          ? 'border-red-500 bg-red-500/10 shadow-red-500/20'
+          : hasViolations
             ? 'border-amber-500/50 bg-amber-500/5 shadow-amber-500/10'
             : `${config.bg} ${config.border} ${config.glow}`,
         compact ? 'p-1.5' : 'p-2.5'
@@ -120,7 +122,7 @@ export function ShiftCard({ shift, style, onClick, compact = false }: ShiftCardP
           style={{ backgroundColor: shift.color! }}
         />
       )}
-      
+
       {/* Glow effect on hover */}
       <div
         className={cn(
@@ -128,7 +130,7 @@ export function ShiftCard({ shift, style, onClick, compact = false }: ShiftCardP
           'bg-gradient-to-br from-white/5 to-transparent'
         )}
       />
-      
+
       {/* Content */}
       <div className={cn('relative', hasCustomColor && 'pl-2')}>
         {/* Time */}
@@ -138,7 +140,7 @@ export function ShiftCard({ shift, style, onClick, compact = false }: ShiftCardP
             {formatTime(shift.start_time)} - {formatTime(shift.end_time)}
           </span>
         </div>
-        
+
         {!compact && (
           <>
             {/* Duration badge */}
@@ -148,11 +150,11 @@ export function ShiftCard({ shift, style, onClick, compact = false }: ShiftCardP
               </span>
               {shift.break_minutes && shift.break_minutes > 0 && (
                 <span className="text-[10px] text-zinc-400">
-                  +{shift.break_minutes}m break
+                  +{shift.break_minutes}m {t('roster.breakLabel')}
                 </span>
               )}
             </div>
-            
+
             {/* Location */}
             {shift.location && (
               <div className="mt-2 flex items-center gap-1.5 text-zinc-500">
@@ -160,17 +162,17 @@ export function ShiftCard({ shift, style, onClick, compact = false }: ShiftCardP
                 <span className="truncate text-xs">{shift.location.name}</span>
               </div>
             )}
-            
+
             {/* Assigned user or Open shift */}
             <div className="mt-1.5 flex items-center gap-1.5">
               <User className="h-3 w-3 text-zinc-400" />
               {shift.user ? (
                 <span className="truncate text-xs text-zinc-600">{shift.user.name}</span>
               ) : (
-                <span className="text-xs italic text-zinc-400">Open shift</span>
+                <span className="text-xs italic text-zinc-400">{t('roster.openShift')}</span>
               )}
             </div>
-            
+
             {/* Status badge and compliance warning */}
             <div className="mt-2 flex items-center justify-between gap-2">
               <div className={cn(
@@ -179,10 +181,10 @@ export function ShiftCard({ shift, style, onClick, compact = false }: ShiftCardP
               )}>
                 <StatusIcon className={cn('h-3 w-3', config.text)} />
                 <span className={cn('text-[10px] font-medium', config.text)}>
-                  {config.label}
+                  {t(config.labelKey)}
                 </span>
               </div>
-              
+
               {/* Compliance warning indicator */}
               {hasViolations && (
                 <div className={cn(
@@ -195,14 +197,14 @@ export function ShiftCard({ shift, style, onClick, compact = false }: ShiftCardP
             </div>
           </>
         )}
-        
+
         {compact && shift.user && (
           <div className="mt-0.5 truncate text-[10px] text-zinc-500">
             {shift.user.name}
           </div>
         )}
       </div>
-      
+
       {/* Hover overlay with more details */}
       <motion.div
         initial={{ opacity: 0, y: 10 }}
@@ -222,7 +224,7 @@ export function ShiftCard({ shift, style, onClick, compact = false }: ShiftCardP
       </motion.div>
     </motion.div>
   );
-  
+
   // Wrap with tooltip if there are compliance violations
   if (hasViolations && !compact) {
     return (
@@ -233,7 +235,7 @@ export function ShiftCard({ shift, style, onClick, compact = false }: ShiftCardP
           </TooltipTrigger>
           <TooltipContent side="top" className="max-w-xs">
             <div className="space-y-1.5">
-              <p className="font-semibold text-zinc-900">Compliance Issues:</p>
+              <p className="font-semibold text-zinc-900">{t('roster.complianceIssues')}</p>
               {shift.compliance_warnings!.map((violation, idx) => (
                 <div key={idx} className="flex items-start gap-2">
                   <AlertTriangle className={cn(
@@ -249,14 +251,14 @@ export function ShiftCard({ shift, style, onClick, compact = false }: ShiftCardP
       </TooltipProvider>
     );
   }
-  
+
   return cardContent;
 }
 
 // Compact version for tight spaces
 export function ShiftChip({ shift, onClick }: { shift: Shift; onClick?: () => void }) {
   const config = statusConfig[shift.status];
-  
+
   return (
     <motion.button
       whileHover={{ scale: 1.05 }}

@@ -7,6 +7,7 @@
 import { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Filter, X, Calendar, User, ChevronDown } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import {
   Select,
@@ -32,20 +33,20 @@ function getYearOptions(): number[] {
   return Array.from({ length: 5 }, (_, i) => currentYear - i);
 }
 
-// Month options
-const MONTHS = [
-  { value: 1, label: 'January' },
-  { value: 2, label: 'February' },
-  { value: 3, label: 'March' },
-  { value: 4, label: 'April' },
-  { value: 5, label: 'May' },
-  { value: 6, label: 'June' },
-  { value: 7, label: 'July' },
-  { value: 8, label: 'August' },
-  { value: 9, label: 'September' },
-  { value: 10, label: 'October' },
-  { value: 11, label: 'November' },
-  { value: 12, label: 'December' },
+// Month translation key mapping
+const MONTH_KEYS = [
+  'common.months.january',
+  'common.months.february',
+  'common.months.march',
+  'common.months.april',
+  'common.months.may',
+  'common.months.june',
+  'common.months.july',
+  'common.months.august',
+  'common.months.september',
+  'common.months.october',
+  'common.months.november',
+  'common.months.december',
 ];
 
 export function ReportFilters({
@@ -55,6 +56,7 @@ export function ReportFilters({
   isManager = false,
   className,
 }: ReportFiltersProps) {
+  const { t } = useTranslation();
   const [showMobileFilters, setShowMobileFilters] = useState(false);
   const yearOptions = useMemo(() => getYearOptions(), []);
 
@@ -105,7 +107,7 @@ export function ReportFilters({
       {/* Year filter */}
       <div className="flex-1 sm:flex-initial">
         <label className="mb-1.5 block text-xs font-medium text-zinc-500 sm:hidden">
-          Year
+          {t('reports.yearLabel')}
         </label>
         <Select
           value={currentFilters.year?.toString() || 'all'}
@@ -113,11 +115,11 @@ export function ReportFilters({
         >
           <SelectTrigger className="w-full bg-white border-zinc-200 text-zinc-900 sm:w-[120px]">
             <Calendar className="mr-2 h-4 w-4 text-zinc-500 sm:hidden" />
-            <SelectValue placeholder="Year" />
+            <SelectValue placeholder={t('reports.yearLabel')} />
           </SelectTrigger>
           <SelectContent className="bg-white border-zinc-200">
             <SelectItem value="all" className="text-zinc-700">
-              All Years
+              {t('reports.allYears')}
             </SelectItem>
             {yearOptions.map((year) => (
               <SelectItem key={year} value={year.toString()} className="text-zinc-700">
@@ -131,7 +133,7 @@ export function ReportFilters({
       {/* Month filter */}
       <div className="flex-1 sm:flex-initial">
         <label className="mb-1.5 block text-xs font-medium text-zinc-500 sm:hidden">
-          Month
+          {t('reports.monthLabel')}
         </label>
         <Select
           value={currentFilters.month?.toString() || 'all'}
@@ -139,19 +141,19 @@ export function ReportFilters({
         >
           <SelectTrigger className="w-full bg-white border-zinc-200 text-zinc-900 sm:w-[140px]">
             <Calendar className="mr-2 h-4 w-4 text-zinc-500 sm:hidden" />
-            <SelectValue placeholder="Month" />
+            <SelectValue placeholder={t('reports.monthLabel')} />
           </SelectTrigger>
           <SelectContent className="bg-white border-zinc-200">
             <SelectItem value="all" className="text-zinc-700">
-              All Months
+              {t('reports.allMonths')}
             </SelectItem>
-            {MONTHS.map((month) => (
+            {MONTH_KEYS.map((key, index) => (
               <SelectItem
-                key={month.value}
-                value={month.value.toString()}
+                key={index + 1}
+                value={(index + 1).toString()}
                 className="text-zinc-700"
               >
-                {month.label}
+                {t(key)}
               </SelectItem>
             ))}
           </SelectContent>
@@ -162,7 +164,7 @@ export function ReportFilters({
       {isManager && teamMembers.length > 0 && (
         <div className="flex-1 sm:flex-initial">
           <label className="mb-1.5 block text-xs font-medium text-zinc-500 sm:hidden">
-            Team Member
+            {t('reports.teamMemberLabel')}
           </label>
           <Select
             value={currentFilters.userId || 'all'}
@@ -170,11 +172,11 @@ export function ReportFilters({
           >
             <SelectTrigger className="w-full bg-white border-zinc-200 text-zinc-900 sm:w-[180px]">
               <User className="mr-2 h-4 w-4 text-zinc-500 sm:hidden" />
-              <SelectValue placeholder="Team Member" />
+              <SelectValue placeholder={t('reports.teamMemberLabel')} />
             </SelectTrigger>
             <SelectContent className="bg-white border-zinc-200">
               <SelectItem value="all" className="text-zinc-700">
-                All Team Members
+                {t('reports.allTeamMembers')}
               </SelectItem>
               {teamMembers.map((member) => (
                 <SelectItem key={member.id} value={member.id} className="text-zinc-700">
@@ -196,7 +198,7 @@ export function ReportFilters({
             className="w-full gap-1.5 rounded-lg text-zinc-500 hover:bg-zinc-100 hover:text-zinc-900 sm:w-auto"
           >
             <X className="h-3.5 w-3.5" />
-            Clear
+            {t('common.clear')}
           </Button>
         </motion.div>
       )}
@@ -219,7 +221,7 @@ export function ReportFilters({
           )}
         >
           <Filter className="h-4 w-4" />
-          Filters
+          {t('reports.filters')}
           {activeFilterCount > 0 && (
             <span className="flex h-5 min-w-[20px] items-center justify-center rounded-full bg-primary-500 px-1.5 text-[10px] font-bold text-white">
               {activeFilterCount}
@@ -238,7 +240,7 @@ export function ReportFilters({
             className="gap-1 rounded-lg text-zinc-500 hover:text-zinc-900"
           >
             <X className="h-3.5 w-3.5" />
-            Clear
+            {t('common.clear')}
           </Button>
         )}
       </div>

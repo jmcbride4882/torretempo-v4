@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Plus, Edit, Trash2, Clock, MapPin, Loader2, AlertCircle, Check } from 'lucide-react';
 import { toast } from 'sonner';
@@ -54,6 +55,7 @@ interface ShiftTemplateManagerProps {
 }
 
 export function ShiftTemplateManager({ organizationSlug }: ShiftTemplateManagerProps) {
+  const { t } = useTranslation();
   const [templates, setTemplates] = useState<ShiftTemplate[]>([]);
   const [locations, setLocations] = useState<Location[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -77,7 +79,7 @@ export function ShiftTemplateManager({ organizationSlug }: ShiftTemplateManagerP
       setTemplates(data.templates || []);
     } catch (error) {
       console.error('Error fetching templates:', error);
-      toast.error('Failed to load shift templates');
+      toast.error(t('templates.fetchFailed'));
     } finally {
       setIsLoading(false);
     }
@@ -111,13 +113,13 @@ export function ShiftTemplateManager({ organizationSlug }: ShiftTemplateManagerP
   const handleCreateSuccess = () => {
     setShowCreateModal(false);
     fetchTemplates();
-    toast.success('Shift template created successfully');
+    toast.success(t('templates.createSuccess'));
   };
 
   const handleEditSuccess = () => {
     setEditingTemplate(null);
     fetchTemplates();
-    toast.success('Shift template updated successfully');
+    toast.success(t('templates.updateSuccess'));
   };
 
   const handleDelete = async (template: ShiftTemplate) => {
@@ -133,10 +135,10 @@ export function ShiftTemplateManager({ organizationSlug }: ShiftTemplateManagerP
 
       setDeletingTemplate(null);
       fetchTemplates();
-      toast.success('Shift template deleted successfully');
+      toast.success(t('templates.deleteSuccess'));
     } catch (error) {
       console.error('Error deleting template:', error);
-      toast.error('Failed to delete template');
+      toast.error(t('templates.deleteFailed'));
     }
   };
 
@@ -164,7 +166,7 @@ export function ShiftTemplateManager({ organizationSlug }: ShiftTemplateManagerP
     return (
       <div className="flex items-center justify-center py-12">
         <Loader2 className="h-6 w-6 animate-spin text-zinc-400" />
-        <span className="ml-2 text-sm text-zinc-400">Loading templates...</span>
+        <span className="ml-2 text-sm text-zinc-400">{t('templates.loadingTemplates')}</span>
       </div>
     );
   }
@@ -174,12 +176,12 @@ export function ShiftTemplateManager({ organizationSlug }: ShiftTemplateManagerP
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h3 className="text-lg font-semibold text-zinc-900">Shift Templates</h3>
-          <p className="text-sm text-zinc-500">Reusable shift definitions for quick scheduling</p>
+          <h3 className="text-lg font-semibold text-zinc-900">{t('templates.title')}</h3>
+          <p className="text-sm text-zinc-500">{t('templates.subtitle')}</p>
         </div>
         <Button onClick={() => setShowCreateModal(true)} className="gap-2">
           <Plus className="h-4 w-4" />
-          New Template
+          {t('templates.newTemplate')}
         </Button>
       </div>
 
@@ -189,13 +191,13 @@ export function ShiftTemplateManager({ organizationSlug }: ShiftTemplateManagerP
           <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-zinc-100">
             <Clock className="h-8 w-8 text-zinc-400" />
           </div>
-          <h3 className="mb-2 text-lg font-semibold text-zinc-900">No templates yet</h3>
+          <h3 className="mb-2 text-lg font-semibold text-zinc-900">{t('templates.noTemplatesTitle')}</h3>
           <p className="mb-6 text-sm text-zinc-500">
-            Create shift templates to speed up your scheduling workflow
+            {t('templates.noTemplatesDescription')}
           </p>
           <Button onClick={() => setShowCreateModal(true)} className="gap-2">
             <Plus className="h-4 w-4" />
-            Create First Template
+            {t('templates.createFirst')}
           </Button>
         </div>
       ) : (
@@ -265,11 +267,11 @@ export function ShiftTemplateManager({ organizationSlug }: ShiftTemplateManagerP
                     <div className="flex items-center gap-2">
                       {template.break_minutes > 0 && (
                         <Badge variant="outline" className="text-xs">
-                          {template.break_minutes}m break
+                          {t('templates.breakBadge', { minutes: template.break_minutes })}
                         </Badge>
                       )}
                       <Badge variant="outline" className="text-xs">
-                        {calculateDuration(template.start_time, template.end_time, template.break_minutes)} work
+                        {t('templates.workBadge', { duration: calculateDuration(template.start_time, template.end_time, template.break_minutes) })}
                       </Badge>
                     </div>
                   </div>
@@ -307,20 +309,20 @@ export function ShiftTemplateManager({ organizationSlug }: ShiftTemplateManagerP
       <Dialog open={!!deletingTemplate} onOpenChange={() => setDeletingTemplate(null)}>
         <DialogContent className="border-zinc-200 bg-white">
           <DialogHeader>
-            <DialogTitle className="text-zinc-900">Delete Shift Template</DialogTitle>
+            <DialogTitle className="text-zinc-900">{t('templates.deleteTitle')}</DialogTitle>
             <DialogDescription className="text-zinc-500">
-              Are you sure you want to delete &quot;{deletingTemplate?.name}&quot;? This will deactivate the template and it will no longer appear in the list.
+              {t('templates.deleteConfirmMessage', { name: deletingTemplate?.name })}
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
             <Button variant="ghost" onClick={() => setDeletingTemplate(null)}>
-              Cancel
+              {t('common.cancel')}
             </Button>
             <Button
               variant="destructive"
               onClick={() => deletingTemplate && handleDelete(deletingTemplate)}
             >
-              Delete Template
+              {t('templates.deleteButton')}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -352,6 +354,7 @@ function TemplateFormModal({
   isLoadingLocations,
   editingTemplate,
 }: TemplateFormModalProps) {
+  const { t } = useTranslation();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [formData, setFormData] = useState<ShiftTemplateFormData>({
@@ -397,21 +400,21 @@ function TemplateFormModal({
     try {
       // Validate
       if (!formData.name.trim()) {
-        throw new Error('Template name is required');
+        throw new Error(t('templates.templateNameRequired'));
       }
 
       // Validate time format (HH:mm)
       const timeRegex = /^([0-1][0-9]|2[0-3]):[0-5][0-9]$/;
       if (!timeRegex.test(formData.start_time)) {
-        throw new Error('Invalid start time format. Use HH:mm (e.g., 09:00)');
+        throw new Error(t('templates.invalidStartTime'));
       }
       if (!timeRegex.test(formData.end_time)) {
-        throw new Error('Invalid end time format. Use HH:mm (e.g., 17:00)');
+        throw new Error(t('templates.invalidEndTime'));
       }
 
       // Validate break minutes
       if (formData.break_minutes < 0 || formData.break_minutes > 120) {
-        throw new Error('Break minutes must be between 0 and 120');
+        throw new Error(t('templates.breakMinutesRange'));
       }
 
       const url = editingTemplate
@@ -444,12 +447,12 @@ function TemplateFormModal({
         <form onSubmit={handleSubmit}>
           <DialogHeader>
             <DialogTitle className="text-zinc-900">
-              {editingTemplate ? 'Edit Shift Template' : 'Create Shift Template'}
+              {editingTemplate ? t('templates.editTitle') : t('templates.createTitle')}
             </DialogTitle>
             <DialogDescription className="text-zinc-500">
               {editingTemplate
-                ? 'Update the shift template details below.'
-                : 'Create a reusable shift template for quick scheduling.'}
+                ? t('templates.editDescription')
+                : t('templates.createDescription')}
             </DialogDescription>
           </DialogHeader>
 
@@ -469,11 +472,11 @@ function TemplateFormModal({
             {/* Template name */}
             <div className="space-y-2">
               <Label htmlFor="name" className="text-zinc-700">
-                Template Name *
+                {t('templates.name')} *
               </Label>
               <Input
                 id="name"
-                placeholder="e.g., Morning Shift, Night Shift"
+                placeholder={t('templates.templateNamePlaceholder')}
                 value={formData.name}
                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                 className="border-zinc-200 bg-white text-zinc-900 placeholder:text-zinc-400"
@@ -485,7 +488,7 @@ function TemplateFormModal({
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="start_time" className="text-zinc-700">
-                  Start Time *
+                  {t('templates.startTimeRequired')} *
                 </Label>
                 <Input
                   id="start_time"
@@ -499,7 +502,7 @@ function TemplateFormModal({
 
               <div className="space-y-2">
                 <Label htmlFor="end_time" className="text-zinc-700">
-                  End Time *
+                  {t('templates.endTimeRequired')} *
                 </Label>
                 <Input
                   id="end_time"
@@ -515,7 +518,7 @@ function TemplateFormModal({
             {/* Break minutes */}
             <div className="space-y-2">
               <Label htmlFor="break_minutes" className="text-zinc-700">
-                Break Minutes
+                {t('templates.breakMinutes')}
               </Label>
               <Input
                 id="break_minutes"
@@ -531,7 +534,7 @@ function TemplateFormModal({
             {/* Location */}
             <div className="space-y-2">
               <Label htmlFor="location" className="text-zinc-700">
-                Default Location (Optional)
+                {t('templates.defaultLocation')}
               </Label>
               <Select
                 value={formData.location_id || 'none'}
@@ -539,10 +542,10 @@ function TemplateFormModal({
                 disabled={isLoadingLocations}
               >
                 <SelectTrigger className="border-zinc-200 bg-white text-zinc-900">
-                  <SelectValue placeholder={isLoadingLocations ? 'Loading...' : 'Select location'} />
+                  <SelectValue placeholder={isLoadingLocations ? t('common.loading') : t('templates.selectLocation')} />
                 </SelectTrigger>
                 <SelectContent className="border-zinc-200 bg-white">
-                  <SelectItem value="none">No default location</SelectItem>
+                  <SelectItem value="none">{t('templates.noDefaultLocation')}</SelectItem>
                   {locations.map((loc) => (
                     <SelectItem key={loc.id} value={loc.id}>
                       {loc.name}
@@ -555,7 +558,7 @@ function TemplateFormModal({
             {/* Color picker */}
             <div className="space-y-2">
               <Label htmlFor="color" className="text-zinc-700">
-                Color
+                {t('templates.colorLabel')}
               </Label>
               <div className="flex items-center gap-3">
                 <Input
@@ -572,18 +575,18 @@ function TemplateFormModal({
 
           <DialogFooter>
             <Button type="button" variant="ghost" onClick={() => onOpenChange(false)} disabled={isSubmitting}>
-              Cancel
+              {t('common.cancel')}
             </Button>
             <Button type="submit" disabled={isSubmitting} className="gap-2">
               {isSubmitting ? (
                 <>
                   <Loader2 className="h-4 w-4 animate-spin" />
-                  {editingTemplate ? 'Updating...' : 'Creating...'}
+                  {editingTemplate ? t('templates.updating') : t('templates.creating')}
                 </>
               ) : (
                 <>
                   <Check className="h-4 w-4" />
-                  {editingTemplate ? 'Update Template' : 'Create Template'}
+                  {editingTemplate ? t('templates.updateButton') : t('templates.createButton')}
                 </>
               )}
             </Button>

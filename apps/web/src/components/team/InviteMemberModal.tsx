@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'framer-motion';
 import { toast } from 'sonner';
 import { Mail, UserPlus, Loader2, CheckCircle2, XCircle, Shield } from 'lucide-react';
@@ -26,6 +27,7 @@ type InviteState = 'idle' | 'loading' | 'success' | 'error';
 type MemberRole = 'member' | 'admin' | 'owner';
 
 export function InviteMemberModal({ open, onOpenChange, onSuccess, organizationId }: InviteMemberModalProps) {
+  const { t } = useTranslation();
   const [email, setEmail] = useState('');
   const [role, setRole] = useState<MemberRole>('member');
   const [state, setState] = useState<InviteState>('idle');
@@ -33,16 +35,16 @@ export function InviteMemberModal({ open, onOpenChange, onSuccess, organizationI
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!email.trim()) {
-      toast.error('Please enter an email address');
+      toast.error(t('team.enterEmail'));
       return;
     }
 
     // Basic email validation
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email.trim())) {
-      toast.error('Please enter a valid email address');
+      toast.error(t('team.enterValidEmail'));
       return;
     }
 
@@ -55,14 +57,14 @@ export function InviteMemberModal({ open, onOpenChange, onSuccess, organizationI
         role,
         organizationId,
       });
-      
+
       if (result.error) {
-        throw new Error(result.error.message || 'Failed to send invitation');
+        throw new Error(result.error.message || t('team.failedInvitation'));
       }
-      
+
       setState('success');
-      toast.success(`Invitation sent to ${email.trim()}`);
-      
+      toast.success(t('team.invitationSentTo', { email: email.trim() }));
+
       // Short delay to show success state, then trigger callback
       setTimeout(() => {
         handleClose();
@@ -70,14 +72,14 @@ export function InviteMemberModal({ open, onOpenChange, onSuccess, organizationI
       }, 1200);
     } catch (error) {
       setState('error');
-      const message = error instanceof Error ? error.message : 'Failed to send invitation';
+      const message = error instanceof Error ? error.message : t('team.failedInvitation');
       setErrorMessage(message);
-      
+
       // Map common errors to user-friendly messages
       if (message.toLowerCase().includes('already')) {
-        setErrorMessage('This user is already a member of the organization.');
+        setErrorMessage(t('team.alreadyMember'));
       } else if (message.toLowerCase().includes('invalid')) {
-        setErrorMessage('Invalid email address or organization.');
+        setErrorMessage(t('team.invalidEmailOrOrg'));
       }
     }
   };
@@ -101,7 +103,7 @@ export function InviteMemberModal({ open, onOpenChange, onSuccess, organizationI
       <DialogContent className="border-zinc-200 bg-white sm:max-w-md">
         {/* Decorative elements */}
         <div className="pointer-events-none absolute -top-32 left-1/2 h-64 w-64 -translate-x-1/2 rounded-full bg-blue-100 blur-[100px]" />
-        
+
         <DialogHeader className="relative">
           <motion.div
             initial={{ scale: 0.8, opacity: 0 }}
@@ -140,14 +142,14 @@ export function InviteMemberModal({ open, onOpenChange, onSuccess, organizationI
               )}
             </AnimatePresence>
           </motion.div>
-          
+
           <DialogTitle className="text-center text-xl text-zinc-900">
-            {state === 'success' ? 'Invitation Sent!' : 'Invite Team Member'}
+            {state === 'success' ? t('team.invitationSentTitle') : t('team.inviteTeamMember')}
           </DialogTitle>
           <DialogDescription className="text-center text-zinc-500">
-            {state === 'success' 
-              ? 'They will receive an email with instructions to join.'
-              : 'Send an invitation to add a new member to your team.'
+            {state === 'success'
+              ? t('team.invitationSentDesc')
+              : t('team.inviteTeamMemberDesc')
             }
           </DialogDescription>
         </DialogHeader>
@@ -168,7 +170,7 @@ export function InviteMemberModal({ open, onOpenChange, onSuccess, organizationI
                 className="inline-flex items-center gap-2 rounded-full bg-emerald-50 px-4 py-2 text-emerald-600 ring-1 ring-emerald-200"
               >
                 <CheckCircle2 className="h-4 w-4" />
-                Invitation email sent successfully
+                {t('team.invitationEmailSent')}
               </motion.div>
             </motion.div>
           ) : (
@@ -182,14 +184,14 @@ export function InviteMemberModal({ open, onOpenChange, onSuccess, organizationI
             >
               <div className="space-y-2">
                 <Label htmlFor="email" className="text-zinc-700">
-                  Email Address
+                  {t('team.emailAddress')}
                 </Label>
                 <div className="relative">
                   <Mail className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-400" />
                   <Input
                     id="email"
                     type="email"
-                    placeholder="colleague@example.com"
+                    placeholder={t('team.emailPlaceholder')}
                     value={email}
                     onChange={(e) => {
                       setEmail(e.target.value);
@@ -201,7 +203,7 @@ export function InviteMemberModal({ open, onOpenChange, onSuccess, organizationI
                     autoComplete="off"
                   />
                 </div>
-                
+
                 {/* Error message */}
                 <AnimatePresence>
                   {state === 'error' && errorMessage && (
@@ -220,7 +222,7 @@ export function InviteMemberModal({ open, onOpenChange, onSuccess, organizationI
 
               <div className="space-y-2">
                 <Label htmlFor="role" className="text-zinc-700">
-                  Role
+                  {t('common.role')}
                 </Label>
                 <div className="relative">
                   <Shield className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-400" />
@@ -231,13 +233,13 @@ export function InviteMemberModal({ open, onOpenChange, onSuccess, organizationI
                     disabled={state === 'loading'}
                     className="w-full rounded-xl border border-zinc-200 bg-white px-10 py-2.5 text-zinc-900 transition-colors focus:border-primary-400 focus:outline-none focus:ring-2 focus:ring-primary-200 disabled:opacity-50"
                   >
-                    <option value="member">Member</option>
-                    <option value="admin">Admin</option>
-                    <option value="owner">Owner</option>
+                    <option value="member">{t('team.roleMember')}</option>
+                    <option value="admin">{t('team.roleAdmin')}</option>
+                    <option value="owner">{t('team.roleOwner')}</option>
                   </select>
                 </div>
                 <p className="text-xs text-zinc-400">
-                  Members can view schedules and clock in/out. Admins can manage team and settings. Owners have full access.
+                  {t('team.roleDescription')}
                 </p>
               </div>
 
@@ -249,7 +251,7 @@ export function InviteMemberModal({ open, onOpenChange, onSuccess, organizationI
                   disabled={state === 'loading'}
                   className="flex-1 border-zinc-200 bg-zinc-50 hover:bg-zinc-100"
                 >
-                  Cancel
+                  {t('common.cancel')}
                 </Button>
                 <Button
                   type="submit"
@@ -259,11 +261,11 @@ export function InviteMemberModal({ open, onOpenChange, onSuccess, organizationI
                   {state === 'loading' ? (
                     <>
                       <Loader2 className="h-4 w-4 animate-spin" />
-                      Sending...
+                      {t('team.sending')}
                     </>
                   ) : (
                     <>
-                      Send Invitation
+                      {t('team.sendInvitation')}
                       <Mail className="h-4 w-4" />
                     </>
                   )}

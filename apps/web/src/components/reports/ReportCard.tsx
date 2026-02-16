@@ -14,6 +14,7 @@ import {
   CheckCircle2,
   TrendingUp,
 } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import type { MonthlyReport, ReportStatus } from '@/types/reports';
@@ -25,10 +26,20 @@ interface ReportCardProps {
   className?: string;
 }
 
-// Month names
-const MONTHS = [
-  'January', 'February', 'March', 'April', 'May', 'June',
-  'July', 'August', 'September', 'October', 'November', 'December',
+// Month index to translation key mapping
+const MONTH_KEYS = [
+  'common.months.january',
+  'common.months.february',
+  'common.months.march',
+  'common.months.april',
+  'common.months.may',
+  'common.months.june',
+  'common.months.july',
+  'common.months.august',
+  'common.months.september',
+  'common.months.october',
+  'common.months.november',
+  'common.months.december',
 ];
 
 // Format hours to display
@@ -41,30 +52,32 @@ function formatHours(hours: number): string {
 
 // Status badge component
 function StatusBadge({ status }: { status: ReportStatus }) {
-  const configs: Record<ReportStatus, { icon: typeof CheckCircle2; label: string; className: string }> = {
+  const { t } = useTranslation();
+
+  const configs: Record<ReportStatus, { icon: typeof CheckCircle2; labelKey: string; className: string }> = {
     pending: {
       icon: Clock,
-      label: 'Pending',
+      labelKey: 'reports.statuses.pending',
       className: 'bg-zinc-100 text-zinc-700 border-zinc-300',
     },
     generating: {
       icon: Loader2,
-      label: 'Generating',
+      labelKey: 'reports.statuses.generating',
       className: 'bg-amber-500/20 text-amber-300 border-amber-500/30',
     },
     ready: {
       icon: CheckCircle2,
-      label: 'Ready',
+      labelKey: 'reports.statuses.ready',
       className: 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30',
     },
     delivered: {
       icon: CheckCircle2,
-      label: 'Delivered',
+      labelKey: 'reports.statuses.delivered',
       className: 'bg-primary-500/20 text-primary-300 border-primary-500/30',
     },
     failed: {
       icon: AlertCircle,
-      label: 'Failed',
+      labelKey: 'reports.statuses.failed',
       className: 'bg-red-500/20 text-red-300 border-red-500/30',
     },
   };
@@ -80,12 +93,14 @@ function StatusBadge({ status }: { status: ReportStatus }) {
       )}
     >
       <Icon className={cn('h-3 w-3', status === 'generating' && 'animate-spin')} />
-      {config.label}
+      {t(config.labelKey)}
     </span>
   );
 }
 
 export function ReportCard({ report, onClick, onDownload, className }: ReportCardProps) {
+  const { t } = useTranslation();
+
   const handleDownload = async (e: React.MouseEvent) => {
     e.stopPropagation();
     if (onDownload) {
@@ -93,7 +108,9 @@ export function ReportCard({ report, onClick, onDownload, className }: ReportCar
     }
   };
 
-  const monthName = MONTHS[report.month - 1] || 'Unknown';
+  const monthName = MONTH_KEYS[report.month - 1]
+    ? t(MONTH_KEYS[report.month - 1]!)
+    : t('common.unknown');
   const hasOvertime = report.overtimeHours > 0;
 
   return (
@@ -138,7 +155,7 @@ export function ReportCard({ report, onClick, onDownload, className }: ReportCar
           <div className="rounded-xl border border-zinc-100 bg-zinc-50 p-3">
             <div className="mb-1 flex items-center gap-1.5 text-zinc-500">
               <Clock className="h-3.5 w-3.5" />
-              <span className="text-[10px] font-medium uppercase tracking-wider">Total Hours</span>
+              <span className="text-[10px] font-medium uppercase tracking-wider">{t('reports.totalHoursLabel')}</span>
             </div>
             <p className="text-xl font-bold text-zinc-900">{formatHours(report.totalHours)}</p>
           </div>
@@ -147,7 +164,7 @@ export function ReportCard({ report, onClick, onDownload, className }: ReportCar
           <div className="rounded-xl border border-zinc-100 bg-zinc-50 p-3">
             <div className="mb-1 flex items-center gap-1.5 text-zinc-500">
               <Calendar className="h-3.5 w-3.5" />
-              <span className="text-[10px] font-medium uppercase tracking-wider">Days Worked</span>
+              <span className="text-[10px] font-medium uppercase tracking-wider">{t('reports.daysWorkedLabel')}</span>
             </div>
             <p className="text-xl font-bold text-zinc-900">{report.totalDays}</p>
           </div>
@@ -158,7 +175,7 @@ export function ReportCard({ report, onClick, onDownload, className }: ReportCar
           <div className="mb-4 flex items-center gap-2 rounded-lg border border-amber-500/20 bg-amber-500/10 px-3 py-2">
             <TrendingUp className="h-4 w-4 text-amber-400" />
             <span className="text-sm font-medium text-amber-300">
-              {formatHours(report.overtimeHours)} overtime
+              {t('reports.overtimeAmount', { hours: formatHours(report.overtimeHours) })}
             </span>
           </div>
         )}
@@ -181,7 +198,7 @@ export function ReportCard({ report, onClick, onDownload, className }: ReportCar
             className="flex-1 gap-1.5 rounded-lg text-zinc-700 hover:bg-zinc-100 hover:text-zinc-900"
             onClick={() => onClick(report.id)}
           >
-            View Details
+            {t('reports.viewDetails')}
           </Button>
 
           {report.status === 'ready' && report.pdfUrl && onDownload && (

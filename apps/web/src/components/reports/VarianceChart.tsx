@@ -18,6 +18,7 @@ import {
 } from 'recharts';
 import { motion } from 'framer-motion';
 import { TrendingUp, TrendingDown, Minus, Calendar } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { cn } from '@/lib/utils';
 import type { VarianceDiscrepancy } from '@/types/reports';
 
@@ -37,6 +38,7 @@ function formatDate(dateString: string): string {
 
 // Custom tooltip component
 function CustomTooltip({ active, payload, label }: { active?: boolean; payload?: unknown[]; label?: string }) {
+  const { t } = useTranslation();
   if (!active || !payload || !payload.length) return null;
 
   const data = payload[0] as { payload: { scheduledHours: number; actualHours: number; difference: number; reason?: string } };
@@ -47,16 +49,16 @@ function CustomTooltip({ active, payload, label }: { active?: boolean; payload?:
       <p className="mb-2 font-medium text-zinc-900">{label}</p>
       <div className="space-y-1.5 text-sm">
         <div className="flex items-center justify-between gap-4">
-          <span className="text-zinc-500">Scheduled:</span>
+          <span className="text-zinc-500">{t('reports.scheduledLabel')}:</span>
           <span className="font-medium text-emerald-600">{item.scheduledHours.toFixed(1)}h</span>
         </div>
         <div className="flex items-center justify-between gap-4">
-          <span className="text-zinc-500">Actual:</span>
+          <span className="text-zinc-500">{t('reports.actualLabel')}:</span>
           <span className="font-medium text-amber-600">{item.actualHours.toFixed(1)}h</span>
         </div>
         <div className="border-t border-zinc-200 pt-1.5">
           <div className="flex items-center justify-between gap-4">
-            <span className="text-zinc-500">Variance:</span>
+            <span className="text-zinc-500">{t('reports.varianceLabel')}:</span>
             <span
               className={cn(
                 'font-medium',
@@ -109,6 +111,8 @@ function StatCard({
 }
 
 export function VarianceChart({ data, className }: VarianceChartProps) {
+  const { t } = useTranslation();
+
   // Transform data for chart
   const chartData = useMemo(() => {
     return data.map((item) => ({
@@ -148,9 +152,9 @@ export function VarianceChart({ data, className }: VarianceChartProps) {
         )}
       >
         <Calendar className="mb-4 h-12 w-12 text-zinc-400" />
-        <h3 className="mb-1 text-lg font-semibold text-zinc-900">No Variance Data</h3>
+        <h3 className="mb-1 text-lg font-semibold text-zinc-900">{t('reports.noVarianceData')}</h3>
         <p className="text-sm text-zinc-500">
-          No discrepancies found for this period.
+          {t('reports.noVarianceDesc')}
         </p>
       </motion.div>
     );
@@ -165,23 +169,23 @@ export function VarianceChart({ data, className }: VarianceChartProps) {
       {/* Summary cards */}
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
         <StatCard
-          label="Scheduled"
+          label={t('reports.scheduledLabel')}
           value={`${stats.totalScheduled.toFixed(1)}h`}
           icon={Calendar}
         />
         <StatCard
-          label="Actual"
+          label={t('reports.actualLabel')}
           value={`${stats.totalActual.toFixed(1)}h`}
           icon={Calendar}
         />
         <StatCard
-          label="Variance"
+          label={t('reports.varianceLabel')}
           value={`${stats.totalVariance > 0 ? '+' : ''}${stats.totalVariance.toFixed(1)}h`}
           icon={stats.totalVariance > 0 ? TrendingUp : stats.totalVariance < 0 ? TrendingDown : Minus}
           trend={stats.totalVariance > 0 ? 'up' : stats.totalVariance < 0 ? 'down' : 'neutral'}
         />
         <StatCard
-          label="Variance %"
+          label={t('reports.variancePercent')}
           value={`${stats.percentVariance > 0 ? '+' : ''}${stats.percentVariance.toFixed(1)}%`}
           icon={stats.percentVariance > 0 ? TrendingUp : stats.percentVariance < 0 ? TrendingDown : Minus}
           trend={stats.percentVariance > 2 ? 'up' : stats.percentVariance < -2 ? 'down' : 'neutral'}
@@ -190,7 +194,7 @@ export function VarianceChart({ data, className }: VarianceChartProps) {
 
       {/* Chart */}
       <div className="rounded-2xl border border-zinc-200 bg-white p-4 shadow-sm">
-        <h4 className="mb-4 text-sm font-medium text-zinc-700">Daily Variance</h4>
+        <h4 className="mb-4 text-sm font-medium text-zinc-700">{t('reports.dailyVariance')}</h4>
         <div className="h-64 w-full sm:h-80">
           <ResponsiveContainer width="100%" height="100%">
             <BarChart data={chartData} margin={{ top: 10, right: 10, left: -10, bottom: 0 }}>
@@ -214,14 +218,14 @@ export function VarianceChart({ data, className }: VarianceChartProps) {
               />
               <Bar
                 dataKey="scheduledHours"
-                name="Scheduled"
+                name={t('reports.scheduledLabel')}
                 fill="#10b981"
                 radius={[4, 4, 0, 0]}
                 maxBarSize={40}
               />
               <Bar
                 dataKey="actualHours"
-                name="Actual"
+                name={t('reports.actualLabel')}
                 fill="#f59e0b"
                 radius={[4, 4, 0, 0]}
                 maxBarSize={40}
@@ -240,7 +244,7 @@ export function VarianceChart({ data, className }: VarianceChartProps) {
 
       {/* Variance days note */}
       <p className="text-center text-xs text-zinc-500">
-        {stats.daysWithVariance} of {stats.totalDays} days had variance between scheduled and actual hours
+        {t('reports.varianceDaysNote', { withVariance: stats.daysWithVariance, totalDays: stats.totalDays })}
       </p>
     </motion.div>
   );

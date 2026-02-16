@@ -6,6 +6,7 @@
  */
 
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'framer-motion';
 import { AlertTriangle, Calendar, Check, Loader2, Send, Users, X } from 'lucide-react';
 import {
@@ -40,10 +41,10 @@ interface PublishResult {
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
 
-function formatDateRange(start: Date, end: Date): string {
+function formatDateRange(start: Date, end: Date, locale: string): string {
   const options: Intl.DateTimeFormatOptions = { month: 'short', day: 'numeric' };
-  const startStr = start.toLocaleDateString('en-US', options);
-  const endStr = end.toLocaleDateString('en-US', { ...options, year: 'numeric' });
+  const startStr = start.toLocaleDateString(locale, options);
+  const endStr = end.toLocaleDateString(locale, { ...options, year: 'numeric' });
   return `${startStr} – ${endStr}`;
 }
 
@@ -56,6 +57,8 @@ export function PublishDialog({
   weekEnd,
   shifts,
 }: PublishDialogProps) {
+  const { t, i18n } = useTranslation();
+  const locale = i18n.language === 'es' ? 'es-ES' : 'en-US';
   const [isPublishing, setIsPublishing] = useState(false);
   const [publishResult, setPublishResult] = useState<PublishResult | null>(null);
 
@@ -92,12 +95,12 @@ export function PublishDialog({
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.message || 'Failed to publish roster');
+        throw new Error(data.message || t('roster.failedToPublish'));
       }
 
       setPublishResult({
         success: true,
-        message: data.message || 'Roster published successfully',
+        message: data.message || t('roster.publishedSuccess'),
         publishedCount: data.publishedCount,
         employeesNotified: data.employeesNotified,
       });
@@ -111,7 +114,7 @@ export function PublishDialog({
     } catch (err) {
       setPublishResult({
         success: false,
-        message: err instanceof Error ? err.message : 'Failed to publish roster',
+        message: err instanceof Error ? err.message : t('roster.failedToPublish'),
       });
     } finally {
       setIsPublishing(false);
@@ -133,10 +136,10 @@ export function PublishDialog({
             <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary-50">
               <Send className="h-4 w-4 text-primary-500" />
             </div>
-            Publish Roster
+            {t('roster.publishTitle')}
           </DialogTitle>
           <DialogDescription className="text-zinc-500">
-            Publish shifts and notify assigned employees.
+            {t('roster.publishDesc')}
           </DialogDescription>
         </DialogHeader>
 
@@ -148,9 +151,9 @@ export function PublishDialog({
             </div>
             <div>
               <p className="text-sm font-medium text-zinc-900">
-                {formatDateRange(weekStart, weekEnd)}
+                {formatDateRange(weekStart, weekEnd, locale)}
               </p>
-              <p className="text-xs text-zinc-400">Week to publish</p>
+              <p className="text-xs text-zinc-400">{t('roster.weekToPublish')}</p>
             </div>
           </div>
 
@@ -159,7 +162,7 @@ export function PublishDialog({
             <div className="rounded-lg border border-zinc-200 bg-zinc-50 p-3 text-center">
               <p className="text-2xl font-bold text-zinc-900">{draftShifts.length}</p>
               <p className="text-xs text-zinc-400">
-                Draft shift{draftShifts.length !== 1 ? 's' : ''}
+                {t('roster.draftShiftCount', { count: draftShifts.length })}
               </p>
             </div>
             <div className="rounded-lg border border-zinc-200 bg-zinc-50 p-3 text-center">
@@ -168,7 +171,7 @@ export function PublishDialog({
                 <p className="text-2xl font-bold text-zinc-900">{employeeCount}</p>
               </div>
               <p className="text-xs text-zinc-400">
-                Employee{employeeCount !== 1 ? 's' : ''} to notify
+                {t('roster.employeesToNotify', { count: employeeCount })}
               </p>
             </div>
           </div>
@@ -182,10 +185,9 @@ export function PublishDialog({
             >
               <AlertTriangle className="h-4 w-4 shrink-0 text-amber-400" />
               <div>
-                <p className="text-sm font-medium text-amber-700">Compliance Warnings</p>
+                <p className="text-sm font-medium text-amber-700">{t('roster.complianceWarnings')}</p>
                 <p className="text-xs text-amber-600">
-                  {shiftsWithWarnings.length} shift{shiftsWithWarnings.length !== 1 ? 's have' : ' has'}{' '}
-                  compliance warnings. Review before publishing.
+                  {t('roster.complianceWarningsShiftCount', { count: shiftsWithWarnings.length })}
                 </p>
               </div>
             </motion.div>
@@ -200,9 +202,9 @@ export function PublishDialog({
             >
               <AlertTriangle className="h-4 w-4 shrink-0 text-zinc-500" />
               <div>
-                <p className="text-sm font-medium text-zinc-700">No Draft Shifts</p>
+                <p className="text-sm font-medium text-zinc-700">{t('roster.noDraftShifts')}</p>
                 <p className="text-xs text-zinc-500">
-                  There are no draft shifts to publish for this week.
+                  {t('roster.noDraftShiftsDesc')}
                 </p>
               </div>
             </motion.div>
@@ -234,7 +236,7 @@ export function PublishDialog({
                       publishResult.success ? 'text-emerald-700' : 'text-red-700'
                     )}
                   >
-                    {publishResult.success ? 'Published!' : 'Error'}
+                    {publishResult.success ? t('roster.publishedResult') : t('roster.publishError')}
                   </p>
                   <p
                     className={cn(
@@ -246,9 +248,11 @@ export function PublishDialog({
                     {publishResult.success && publishResult.publishedCount !== undefined && (
                       <>
                         {' '}
-                        ({publishResult.publishedCount} shift
-                        {publishResult.publishedCount !== 1 ? 's' : ''},{' '}
-                        {publishResult.employeesNotified} notified)
+                        {t('roster.publishResultDetail', {
+                          count: publishResult.publishedCount,
+                          shifts: publishResult.publishedCount,
+                          employees: publishResult.employeesNotified,
+                        })}
                       </>
                     )}
                   </p>
@@ -266,7 +270,7 @@ export function PublishDialog({
             disabled={isPublishing}
             className="rounded-lg border border-zinc-200 bg-zinc-50 text-zinc-700 hover:bg-zinc-100"
           >
-            Cancel
+            {t('common.cancel')}
           </Button>
           <Button
             type="button"
@@ -280,17 +284,17 @@ export function PublishDialog({
             {isPublishing ? (
               <>
                 <Loader2 className="h-4 w-4 animate-spin" />
-                Publishing...
+                {t('roster.publishingButton')}
               </>
             ) : publishResult?.success ? (
               <>
                 <Check className="h-4 w-4" />
-                Published
+                {t('roster.publishedButton')}
               </>
             ) : (
               <>
                 <Send className="h-4 w-4" />
-                Publish {draftShifts.length} Shift{draftShifts.length !== 1 ? 's' : ''}
+                {t('roster.publishShiftsButton', { count: draftShifts.length })}
               </>
             )}
           </Button>

@@ -6,12 +6,13 @@
  */
 
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  AlertTriangle, 
-  AlertCircle, 
-  XCircle, 
-  CheckCircle2, 
+import {
+  AlertTriangle,
+  AlertCircle,
+  XCircle,
+  CheckCircle2,
   Info,
   X,
   ShieldAlert
@@ -105,6 +106,7 @@ const SPRING_CONFIG = { type: 'spring', damping: 25, stiffness: 300 } as const;
 // ============================================================================
 
 function ViolationItem({ violation }: { violation: ComplianceViolation }) {
+  const { t } = useTranslation();
   const config = SEVERITY_CONFIG[violation.severity];
   const Icon = config.icon;
 
@@ -122,7 +124,7 @@ function ViolationItem({ violation }: { violation: ComplianceViolation }) {
         <Icon className={cn("h-5 w-5 flex-shrink-0 mt-0.5", config.color)} />
         <div className="flex-1 space-y-2">
           <p className="text-sm font-medium text-zinc-900">{violation.message}</p>
-          
+
           {violation.ruleReference && (
             <div className="flex items-center gap-2">
               <Badge className={cn("text-xs", config.badge)}>
@@ -130,10 +132,10 @@ function ViolationItem({ violation }: { violation: ComplianceViolation }) {
               </Badge>
             </div>
           )}
-          
+
           {violation.recommendedAction && (
             <p className="text-xs text-zinc-500">
-              <span className="font-medium">Recommended:</span> {violation.recommendedAction}
+              <span className="font-medium">{t('compliance.recommended')}:</span> {violation.recommendedAction}
             </p>
           )}
         </div>
@@ -155,6 +157,7 @@ export function ComplianceAlert({
   onOverride,
   isBlocking = false,
 }: ComplianceAlertProps) {
+  const { t } = useTranslation();
   const [overrideReason, setOverrideReason] = React.useState('');
   const [showOverrideForm, setShowOverrideForm] = React.useState(false);
 
@@ -184,10 +187,10 @@ export function ComplianceAlert({
               </div>
               <div>
                 <DialogTitle className="text-zinc-900">
-                  Compliance Violation
+                  {t('compliance.violationTitle')}
                 </DialogTitle>
                 <DialogDescription className="text-zinc-500">
-                  Clock-out blocked due to labor law violations
+                  {t('compliance.violationBlocked')}
                 </DialogDescription>
               </div>
             </div>
@@ -201,8 +204,8 @@ export function ComplianceAlert({
 
           {summary && (
             <div className="flex items-center justify-between text-xs text-zinc-500 py-2 border-t border-zinc-200">
-              <span>{summary.checks} compliance checks performed</span>
-              <span className="text-red-400">{summary.violations} violation(s)</span>
+              <span>{t('compliance.checksPerformed', { count: summary.checks })}</span>
+              <span className="text-red-400">{t('compliance.violationsFound', { count: summary.violations })}</span>
             </div>
           )}
 
@@ -213,7 +216,7 @@ export function ComplianceAlert({
                 onClick={() => setShowOverrideForm(true)}
                 className="w-full border-zinc-200"
               >
-                Manager Override
+                {t('compliance.managerOverride')}
               </Button>
             )}
 
@@ -226,7 +229,7 @@ export function ComplianceAlert({
                 <textarea
                   value={overrideReason}
                   onChange={(e) => setOverrideReason(e.target.value)}
-                  placeholder="Enter reason for override (required)..."
+                  placeholder={t('compliance.overridePlaceholder')}
                   rows={2}
                   className={cn(
                     "w-full px-3 py-2 rounded-lg resize-none",
@@ -242,14 +245,14 @@ export function ComplianceAlert({
                     onClick={() => setShowOverrideForm(false)}
                     className="flex-1"
                   >
-                    Cancel
+                    {t('common.cancel')}
                   </Button>
                   <Button
                     onClick={handleOverride}
                     disabled={!overrideReason.trim()}
                     className="flex-1 bg-amber-600 hover:bg-amber-700"
                   >
-                    Confirm Override
+                    {t('compliance.confirmOverride')}
                   </Button>
                 </div>
               </motion.div>
@@ -261,7 +264,7 @@ export function ComplianceAlert({
                 onClick={onClose}
                 className="w-full text-zinc-400"
               >
-                Close
+                {t('common.close')}
               </Button>
             )}
           </DialogFooter>
@@ -290,14 +293,14 @@ export function ComplianceAlert({
               <AlertTriangle className="h-5 w-5 text-yellow-400 flex-shrink-0 mt-0.5" />
               <div className="flex-1">
                 <p className="text-sm font-medium text-yellow-700">
-                  Compliance Warning
+                  {t('compliance.warningTitle')}
                 </p>
                 <p className="text-xs text-zinc-700 mt-1">
                   {warnings[0]?.message}
                 </p>
                 {warnings.length > 1 && (
                   <p className="text-xs text-zinc-500 mt-1">
-                    +{warnings.length - 1} more warning(s)
+                    {t('compliance.moreWarnings', { count: warnings.length - 1 })}
                   </p>
                 )}
               </div>
@@ -333,11 +336,11 @@ export function ComplianceAlert({
             <CheckCircle2 className="h-5 w-5 text-emerald-400" />
             <div className="flex-1">
               <p className="text-sm font-medium text-emerald-700">
-                All Compliance Checks Passed
+                {t('compliance.allChecksPassed')}
               </p>
               {summary && (
                 <p className="text-xs text-zinc-500 mt-0.5">
-                  {summary.checks} checks performed
+                  {t('compliance.checksCount', { count: summary.checks })}
                 </p>
               )}
             </div>

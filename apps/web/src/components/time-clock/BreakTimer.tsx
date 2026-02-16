@@ -6,6 +6,7 @@
  */
 
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Coffee, Play, Square, Loader2, AlertCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -71,6 +72,7 @@ export function BreakTimer({
   maxBreakWarning = 30,
 }: BreakTimerProps) {
   // Hooks
+  const { t } = useTranslation();
   const haptic = useHaptic();
   const { isOnline, queueAction } = useOfflineQueue();
 
@@ -124,7 +126,7 @@ export function BreakTimer({
 
         if (!response.ok) {
           const data = await response.json();
-          throw new Error(data.message || 'Failed to start break');
+          throw new Error(data.message || t('clock.failedStartBreak'));
         }
       } else {
         await queueAction('start-break', organizationSlug, { break_type: breakType });
@@ -134,7 +136,7 @@ export function BreakTimer({
       onBreakStart?.();
     } catch (err) {
       haptic.error();
-      setError(err instanceof Error ? err.message : 'Failed to start break');
+      setError(err instanceof Error ? err.message : t('clock.failedStartBreak'));
     } finally {
       setIsStarting(false);
     }
@@ -157,7 +159,7 @@ export function BreakTimer({
 
         if (!response.ok) {
           const data = await response.json();
-          throw new Error(data.message || 'Failed to end break');
+          throw new Error(data.message || t('clock.failedEndBreak'));
         }
       } else {
         await queueAction('end-break', organizationSlug, {});
@@ -168,7 +170,7 @@ export function BreakTimer({
       onBreakEnd?.(durationMinutes);
     } catch (err) {
       haptic.error();
-      setError(err instanceof Error ? err.message : 'Failed to end break');
+      setError(err instanceof Error ? err.message : t('clock.failedEndBreak'));
     } finally {
       setIsEnding(false);
     }
@@ -185,11 +187,11 @@ export function BreakTimer({
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <Coffee className="h-4 w-4 text-zinc-500" />
-          <span className="text-sm font-medium text-zinc-700">Break</span>
+          <span className="text-sm font-medium text-zinc-700">{t('clock.break')}</span>
         </div>
         {totalBreakMinutes > 0 && (
           <Badge variant="ghost" className="text-xs">
-            {totalBreakMinutes} min today
+            {t('clock.minToday', { count: totalBreakMinutes })}
           </Badge>
         )}
       </div>
@@ -223,12 +225,12 @@ export function BreakTimer({
                   variant={activeBreak.breakType === 'paid' ? 'success' : 'ghost'}
                   className="text-xs"
                 >
-                  {activeBreak.breakType === 'paid' ? 'Paid' : 'Unpaid'}
+                  {activeBreak.breakType === 'paid' ? t('clock.paid') : t('clock.unpaid')}
                 </Badge>
                 {isOverWarning && (
                   <Badge variant="warning" className="text-xs gap-1">
                     <AlertCircle className="h-3 w-3" />
-                    Over {maxBreakWarning} min
+                    {t('clock.overMinWarning', { count: maxBreakWarning })}
                   </Badge>
                 )}
               </div>
@@ -246,12 +248,12 @@ export function BreakTimer({
               {isEnding ? (
                 <span className="flex items-center gap-2">
                   <Loader2 className="h-5 w-5 animate-spin" />
-                  Ending Break...
+                  {t('clock.endingBreak')}
                 </span>
               ) : (
                 <span className="flex items-center gap-2">
                   <Square className="h-5 w-5" />
-                  End Break
+                  {t('clock.endBreak')}
                 </span>
               )}
             </Button>
@@ -278,7 +280,7 @@ export function BreakTimer({
                     : "bg-transparent border-zinc-200 text-zinc-500 hover:text-zinc-700"
                 )}
               >
-                Unpaid
+                {t('clock.unpaid')}
               </button>
               <button
                 onClick={() => setBreakType('paid')}
@@ -290,7 +292,7 @@ export function BreakTimer({
                     : "bg-transparent border-zinc-200 text-zinc-500 hover:text-zinc-700"
                 )}
               >
-                Paid
+                {t('clock.paid')}
               </button>
             </div>
 
@@ -307,12 +309,12 @@ export function BreakTimer({
               {isStarting ? (
                 <span className="flex items-center gap-2">
                   <Loader2 className="h-4 w-4 animate-spin" />
-                  Starting...
+                  {t('clock.startingBreak')}
                 </span>
               ) : (
                 <span className="flex items-center gap-2">
                   <Play className="h-4 w-4" />
-                  Start Break
+                  {t('clock.startBreak')}
                 </span>
               )}
             </Button>

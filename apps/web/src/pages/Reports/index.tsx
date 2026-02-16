@@ -52,11 +52,11 @@ export default function ReportsPage() {
         setReports(response.reports || []);
 
         if (silent) {
-          toast.success('Reports refreshed');
+          toast.success(t('reports.toasts.reportsRefreshed'));
         }
       } catch (error) {
         console.error('Error fetching reports:', error);
-        toast.error('Failed to load reports');
+        toast.error(t('reports.toasts.loadFailed'));
       } finally {
         setIsLoading(false);
         setIsRefreshing(false);
@@ -114,10 +114,10 @@ export default function ReportsPage() {
     try {
       const { pdfUrl } = await downloadReportPDF(slug, id);
       window.open(pdfUrl, '_blank');
-      toast.success('PDF download started');
+      toast.success(t('reports.toasts.pdfStarted'));
     } catch (error) {
       console.error('Error downloading PDF:', error);
-      toast.error('Failed to download PDF');
+      toast.error(t('reports.toasts.pdfFailed'));
     }
   }
 

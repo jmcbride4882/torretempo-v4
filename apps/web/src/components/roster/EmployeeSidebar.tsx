@@ -6,6 +6,7 @@
  */
 
 import { useEffect, useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { motion } from 'framer-motion';
 import { Search, User, Users } from 'lucide-react';
 import { useDraggable } from '@dnd-kit/core';
@@ -73,12 +74,13 @@ interface DraggableEmployeeCardProps {
 }
 
 function DraggableEmployeeCard({ member, hours }: DraggableEmployeeCardProps) {
+  const { t } = useTranslation();
   const { attributes, listeners, setNodeRef, isDragging } = useDraggable({
     id: `employee-${member.userId}`,
     data: { employee: member, type: 'employee' },
   });
 
-  const name = member.user?.name || member.user?.email || 'Unnamed';
+  const name = member.user?.name || member.user?.email || t('common.unknown');
   const initials = getInitials(member.user?.name, member.user?.email);
   const hoursPercent = Math.min(100, (hours / MAX_WEEKLY_HOURS) * 100);
 
@@ -153,6 +155,7 @@ function EmployeeCardSkeleton() {
 }
 
 export function EmployeeSidebar({ organizationSlug, weekStart, className }: EmployeeSidebarProps) {
+  const { t } = useTranslation();
   const [members, setMembers] = useState<MemberData[]>([]);
   const [hoursMap, setHoursMap] = useState<Map<string, number>>(new Map());
   const [searchQuery, setSearchQuery] = useState('');
@@ -176,7 +179,7 @@ export function EmployeeSidebar({ organizationSlug, weekStart, className }: Empl
         });
 
         if (!membersRes.ok) {
-          throw new Error('Failed to fetch members');
+          throw new Error(t('roster.failedToLoadEmployees'));
         }
 
         const membersData = await membersRes.json();
@@ -221,7 +224,7 @@ export function EmployeeSidebar({ organizationSlug, weekStart, className }: Empl
         }
       } catch (err) {
         if (isMounted) {
-          setError(err instanceof Error ? err.message : 'Failed to load employees');
+          setError(err instanceof Error ? err.message : t('roster.failedToLoadEmployees'));
         }
       } finally {
         if (isMounted) {
@@ -254,7 +257,7 @@ export function EmployeeSidebar({ organizationSlug, weekStart, className }: Empl
       {/* Header */}
       <div className="mb-4 flex items-center gap-2">
         <Users className="h-4 w-4 text-zinc-400" />
-        <h3 className="text-sm font-medium text-zinc-700">Employees</h3>
+        <h3 className="text-sm font-medium text-zinc-700">{t('roster.employees')}</h3>
         <span className="ml-auto rounded-full bg-zinc-100 px-2 py-0.5 text-xs text-zinc-400">
           {members.length}
         </span>
@@ -265,7 +268,7 @@ export function EmployeeSidebar({ organizationSlug, weekStart, className }: Empl
         <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-400" />
         <Input
           type="text"
-          placeholder="Search employees..."
+          placeholder={t('roster.searchEmployees')}
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           className="border-zinc-200 bg-white pl-9 text-sm text-zinc-900 placeholder:text-zinc-400 focus:border-primary-500"
@@ -288,7 +291,7 @@ export function EmployeeSidebar({ organizationSlug, weekStart, className }: Empl
           <div className="rounded-lg border border-zinc-200 bg-white p-6 text-center">
             <User className="mx-auto h-8 w-8 text-zinc-400" />
             <p className="mt-2 text-sm text-zinc-400">
-              {searchQuery ? 'No employees match your search' : 'No employees found'}
+              {searchQuery ? t('roster.noEmployeesMatch') : t('roster.noEmployeesFound')}
             </p>
           </div>
         ) : (
@@ -304,7 +307,7 @@ export function EmployeeSidebar({ organizationSlug, weekStart, className }: Empl
 
       {/* Footer - Hours Legend */}
       <div className="mt-4 border-t border-zinc-200 pt-4">
-        <p className="mb-2 text-xs font-medium text-zinc-400">Weekly Hours</p>
+        <p className="mb-2 text-xs font-medium text-zinc-400">{t('roster.weeklyHoursLabel')}</p>
         <div className="flex items-center gap-3 text-[10px]">
           <div className="flex items-center gap-1">
             <div className="h-2 w-2 rounded-full bg-emerald-500" />

@@ -108,7 +108,7 @@ export default function BillingPage() {
         <CardContent>
           <div className="flex items-center justify-between mb-4">
             <div>
-              <p className="text-2xl font-bold text-zinc-900">{plan.name || 'Free'}</p>
+              <p className="text-2xl font-bold text-zinc-900">{plan.name || t('billing.free')}</p>
               {plan.priceCents && (
                 <p className="text-zinc-500">
                   {(plan.priceCents / 100).toFixed(2)} {t('billing.perUserMonth')}

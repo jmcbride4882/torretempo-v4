@@ -143,7 +143,7 @@ function AdminSidebar() {
             <div className="flex items-center gap-2">
               <p className="truncate text-sm font-medium text-zinc-900">{user?.name || 'Admin'}</p>
               <span className="rounded bg-amber-100 px-1.5 py-0.5 text-[10px] font-semibold uppercase text-amber-700">
-                Admin
+                {t('admin.adminBadge')}
               </span>
             </div>
             <p className="truncate text-xs text-zinc-500">{user?.email}</p>
@@ -254,7 +254,7 @@ export default function AdminLayout() {
                   <div className="flex items-center gap-2">
                     <p className="truncate text-sm font-medium text-zinc-900">{user?.name || 'Admin'}</p>
                     <span className="rounded bg-amber-100 px-1.5 py-0.5 text-[10px] font-semibold uppercase text-amber-700">
-                      Admin
+                      {t('admin.adminBadge')}
                     </span>
                   </div>
                   <p className="truncate text-xs text-zinc-500">{user?.email}</p>
@@ -289,7 +289,7 @@ export default function AdminLayout() {
                 <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-amber-600">
                   <Shield className="h-4 w-4 text-white" />
                 </div>
-                <span className="font-semibold text-zinc-900">Admin</span>
+                <span className="font-semibold text-zinc-900">{t('admin.adminBadge')}</span>
               </div>
             </div>
 
@@ -319,7 +319,7 @@ export default function AdminLayout() {
                       <div className="flex items-center gap-2">
                         <span className="text-zinc-900">{user?.name}</span>
                         <span className="rounded bg-amber-100 px-1.5 py-0.5 text-[10px] font-semibold uppercase text-amber-700">
-                          Admin
+                          {t('admin.adminBadge')}
                         </span>
                       </div>
                       <span className="text-xs font-normal text-zinc-500">{user?.email}</span>

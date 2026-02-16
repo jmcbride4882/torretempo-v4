@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate, useParams } from 'react-router-dom';
 import { BellOff, CheckCheck, ChevronRight, Loader2 } from 'lucide-react';
@@ -23,6 +24,7 @@ export function NotificationPopover({
   onUnreadCountChange,
   onClose,
 }: NotificationPopoverProps) {
+  const { t } = useTranslation();
   const { slug } = useParams<{ slug: string }>();
   const navigate = useNavigate();
   const [notifications, setNotifications] = useState<Notification[]>([]);
@@ -46,7 +48,7 @@ export function NotificationPopover({
       onUnreadCountChange?.(unreadCount);
       hasLoadedRef.current = true;
     } catch (err) {
-      setError('Failed to load notifications');
+      setError(t('notifications.failedToLoad'));
       console.error('Error loading notifications:', err);
       hasLoadedRef.current = true; // Stop retrying on error
     } finally {
@@ -121,7 +123,7 @@ export function NotificationPopover({
       {/* Header */}
       <div className="flex items-center justify-between px-4 py-3 border-b border-zinc-200">
         <div className="flex items-center gap-2">
-          <h2 className="text-sm font-semibold text-zinc-900">Notifications</h2>
+          <h2 className="text-sm font-semibold text-zinc-900">{t('notifications.title')}</h2>
           {unreadCount > 0 && (
             <motion.span
               initial={{ scale: 0 }}
@@ -145,7 +147,7 @@ export function NotificationPopover({
             ) : (
               <CheckCheck className="h-3.5 w-3.5" />
             )}
-            Mark all read
+            {t('notifications.markAllRead')}
           </Button>
         )}
       </div>
@@ -163,7 +165,7 @@ export function NotificationPopover({
                 className="flex flex-col items-center justify-center py-12 gap-3"
               >
                 <Loader2 className="h-8 w-8 text-primary-500 animate-spin" />
-                <p className="text-sm text-zinc-500">Loading notifications...</p>
+                <p className="text-sm text-zinc-500">{t('notifications.loadingNotifications')}</p>
               </motion.div>
             ) : error ? (
               <motion.div
@@ -186,7 +188,7 @@ export function NotificationPopover({
                   }}
                   className="text-xs"
                 >
-                  Try again
+                  {t('common.tryAgain')}
                 </Button>
               </motion.div>
             ) : notifications.length === 0 ? (
@@ -204,9 +206,9 @@ export function NotificationPopover({
                   </div>
                 </div>
                 <div className="text-center">
-                  <p className="text-sm font-medium text-zinc-700">All caught up!</p>
+                  <p className="text-sm font-medium text-zinc-700">{t('notifications.allCaughtUp')}</p>
                   <p className="text-xs text-zinc-500 mt-1">
-                    No notifications at the moment
+                    {t('notifications.noNotificationsAtMoment')}
                   </p>
                 </div>
               </motion.div>
@@ -242,7 +244,7 @@ export function NotificationPopover({
             'flex items-center justify-center gap-2 group'
           )}
         >
-          View all notifications
+          {t('notifications.viewAllNotifications')}
           <ChevronRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
         </Button>
       </div>

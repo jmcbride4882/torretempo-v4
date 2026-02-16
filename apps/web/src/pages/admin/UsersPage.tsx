@@ -135,7 +135,7 @@ export default function UsersPage() {
         setTotal(response.total || 0);
       } catch (error) {
         console.error('Error fetching users:', error);
-        toast.error('Failed to load users');
+        toast.error(t('admin.toasts.failedLoadUsers'));
       } finally {
         setIsLoading(false);
         setIsRefreshing(false);
@@ -180,10 +180,10 @@ export default function UsersPage() {
       a.click();
       document.body.removeChild(a);
       URL.revokeObjectURL(downloadUrl);
-      toast.success('Users exported successfully');
+      toast.success(t('admin.toasts.usersExportSuccess'));
     } catch (error) {
       console.error('Error exporting users:', error);
-      toast.error('Failed to export users');
+      toast.error(t('admin.toasts.failedExportUsers'));
     } finally {
       setIsExporting(false);
     }
@@ -203,19 +203,19 @@ export default function UsersPage() {
       switch (confirmModal.type) {
         case 'ban':
           await banUser(confirmModal.user.id, banReason.trim());
-          toast.success(`${confirmModal.user.name} has been banned`);
+          toast.success(t('admin.toasts.userBanned', { name: confirmModal.user.name }));
           break;
         case 'unban':
           await unbanUser(confirmModal.user.id);
-          toast.success(`${confirmModal.user.name} has been unbanned`);
+          toast.success(t('admin.toasts.userUnbanned', { name: confirmModal.user.name }));
           break;
         case 'grant-admin':
           await grantAdmin(confirmModal.user.id);
-          toast.success(`${confirmModal.user.name} is now a platform admin`);
+          toast.success(t('admin.toasts.adminGranted', { name: confirmModal.user.name }));
           break;
         case 'revoke-admin':
           await revokeAdmin(confirmModal.user.id);
-          toast.success(`Admin access revoked from ${confirmModal.user.name}`);
+          toast.success(t('admin.toasts.adminRevoked', { name: confirmModal.user.name }));
           break;
       }
       setConfirmModal(null);
@@ -223,7 +223,7 @@ export default function UsersPage() {
       loadUsers(true);
     } catch (error) {
       console.error('Error performing action:', error);
-      toast.error('Failed to perform action');
+      toast.error(t('admin.toasts.failedAction'));
     } finally {
       setIsActionLoading(false);
     }
@@ -234,11 +234,11 @@ export default function UsersPage() {
 
     // Validate form
     if (!editForm.name.trim()) {
-      toast.error('User name is required');
+      toast.error(t('admin.toasts.userNameRequired'));
       return;
     }
     if (!editForm.email.trim()) {
-      toast.error('Email is required');
+      toast.error(t('admin.toasts.emailRequired'));
       return;
     }
 
@@ -250,12 +250,12 @@ export default function UsersPage() {
         role: editForm.role,
         emailVerified: editForm.emailVerified,
       });
-      toast.success(`${editForm.name} has been updated`);
+      toast.success(t('admin.toasts.userUpdated', { name: editForm.name }));
       setEditModal(null);
       loadUsers(true);
     } catch (error) {
       console.error('Error updating user:', error);
-      toast.error('Failed to update user');
+      toast.error(t('admin.toasts.failedUpdateUser'));
     } finally {
       setIsEditLoading(false);
     }
@@ -275,37 +275,37 @@ export default function UsersPage() {
   const handleSendPasswordReset = async (user: AdminUser) => {
     try {
       await sendPasswordReset(user.id);
-      toast.success(`Password reset email sent to ${user.email}`);
+      toast.success(t('admin.toasts.passwordResetSent', { email: user.email }));
     } catch (error) {
       console.error('Error sending password reset:', error);
-      toast.error('Failed to send password reset email');
+      toast.error(t('admin.toasts.failedPasswordReset'));
     }
   };
 
   const handleResendVerification = async (user: AdminUser) => {
     if (user.emailVerified) {
-      toast.error('Email is already verified');
+      toast.error(t('admin.toasts.emailAlreadyVerified'));
       return;
     }
 
     try {
       await resendVerificationEmail(user.id);
-      toast.success(`Verification email sent to ${user.email}`);
+      toast.success(t('admin.toasts.verificationSent', { email: user.email }));
     } catch (error) {
       console.error('Error sending verification email:', error);
-      toast.error('Failed to send verification email');
+      toast.error(t('admin.toasts.failedVerification'));
     }
   };
 
   // Impersonation handler
   const handleImpersonate = async (user: AdminUser) => {
     if (user.isAdmin) {
-      toast.error('Cannot impersonate other administrators');
+      toast.error(t('admin.toasts.cannotImpersonateAdmin'));
       return;
     }
 
     const confirmed = window.confirm(
-      `Are you sure you want to impersonate ${user.name} (${user.email})?\n\nYou will be logged in as this user and can perform actions on their behalf. This action is logged in the audit trail.`
+      t('admin.toasts.impersonateConfirm', { name: user.name, email: user.email })
     );
 
     if (!confirmed) return;
@@ -321,7 +321,7 @@ export default function UsersPage() {
         throw new Error(error.message || 'Impersonation failed');
       }
 
-      toast.success(`Now impersonating ${user.name}`);
+      toast.success(t('admin.toasts.nowImpersonating', { name: user.name }));
 
       // Redirect to tenant dashboard or refresh to update session
       setTimeout(() => {
@@ -329,7 +329,7 @@ export default function UsersPage() {
       }, 1000);
     } catch (error) {
       console.error('Error during impersonation:', error);
-      toast.error(error instanceof Error ? error.message : 'Failed to impersonate user');
+      toast.error(error instanceof Error ? error.message : t('admin.toasts.failedImpersonate'));
     }
   };
 
@@ -366,16 +366,16 @@ export default function UsersPage() {
     setIsBulkLoading(true);
     try {
       const result = await bulkBanUsers(Array.from(selectedIds), bulkBanReason.trim());
-      toast.success(`${result.success} user(s) banned successfully`);
+      toast.success(t('admin.toasts.bulkBanSuccess', { count: result.success }));
       if (result.failed > 0) {
-        toast.warning(`${result.failed} user(s) failed to ban`);
+        toast.warning(t('admin.toasts.bulkBanFailed', { count: result.failed }));
       }
       setBulkBanModal(false);
       setBulkBanReason('');
       clearSelection();
       loadUsers(true);
     } catch (error) {
-      toast.error('Failed to ban users');
+      toast.error(t('admin.toasts.failedBanUsers'));
     } finally {
       setIsBulkLoading(false);
     }
@@ -384,13 +384,13 @@ export default function UsersPage() {
   // Bulk delete handler
   const handleBulkDelete = async () => {
     if (bulkDeleteConfirm !== 'DELETE') {
-      toast.error('Type DELETE to confirm');
+      toast.error(t('admin.toasts.typeDeleteConfirm'));
       return;
     }
     setIsBulkLoading(true);
     try {
       const result = await bulkDeleteUsers(Array.from(selectedIds));
-      toast.success(`${result.success} user(s) deleted successfully`);
+      toast.success(t('admin.toasts.bulkDeleteUsersSuccess', { count: result.success }));
       if (result.failed > 0) {
         // Show detailed error messages
         result.errors.forEach((error) => {
@@ -402,7 +402,7 @@ export default function UsersPage() {
       clearSelection();
       loadUsers(true);
     } catch (error) {
-      toast.error('Failed to delete users');
+      toast.error(t('admin.toasts.failedDeleteUsers'));
     } finally {
       setIsBulkLoading(false);
     }
@@ -426,7 +426,7 @@ export default function UsersPage() {
           <div>
             <h1 className="text-xl font-bold text-zinc-900 sm:text-2xl">{t('admin.users.title')}</h1>
             <p className="text-sm text-zinc-500">
-              Live monitoring • Updates every 10 seconds
+              {t('admin.liveMonitoring')}
             </p>
           </div>
         </div>
@@ -441,7 +441,7 @@ export default function UsersPage() {
               className="gap-1.5 rounded-lg border border-zinc-200 bg-zinc-50 text-zinc-700 hover:bg-zinc-100"
             >
               <Download className={cn('h-4 w-4', isExporting && 'animate-bounce')} />
-              <span className="hidden sm:inline">{isExporting ? 'Exporting...' : t('admin.exportCsv')}</span>
+              <span className="hidden sm:inline">{isExporting ? t('admin.exporting') : t('admin.exportCsv')}</span>
             </Button>
           </div>
           <div>
@@ -490,11 +490,11 @@ export default function UsersPage() {
             <SelectValue placeholder={t('common.filter')} />
           </SelectTrigger>
           <SelectContent className="rounded-xl border border-zinc-200 bg-white shadow-sm">
-            <SelectItem value="all" className="text-zinc-700">All Roles</SelectItem>
-            <SelectItem value="owner" className="text-zinc-700">Owner</SelectItem>
-            <SelectItem value="tenantAdmin" className="text-zinc-700">Tenant Admin</SelectItem>
-            <SelectItem value="manager" className="text-zinc-700">Manager</SelectItem>
-            <SelectItem value="employee" className="text-zinc-700">Employee</SelectItem>
+            <SelectItem value="all" className="text-zinc-700">{t('admin.filters.allRoles')}</SelectItem>
+            <SelectItem value="owner" className="text-zinc-700">{t('admin.filters.owner')}</SelectItem>
+            <SelectItem value="tenantAdmin" className="text-zinc-700">{t('admin.filters.tenantAdmin')}</SelectItem>
+            <SelectItem value="manager" className="text-zinc-700">{t('admin.filters.manager')}</SelectItem>
+            <SelectItem value="employee" className="text-zinc-700">{t('admin.filters.employee')}</SelectItem>
           </SelectContent>
         </Select>
 
@@ -510,7 +510,7 @@ export default function UsersPage() {
             <SelectValue placeholder={t('common.filter')} />
           </SelectTrigger>
           <SelectContent className="rounded-xl border border-zinc-200 bg-white shadow-sm">
-            <SelectItem value="all" className="text-zinc-700">All Status</SelectItem>
+            <SelectItem value="all" className="text-zinc-700">{t('admin.filters.allStatus')}</SelectItem>
             <SelectItem value="active" className="text-zinc-700">{t('admin.active')}</SelectItem>
             <SelectItem value="banned" className="text-zinc-700">{t('admin.banned')}</SelectItem>
             <SelectItem value="admin" className="text-zinc-700">{t('admin.admins')}</SelectItem>
@@ -706,7 +706,7 @@ export default function UsersPage() {
           <DialogHeader>
             <DialogTitle>{t('admin.users.editUser')}</DialogTitle>
             <DialogDescription>
-              Update user details, role, and email verification status
+              {t('admin.users.editUserDescription')}
             </DialogDescription>
           </DialogHeader>
 
@@ -847,11 +847,10 @@ export default function UsersPage() {
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               <AlertTriangle className="h-5 w-5 text-amber-600" />
-              {t('admin.users.ban')} {selectedIds.size} User{selectedIds.size !== 1 ? 's' : ''}
+              {t('admin.bulkBan.title', { count: selectedIds.size })}
             </DialogTitle>
             <DialogDescription>
-              These users will be logged out and unable to access the platform.
-              Already-banned users are excluded from selection.
+              {t('admin.bulkBan.description')}
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-2 py-2">
@@ -876,7 +875,7 @@ export default function UsersPage() {
               disabled={isBulkLoading || !bulkBanReason.trim()}
               className="bg-amber-600 hover:bg-amber-500"
             >
-              {isBulkLoading ? t('common.loading') + '...' : `${t('admin.users.ban')} ${selectedIds.size} User${selectedIds.size !== 1 ? 's' : ''}`}
+              {isBulkLoading ? t('common.loading') + '...' : t('admin.bulkBan.banCount', { count: selectedIds.size })}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -888,16 +887,16 @@ export default function UsersPage() {
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               <AlertTriangle className="h-5 w-5 text-red-400" />
-              {t('common.delete')} {selectedIds.size} User{selectedIds.size !== 1 ? 's' : ''}
+              {t('admin.bulkDelete.title', { count: selectedIds.size })}
             </DialogTitle>
             <DialogDescription>
-              <span className="text-red-400">This action cannot be undone.</span>{' '}
-              All data for these users will be permanently deleted.
+              <span className="text-red-400">{t('admin.bulkDelete.cannotUndo')}</span>{' '}
+              {t('admin.bulkDelete.usersWarning')}
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-2 py-2">
             <label className="text-sm text-zinc-700">
-              Type <code className="rounded bg-zinc-100 px-1.5 py-0.5 text-red-400">DELETE</code> to confirm:
+              {t('admin.bulkDelete.typeDeleteLabel')} <code className="rounded bg-zinc-100 px-1.5 py-0.5 text-red-400">DELETE</code>:
             </label>
             <Input
               value={bulkDeleteConfirm}
@@ -916,7 +915,7 @@ export default function UsersPage() {
               onClick={handleBulkDelete}
               disabled={isBulkLoading || bulkDeleteConfirm !== 'DELETE'}
             >
-              {isBulkLoading ? t('common.loading') + '...' : `${t('common.delete')} ${selectedIds.size} User${selectedIds.size !== 1 ? 's' : ''}`}
+              {isBulkLoading ? t('common.loading') + '...' : t('admin.bulkDelete.deleteCount', { count: selectedIds.size })}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -1106,7 +1105,7 @@ function UserCard({ user, isSelected, onToggleSelect, onEdit, onBan, onUnban, on
               ))}
               {user.organizations.length > 3 && (
                 <span className="rounded-md bg-zinc-50 px-2 py-1 text-xs text-zinc-500">
-                  +{user.organizations.length - 3} more
+                  +{user.organizations.length - 3} {t('common.more')}
                 </span>
               )}
             </div>

@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Plus, Edit, Trash2, MapPin, Loader2, AlertCircle, Check, Map } from 'lucide-react';
 import { toast } from 'sonner';
@@ -44,6 +45,7 @@ interface LocationManagerProps {
 }
 
 export function LocationManager({ organizationSlug }: LocationManagerProps) {
+  const { t } = useTranslation();
   const [locations, setLocations] = useState<Location[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [showCreateModal, setShowCreateModal] = useState(false);
@@ -65,7 +67,7 @@ export function LocationManager({ organizationSlug }: LocationManagerProps) {
       setLocations(data.locations || []);
     } catch (error) {
       console.error('Error fetching locations:', error);
-      toast.error('Failed to load locations');
+      toast.error(t('settings.locations.fetchFailed'));
     } finally {
       setIsLoading(false);
     }
@@ -78,13 +80,13 @@ export function LocationManager({ organizationSlug }: LocationManagerProps) {
   const handleCreateSuccess = () => {
     setShowCreateModal(false);
     fetchLocations();
-    toast.success('Location created successfully');
+    toast.success(t('settings.locations.createSuccess'));
   };
 
   const handleEditSuccess = () => {
     setEditingLocation(null);
     fetchLocations();
-    toast.success('Location updated successfully');
+    toast.success(t('settings.locations.updateSuccess'));
   };
 
   const handleDelete = async (location: Location) => {
@@ -100,10 +102,10 @@ export function LocationManager({ organizationSlug }: LocationManagerProps) {
 
       setDeletingLocation(null);
       fetchLocations();
-      toast.success('Location deleted successfully');
+      toast.success(t('settings.locations.deleteSuccess'));
     } catch (error) {
       console.error('Error deleting location:', error);
-      toast.error('Failed to delete location');
+      toast.error(t('settings.locations.deleteFailed'));
     }
   };
 
@@ -111,7 +113,7 @@ export function LocationManager({ organizationSlug }: LocationManagerProps) {
     return (
       <div className="flex items-center justify-center py-12">
         <Loader2 className="h-6 w-6 animate-spin text-zinc-400" />
-        <span className="ml-2 text-sm text-zinc-400">Loading locations...</span>
+        <span className="ml-2 text-sm text-zinc-400">{t('settings.locations.loadingLocations')}</span>
       </div>
     );
   }
@@ -121,12 +123,12 @@ export function LocationManager({ organizationSlug }: LocationManagerProps) {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h3 className="text-lg font-semibold text-zinc-900">Locations</h3>
-          <p className="text-sm text-zinc-500">Manage work sites and geofencing for clock-ins</p>
+          <h3 className="text-lg font-semibold text-zinc-900">{t('settings.locations.title')}</h3>
+          <p className="text-sm text-zinc-500">{t('settings.locations.subtitle')}</p>
         </div>
         <Button onClick={() => setShowCreateModal(true)} className="gap-2">
           <Plus className="h-4 w-4" />
-          New Location
+          {t('settings.locations.newLocation')}
         </Button>
       </div>
 
@@ -136,13 +138,13 @@ export function LocationManager({ organizationSlug }: LocationManagerProps) {
           <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-zinc-100">
             <MapPin className="h-8 w-8 text-zinc-400" />
           </div>
-          <h3 className="mb-2 text-lg font-semibold text-zinc-900">No locations yet</h3>
+          <h3 className="mb-2 text-lg font-semibold text-zinc-900">{t('settings.locations.noLocationsTitle')}</h3>
           <p className="mb-6 text-sm text-zinc-500">
-            Add locations to track where employees work and enable geofencing
+            {t('settings.locations.noLocationsDescription')}
           </p>
           <Button onClick={() => setShowCreateModal(true)} className="gap-2">
             <Plus className="h-4 w-4" />
-            Create First Location
+            {t('settings.locations.createFirst')}
           </Button>
         </div>
       ) : (
@@ -204,7 +206,7 @@ export function LocationManager({ organizationSlug }: LocationManagerProps) {
 
                     {location.geofence_radius && (
                       <Badge variant="outline" className="text-xs">
-                        {location.geofence_radius}m geofence
+                        {t('settings.locations.geofenceMeters', { radius: location.geofence_radius })}
                       </Badge>
                     )}
                   </div>
@@ -238,20 +240,20 @@ export function LocationManager({ organizationSlug }: LocationManagerProps) {
       <Dialog open={!!deletingLocation} onOpenChange={() => setDeletingLocation(null)}>
         <DialogContent className="border-zinc-200 bg-white">
           <DialogHeader>
-            <DialogTitle className="text-zinc-900">Delete Location</DialogTitle>
+            <DialogTitle className="text-zinc-900">{t('settings.locations.deleteTitle')}</DialogTitle>
             <DialogDescription className="text-zinc-500">
-              Are you sure you want to delete &quot;{deletingLocation?.name}&quot;? This action cannot be undone.
+              {t('settings.locations.deleteConfirmMessage', { name: deletingLocation?.name })}
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
             <Button variant="ghost" onClick={() => setDeletingLocation(null)}>
-              Cancel
+              {t('common.cancel')}
             </Button>
             <Button
               variant="destructive"
               onClick={() => deletingLocation && handleDelete(deletingLocation)}
             >
-              Delete Location
+              {t('settings.locations.deleteButton')}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -279,6 +281,7 @@ function LocationFormModal({
   organizationSlug,
   editingLocation,
 }: LocationFormModalProps) {
+  const { t } = useTranslation();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [formData, setFormData] = useState<LocationFormData>({
@@ -321,7 +324,7 @@ function LocationFormModal({
     try {
       // Validate
       if (!formData.name.trim()) {
-        throw new Error('Location name is required');
+        throw new Error(t('settings.locations.locationNameRequired'));
       }
 
       // Validate coordinates (optional, but must be valid if provided)
@@ -329,14 +332,14 @@ function LocationFormModal({
         const lat = parseFloat(formData.lat);
         const lng = parseFloat(formData.lng);
         if (isNaN(lat) || isNaN(lng) || lat < -90 || lat > 90 || lng < -180 || lng > 180) {
-          throw new Error('Invalid coordinates. Latitude must be between -90 and 90, longitude between -180 and 180');
+          throw new Error(t('settings.locations.invalidCoordinates'));
         }
       }
 
       // Validate geofence radius
       const geofenceRadius = formData.geofence_radius ? parseInt(formData.geofence_radius) : null;
       if (geofenceRadius !== null && (isNaN(geofenceRadius) || geofenceRadius < 0)) {
-        throw new Error('Geofence radius must be a positive number');
+        throw new Error(t('settings.locations.geofenceRadiusPositive'));
       }
 
       // Prepare request body
@@ -379,12 +382,12 @@ function LocationFormModal({
           <div className="p-6 pb-4">
             <DialogHeader>
               <DialogTitle className="text-zinc-900">
-                {editingLocation ? 'Edit Location' : 'Create Location'}
+                {editingLocation ? t('settings.locations.editTitle') : t('settings.locations.createTitle')}
               </DialogTitle>
               <DialogDescription className="text-zinc-500">
                 {editingLocation
-                  ? 'Update the location details below.'
-                  : 'Add a new work site for scheduling and time tracking.'}
+                  ? t('settings.locations.editDescription')
+                  : t('settings.locations.createDescription')}
               </DialogDescription>
             </DialogHeader>
           </div>
@@ -405,11 +408,11 @@ function LocationFormModal({
             {/* Location name */}
             <div className="space-y-2">
               <Label htmlFor="name" className="text-zinc-700">
-                Location Name *
+                {t('settings.locations.locationName')} *
               </Label>
               <Input
                 id="name"
-                placeholder="e.g., Main Office, Warehouse A"
+                placeholder={t('settings.locations.locationNamePlaceholder')}
                 value={formData.name}
                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                 className="border-zinc-200 bg-white text-zinc-900 placeholder:text-zinc-400"
@@ -420,11 +423,11 @@ function LocationFormModal({
             {/* Address */}
             <div className="space-y-2">
               <Label htmlFor="address" className="text-zinc-700">
-                Address (Optional)
+                {t('settings.locations.addressOptional')}
               </Label>
               <Input
                 id="address"
-                placeholder="e.g., 123 Main St, Madrid"
+                placeholder={t('settings.locations.addressPlaceholder')}
                 value={formData.address}
                 onChange={(e) => setFormData({ ...formData, address: e.target.value })}
                 className="border-zinc-200 bg-white text-zinc-900 placeholder:text-zinc-400"
@@ -434,10 +437,10 @@ function LocationFormModal({
             {/* Map Picker */}
             <div className="space-y-2">
               <Label className="text-zinc-700">
-                Location on Map (Optional)
+                {t('settings.locations.locationOnMap')}
               </Label>
               <p className="text-xs text-zinc-500">
-                Tap on the map to set coordinates, or use "Expand Map" for full screen view
+                {t('settings.locations.mapHint')}
               </p>
               <MapPicker
                 lat={formData.lat ? parseFloat(formData.lat) : undefined}
@@ -457,13 +460,13 @@ function LocationFormModal({
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="lat" className="text-zinc-700">
-                  Latitude (Optional)
+                  {t('settings.locations.latitude')}
                 </Label>
                 <Input
                   id="lat"
                   type="number"
                   step="any"
-                  placeholder="e.g., 40.416775"
+                  placeholder={t('settings.locations.latitudePlaceholder')}
                   value={formData.lat}
                   onChange={(e) => setFormData({ ...formData, lat: e.target.value })}
                   className="border-zinc-200 bg-white text-zinc-900 placeholder:text-zinc-400"
@@ -472,13 +475,13 @@ function LocationFormModal({
 
               <div className="space-y-2">
                 <Label htmlFor="lng" className="text-zinc-700">
-                  Longitude (Optional)
+                  {t('settings.locations.longitude')}
                 </Label>
                 <Input
                   id="lng"
                   type="number"
                   step="any"
-                  placeholder="e.g., -3.703790"
+                  placeholder={t('settings.locations.longitudePlaceholder')}
                   value={formData.lng}
                   onChange={(e) => setFormData({ ...formData, lng: e.target.value })}
                   className="border-zinc-200 bg-white text-zinc-900 placeholder:text-zinc-400"
@@ -489,19 +492,19 @@ function LocationFormModal({
             {/* Geofence radius */}
             <div className="space-y-2">
               <Label htmlFor="geofence_radius" className="text-zinc-700">
-                Geofence Radius (meters)
+                {t('settings.locations.geofenceRadiusLabel')}
               </Label>
               <Input
                 id="geofence_radius"
                 type="number"
                 min="0"
-                placeholder="e.g., 100"
+                placeholder={t('settings.locations.geofenceRadiusPlaceholder')}
                 value={formData.geofence_radius}
                 onChange={(e) => setFormData({ ...formData, geofence_radius: e.target.value })}
                 className="border-zinc-200 bg-white text-zinc-900 placeholder:text-zinc-400"
               />
               <p className="text-xs text-zinc-500">
-                Employees must be within this radius to clock in (requires GPS)
+                {t('settings.locations.geofenceRadiusHint')}
               </p>
             </div>
           </div>
@@ -509,18 +512,18 @@ function LocationFormModal({
           <div className="border-t border-zinc-200 p-6 pt-4">
             <DialogFooter>
               <Button type="button" variant="ghost" onClick={() => onOpenChange(false)} disabled={isSubmitting}>
-                Cancel
+                {t('common.cancel')}
               </Button>
               <Button type="submit" disabled={isSubmitting} className="gap-2">
                 {isSubmitting ? (
                   <>
                     <Loader2 className="h-4 w-4 animate-spin" />
-                    {editingLocation ? 'Updating...' : 'Creating...'}
+                    {editingLocation ? t('settings.locations.updating') : t('settings.locations.creating')}
                   </>
                 ) : (
                   <>
                     <Check className="h-4 w-4" />
-                    {editingLocation ? 'Update Location' : 'Create Location'}
+                    {editingLocation ? t('settings.locations.updateButton') : t('settings.locations.createButton')}
                   </>
                 )}
               </Button>

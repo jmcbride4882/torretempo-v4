@@ -146,7 +146,7 @@ export default function SessionsPage() {
         setTotal(response.total || 0);
       } catch (error) {
         console.error('Error fetching sessions:', error);
-        toast.error('Failed to load sessions');
+        toast.error(t('admin.toasts.failedLoadSessions'));
       } finally {
         setIsLoading(false);
         setIsRefreshing(false);
@@ -171,12 +171,12 @@ export default function SessionsPage() {
     setIsRevoking(true);
     try {
       await revokeSession(revokeModal.id);
-      toast.success(`Session for ${revokeModal.userName} has been revoked`);
+      toast.success(t('admin.toasts.sessionRevoked', { name: revokeModal.userName }));
       setRevokeModal(null);
       loadSessions(true);
     } catch (error) {
       console.error('Error revoking session:', error);
-      toast.error('Failed to revoke session');
+      toast.error(t('admin.toasts.failedRevokeSession'));
     } finally {
       setIsRevoking(false);
     }
@@ -201,7 +201,7 @@ export default function SessionsPage() {
           <div>
             <h1 className="text-xl font-bold text-zinc-900 sm:text-2xl">{t('admin.sessions.title')}</h1>
             <p className="text-sm text-zinc-500">
-              Live monitoring -- Updates every 10 seconds
+              {t('admin.liveMonitoring')}
             </p>
           </div>
         </div>
@@ -253,10 +253,10 @@ export default function SessionsPage() {
             <SelectValue placeholder="Status" />
           </SelectTrigger>
           <SelectContent className="rounded-xl border border-zinc-200 bg-white shadow-sm">
-            <SelectItem value="all" className="text-zinc-700">All Sessions</SelectItem>
-            <SelectItem value="active" className="text-zinc-700">Active</SelectItem>
-            <SelectItem value="expired" className="text-zinc-700">Expired</SelectItem>
-            <SelectItem value="impersonated" className="text-zinc-700">Impersonated</SelectItem>
+            <SelectItem value="all" className="text-zinc-700">{t('admin.filters.allSessions')}</SelectItem>
+            <SelectItem value="active" className="text-zinc-700">{t('admin.filters.active')}</SelectItem>
+            <SelectItem value="expired" className="text-zinc-700">{t('admin.filters.expired')}</SelectItem>
+            <SelectItem value="impersonated" className="text-zinc-700">{t('admin.filters.impersonated')}</SelectItem>
           </SelectContent>
         </Select>
       </div>
@@ -357,7 +357,7 @@ export default function SessionsPage() {
               <div className="flex items-center justify-between">
                 <span className="text-zinc-500">{t('admin.sessions.ipAddress')}</span>
                 <span className="font-mono text-zinc-700">
-                  {revokeModal.ipAddress || 'Unknown'}
+                  {revokeModal.ipAddress || t('common.unknown')}
                 </span>
               </div>
               <div className="mt-2 flex items-center justify-between">
@@ -381,14 +381,14 @@ export default function SessionsPage() {
               onClick={() => setRevokeModal(null)}
               disabled={isRevoking}
             >
-              Cancel
+              {t('common.cancel')}
             </Button>
             <Button
               variant="destructive"
               onClick={handleRevoke}
               disabled={isRevoking}
             >
-              {isRevoking ? 'Revoking...' : t('admin.sessions.forceLogout')}
+              {isRevoking ? t('admin.sessions.revoking') : t('admin.sessions.forceLogout')}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -445,11 +445,11 @@ function SessionCard({ session, onRevoke }: SessionCardProps) {
 
           {expired ? (
             <Badge className="border border-zinc-300 bg-zinc-100 text-zinc-500">
-              Expired
+              {t('admin.expired')}
             </Badge>
           ) : (
             <Badge className="border border-emerald-300 bg-emerald-50 text-emerald-700">
-              Active
+              {t('admin.active')}
             </Badge>
           )}
         </div>
@@ -604,16 +604,16 @@ function EmptyState({ hasFilters, onClearFilters }: EmptyStateProps) {
         <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-xl bg-zinc-100">
           <Search className="h-7 w-7 text-zinc-400" />
         </div>
-        <h3 className="mb-1 text-lg font-semibold text-zinc-900">No matching sessions</h3>
+        <h3 className="mb-1 text-lg font-semibold text-zinc-900">{t('admin.noMatchingResults')}</h3>
         <p className="mb-4 max-w-sm text-sm text-zinc-500">
-          Try adjusting your filters or search query.
+          {t('admin.adjustFilters')}
         </p>
         <Button
           variant="ghost"
           onClick={onClearFilters}
           className="gap-2 rounded-lg border border-zinc-200 text-zinc-700 hover:bg-zinc-50"
         >
-          Clear filters
+          {t('admin.clearFilters')}
         </Button>
       </div>
     );

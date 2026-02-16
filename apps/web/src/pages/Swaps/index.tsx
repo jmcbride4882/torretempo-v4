@@ -108,11 +108,11 @@ export default function SwapsPage() {
         setSwaps(data?.swaps || []);
 
         if (silent) {
-          toast.success('Swaps refreshed');
+          toast.success(t('swaps.toasts.swapsRefreshed'));
         }
       } catch (error) {
         console.error('Error fetching swaps:', error);
-        toast.error('Failed to load swap requests');
+        toast.error(t('swaps.toasts.loadFailed'));
       } finally {
         setIsLoading(false);
         setIsRefreshing(false);
@@ -225,11 +225,11 @@ export default function SwapsPage() {
     if (!slug) return;
     try {
       await respondToPeer(slug, swapId, action);
-      toast.success(action === 'accept' ? 'Swap accepted!' : 'Swap rejected');
+      toast.success(action === 'accept' ? t('swaps.toasts.swapAccepted') : t('swaps.toasts.swapRejected'));
       fetchData(true);
     } catch (error) {
       console.error('Error responding to swap:', error);
-      toast.error('Failed to respond to swap');
+      toast.error(t('swaps.toasts.respondFailed'));
     }
   };
 
@@ -237,11 +237,11 @@ export default function SwapsPage() {
     if (!slug) return;
     try {
       await respondAsManager(slug, swapId, action);
-      toast.success(action === 'approve' ? 'Swap approved!' : 'Swap rejected');
+      toast.success(action === 'approve' ? t('swaps.toasts.swapApproved') : t('swaps.toasts.swapRejected'));
       fetchData(true);
     } catch (error) {
       console.error('Error responding to swap:', error);
-      toast.error('Failed to respond to swap');
+      toast.error(t('swaps.toasts.respondFailed'));
     }
   };
 
@@ -249,11 +249,11 @@ export default function SwapsPage() {
     if (!slug) return;
     try {
       await claimOpenSwap(slug, swapId);
-      toast.success('Swap claimed!');
+      toast.success(t('swaps.toasts.swapClaimed'));
       fetchData(true);
     } catch (error) {
       console.error('Error claiming swap:', error);
-      toast.error('Failed to claim swap');
+      toast.error(t('swaps.toasts.claimFailed'));
     }
   };
 
@@ -261,11 +261,11 @@ export default function SwapsPage() {
     if (!slug) return;
     try {
       await cancelSwap(slug, swapId);
-      toast.success('Swap request cancelled');
+      toast.success(t('swaps.toasts.swapCancelled'));
       fetchData(true);
     } catch (error) {
       console.error('Error cancelling swap:', error);
-      toast.error('Failed to cancel swap');
+      toast.error(t('swaps.toasts.cancelFailed'));
     }
   };
 

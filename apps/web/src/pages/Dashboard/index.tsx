@@ -112,6 +112,7 @@ function StatCard({
   color?: 'primary' | 'emerald' | 'amber' | 'red';
   onClick?: () => void;
 }) {
+  const { t } = useTranslation();
   const colorMap = {
     primary: { bg: 'bg-primary-50', border: 'border-primary-200', text: 'text-primary-600', icon: 'bg-primary-100' },
     emerald: { bg: 'bg-emerald-50', border: 'border-emerald-200', text: 'text-emerald-600', icon: 'bg-emerald-100' },
@@ -140,7 +141,7 @@ function StatCard({
       {sub && <p className="text-xs text-zinc-500 mt-1">{sub}</p>}
       {onClick && (
         <div className={cn('flex items-center gap-1 mt-2 text-xs', c.text)}>
-          <span>Ver</span>
+          <span>{t('common.view')}</span>
           <ArrowRight className="h-3 w-3" />
         </div>
       )}

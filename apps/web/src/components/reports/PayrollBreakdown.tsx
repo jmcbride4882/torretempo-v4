@@ -14,6 +14,7 @@ import {
   Wallet,
   Calculator,
 } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { cn } from '@/lib/utils';
 import type { PayrollReport } from '@/types/reports';
 
@@ -56,6 +57,7 @@ function TableRow({
   variant?: 'default' | 'highlight' | 'deduction' | 'total';
   className?: string;
 }) {
+  const { t } = useTranslation();
   const rowStyles = {
     default: 'text-zinc-700',
     highlight: 'text-amber-700 bg-amber-50',
@@ -99,7 +101,7 @@ function TableRow({
           <p className="text-sm">{label}</p>
           {rate && (
             <p className="text-xs text-zinc-500">
-              @ {formatCurrency(rate)}/hr
+              @ {formatCurrency(rate)}/{t('reports.perHour')}
             </p>
           )}
         </div>
@@ -136,6 +138,7 @@ function SectionHeader({ title, icon: Icon }: { title: string; icon: typeof Calc
 }
 
 export function PayrollBreakdown({ report, className }: PayrollBreakdownProps) {
+  const { t } = useTranslation();
   const { compensation, deductions, netPay, employee } = report;
 
   return (
@@ -162,11 +165,11 @@ export function PayrollBreakdown({ report, className }: PayrollBreakdownProps) {
 
       {/* Earnings section */}
       <div className="rounded-xl border border-zinc-200 bg-white p-4 shadow-sm">
-        <SectionHeader title="Earnings" icon={DollarSign} />
+        <SectionHeader title={t('reports.earnings')} icon={DollarSign} />
 
         <div className="space-y-1">
           <TableRow
-            label="Regular Hours"
+            label={t('reports.regularHours')}
             hours={compensation.baseHours}
             amount={compensation.basePay}
             rate={compensation.baseRate}
@@ -175,7 +178,7 @@ export function PayrollBreakdown({ report, className }: PayrollBreakdownProps) {
 
           {compensation.overtimeHours > 0 && (
             <TableRow
-              label="Overtime Hours"
+              label={t('reports.overtimeHours')}
               hours={compensation.overtimeHours}
               amount={compensation.overtimePay}
               rate={compensation.overtimeRate}
@@ -185,7 +188,7 @@ export function PayrollBreakdown({ report, className }: PayrollBreakdownProps) {
           )}
 
           <TableRow
-            label="Gross Pay"
+            label={t('reports.grossPay')}
             amount={compensation.totalGrossPay}
             icon={Wallet}
             className="mt-2 border-t border-zinc-100 pt-3"
@@ -195,18 +198,18 @@ export function PayrollBreakdown({ report, className }: PayrollBreakdownProps) {
 
       {/* Deductions section */}
       <div className="rounded-xl border border-zinc-200 bg-white p-4 shadow-sm">
-        <SectionHeader title="Deductions" icon={Minus} />
+        <SectionHeader title={t('reports.deductions')} icon={Minus} />
 
         <div className="space-y-1">
           <TableRow
-            label="Social Security"
+            label={t('reports.socialSecurity')}
             amount={deductions.socialSecurity}
             icon={Receipt}
             variant="deduction"
           />
 
           <TableRow
-            label="Income Tax (IRPF)"
+            label={t('reports.incomeTax')}
             amount={deductions.incomeTax}
             icon={Receipt}
             variant="deduction"
@@ -214,7 +217,7 @@ export function PayrollBreakdown({ report, className }: PayrollBreakdownProps) {
 
           {deductions.otherDeductions > 0 && (
             <TableRow
-              label="Other Deductions"
+              label={t('reports.otherDeductions')}
               amount={deductions.otherDeductions}
               icon={Receipt}
               variant="deduction"
@@ -222,7 +225,7 @@ export function PayrollBreakdown({ report, className }: PayrollBreakdownProps) {
           )}
 
           <TableRow
-            label="Total Deductions"
+            label={t('reports.totalDeductions')}
             amount={deductions.totalDeductions}
             icon={Minus}
             variant="deduction"
@@ -244,14 +247,14 @@ export function PayrollBreakdown({ report, className }: PayrollBreakdownProps) {
               <Calculator className="h-6 w-6 text-emerald-400" />
             </div>
             <div>
-              <p className="text-sm font-medium text-zinc-700">Net Pay</p>
-              <p className="text-xs text-zinc-500">Take-home amount</p>
+              <p className="text-sm font-medium text-zinc-700">{t('reports.netPay')}</p>
+              <p className="text-xs text-zinc-500">{t('reports.takeHomeAmount')}</p>
             </div>
           </div>
           <div className="text-right">
             <p className="text-2xl font-bold text-emerald-600">{formatCurrency(netPay)}</p>
             <p className="text-xs text-zinc-500">
-              {((netPay / compensation.totalGrossPay) * 100).toFixed(1)}% of gross
+              {t('reports.ofGross', { percent: ((netPay / compensation.totalGrossPay) * 100).toFixed(1) })}
             </p>
           </div>
         </div>
@@ -260,19 +263,19 @@ export function PayrollBreakdown({ report, className }: PayrollBreakdownProps) {
       {/* Summary cards */}
       <div className="grid grid-cols-3 gap-3">
         <div className="rounded-xl border border-zinc-100 bg-zinc-50 p-3 text-center">
-          <p className="text-xs text-zinc-500">Total Hours</p>
+          <p className="text-xs text-zinc-500">{t('reports.totalHoursSummary')}</p>
           <p className="text-lg font-bold text-zinc-900">
             {formatHours(compensation.baseHours + compensation.overtimeHours)}
           </p>
         </div>
         <div className="rounded-xl border border-zinc-100 bg-zinc-50 p-3 text-center">
-          <p className="text-xs text-zinc-500">Overtime</p>
+          <p className="text-xs text-zinc-500">{t('reports.overtimeSummary')}</p>
           <p className="text-lg font-bold text-amber-600">
             {formatHours(compensation.overtimeHours)}
           </p>
         </div>
         <div className="rounded-xl border border-zinc-100 bg-zinc-50 p-3 text-center">
-          <p className="text-xs text-zinc-500">Deduction Rate</p>
+          <p className="text-xs text-zinc-500">{t('reports.deductionRate')}</p>
           <p className="text-lg font-bold text-red-600">
             {((deductions.totalDeductions / compensation.totalGrossPay) * 100).toFixed(1)}%
           </p>

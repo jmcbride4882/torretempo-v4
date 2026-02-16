@@ -64,15 +64,15 @@ function getNotificationColor(type: string): string {
   return 'text-zinc-500 bg-zinc-100';
 }
 
-function timeAgo(dateStr: string): string {
+function timeAgo(dateStr: string, t: (key: string, opts?: Record<string, unknown>) => string): string {
   const seconds = Math.floor((Date.now() - new Date(dateStr).getTime()) / 1000);
-  if (seconds < 60) return 'just now';
+  if (seconds < 60) return t('common.timeAgo.justNow');
   const minutes = Math.floor(seconds / 60);
-  if (minutes < 60) return `${minutes}m ago`;
+  if (minutes < 60) return t('common.timeAgo.minutesAgo', { count: minutes });
   const hours = Math.floor(minutes / 60);
-  if (hours < 24) return `${hours}h ago`;
+  if (hours < 24) return t('common.timeAgo.hoursAgo', { count: hours });
   const days = Math.floor(hours / 24);
-  if (days < 7) return `${days}d ago`;
+  if (days < 7) return t('common.timeAgo.daysAgo', { count: days });
   return new Date(dateStr).toLocaleDateString('es-ES', { day: 'numeric', month: 'short' });
 }
 
@@ -108,6 +108,7 @@ function NotificationItem({
   onMarkRead: (id: string) => void;
 }) {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const Icon = getNotificationIcon(notification.type);
   const colorClass = getNotificationColor(notification.type);
 
@@ -143,7 +144,7 @@ function NotificationItem({
           )}
         </div>
         <p className="text-xs text-zinc-400 mt-0.5 line-clamp-2">{notification.message}</p>
-        <p className="text-[11px] text-zinc-400 mt-1">{timeAgo(notification.createdAt)}</p>
+        <p className="text-[11px] text-zinc-400 mt-1">{timeAgo(notification.createdAt, t)}</p>
       </div>
     </div>
   );
@@ -244,7 +245,7 @@ export default function NotificationsPage() {
             size="icon"
             onClick={() => loadNotifications(true)}
             disabled={isRefreshing}
-            title="Refresh"
+            title={t('common.refresh')}
           >
             <RefreshCw className={cn('h-4 w-4', isRefreshing && 'animate-spin')} />
           </Button>
