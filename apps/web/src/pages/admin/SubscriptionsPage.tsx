@@ -86,7 +86,7 @@ export default function SubscriptionsPage() {
       setMetrics(data);
     } catch (error) {
       console.error('Error fetching subscription metrics:', error);
-      toast.error('Failed to load subscription metrics');
+      toast.error(t('admin.subscriptions.failedToLoad'));
     } finally {
       setIsLoading(false);
       setIsRefreshing(false);
@@ -120,7 +120,7 @@ export default function SubscriptionsPage() {
           <div>
             <h1 className="text-xl font-bold text-zinc-900 sm:text-2xl">{t('admin.subscriptions.title')}</h1>
             <p className="text-sm text-zinc-500">
-              Live monitoring &bull; Updates every 10 seconds
+              {t('admin.subscriptions.subtitle')}
             </p>
           </div>
         </div>
@@ -237,7 +237,7 @@ export default function SubscriptionsPage() {
           </div>
           <p className="text-3xl font-bold text-zinc-900">{metrics?.totalActive || 0}</p>
           <p className="mt-1 text-sm text-zinc-500">
-            {metrics?.totalFree || 0} free, {metrics?.totalPaid || 0} paid
+            {t('admin.subscriptions.freeAndPaidSummary', { free: metrics?.totalFree || 0, paid: metrics?.totalPaid || 0 })}
           </p>
         </div>
 
@@ -409,29 +409,29 @@ function formatCents(cents: number): string {
 }
 
 // Validation helpers
-function validateCustomerId(value: string): string | null {
-  if (!value.trim()) return 'Customer ID is required';
-  if (!value.startsWith('cus_')) return 'Must start with "cus_"';
+function validateCustomerId(value: string, t: (key: string) => string): string | null {
+  if (!value.trim()) return t('admin.subscriptions.validation.customerIdRequired');
+  if (!value.startsWith('cus_')) return t('admin.subscriptions.validation.customerIdPrefix');
   return null;
 }
 
-function validatePaymentIntentId(value: string): string | null {
-  if (!value.trim()) return 'Payment Intent ID is required';
-  if (!value.startsWith('pi_')) return 'Must start with "pi_"';
+function validatePaymentIntentId(value: string, t: (key: string) => string): string | null {
+  if (!value.trim()) return t('admin.subscriptions.validation.paymentIntentIdRequired');
+  if (!value.startsWith('pi_')) return t('admin.subscriptions.validation.paymentIntentIdPrefix');
   return null;
 }
 
-function validateAmount(value: string, required = true): string | null {
-  if (!value.trim()) return required ? 'Amount is required' : null;
+function validateAmount(value: string, t: (key: string) => string, required = true): string | null {
+  if (!value.trim()) return required ? t('admin.subscriptions.validation.amountRequired') : null;
   const num = Number(value);
-  if (isNaN(num) || num <= 0) return 'Must be a positive number';
-  if (!Number.isInteger(num)) return 'Amount must be in whole cents';
+  if (isNaN(num) || num <= 0) return t('admin.subscriptions.validation.mustBePositive');
+  if (!Number.isInteger(num)) return t('admin.subscriptions.validation.wholeCents');
   return null;
 }
 
-function validateDescription(value: string): string | null {
-  if (!value.trim()) return 'Description is required';
-  if (value.trim().length < 10) return 'Must be at least 10 characters';
+function validateDescription(value: string, t: (key: string) => string): string | null {
+  if (!value.trim()) return t('admin.subscriptions.validation.descriptionRequired');
+  if (value.trim().length < 10) return t('admin.subscriptions.validation.minTenChars');
   return null;
 }
 
@@ -553,9 +553,9 @@ function CreateInvoiceModal({ open, onOpenChange, onSuccess }: BillingModalProps
 
   const validate = (): boolean => {
     const errors: Record<string, string | null> = {
-      customerId: validateCustomerId(customerId),
-      amount: validateAmount(amount),
-      description: validateDescription(description),
+      customerId: validateCustomerId(customerId, t),
+      amount: validateAmount(amount, t),
+      description: validateDescription(description, t),
     };
     setFieldErrors(errors);
     return !Object.values(errors).some(Boolean);
@@ -572,7 +572,7 @@ function CreateInvoiceModal({ open, onOpenChange, onSuccess }: BillingModalProps
         amount: Number(amount),
         description: description.trim(),
       });
-      toast.success('Invoice created', {
+      toast.success(t('admin.subscriptions.invoiceCreated'), {
         description: `${result.message} — ${formatCents(Number(amount))}`,
       });
       handleOpenChange(false);
@@ -581,7 +581,7 @@ function CreateInvoiceModal({ open, onOpenChange, onSuccess }: BillingModalProps
       if (err instanceof AdminApiError) {
         setError(err.message);
       } else {
-        setError('An unexpected error occurred');
+        setError(t('admin.subscriptions.unexpectedError'));
       }
     } finally {
       setIsSubmitting(false);
@@ -609,7 +609,7 @@ function CreateInvoiceModal({ open, onOpenChange, onSuccess }: BillingModalProps
             <Label htmlFor="invoice-customer-id">{t('admin.subscriptions.customerId')}</Label>
             <Input
               id="invoice-customer-id"
-              placeholder="cus_xxxxxxxxxx"
+              placeholder={t('admin.subscriptions.customerIdPlaceholder')}
               value={customerId}
               onChange={(e) => {
                 setCustomerId(e.target.value);
@@ -630,7 +630,7 @@ function CreateInvoiceModal({ open, onOpenChange, onSuccess }: BillingModalProps
               <Input
                 id="invoice-amount"
                 type="number"
-                placeholder="5000"
+                placeholder={t('admin.subscriptions.amountPlaceholder')}
                 min="1"
                 step="1"
                 value={amount}
@@ -656,7 +656,7 @@ function CreateInvoiceModal({ open, onOpenChange, onSuccess }: BillingModalProps
             <Label htmlFor="invoice-description">{t('admin.subscriptions.description')}</Label>
             <textarea
               id="invoice-description"
-              placeholder="e.g., Monthly consulting fee for February 2026"
+              placeholder={t('admin.subscriptions.invoiceDescriptionPlaceholder')}
               value={description}
               onChange={(e) => {
                 setDescription(e.target.value);
@@ -728,9 +728,9 @@ function ProcessRefundModal({ open, onOpenChange, onSuccess }: BillingModalProps
 
   const validate = (): boolean => {
     const errors: Record<string, string | null> = {
-      paymentIntentId: validatePaymentIntentId(paymentIntentId),
-      amount: validateAmount(amount, false),
-      reason: !reason ? 'Reason is required' : null,
+      paymentIntentId: validatePaymentIntentId(paymentIntentId, t),
+      amount: validateAmount(amount, t, false),
+      reason: !reason ? t('admin.subscriptions.validation.reasonRequired') : null,
     };
     setFieldErrors(errors);
     return !Object.values(errors).some(Boolean);
@@ -748,8 +748,8 @@ function ProcessRefundModal({ open, onOpenChange, onSuccess }: BillingModalProps
         ...(amount.trim() ? { amount: Number(amount) } : {}),
         reason,
       });
-      toast.success('Refund processed', {
-        description: `${result.message}${amount.trim() ? ` — ${formatCents(Number(amount))}` : ' — Full refund'}`,
+      toast.success(t('admin.subscriptions.refundProcessed'), {
+        description: `${result.message}${amount.trim() ? ` — ${formatCents(Number(amount))}` : ` — ${t('admin.subscriptions.fullRefund')}`}`,
       });
       handleOpenChange(false);
       onSuccess();
@@ -757,7 +757,7 @@ function ProcessRefundModal({ open, onOpenChange, onSuccess }: BillingModalProps
       if (err instanceof AdminApiError) {
         setError(err.message);
       } else {
-        setError('An unexpected error occurred');
+        setError(t('admin.subscriptions.unexpectedError'));
       }
     } finally {
       setIsSubmitting(false);
@@ -785,7 +785,7 @@ function ProcessRefundModal({ open, onOpenChange, onSuccess }: BillingModalProps
             <Label htmlFor="refund-payment-intent-id">{t('admin.subscriptions.paymentIntentId')}</Label>
             <Input
               id="refund-payment-intent-id"
-              placeholder="pi_xxxxxxxxxx"
+              placeholder={t('admin.subscriptions.paymentIntentIdPlaceholder')}
               value={paymentIntentId}
               onChange={(e) => {
                 setPaymentIntentId(e.target.value);
@@ -809,7 +809,7 @@ function ProcessRefundModal({ open, onOpenChange, onSuccess }: BillingModalProps
               <Input
                 id="refund-amount"
                 type="number"
-                placeholder="Full refund"
+                placeholder={t('admin.subscriptions.fullRefund')}
                 min="1"
                 step="1"
                 value={amount}
@@ -841,7 +841,7 @@ function ProcessRefundModal({ open, onOpenChange, onSuccess }: BillingModalProps
               }}
             >
               <SelectTrigger className={cn(fieldErrors.reason && 'border-red-500/50')}>
-                <SelectValue placeholder="Select a reason..." />
+                <SelectValue placeholder={t('admin.subscriptions.selectReasonPlaceholder')} />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="duplicate">{t('admin.subscriptions.duplicate')}</SelectItem>
@@ -909,9 +909,9 @@ function ApplyCreditModal({ open, onOpenChange, onSuccess }: BillingModalProps) 
 
   const validate = (): boolean => {
     const errors: Record<string, string | null> = {
-      customerId: validateCustomerId(customerId),
-      amount: validateAmount(amount),
-      description: validateDescription(description),
+      customerId: validateCustomerId(customerId, t),
+      amount: validateAmount(amount, t),
+      description: validateDescription(description, t),
     };
     setFieldErrors(errors);
     return !Object.values(errors).some(Boolean);
@@ -928,7 +928,7 @@ function ApplyCreditModal({ open, onOpenChange, onSuccess }: BillingModalProps) 
         amount: Number(amount),
         description: description.trim(),
       });
-      toast.success('Credit applied', {
+      toast.success(t('admin.subscriptions.creditApplied'), {
         description: `${result.message} — ${formatCents(Number(amount))}`,
       });
       handleOpenChange(false);
@@ -937,7 +937,7 @@ function ApplyCreditModal({ open, onOpenChange, onSuccess }: BillingModalProps) 
       if (err instanceof AdminApiError) {
         setError(err.message);
       } else {
-        setError('An unexpected error occurred');
+        setError(t('admin.subscriptions.unexpectedError'));
       }
     } finally {
       setIsSubmitting(false);
@@ -965,7 +965,7 @@ function ApplyCreditModal({ open, onOpenChange, onSuccess }: BillingModalProps) 
             <Label htmlFor="credit-customer-id">{t('admin.subscriptions.customerId')}</Label>
             <Input
               id="credit-customer-id"
-              placeholder="cus_xxxxxxxxxx"
+              placeholder={t('admin.subscriptions.customerIdPlaceholder')}
               value={customerId}
               onChange={(e) => {
                 setCustomerId(e.target.value);
@@ -986,7 +986,7 @@ function ApplyCreditModal({ open, onOpenChange, onSuccess }: BillingModalProps) 
               <Input
                 id="credit-amount"
                 type="number"
-                placeholder="5000"
+                placeholder={t('admin.subscriptions.amountPlaceholder')}
                 min="1"
                 step="1"
                 value={amount}
@@ -1012,7 +1012,7 @@ function ApplyCreditModal({ open, onOpenChange, onSuccess }: BillingModalProps) 
             <Label htmlFor="credit-description">{t('admin.subscriptions.description')}</Label>
             <textarea
               id="credit-description"
-              placeholder="e.g., Service credit for downtime on Jan 15, 2026"
+              placeholder={t('admin.subscriptions.creditDescriptionPlaceholder')}
               value={description}
               onChange={(e) => {
                 setDescription(e.target.value);

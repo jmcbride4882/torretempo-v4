@@ -71,7 +71,7 @@ export default function SignUp() {
                 <Input
                   id="name"
                   type="text"
-                  placeholder="Juan Garcia"
+                  placeholder={t('auth.namePlaceholder')}
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   className="pl-10 h-11"
@@ -89,7 +89,7 @@ export default function SignUp() {
                 <Input
                   id="email"
                   type="email"
-                  placeholder="tu@empresa.com"
+                  placeholder={t('auth.emailPlaceholder')}
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   className="pl-10 h-11"

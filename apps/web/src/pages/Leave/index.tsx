@@ -28,7 +28,7 @@ const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:3000';
 
 async function fetchLeave(slug: string) {
   const res = await fetch(`${API_BASE}/api/v1/org/${slug}/leave-requests`, { credentials: 'include' });
-  if (!res.ok) throw new Error('Failed to fetch leave requests');
+  if (!res.ok) throw new Error('leave.fetchError');
   return res.json();
 }
 
@@ -39,7 +39,7 @@ async function createLeave(slug: string, data: any) {
     credentials: 'include',
     body: JSON.stringify(data),
   });
-  if (!res.ok) throw new Error('Failed to create leave request');
+  if (!res.ok) throw new Error('leave.createError');
   return res.json();
 }
 
@@ -48,7 +48,7 @@ async function approveLeave(slug: string, id: string) {
     method: 'PATCH',
     credentials: 'include',
   });
-  if (!res.ok) throw new Error('Failed to approve');
+  if (!res.ok) throw new Error('leave.approveError');
   return res.json();
 }
 
@@ -59,7 +59,7 @@ async function rejectLeave(slug: string, id: string, reason: string) {
     credentials: 'include',
     body: JSON.stringify({ rejectionReason: reason }),
   });
-  if (!res.ok) throw new Error('Failed to reject');
+  if (!res.ok) throw new Error('leave.rejectError');
   return res.json();
 }
 
@@ -212,7 +212,7 @@ export default function LeavePage() {
                     <Button
                       size="sm"
                       variant="outline"
-                      onClick={() => rejectMutation.mutate({ id: req.id, reason: 'Rejected' })}
+                      onClick={() => rejectMutation.mutate({ id: req.id, reason: t('common.rejected') })}
                       className="text-red-600 border-red-200 hover:bg-red-50"
                     >
                       <X className="h-4 w-4" />

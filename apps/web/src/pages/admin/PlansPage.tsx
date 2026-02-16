@@ -53,12 +53,12 @@ import type { SubscriptionPlan, CreatePlanRequest, UpdatePlanRequest } from '@/l
 // CONSTANTS
 // ============================================================================
 
-const MODULE_OPTIONS: { key: string; label: string }[] = [
-  { key: 'timeTracking', label: 'Time Tracking' },
-  { key: 'scheduling', label: 'Scheduling' },
-  { key: 'swapRequests', label: 'Swap Requests' },
-  { key: 'reporting', label: 'Reporting' },
-  { key: 'mobileApp', label: 'Mobile App' },
+const MODULE_OPTIONS: { key: string; labelKey: string }[] = [
+  { key: 'timeTracking', labelKey: 'admin.plans.moduleTimeTracking' },
+  { key: 'scheduling', labelKey: 'admin.plans.moduleScheduling' },
+  { key: 'swapRequests', labelKey: 'admin.plans.moduleSwapRequests' },
+  { key: 'reporting', labelKey: 'admin.plans.moduleReporting' },
+  { key: 'mobileApp', labelKey: 'admin.plans.moduleMobileApp' },
 ];
 
 const CURRENCY_OPTIONS = [
@@ -68,8 +68,8 @@ const CURRENCY_OPTIONS = [
 ];
 
 const BILLING_PERIOD_OPTIONS = [
-  { value: 'monthly', label: 'Monthly' },
-  { value: 'annual', label: 'Annual' },
+  { value: 'monthly', labelKey: 'admin.plans.monthly' },
+  { value: 'annual', labelKey: 'admin.plans.annual' },
 ];
 
 const DEFAULT_MODULES: Record<string, boolean> = {
@@ -122,55 +122,55 @@ const INITIAL_FORM: PlanFormState = {
   is_active: true,
 };
 
-function validateForm(form: PlanFormState): Record<string, string | null> {
+function validateForm(form: PlanFormState, t: (key: string) => string): Record<string, string | null> {
   const errors: Record<string, string | null> = {};
 
   // code: required, lowercase, alphanumeric + underscore/dash
   if (!form.code.trim()) {
-    errors.code = 'Plan code is required';
+    errors.code = t('admin.plans.validation.codeRequired');
   } else if (!/^[a-z0-9_-]+$/.test(form.code.trim())) {
-    errors.code = 'Only lowercase letters, numbers, underscores, and dashes allowed';
+    errors.code = t('admin.plans.validation.codeFormat');
   }
 
   // name: required, min 3 chars
   if (!form.name.trim()) {
-    errors.name = 'Plan name is required';
+    errors.name = t('admin.plans.validation.nameRequired');
   } else if (form.name.trim().length < 3) {
-    errors.name = 'Name must be at least 3 characters';
+    errors.name = t('admin.plans.validation.nameMinLength');
   }
 
   // price_cents: required, >= 0
   if (!form.price_cents.trim()) {
-    errors.price_cents = 'Price is required';
+    errors.price_cents = t('admin.plans.validation.priceRequired');
   } else {
     const cents = Number(form.price_cents);
     if (isNaN(cents) || cents < 0) {
-      errors.price_cents = 'Price must be 0 or greater';
+      errors.price_cents = t('admin.plans.validation.priceMinValue');
     } else if (!Number.isInteger(cents)) {
-      errors.price_cents = 'Price must be a whole number (cents)';
+      errors.price_cents = t('admin.plans.validation.priceWholeNumber');
     }
   }
 
   // currency: required
   if (!form.currency) {
-    errors.currency = 'Currency is required';
+    errors.currency = t('admin.plans.validation.currencyRequired');
   }
 
   // billing_period: required
   if (!form.billing_period) {
-    errors.billing_period = 'Billing period is required';
+    errors.billing_period = t('admin.plans.validation.billingPeriodRequired');
   }
 
   // employee_limit: if not unlimited, must be > 0
   if (!form.unlimited_employees) {
     if (!form.employee_limit.trim()) {
-      errors.employee_limit = 'Employee limit is required when not unlimited';
+      errors.employee_limit = t('admin.plans.validation.employeeLimitRequired');
     } else {
       const limit = Number(form.employee_limit);
       if (isNaN(limit) || limit <= 0) {
-        errors.employee_limit = 'Must be greater than 0';
+        errors.employee_limit = t('admin.plans.validation.mustBeGreaterThanZero');
       } else if (!Number.isInteger(limit)) {
-        errors.employee_limit = 'Must be a whole number';
+        errors.employee_limit = t('admin.plans.validation.mustBeWholeNumber');
       }
     }
   }
@@ -209,7 +209,7 @@ export default function PlansPage() {
       setPlans(response.plans || []);
     } catch (error) {
       console.error('Error fetching plans:', error);
-      toast.error('Failed to load subscription plans');
+      toast.error(t('admin.plans.failedToLoad'));
     } finally {
       setIsLoading(false);
       setIsRefreshing(false);
@@ -267,7 +267,7 @@ export default function PlansPage() {
 
   // ---- Handlers ----
   const handleCreate = async () => {
-    const errors = validateForm(form);
+    const errors = validateForm(form, t);
     setFieldErrors(errors);
     if (Object.values(errors).some(Boolean)) return;
 
@@ -287,7 +287,7 @@ export default function PlansPage() {
         is_active: form.is_active,
       };
       await createPlan(payload);
-      toast.success('Plan created successfully');
+      toast.success(t('admin.plans.planCreated'));
       setCreateModalOpen(false);
       resetForm();
       loadPlans();
@@ -295,7 +295,7 @@ export default function PlansPage() {
       if (err instanceof AdminApiError) {
         setApiError(err.message);
       } else {
-        setApiError('An unexpected error occurred');
+        setApiError(t('admin.plans.unexpectedError'));
       }
     } finally {
       setIsActionLoading(false);
@@ -305,7 +305,7 @@ export default function PlansPage() {
   const handleUpdate = async () => {
     if (!editingPlan) return;
 
-    const errors = validateForm(form);
+    const errors = validateForm(form, t);
     setFieldErrors(errors);
     if (Object.values(errors).some(Boolean)) return;
 
@@ -324,7 +324,7 @@ export default function PlansPage() {
         is_active: form.is_active,
       };
       await updatePlan(editingPlan.id, payload);
-      toast.success('Plan updated successfully');
+      toast.success(t('admin.plans.planUpdated'));
       setEditingPlan(null);
       resetForm();
       loadPlans();
@@ -332,7 +332,7 @@ export default function PlansPage() {
       if (err instanceof AdminApiError) {
         setApiError(err.message);
       } else {
-        setApiError('An unexpected error occurred');
+        setApiError(t('admin.plans.unexpectedError'));
       }
     } finally {
       setIsActionLoading(false);
@@ -346,10 +346,10 @@ export default function PlansPage() {
     try {
       if (deactivateTarget.is_active) {
         await deactivatePlan(deactivateTarget.id);
-        toast.success('Plan deactivated');
+        toast.success(t('admin.plans.planDeactivated'));
       } else {
         await updatePlan(deactivateTarget.id, { is_active: true });
-        toast.success('Plan reactivated');
+        toast.success(t('admin.plans.planReactivated'));
       }
       setDeactivateTarget(null);
       loadPlans();
@@ -357,7 +357,7 @@ export default function PlansPage() {
       if (err instanceof AdminApiError) {
         toast.error(err.message);
       } else {
-        toast.error('Failed to update plan status');
+        toast.error(t('admin.plans.failedToUpdateStatus'));
       }
     } finally {
       setIsActionLoading(false);
@@ -383,7 +383,7 @@ export default function PlansPage() {
           <div>
             <h1 className="text-xl font-bold text-zinc-900 sm:text-2xl">{t('admin.plans.title')}</h1>
             <p className="text-sm text-zinc-500">
-              Manage pricing tiers and feature bundles
+              {t('admin.plans.subtitle')}
             </p>
           </div>
         </div>
@@ -398,7 +398,7 @@ export default function PlansPage() {
               className="gap-1.5 rounded-lg border border-zinc-200 bg-zinc-50 text-zinc-700 hover:bg-zinc-100"
             >
               <RefreshCw className={cn('h-4 w-4', isRefreshing && 'animate-spin')} />
-              <span className="hidden sm:inline">Refresh</span>
+              <span className="hidden sm:inline">{t('admin.refresh')}</span>
             </Button>
           </div>
           <div>
@@ -421,7 +421,7 @@ export default function PlansPage() {
         <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-zinc-200 bg-zinc-50 py-16 text-center">
           <CreditCard className="mb-3 h-10 w-10 text-zinc-400" />
           <p className="text-lg font-medium text-zinc-700">{t('admin.plans.title')}</p>
-          <p className="mt-1 text-sm text-zinc-500">Create your first plan to get started</p>
+          <p className="mt-1 text-sm text-zinc-500">{t('admin.plans.createFirstPlan')}</p>
           <Button
             size="sm"
             onClick={openCreateModal}
@@ -437,7 +437,7 @@ export default function PlansPage() {
           {activePlans.length > 0 && (
             <div>
               <h2 className="mb-4 text-lg font-semibold text-zinc-900">
-                Active Plans
+                {t('admin.plans.activePlans')}
                 <span className="ml-2 text-sm font-normal text-zinc-500">
                   ({activePlans.length})
                 </span>
@@ -459,7 +459,7 @@ export default function PlansPage() {
           {inactivePlans.length > 0 && (
             <div>
               <h2 className="mb-4 text-lg font-semibold text-zinc-500">
-                Inactive Plans
+                {t('admin.plans.inactivePlans')}
                 <span className="ml-2 text-sm font-normal text-zinc-400">
                   ({inactivePlans.length})
                 </span>
@@ -504,8 +504,8 @@ export default function PlansPage() {
             </DialogTitle>
             <DialogDescription>
               {isEditMode
-                ? 'Update the plan details, pricing, and included modules.'
-                : 'Define a new subscription plan with pricing and features.'}
+                ? t('admin.plans.editPlanDescription')
+                : t('admin.plans.createPlanDescription')}
             </DialogDescription>
           </DialogHeader>
 
@@ -513,11 +513,11 @@ export default function PlansPage() {
             {/* Code */}
             <div className="space-y-2">
               <Label htmlFor="plan-code">
-                Plan Code <span className="text-red-500">*</span>
+                {t('admin.plans.planCode')} <span className="text-red-500">*</span>
               </Label>
               <Input
                 id="plan-code"
-                placeholder="e.g., starter, pro, enterprise"
+                placeholder={t('admin.plans.planCodePlaceholder')}
                 value={form.code}
                 onChange={(e) => updateField('code', e.target.value.toLowerCase().replace(/\s/g, ''))}
                 disabled={isEditMode}
@@ -527,7 +527,7 @@ export default function PlansPage() {
                 )}
               />
               <p className="text-xs text-zinc-500">
-                Lowercase, no spaces. Used internally as an identifier.
+                {t('admin.plans.planCodeHint')}
               </p>
               {fieldErrors.code && <FieldError message={fieldErrors.code} />}
             </div>
@@ -535,11 +535,11 @@ export default function PlansPage() {
             {/* Name */}
             <div className="space-y-2">
               <Label htmlFor="plan-name">
-                Display Name <span className="text-red-500">*</span>
+                {t('admin.plans.displayName')} <span className="text-red-500">*</span>
               </Label>
               <Input
                 id="plan-name"
-                placeholder="e.g., Starter Plan"
+                placeholder={t('admin.plans.displayNamePlaceholder')}
                 value={form.name}
                 onChange={(e) => updateField('name', e.target.value)}
                 className={cn(fieldErrors.name && 'border-red-500/50 focus-visible:ring-red-500')}
@@ -549,10 +549,10 @@ export default function PlansPage() {
 
             {/* Description */}
             <div className="space-y-2">
-              <Label htmlFor="plan-description">Description</Label>
+              <Label htmlFor="plan-description">{t('admin.plans.descriptionLabel')}</Label>
               <textarea
                 id="plan-description"
-                placeholder="Brief description of what this plan includes..."
+                placeholder={t('admin.plans.descriptionPlaceholder')}
                 value={form.description}
                 onChange={(e) => updateField('description', e.target.value)}
                 rows={3}
@@ -564,12 +564,12 @@ export default function PlansPage() {
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="plan-price">
-                  Price (cents) <span className="text-red-500">*</span>
+                  {t('admin.plans.priceCents')} <span className="text-red-500">*</span>
                 </Label>
                 <Input
                   id="plan-price"
                   type="number"
-                  placeholder="2900"
+                  placeholder={t('admin.plans.pricePlaceholder')}
                   min="0"
                   step="1"
                   value={form.price_cents}
@@ -586,14 +586,14 @@ export default function PlansPage() {
 
               <div className="space-y-2">
                 <Label>
-                  Currency <span className="text-red-500">*</span>
+                  {t('admin.plans.currency')} <span className="text-red-500">*</span>
                 </Label>
                 <Select
                   value={form.currency}
                   onValueChange={(val) => updateField('currency', val)}
                 >
                   <SelectTrigger className={cn(fieldErrors.currency && 'border-red-500/50')}>
-                    <SelectValue placeholder="Select..." />
+                    <SelectValue placeholder={t('admin.plans.selectPlaceholder')} />
                   </SelectTrigger>
                   <SelectContent>
                     {CURRENCY_OPTIONS.map((opt) => (
@@ -610,19 +610,19 @@ export default function PlansPage() {
             {/* Billing Period */}
             <div className="space-y-2">
               <Label>
-                Billing Period <span className="text-red-500">*</span>
+                {t('admin.plans.billingPeriod')} <span className="text-red-500">*</span>
               </Label>
               <Select
                 value={form.billing_period}
                 onValueChange={(val) => updateField('billing_period', val as 'monthly' | 'annual')}
               >
                 <SelectTrigger className={cn(fieldErrors.billing_period && 'border-red-500/50')}>
-                  <SelectValue placeholder="Select..." />
+                  <SelectValue placeholder={t('admin.plans.selectPlaceholder')} />
                 </SelectTrigger>
                 <SelectContent>
                   {BILLING_PERIOD_OPTIONS.map((opt) => (
                     <SelectItem key={opt.value} value={opt.value}>
-                      {opt.label}
+                      {t(opt.labelKey)}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -632,7 +632,7 @@ export default function PlansPage() {
 
             {/* Employee Limit */}
             <div className="space-y-3">
-              <Label>Employee Limit</Label>
+              <Label>{t('admin.plans.employeeLimit')}</Label>
               <div className="flex items-center gap-2">
                 <input
                   type="checkbox"
@@ -648,14 +648,14 @@ export default function PlansPage() {
                   className="h-4 w-4 rounded border-zinc-300 bg-white"
                 />
                 <label htmlFor="unlimited-employees" className="text-sm text-zinc-700">
-                  Unlimited employees
+                  {t('admin.plans.unlimitedEmployees')}
                 </label>
               </div>
               {!form.unlimited_employees && (
                 <div>
                   <Input
                     type="number"
-                    placeholder="e.g., 50"
+                    placeholder={t('admin.plans.employeeLimitPlaceholder')}
                     min="1"
                     step="1"
                     value={form.employee_limit}
@@ -671,7 +671,7 @@ export default function PlansPage() {
 
             {/* Included Modules */}
             <div className="space-y-3">
-              <Label>Included Modules</Label>
+              <Label>{t('admin.plans.includedModules')}</Label>
               <div className="grid grid-cols-2 gap-2">
                 {MODULE_OPTIONS.map((mod) => (
                   <label
@@ -701,7 +701,7 @@ export default function PlansPage() {
                         <Check className="h-3 w-3 text-white" />
                       )}
                     </div>
-                    {mod.label}
+                    {t(mod.labelKey)}
                   </label>
                 ))}
               </div>
@@ -718,7 +718,7 @@ export default function PlansPage() {
                   className="h-4 w-4 rounded border-zinc-300 bg-white"
                 />
                 <label htmlFor="plan-active" className="text-sm text-zinc-700">
-                  Plan is active and available for purchase
+                  {t('admin.plans.planIsActive')}
                 </label>
               </div>
             )}
@@ -770,22 +770,12 @@ export default function PlansPage() {
                   )}
                 />
               </div>
-              {deactivateTarget?.is_active ? t('admin.plans.deletePlan') : 'Reactivate Plan'}
+              {deactivateTarget?.is_active ? t('admin.plans.deactivatePlan') : t('admin.plans.reactivatePlan')}
             </DialogTitle>
             <DialogDescription>
-              {deactivateTarget?.is_active ? (
-                <>
-                  Are you sure you want to deactivate{' '}
-                  <span className="font-semibold text-zinc-900">{deactivateTarget.name}</span>?
-                  It will no longer be available for new subscriptions.
-                </>
-              ) : (
-                <>
-                  Reactivate{' '}
-                  <span className="font-semibold text-zinc-900">{deactivateTarget?.name}</span>?
-                  It will become available for subscriptions again.
-                </>
-              )}
+              {deactivateTarget?.is_active
+                ? t('admin.plans.deactivateConfirmation', { name: deactivateTarget.name })
+                : t('admin.plans.reactivateConfirmation', { name: deactivateTarget?.name })}
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
@@ -808,7 +798,7 @@ export default function PlansPage() {
               )}
             >
               {isActionLoading && <Loader2 className="h-4 w-4 animate-spin" />}
-              {deactivateTarget?.is_active ? t('common.delete') : 'Reactivate'}
+              {deactivateTarget?.is_active ? t('admin.plans.deactivate') : t('admin.plans.reactivate')}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -828,6 +818,7 @@ interface PlanCardProps {
 }
 
 function PlanCard({ plan, onEdit, onToggleActive }: PlanCardProps) {
+  const { t } = useTranslation();
   const enabledModules = Object.entries(plan.included_modules || {}).filter(
     ([, enabled]) => enabled
   );
@@ -851,7 +842,7 @@ function PlanCard({ plan, onEdit, onToggleActive }: PlanCardProps) {
               : 'border-zinc-300 bg-zinc-100 text-zinc-500'
           )}
         >
-          {plan.is_active ? 'Active' : 'Inactive'}
+          {plan.is_active ? t('admin.plans.active') : t('admin.plans.inactive')}
         </Badge>
         <code className="text-xs text-zinc-500">{plan.code}</code>
       </div>
@@ -865,7 +856,7 @@ function PlanCard({ plan, onEdit, onToggleActive }: PlanCardProps) {
           {formatPrice(plan.price_cents, plan.currency)}
         </span>
         <span className="text-sm text-zinc-500">
-          /{plan.billing_period === 'monthly' ? 'mo' : 'year'}
+          /{plan.billing_period === 'monthly' ? t('admin.plans.mo') : t('admin.plans.year')}
         </span>
       </div>
 
@@ -881,12 +872,12 @@ function PlanCard({ plan, onEdit, onToggleActive }: PlanCardProps) {
         {plan.employee_limit === null ? (
           <>
             <Infinity className="h-4 w-4 text-zinc-400" />
-            <span>Unlimited employees</span>
+            <span>{t('admin.plans.unlimitedEmployees')}</span>
           </>
         ) : (
           <>
             <Users className="h-4 w-4 text-zinc-400" />
-            <span>Up to {plan.employee_limit} employees</span>
+            <span>{t('admin.plans.upToEmployees', { count: plan.employee_limit })}</span>
           </>
         )}
       </div>
@@ -901,7 +892,7 @@ function PlanCard({ plan, onEdit, onToggleActive }: PlanCardProps) {
                 key={key}
                 className="rounded-md border border-zinc-200 bg-zinc-50 px-2 py-0.5 text-xs text-zinc-700"
               >
-                {mod?.label || key}
+                {mod ? t(mod.labelKey) : key}
               </span>
             );
           })}
@@ -917,7 +908,7 @@ function PlanCard({ plan, onEdit, onToggleActive }: PlanCardProps) {
           className="flex-1 gap-1.5 text-zinc-500 hover:bg-zinc-100 hover:text-zinc-900"
         >
           <Edit className="h-3.5 w-3.5" />
-          Edit
+          {t('common.edit')}
         </Button>
         <Button
           variant="ghost"
@@ -931,7 +922,7 @@ function PlanCard({ plan, onEdit, onToggleActive }: PlanCardProps) {
           )}
         >
           <Power className="h-3.5 w-3.5" />
-          {plan.is_active ? 'Deactivate' : 'Activate'}
+          {plan.is_active ? t('admin.plans.deactivate') : t('admin.plans.activate')}
         </Button>
       </div>
     </div>

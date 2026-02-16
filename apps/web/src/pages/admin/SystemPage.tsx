@@ -89,7 +89,7 @@ export default function SystemPage() {
       setHealth(data);
     } catch (error) {
       console.error('Error fetching system health:', error);
-      toast.error('Failed to load system health');
+      toast.error(t('admin.system.failedToLoad'));
     } finally {
       setIsLoading(false);
       setIsRefreshing(false);
@@ -110,11 +110,11 @@ export default function SystemPage() {
     setRetryingJobs((prev) => new Set(prev).add(jobId));
     try {
       await retryFailedJob(queueName, jobId);
-      toast.success('Job queued for retry');
+      toast.success(t('admin.system.jobQueuedForRetry'));
       loadHealth(true);
     } catch (error) {
       console.error('Error retrying job:', error);
-      toast.error('Failed to retry job');
+      toast.error(t('admin.system.failedToRetryJob'));
     } finally {
       setRetryingJobs((prev) => {
         const next = new Set(prev);
@@ -127,11 +127,11 @@ export default function SystemPage() {
   const handleDeleteJob = async (queueName: string, jobId: string) => {
     try {
       await deleteFailedJob(queueName, jobId);
-      toast.success('Failed job deleted');
+      toast.success(t('admin.system.failedJobDeleted'));
       loadHealth(true);
     } catch (error) {
       console.error('Error deleting job:', error);
-      toast.error('Failed to delete job');
+      toast.error(t('admin.system.failedToDeleteJob'));
     }
   };
 
@@ -150,7 +150,7 @@ export default function SystemPage() {
           <div>
             <h1 className="text-xl font-bold text-zinc-900 sm:text-2xl">{t('admin.system.title')}</h1>
             <p className="text-sm text-zinc-500">
-              Live monitoring • Updates every 5 seconds
+              {t('admin.system.liveMonitoring')}
             </p>
           </div>
         </div>
@@ -191,11 +191,11 @@ export default function SystemPage() {
         {/* CPU Usage */}
         <ServiceCard
           icon={Zap}
-          label="CPU Usage"
+          label={t('admin.system.cpuUsage')}
           status={health?.system ? 'connected' : 'disconnected'}
           metrics={[
-            { label: 'Usage', value: formatPercent(health?.system?.cpuUsage || 0), alert: (health?.system?.cpuUsage || 0) > 80 },
-            { label: 'Load (1m)', value: health?.system?.loadAverage['1min'].toFixed(2) || '0' },
+            { label: t('admin.system.usage'), value: formatPercent(health?.system?.cpuUsage || 0), alert: (health?.system?.cpuUsage || 0) > 80 },
+            { label: t('admin.system.load1m'), value: health?.system?.loadAverage['1min'].toFixed(2) || '0' },
           ]}
           color="violet"
         />
@@ -203,15 +203,15 @@ export default function SystemPage() {
         {/* Memory Usage */}
         <ServiceCard
           icon={HardDrive}
-          label="Memory"
+          label={t('admin.system.memory')}
           status={health?.system ? 'connected' : 'disconnected'}
           metrics={[
             {
-              label: 'Used',
-              value: health?.system ? `${formatBytes(health.system.memory.used)} / ${formatBytes(health.system.memory.total)}` : 'N/A',
+              label: t('admin.system.used'),
+              value: health?.system ? `${formatBytes(health.system.memory.used)} / ${formatBytes(health.system.memory.total)}` : t('common.notAvailable'),
               alert: (health?.system?.memory.usagePercent || 0) > 85,
             },
-            { label: 'Usage', value: formatPercent(health?.system?.memory.usagePercent || 0) },
+            { label: t('admin.system.usage'), value: formatPercent(health?.system?.memory.usagePercent || 0) },
           ]}
           color="blue"
         />
@@ -219,15 +219,15 @@ export default function SystemPage() {
         {/* Disk Usage */}
         <ServiceCard
           icon={Database}
-          label="Disk"
+          label={t('admin.system.disk')}
           status={health?.system ? 'connected' : 'disconnected'}
           metrics={[
             {
-              label: 'Used',
-              value: health?.system ? `${formatBytes(health.system.disk.used)} / ${formatBytes(health.system.disk.total)}` : 'N/A',
+              label: t('admin.system.used'),
+              value: health?.system ? `${formatBytes(health.system.disk.used)} / ${formatBytes(health.system.disk.total)}` : t('common.notAvailable'),
               alert: (health?.system?.disk.usagePercent || 0) > 85,
             },
-            { label: 'Usage', value: formatPercent(health?.system?.disk.usagePercent || 0) },
+            { label: t('admin.system.usage'), value: formatPercent(health?.system?.disk.usagePercent || 0) },
           ]}
           color="amber"
         />
@@ -235,10 +235,10 @@ export default function SystemPage() {
         {/* System Info */}
         <ServiceCard
           icon={Server}
-          label="System"
+          label={t('admin.system.system')}
           status={health?.system ? 'connected' : 'disconnected'}
           metrics={[
-            { label: 'Hostname', value: health?.system?.hostname || 'Unknown' },
+            { label: t('admin.system.hostname'), value: health?.system?.hostname || t('admin.system.unknown') },
             { label: t('admin.system.apiUptime'), value: formatUptime(health?.system?.uptime || 0) },
           ]}
           color="red"
@@ -250,11 +250,11 @@ export default function SystemPage() {
         {/* API Status */}
         <ServiceCard
           icon={Zap}
-          label="API Server"
+          label={t('admin.system.apiServer')}
           status="connected"
           metrics={[
             { label: t('admin.system.apiUptime'), value: formatUptime(health?.uptime || 0) },
-            { label: 'Status', value: health?.status || 'Unknown' },
+            { label: t('admin.system.statusLabel'), value: health?.status || t('admin.system.unknown') },
           ]}
           color="violet"
         />
@@ -265,8 +265,8 @@ export default function SystemPage() {
           label={t('admin.system.dbConnections')}
           status={health?.database.status || 'disconnected'}
           metrics={[
-            { label: 'Status', value: health?.database.status === 'connected' ? 'Connected' : 'Disconnected' },
-            { label: 'Response Time', value: formatLatency(health?.database.responseTime || 0) },
+            { label: t('admin.system.statusLabel'), value: health?.database.status === 'connected' ? t('admin.system.connected') : t('admin.system.disconnected') },
+            { label: t('admin.system.responseTime'), value: formatLatency(health?.database.responseTime || 0) },
           ]}
           color="blue"
         />
@@ -278,12 +278,12 @@ export default function SystemPage() {
           status={health?.redis.status || 'disconnected'}
           metrics={[
             {
-              label: 'Memory',
+              label: t('admin.system.memory'),
               value: health?.redis.memory
                 ? `${formatBytes(health.redis.memory.used)} / ${formatBytes(health.redis.memory.peak)}`
-                : 'N/A'
+                : t('common.notAvailable')
             },
-            { label: 'Ping', value: formatLatency(health?.redis.ping || 0) },
+            { label: t('admin.system.ping'), value: formatLatency(health?.redis.ping || 0) },
           ]}
           color="red"
         />
@@ -294,9 +294,9 @@ export default function SystemPage() {
           label={t('admin.system.queueDepth')}
           status={health?.queues && health.queues.length > 0 ? 'connected' : 'disconnected'}
           metrics={[
-            { label: 'Active Queues', value: health?.queues?.length?.toString() || '0' },
+            { label: t('admin.system.activeQueues'), value: health?.queues?.length?.toString() || '0' },
             {
-              label: 'Failed Jobs',
+              label: t('admin.system.failedJobs'),
               value: health?.failedJobs?.reduce((sum, queue) => sum + queue.failedCount, 0).toString() || '0',
               alert: (health?.failedJobs?.reduce((sum, queue) => sum + queue.failedCount, 0) || 0) > 0,
             },
@@ -307,18 +307,18 @@ export default function SystemPage() {
 
       {/* Queue details */}
       <div className="rounded-xl border border-zinc-200 bg-white shadow-sm p-6">
-        <h2 className="mb-4 text-lg font-semibold text-zinc-900">Queue Metrics</h2>
+        <h2 className="mb-4 text-lg font-semibold text-zinc-900">{t('admin.system.queueMetrics')}</h2>
         {health?.queues && health.queues.length > 0 ? (
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead>
                 <tr className="border-b border-zinc-200">
-                  <th className="pb-3 text-left text-xs font-medium uppercase tracking-wider text-zinc-500">Queue</th>
-                  <th className="pb-3 text-right text-xs font-medium uppercase tracking-wider text-zinc-500">Pending</th>
-                  <th className="pb-3 text-right text-xs font-medium uppercase tracking-wider text-zinc-500">Active</th>
-                  <th className="pb-3 text-right text-xs font-medium uppercase tracking-wider text-zinc-500">Completed</th>
-                  <th className="pb-3 text-right text-xs font-medium uppercase tracking-wider text-zinc-500">Delayed</th>
-                  <th className="pb-3 text-right text-xs font-medium uppercase tracking-wider text-zinc-500">Failed</th>
+                  <th className="pb-3 text-left text-xs font-medium uppercase tracking-wider text-zinc-500">{t('admin.system.queue')}</th>
+                  <th className="pb-3 text-right text-xs font-medium uppercase tracking-wider text-zinc-500">{t('admin.system.pending')}</th>
+                  <th className="pb-3 text-right text-xs font-medium uppercase tracking-wider text-zinc-500">{t('admin.system.active')}</th>
+                  <th className="pb-3 text-right text-xs font-medium uppercase tracking-wider text-zinc-500">{t('admin.system.completed')}</th>
+                  <th className="pb-3 text-right text-xs font-medium uppercase tracking-wider text-zinc-500">{t('admin.system.delayed')}</th>
+                  <th className="pb-3 text-right text-xs font-medium uppercase tracking-wider text-zinc-500">{t('admin.system.failed')}</th>
                 </tr>
               </thead>
               <tbody>
@@ -349,7 +349,7 @@ export default function SystemPage() {
         ) : (
           <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-zinc-200 bg-zinc-50 py-12 text-center">
             <Layers className="mb-3 h-8 w-8 text-zinc-400" />
-            <p className="text-sm text-zinc-500">No queues configured</p>
+            <p className="text-sm text-zinc-500">{t('admin.system.noQueues')}</p>
           </div>
         )}
       </div>
@@ -357,10 +357,10 @@ export default function SystemPage() {
       {/* Failed jobs */}
       <div className="rounded-xl border border-zinc-200 bg-white shadow-sm p-6">
         <div className="mb-4 flex items-center justify-between">
-          <h2 className="text-lg font-semibold text-zinc-900">Failed Jobs</h2>
+          <h2 className="text-lg font-semibold text-zinc-900">{t('admin.system.failedJobs')}</h2>
           {health?.failedJobs && health.failedJobs.length > 0 && (
             <Badge className="border border-red-500/30 bg-red-50 text-red-700">
-              {health.failedJobs.reduce((sum, queue) => sum + queue.failedCount, 0)} failed
+              {t('admin.system.failedCount', { count: health.failedJobs.reduce((sum, queue) => sum + queue.failedCount, 0) })}
             </Badge>
           )}
         </div>
@@ -374,7 +374,7 @@ export default function SystemPage() {
                   <div className="flex items-center gap-2">
                     <div className="h-px flex-1 bg-zinc-200" />
                     <p className="text-xs font-medium uppercase tracking-wider text-zinc-500">
-                      {queueSummary.queueName} Queue ({queueSummary.failedCount} failed)
+                      {t('admin.system.queueHeader', { name: queueSummary.queueName, count: queueSummary.failedCount })}
                     </p>
                     <div className="h-px flex-1 bg-zinc-200" />
                   </div>
@@ -391,9 +391,9 @@ export default function SystemPage() {
                             <XCircle className="h-4 w-4 text-red-600" />
                           </div>
                           <div>
-                            <p className="font-medium text-zinc-900">Job ID: {error.jobId.slice(0, 16)}{error.jobId.length > 16 ? '...' : ''}</p>
+                            <p className="font-medium text-zinc-900">{t('admin.system.jobId')}: {error.jobId.slice(0, 16)}{error.jobId.length > 16 ? '...' : ''}</p>
                             <p className="text-sm text-zinc-500">
-                              Queue: {queueSummary.queueName}
+                              {t('admin.system.queue')}: {queueSummary.queueName}
                             </p>
                           </div>
                         </div>
@@ -406,7 +406,7 @@ export default function SystemPage() {
                             className="gap-1.5 text-emerald-600 hover:bg-emerald-50 hover:text-emerald-700"
                           >
                             <RotateCcw className={cn('h-3.5 w-3.5', retryingJobs.has(error.jobId) && 'animate-spin')} />
-                            Retry
+                            {t('admin.system.retry')}
                           </Button>
                           <Button
                             variant="ghost"
@@ -415,7 +415,7 @@ export default function SystemPage() {
                             className="gap-1.5 text-red-600 hover:bg-red-50 hover:text-red-700"
                           >
                             <Trash2 className="h-3.5 w-3.5" />
-                            Delete
+                            {t('admin.system.delete')}
                           </Button>
                         </div>
                       </div>
@@ -424,7 +424,7 @@ export default function SystemPage() {
                       </div>
                       <div className="mt-2 flex items-center gap-1 text-xs text-zinc-500">
                         <Clock className="h-3 w-3" />
-                        Failed {new Date(error.failedAt).toLocaleString()}
+                        {t('admin.system.failedAt', { date: new Date(error.failedAt).toLocaleString() })}
                       </div>
                     </div>
                   ))}
@@ -435,7 +435,7 @@ export default function SystemPage() {
         ) : (
           <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-zinc-200 bg-zinc-50 py-12 text-center">
             <CheckCircle2 className="mb-3 h-8 w-8 text-emerald-500" />
-            <p className="text-sm text-zinc-500">No failed jobs</p>
+            <p className="text-sm text-zinc-500">{t('admin.system.noFailedJobs')}</p>
           </div>
         )}
       </div>
@@ -453,6 +453,7 @@ interface ServiceCardProps {
 }
 
 function ServiceCard({ icon: Icon, label, status, metrics, color }: ServiceCardProps) {
+  const { t } = useTranslation();
   const colorClasses = {
     violet: 'bg-violet-50 text-violet-600',
     blue: 'bg-blue-50 text-blue-600',
@@ -474,7 +475,7 @@ function ServiceCard({ icon: Icon, label, status, metrics, color }: ServiceCardP
         <div className="flex items-center gap-1.5">
           <span className={cn('h-2 w-2 rounded-full', statusColors[status])} />
           <span className={cn('text-xs font-medium', status === 'connected' ? 'text-emerald-600' : 'text-red-600')}>
-            {status === 'connected' ? 'Online' : 'Offline'}
+            {status === 'connected' ? t('admin.system.online') : t('admin.system.offline')}
           </span>
         </div>
       </div>

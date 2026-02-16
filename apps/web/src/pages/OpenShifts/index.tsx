@@ -10,7 +10,7 @@ const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
 
 export default function OpenShiftsPage() {
   const { slug } = useParams<{ slug: string }>();
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
 
   const [openShifts, setOpenShifts] = useState<Shift[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -31,18 +31,18 @@ export default function OpenShiftsPage() {
       );
 
       if (!response.ok) {
-        throw new Error('Failed to fetch open shifts');
+        throw new Error(t('roster.openShifts.fetchError'));
       }
 
       const data: ShiftsResponse = await response.json();
       setOpenShifts(data.shifts || []);
 
       if (silent) {
-        toast.success('Open shifts refreshed');
+        toast.success(t('roster.openShifts.refreshed'));
       }
     } catch (error) {
       console.error('Error fetching open shifts:', error);
-      toast.error('Failed to load open shifts');
+      toast.error(t('roster.openShifts.fetchError'));
     } finally {
       setIsLoading(false);
       setIsRefreshing(false);
@@ -77,23 +77,23 @@ export default function OpenShiftsPage() {
           const violationMessages = errorData.violations
             .map((v: any) => v.message)
             .join('\n');
-          toast.error('Cannot claim shift', {
+          toast.error(t('roster.openShifts.cannotClaim'), {
             description: violationMessages,
             duration: 5000,
           });
           return;
         }
 
-        throw new Error(errorData.message || 'Failed to claim shift');
+        throw new Error(errorData.message || t('roster.openShifts.claimError'));
       }
 
-      toast.success('Shift claimed successfully!');
+      toast.success(t('roster.openShifts.claimSuccess'));
 
       // Refresh the list
       await fetchOpenShifts(true);
     } catch (error) {
       console.error('Error claiming shift:', error);
-      toast.error(error instanceof Error ? error.message : 'Failed to claim shift');
+      toast.error(error instanceof Error ? error.message : t('roster.openShifts.claimError'));
     } finally {
       setClaimingShiftId(null);
     }
@@ -176,7 +176,7 @@ export default function OpenShiftsPage() {
                 <div className="flex items-center gap-2 text-sm">
                   <Calendar className="h-4 w-4 text-zinc-400" />
                   <h3 className="font-semibold text-zinc-900">
-                    {date.toLocaleDateString('en-US', {
+                    {date.toLocaleDateString(i18n.language === 'es' ? 'es-ES' : 'en-US', {
                       weekday: 'long',
                       year: 'numeric',
                       month: 'long',
@@ -235,7 +235,7 @@ export default function OpenShiftsPage() {
                             </div>
                             {shift.break_minutes && shift.break_minutes > 0 && (
                               <span className="text-xs text-zinc-400">
-                                +{shift.break_minutes}m break
+                                +{shift.break_minutes}m {t('roster.openShifts.break')}
                               </span>
                             )}
                           </div>

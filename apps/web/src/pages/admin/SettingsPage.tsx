@@ -62,17 +62,17 @@ type TabId = 'stripe' | 'gocardless' | 'email' | 'general' | 'database' | 'redis
 
 interface TabDefinition {
   id: TabId;
-  label: string;
+  labelKey: string;
   icon: typeof Settings;
   color: string;
 }
 
 interface FieldConfig {
   key: string;
-  label: string;
+  labelKey: string;
   placeholder: string;
   sensitive: boolean;
-  description?: string;
+  descriptionKey?: string;
 }
 
 // ============================================================================
@@ -82,55 +82,55 @@ interface FieldConfig {
 const TABS: TabDefinition[] = [
   {
     id: 'stripe',
-    label: 'Stripe',
+    labelKey: 'admin.settings.tabStripe',
     icon: CreditCard,
     color: 'text-violet-600',
   },
   {
     id: 'gocardless',
-    label: 'GoCardless',
+    labelKey: 'admin.settings.tabGoCardless',
     icon: DollarSign,
     color: 'text-cyan-600',
   },
   {
     id: 'email',
-    label: 'Email',
+    labelKey: 'admin.settings.tabEmail',
     icon: Mail,
     color: 'text-amber-600',
   },
   {
     id: 'general',
-    label: 'General',
+    labelKey: 'admin.settings.tabGeneral',
     icon: Settings,
     color: 'text-emerald-600',
   },
   {
     id: 'database',
-    label: 'Database',
+    labelKey: 'admin.settings.tabDatabase',
     icon: Database,
     color: 'text-red-600',
   },
   {
     id: 'redis',
-    label: 'Redis',
+    labelKey: 'admin.settings.tabRedis',
     icon: Zap,
     color: 'text-orange-600',
   },
   {
     id: 'auth',
-    label: 'Auth',
+    labelKey: 'admin.settings.tabAuth',
     icon: Shield,
     color: 'text-blue-600',
   },
   {
     id: 'admin',
-    label: 'Admin',
+    labelKey: 'admin.settings.tabAdmin',
     icon: User,
     color: 'text-purple-600',
   },
   {
     id: 'frontend',
-    label: 'Frontend',
+    labelKey: 'admin.settings.tabFrontend',
     icon: Monitor,
     color: 'text-teal-600',
   },
@@ -139,150 +139,150 @@ const TABS: TabDefinition[] = [
 const STRIPE_FIELDS: FieldConfig[] = [
   {
     key: 'secretKey',
-    label: 'Secret Key',
+    labelKey: 'admin.settings.stripe.secretKey',
     placeholder: 'sk_live_...',
     sensitive: true,
-    description: 'Your Stripe secret key for server-side API calls',
+    descriptionKey: 'admin.settings.stripe.secretKeyDesc',
   },
   {
     key: 'publishableKey',
-    label: 'Publishable Key',
+    labelKey: 'admin.settings.stripe.publishableKey',
     placeholder: 'pk_live_...',
     sensitive: false,
-    description: 'Your Stripe publishable key for client-side usage',
+    descriptionKey: 'admin.settings.stripe.publishableKeyDesc',
   },
   {
     key: 'webhookSecret',
-    label: 'Webhook Secret',
+    labelKey: 'admin.settings.stripe.webhookSecret',
     placeholder: 'whsec_...',
     sensitive: true,
-    description: 'Used to verify Stripe webhook event signatures',
+    descriptionKey: 'admin.settings.stripe.webhookSecretDesc',
   },
 ];
 
 const GOCARDLESS_FIELDS: FieldConfig[] = [
   {
     key: 'accessToken',
-    label: 'Access Token',
+    labelKey: 'admin.settings.gocardless.accessToken',
     placeholder: 'live_...',
     sensitive: true,
-    description: 'GoCardless API access token',
+    descriptionKey: 'admin.settings.gocardless.accessTokenDesc',
   },
   {
     key: 'webhookSecret',
-    label: 'Webhook Secret',
+    labelKey: 'admin.settings.gocardless.webhookSecret',
     placeholder: 'webhook-secret-...',
     sensitive: true,
-    description: 'Used to verify GoCardless webhook signatures',
+    descriptionKey: 'admin.settings.gocardless.webhookSecretDesc',
   },
 ];
 
 const EMAIL_FIELDS: FieldConfig[] = [
   {
     key: 'resendApiKey',
-    label: 'Resend API Key',
+    labelKey: 'admin.settings.email.resendApiKey',
     placeholder: 're_...',
     sensitive: true,
-    description: 'API key for Resend email service',
+    descriptionKey: 'admin.settings.email.resendApiKeyDesc',
   },
 ];
 
 const DATABASE_FIELDS: FieldConfig[] = [
   {
     key: 'url',
-    label: 'Database URL',
+    labelKey: 'admin.settings.database.url',
     placeholder: 'postgresql://...',
     sensitive: true,
-    description: 'CRITICAL: Changing this requires database migration',
+    descriptionKey: 'admin.settings.database.urlDesc',
   },
   {
     key: 'user',
-    label: 'Database User',
+    labelKey: 'admin.settings.database.user',
     placeholder: 'torretempo',
     sensitive: false,
-    description: 'PostgreSQL username',
+    descriptionKey: 'admin.settings.database.userDesc',
   },
   {
     key: 'password',
-    label: 'Database Password',
+    labelKey: 'admin.settings.database.password',
     placeholder: '--------',
     sensitive: true,
-    description: 'PostgreSQL password',
+    descriptionKey: 'admin.settings.database.passwordDesc',
   },
   {
     key: 'name',
-    label: 'Database Name',
+    labelKey: 'admin.settings.database.name',
     placeholder: 'torretempo',
     sensitive: false,
-    description: 'PostgreSQL database name',
+    descriptionKey: 'admin.settings.database.nameDesc',
   },
 ];
 
 const REDIS_FIELDS: FieldConfig[] = [
   {
     key: 'url',
-    label: 'Redis URL',
+    labelKey: 'admin.settings.redis.url',
     placeholder: 'redis://localhost:6379',
     sensitive: true,
-    description: 'Redis connection string for queues and caching',
+    descriptionKey: 'admin.settings.redis.urlDesc',
   },
 ];
 
 const AUTH_FIELDS: FieldConfig[] = [
   {
     key: 'url',
-    label: 'Better Auth URL',
+    labelKey: 'admin.settings.auth.url',
     placeholder: 'https://time.lsltgroup.es',
     sensitive: false,
-    description: 'Base URL for authentication callbacks',
+    descriptionKey: 'admin.settings.auth.urlDesc',
   },
   {
     key: 'secret',
-    label: 'Auth Secret',
+    labelKey: 'admin.settings.auth.secret',
     placeholder: '64-character secret',
     sensitive: true,
-    description: 'CRITICAL: Changing this invalidates all sessions',
+    descriptionKey: 'admin.settings.auth.secretDesc',
   },
 ];
 
 const ADMIN_FIELDS: FieldConfig[] = [
   {
     key: 'email',
-    label: 'Admin Email',
+    labelKey: 'admin.settings.adminCreds.email',
     placeholder: 'admin@lsltgroup.es',
     sensitive: false,
-    description: 'Platform administrator email for initial setup',
+    descriptionKey: 'admin.settings.adminCreds.emailDesc',
   },
   {
     key: 'password',
-    label: 'Admin Password',
+    labelKey: 'admin.settings.adminCreds.password',
     placeholder: '--------',
     sensitive: true,
-    description: 'Initial admin password (used for seed script)',
+    descriptionKey: 'admin.settings.adminCreds.passwordDesc',
   },
 ];
 
 const FRONTEND_FIELDS: FieldConfig[] = [
   {
     key: 'apiUrl',
-    label: 'API URL',
+    labelKey: 'admin.settings.frontend.apiUrl',
     placeholder: 'https://time.lsltgroup.es',
     sensitive: false,
-    description: 'Backend API base URL for frontend calls',
+    descriptionKey: 'admin.settings.frontend.apiUrlDesc',
   },
   {
     key: 'stripePublishableKey',
-    label: 'Stripe Publishable Key (Frontend)',
+    labelKey: 'admin.settings.frontend.stripePublishableKey',
     placeholder: 'pk_live_...',
     sensitive: false,
-    description: 'Public Stripe key exposed to client',
+    descriptionKey: 'admin.settings.frontend.stripePublishableKeyDesc',
   },
 ];
 
 const CURRENCY_OPTIONS = [
-  { value: 'EUR', label: 'EUR - Euro' },
-  { value: 'GBP', label: 'GBP - British Pound' },
-  { value: 'USD', label: 'USD - US Dollar' },
+  { value: 'EUR', labelKey: 'admin.settings.currencyEur' },
+  { value: 'GBP', labelKey: 'admin.settings.currencyGbp' },
+  { value: 'USD', labelKey: 'admin.settings.currencyUsd' },
 ];
 
 // ============================================================================
@@ -319,6 +319,7 @@ interface SecretFieldProps {
 }
 
 function SecretField({ field, value, editedValue, onEdit }: SecretFieldProps) {
+  const { t } = useTranslation();
   const [visible, setVisible] = useState(false);
   const isEdited = editedValue !== undefined;
   const isMasked = !isEdited && isMaskedValue(value);
@@ -327,10 +328,10 @@ function SecretField({ field, value, editedValue, onEdit }: SecretFieldProps) {
     <div className="space-y-2">
       <div className="flex items-center justify-between">
         <label className="text-sm font-medium text-zinc-700">
-          {field.label}
+          {t(field.labelKey)}
           {isEdited && (
             <Badge className="ml-2 border border-amber-300 bg-amber-50 text-amber-700 text-[10px]">
-              Modified
+              {t('admin.settings.modified')}
             </Badge>
           )}
         </label>
@@ -343,12 +344,12 @@ function SecretField({ field, value, editedValue, onEdit }: SecretFieldProps) {
             {visible ? (
               <>
                 <EyeOff className="h-3 w-3" />
-                Hide
+                {t('admin.settings.hide')}
               </>
             ) : (
               <>
                 <Eye className="h-3 w-3" />
-                Show
+                {t('admin.settings.show')}
               </>
             )}
           </button>
@@ -367,8 +368,8 @@ function SecretField({ field, value, editedValue, onEdit }: SecretFieldProps) {
           )}
         />
       </div>
-      {field.description && (
-        <p className="text-xs text-zinc-400">{field.description}</p>
+      {field.descriptionKey && (
+        <p className="text-xs text-zinc-400">{t(field.descriptionKey)}</p>
       )}
     </div>
   );
@@ -427,7 +428,7 @@ export default function SettingsPage() {
       const response = await fetchSettings();
       setSettings(response.settings);
     } catch (error) {
-      const message = error instanceof Error ? error.message : 'Failed to load settings';
+      const message = error instanceof Error ? error.message : t('admin.settings.failedToLoad');
       setFetchError(message);
       toast.error(message);
     } finally {
@@ -589,7 +590,7 @@ export default function SettingsPage() {
       const payload = buildUpdatePayload();
       const result = await updateSettings(payload);
 
-      toast.success(result.message || 'Settings saved successfully');
+      toast.success(result.message || t('admin.settings.settingsSaved'));
 
       if (result.requiresRestart) {
         setRequiresRestart(true);
@@ -607,7 +608,7 @@ export default function SettingsPage() {
       setEditedFrontend({});
       await loadSettings();
     } catch (error) {
-      const message = error instanceof Error ? error.message : 'Failed to save settings';
+      const message = error instanceof Error ? error.message : t('admin.settings.failedToSave');
       toast.error(message);
     } finally {
       setIsSaving(false);
@@ -620,10 +621,10 @@ export default function SettingsPage() {
     setIsRestarting(true);
     try {
       const result = await restartServer();
-      toast.success(result.message || 'Server restart initiated');
+      toast.success(result.message || t('admin.settings.restartInitiated'));
       setRequiresRestart(false);
     } catch (error) {
-      const message = error instanceof Error ? error.message : 'Failed to restart server';
+      const message = error instanceof Error ? error.message : t('admin.settings.failedToRestart');
       toast.error(message);
     } finally {
       setIsRestarting(false);
@@ -658,7 +659,7 @@ export default function SettingsPage() {
           <div>
             <h1 className="text-xl font-bold text-zinc-900 sm:text-2xl">{t('admin.settings.title')}</h1>
             <p className="text-sm text-zinc-500">
-              Integration keys and platform configuration
+              {t('admin.settings.subtitle')}
             </p>
           </div>
         </div>
@@ -676,7 +677,7 @@ export default function SettingsPage() {
               >
                 <RefreshCw className={cn('h-4 w-4', isRestarting && 'animate-spin')} />
                 <span className="hidden sm:inline">
-                  {isRestarting ? 'Restarting...' : 'Restart Server'}
+                  {isRestarting ? t('admin.settings.restarting') : t('admin.settings.restartServer')}
                 </span>
               </Button>
             </div>
@@ -714,7 +715,7 @@ export default function SettingsPage() {
           <div className="flex items-center gap-3 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3">
             <AlertTriangle className="h-5 w-5 shrink-0 text-amber-600" />
             <p className="text-sm text-amber-800">
-              Settings have been updated. A server restart is required for changes to take effect.
+              {t('admin.settings.restartRequired')}
             </p>
             <Button
               variant="ghost"
@@ -723,7 +724,7 @@ export default function SettingsPage() {
               disabled={isRestarting}
               className="ml-auto shrink-0 text-amber-600 hover:bg-amber-100 hover:text-amber-700"
             >
-              {isRestarting ? 'Restarting...' : 'Restart Now'}
+              {isRestarting ? t('admin.settings.restarting') : t('admin.settings.restartNow')}
             </Button>
           </div>
         </div>
@@ -735,7 +736,7 @@ export default function SettingsPage() {
           <div className="flex items-center gap-3 rounded-xl border border-blue-200 bg-blue-50 px-4 py-3">
             <ShieldAlert className="h-5 w-5 shrink-0 text-blue-600" />
             <p className="text-sm text-blue-800">
-              You have unsaved changes. Save to apply them to the server configuration.
+              {t('admin.settings.unsavedChanges')}
             </p>
           </div>
         </div>
@@ -758,7 +759,7 @@ export default function SettingsPage() {
             className="gap-2 border border-zinc-200 text-zinc-700 hover:bg-zinc-50"
           >
             <RefreshCw className="h-4 w-4" />
-            Retry
+            {t('admin.settings.retry')}
           </Button>
         </div>
       ) : (
@@ -780,7 +781,7 @@ export default function SettingsPage() {
                   )}
                 >
                   <tab.icon className={cn('h-4 w-4', isActive ? tab.color : 'text-zinc-400 group-hover:text-zinc-700')} />
-                  {tab.label}
+                  {t(tab.labelKey)}
                   {changeCount > 0 && (
                     <span className="flex h-5 min-w-5 items-center justify-center rounded-full bg-amber-50 px-1.5 text-[10px] font-semibold text-amber-700">
                       {changeCount}
@@ -800,8 +801,8 @@ export default function SettingsPage() {
             {activeTab === 'stripe' && (
               <div className="space-y-6">
                 <SectionCard
-                  title="Stripe Configuration"
-                  description="Configure Stripe payment gateway keys for subscription billing."
+                  title={t('admin.settings.stripeConfig')}
+                  description={t('admin.settings.stripeConfigDesc')}
                   icon={CreditCard}
                   iconColor="text-violet-600"
                   iconBg="bg-violet-50"
@@ -825,8 +826,8 @@ export default function SettingsPage() {
             {activeTab === 'gocardless' && (
               <div className="space-y-6">
                 <SectionCard
-                  title="GoCardless Configuration"
-                  description="Configure GoCardless Direct Debit payment keys."
+                  title={t('admin.settings.gocardlessConfig')}
+                  description={t('admin.settings.gocardlessConfigDesc')}
                   icon={DollarSign}
                   iconColor="text-cyan-600"
                   iconBg="bg-cyan-50"
@@ -844,7 +845,7 @@ export default function SettingsPage() {
                       ) : (
                         <AlertTriangle className="mr-1 h-3 w-3" />
                       )}
-                      {currentEnvironment === 'live' ? 'Live' : 'Sandbox'}
+                      {currentEnvironment === 'live' ? t('admin.settings.live') : t('admin.settings.sandbox')}
                     </Badge>
                   }
                 >
@@ -863,10 +864,10 @@ export default function SettingsPage() {
                     <div className="space-y-2">
                       <div className="flex items-center justify-between">
                         <label className="text-sm font-medium text-zinc-700">
-                          Environment
+                          {t('admin.settings.environment')}
                           {editedGoCardless.environment !== undefined && (
                             <Badge className="ml-2 border border-amber-300 bg-amber-50 text-amber-700 text-[10px]">
-                              Modified
+                              {t('admin.settings.modified')}
                             </Badge>
                           )}
                         </label>
@@ -880,15 +881,15 @@ export default function SettingsPage() {
                         </SelectTrigger>
                         <SelectContent className="rounded-xl border border-zinc-200 bg-white">
                           <SelectItem value="sandbox" className="text-zinc-700">
-                            Sandbox (Testing)
+                            {t('admin.settings.sandboxTesting')}
                           </SelectItem>
                           <SelectItem value="live" className="text-zinc-700">
-                            Live (Production)
+                            {t('admin.settings.liveProduction')}
                           </SelectItem>
                         </SelectContent>
                       </Select>
                       <p className="text-xs text-zinc-400">
-                        Use Sandbox for testing, Live for production payments
+                        {t('admin.settings.environmentHint')}
                       </p>
                     </div>
                   </div>
@@ -901,7 +902,7 @@ export default function SettingsPage() {
               <div className="space-y-6">
                 <SectionCard
                   title={t('admin.settings.emailTemplates')}
-                  description="Configure the Resend email service for transactional emails."
+                  description={t('admin.settings.emailConfigDesc')}
                   icon={Mail}
                   iconColor="text-amber-600"
                   iconBg="bg-amber-50"
@@ -925,8 +926,8 @@ export default function SettingsPage() {
              {activeTab === 'general' && (
                <div className="space-y-6">
                  <SectionCard
-                   title="Payment Configuration"
-                   description="General payment and billing settings."
+                   title={t('admin.settings.paymentConfig')}
+                   description={t('admin.settings.paymentConfigDesc')}
                    icon={Settings}
                    iconColor="text-emerald-600"
                    iconBg="bg-emerald-50"
@@ -934,10 +935,10 @@ export default function SettingsPage() {
                    <div className="space-y-2">
                      <div className="flex items-center justify-between">
                        <label className="text-sm font-medium text-zinc-700">
-                         Default Currency
+                         {t('admin.settings.defaultCurrency')}
                          {editedPayment.currency !== undefined && (
                            <Badge className="ml-2 border border-amber-300 bg-amber-50 text-amber-700 text-[10px]">
-                             Modified
+                             {t('admin.settings.modified')}
                            </Badge>
                          )}
                        </label>
@@ -956,13 +957,13 @@ export default function SettingsPage() {
                              value={opt.value}
                              className="text-zinc-700"
                            >
-                             {opt.label}
+                             {t(opt.labelKey)}
                            </SelectItem>
                          ))}
                        </SelectContent>
                      </Select>
                      <p className="text-xs text-zinc-400">
-                       The default currency used for subscription billing
+                       {t('admin.settings.defaultCurrencyHint')}
                      </p>
                    </div>
                  </SectionCard>
@@ -973,15 +974,15 @@ export default function SettingsPage() {
              {activeTab === 'database' && (
                <div className="space-y-6">
                  <SectionCard
-                   title="Database Configuration"
-                   description="PostgreSQL connection settings. Changes require server restart and may cause downtime."
+                   title={t('admin.settings.databaseConfig')}
+                   description={t('admin.settings.databaseConfigDesc')}
                    icon={Database}
                    iconColor="text-red-600"
                    iconBg="bg-red-50"
                    badge={
                      <Badge className="border border-red-300 bg-red-50 text-red-700 text-xs">
                        <AlertTriangle className="mr-1 h-3 w-3" />
-                       Critical
+                       {t('admin.settings.critical')}
                      </Badge>
                    }
                  >
@@ -1004,8 +1005,8 @@ export default function SettingsPage() {
              {activeTab === 'redis' && (
                <div className="space-y-6">
                  <SectionCard
-                   title="Redis Configuration"
-                   description="Redis connection for queues (BullMQ) and caching."
+                   title={t('admin.settings.redisConfig')}
+                   description={t('admin.settings.redisConfigDesc')}
                    icon={Zap}
                    iconColor="text-orange-600"
                    iconBg="bg-orange-50"
@@ -1029,15 +1030,15 @@ export default function SettingsPage() {
              {activeTab === 'auth' && (
                <div className="space-y-6">
                  <SectionCard
-                   title="Authentication Configuration"
-                   description="Better Auth settings for session management and OAuth callbacks."
+                   title={t('admin.settings.authConfig')}
+                   description={t('admin.settings.authConfigDesc')}
                    icon={Shield}
                    iconColor="text-blue-600"
                    iconBg="bg-blue-50"
                    badge={
                      <Badge className="border border-blue-300 bg-blue-50 text-blue-700 text-xs">
                        <ShieldAlert className="mr-1 h-3 w-3" />
-                       Session Critical
+                       {t('admin.settings.sessionCritical')}
                      </Badge>
                    }
                  >
@@ -1060,8 +1061,8 @@ export default function SettingsPage() {
              {activeTab === 'admin' && (
                <div className="space-y-6">
                  <SectionCard
-                   title="Admin Credentials"
-                   description="Platform administrator account settings for initial setup."
+                   title={t('admin.settings.adminCredsConfig')}
+                   description={t('admin.settings.adminCredsConfigDesc')}
                    icon={User}
                    iconColor="text-purple-600"
                    iconBg="bg-purple-50"
@@ -1085,8 +1086,8 @@ export default function SettingsPage() {
              {activeTab === 'frontend' && (
                <div className="space-y-6">
                  <SectionCard
-                   title="Frontend Configuration"
-                   description="Client-side application settings and public API keys."
+                   title={t('admin.settings.frontendConfig')}
+                   description={t('admin.settings.frontendConfigDesc')}
                    icon={Monitor}
                    iconColor="text-teal-600"
                    iconBg="bg-teal-50"
@@ -1115,11 +1116,10 @@ export default function SettingsPage() {
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2 text-zinc-900">
               <RefreshCw className="h-5 w-5 text-red-600" />
-              Restart Server
+              {t('admin.settings.restartServer')}
             </DialogTitle>
             <DialogDescription className="text-zinc-500">
-              This will restart the server process. The application may be
-              briefly unavailable during the restart. Are you sure you want to continue?
+              {t('admin.settings.restartConfirmation')}
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
@@ -1139,10 +1139,10 @@ export default function SettingsPage() {
               {isRestarting ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Restarting...
+                  {t('admin.settings.restarting')}
                 </>
               ) : (
-                'Restart Server'
+                t('admin.settings.restartServer')
               )}
             </Button>
           </DialogFooter>

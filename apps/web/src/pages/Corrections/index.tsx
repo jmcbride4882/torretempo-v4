@@ -28,7 +28,7 @@ const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:3000';
 
 async function fetchCorrections(slug: string) {
   const res = await fetch(`${API_BASE}/api/v1/org/${slug}/corrections`, { credentials: 'include' });
-  if (!res.ok) throw new Error('Failed to fetch corrections');
+  if (!res.ok) throw new Error('corrections.fetchError');
   return res.json();
 }
 
@@ -39,7 +39,7 @@ async function createCorrection(slug: string, data: any) {
     credentials: 'include',
     body: JSON.stringify(data),
   });
-  if (!res.ok) throw new Error('Failed to create correction');
+  if (!res.ok) throw new Error('corrections.createError');
   return res.json();
 }
 
@@ -48,7 +48,7 @@ async function approveCorrection(slug: string, id: string) {
     method: 'PATCH',
     credentials: 'include',
   });
-  if (!res.ok) throw new Error('Failed to approve');
+  if (!res.ok) throw new Error('corrections.approveError');
   return res.json();
 }
 
@@ -59,7 +59,7 @@ async function rejectCorrection(slug: string, id: string, reason: string) {
     credentials: 'include',
     body: JSON.stringify({ rejectionReason: reason }),
   });
-  if (!res.ok) throw new Error('Failed to reject');
+  if (!res.ok) throw new Error('corrections.rejectError');
   return res.json();
 }
 
@@ -207,7 +207,7 @@ export default function CorrectionsPage() {
                     <Button
                       size="sm"
                       variant="outline"
-                      onClick={() => rejectMutation.mutate({ id: req.id, reason: 'Rejected' })}
+                      onClick={() => rejectMutation.mutate({ id: req.id, reason: t('common.rejected') })}
                       className="text-red-600 border-red-200 hover:bg-red-50"
                     >
                       <X className="h-4 w-4" />

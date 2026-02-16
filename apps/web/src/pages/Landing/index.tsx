@@ -51,64 +51,67 @@ interface PersonaFlow {
 // DATA
 // ============================================================================
 
-const PERSONA_FLOWS: PersonaFlow[] = [
-  {
-    id: 'maria',
-    persona: 'Maria',
-    role: 'Empleada / Camarera',
-    icon: Smartphone,
-    tagline: 'Ficha en 2 segundos desde su movil y consulta su horario en el autobus.',
-    steps: [
-      { icon: MapPin, title: 'Geofence activo', detail: 'Llega al restaurante y el sistema detecta su ubicacion automaticamente' },
-      { icon: Zap, title: 'Tap FICHAR', detail: 'Un solo toque en el boton verde. 2 segundos. Hecho.' },
-      { icon: Timer, title: 'Pausa registrada', detail: 'A medio turno pulsa PAUSA y el temporizador de descanso arranca' },
-      { icon: Clock, title: 'Salida limpia', detail: 'Fin de turno: tap SALIDA y ve su resumen de horas del dia' },
-      { icon: ArrowLeftRight, title: 'Intercambio digital', detail: 'Solicita cambio de turno desde la app, sin mensajes de WhatsApp' },
-    ],
-  },
-  {
-    id: 'carlos',
-    persona: 'Carlos',
-    role: 'Manager / Jefe de turno',
-    icon: Users,
-    tagline: 'Aprueba intercambios, controla asistencia en vivo y monta el cuadrante en minutos.',
-    steps: [
-      { icon: Users, title: 'Asistencia en vivo', detail: 'Dashboard con puntos verdes (fichados) y grises (pendientes) en tiempo real' },
-      { icon: Check, title: 'Aprobacion rapida', detail: 'Desliza para aprobar correcciones e intercambios sin papeleos' },
-      { icon: Calendar, title: 'Cuadrante visual', detail: 'Arrastra y suelta turnos. El sistema bloquea asignaciones que incumplen la ley' },
-      { icon: AlertTriangle, title: 'Alertas preventivas', detail: 'Aviso automatico de horas extras y descansos no cumplidos' },
-      { icon: FileText, title: 'Nomina en 1 clic', detail: 'Genera el informe de horas listo para la gestoria en formato compatible' },
-    ],
-  },
-  {
-    id: 'laura',
-    persona: 'Laura',
-    role: 'HR / Administradora',
-    icon: BarChart3,
-    tagline: 'Genera informes de nomina en segundos y verifica el cumplimiento de toda la plantilla.',
-    steps: [
-      { icon: TrendingUp, title: 'Vista multi-sede', detail: 'Dashboard consolidado: 5 ubicaciones en una sola pantalla' },
-      { icon: AlertTriangle, title: 'Panel de cumplimiento', detail: 'Incumplimientos en rojo, advertencias en amarillo, todo en verde al instante' },
-      { icon: FileText, title: 'Export a gestoria', detail: 'CSV compatible con A3, Sage y Nominaplus generado en 10 segundos' },
-      { icon: ShieldCheck, title: 'Auditoria SHA-256', detail: 'Cada informe mensual incluye cadena de verificacion criptografica' },
-      { icon: Users, title: 'Onboarding digital', detail: 'Nuevos empleados configurados y fichando en menos de 5 minutos' },
-    ],
-  },
-  {
-    id: 'carmen',
-    persona: 'Carmen',
-    role: 'Inspectora ITSS',
-    icon: ShieldCheck,
-    tagline: 'Acceso instantaneo con token temporal. Datos inmutables y verificables.',
-    steps: [
-      { icon: Key, title: 'Token temporal', detail: 'Recibe un enlace de solo lectura sin necesidad de crear cuenta' },
-      { icon: FileText, title: 'Filtros avanzados', detail: 'Filtra por empleado, rango de fechas o ubicacion especifica' },
-      { icon: Shield, title: 'Verificacion SHA-256', detail: 'Cada registro muestra su hash criptografico enlazado al anterior' },
-      { icon: FileText, title: 'PDF de cumplimiento', detail: 'Descarga informe verificable con toda la cadena de auditoria' },
-      { icon: Clock, title: '7 anos de historial', detail: 'Registros inmutables disponibles al instante segun normativa' },
-    ],
-  },
-];
+function usePersonaFlows(): PersonaFlow[] {
+  const { t } = useTranslation();
+  return [
+    {
+      id: 'maria',
+      persona: t('landing.personas.maria.name'),
+      role: t('landing.personas.maria.role'),
+      icon: Smartphone,
+      tagline: t('landing.personas.maria.tagline'),
+      steps: [
+        { icon: MapPin, title: t('landing.personas.maria.steps.0.title'), detail: t('landing.personas.maria.steps.0.detail') },
+        { icon: Zap, title: t('landing.personas.maria.steps.1.title'), detail: t('landing.personas.maria.steps.1.detail') },
+        { icon: Timer, title: t('landing.personas.maria.steps.2.title'), detail: t('landing.personas.maria.steps.2.detail') },
+        { icon: Clock, title: t('landing.personas.maria.steps.3.title'), detail: t('landing.personas.maria.steps.3.detail') },
+        { icon: ArrowLeftRight, title: t('landing.personas.maria.steps.4.title'), detail: t('landing.personas.maria.steps.4.detail') },
+      ],
+    },
+    {
+      id: 'carlos',
+      persona: t('landing.personas.carlos.name'),
+      role: t('landing.personas.carlos.role'),
+      icon: Users,
+      tagline: t('landing.personas.carlos.tagline'),
+      steps: [
+        { icon: Users, title: t('landing.personas.carlos.steps.0.title'), detail: t('landing.personas.carlos.steps.0.detail') },
+        { icon: Check, title: t('landing.personas.carlos.steps.1.title'), detail: t('landing.personas.carlos.steps.1.detail') },
+        { icon: Calendar, title: t('landing.personas.carlos.steps.2.title'), detail: t('landing.personas.carlos.steps.2.detail') },
+        { icon: AlertTriangle, title: t('landing.personas.carlos.steps.3.title'), detail: t('landing.personas.carlos.steps.3.detail') },
+        { icon: FileText, title: t('landing.personas.carlos.steps.4.title'), detail: t('landing.personas.carlos.steps.4.detail') },
+      ],
+    },
+    {
+      id: 'laura',
+      persona: t('landing.personas.laura.name'),
+      role: t('landing.personas.laura.role'),
+      icon: BarChart3,
+      tagline: t('landing.personas.laura.tagline'),
+      steps: [
+        { icon: TrendingUp, title: t('landing.personas.laura.steps.0.title'), detail: t('landing.personas.laura.steps.0.detail') },
+        { icon: AlertTriangle, title: t('landing.personas.laura.steps.1.title'), detail: t('landing.personas.laura.steps.1.detail') },
+        { icon: FileText, title: t('landing.personas.laura.steps.2.title'), detail: t('landing.personas.laura.steps.2.detail') },
+        { icon: ShieldCheck, title: t('landing.personas.laura.steps.3.title'), detail: t('landing.personas.laura.steps.3.detail') },
+        { icon: Users, title: t('landing.personas.laura.steps.4.title'), detail: t('landing.personas.laura.steps.4.detail') },
+      ],
+    },
+    {
+      id: 'carmen',
+      persona: t('landing.personas.carmen.name'),
+      role: t('landing.personas.carmen.role'),
+      icon: ShieldCheck,
+      tagline: t('landing.personas.carmen.tagline'),
+      steps: [
+        { icon: Key, title: t('landing.personas.carmen.steps.0.title'), detail: t('landing.personas.carmen.steps.0.detail') },
+        { icon: FileText, title: t('landing.personas.carmen.steps.1.title'), detail: t('landing.personas.carmen.steps.1.detail') },
+        { icon: Shield, title: t('landing.personas.carmen.steps.2.title'), detail: t('landing.personas.carmen.steps.2.detail') },
+        { icon: FileText, title: t('landing.personas.carmen.steps.3.title'), detail: t('landing.personas.carmen.steps.3.detail') },
+        { icon: Clock, title: t('landing.personas.carmen.steps.4.title'), detail: t('landing.personas.carmen.steps.4.detail') },
+      ],
+    },
+  ];
+}
 
 // ============================================================================
 // NAVBAR
@@ -123,7 +126,7 @@ function Navbar(): JSX.Element {
     { href: '#como-funciona', label: t('landing.nav.howItWorks') },
     { href: '#funciones', label: t('landing.nav.features') },
     { href: '#precios', label: t('landing.nav.pricing') },
-    { href: '#faq', label: 'FAQ' },
+    { href: '#faq', label: t('landing.nav.faq') },
   ];
 
   useEffect(() => {
@@ -154,7 +157,7 @@ function Navbar(): JSX.Element {
                 Torre Tempo
               </span>
               <span className="text-[10px] text-zinc-500 leading-none">
-                by LSLT Apps
+                {t('landing.brandSubtitle')}
               </span>
             </div>
           </Link>
@@ -184,7 +187,7 @@ function Navbar(): JSX.Element {
           <button
             onClick={() => setIsOpen(!isOpen)}
             className="md:hidden p-2 text-zinc-600 hover:text-zinc-900 transition-colors"
-            aria-label="Menu"
+            aria-label={t('landing.nav.menu')}
           >
             {isOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
           </button>
@@ -319,8 +322,9 @@ function HeroSection(): JSX.Element {
 
 function PersonaFlowsSection(): JSX.Element {
   const { t } = useTranslation();
+  const personaFlows = usePersonaFlows();
   const [activeIndex, setActiveIndex] = useState(0);
-  const activeFlow = PERSONA_FLOWS[activeIndex]!;
+  const activeFlow = personaFlows[activeIndex]!;
 
   const personaColors: Record<string, { ring: string; bg: string; text: string; icon: string }> = {
     maria: { ring: 'ring-emerald-500', bg: 'bg-emerald-50', text: 'text-emerald-600', icon: 'bg-emerald-50 border-emerald-200' },
@@ -350,7 +354,7 @@ function PersonaFlowsSection(): JSX.Element {
 
         {/* Persona Tabs */}
         <div className="flex flex-wrap justify-center gap-2 sm:gap-3 mb-12">
-          {PERSONA_FLOWS.map((flow, index) => {
+          {personaFlows.map((flow, index) => {
             const isActive = index === activeIndex;
             const tabColors = personaColors[flow.id]!;
             return (
@@ -432,12 +436,12 @@ function FeaturesSection(): JSX.Element {
   const { t } = useTranslation();
 
   const FEATURES = [
-    { icon: Fingerprint, title: '5 Metodos de Fichaje', description: 'Tap movil, NFC badge, codigo QR, PIN numerico y geofencing automatico.', span: 'large' as const, tags: ['Tap movil', 'NFC', 'QR Code', 'PIN', 'Geofencing'] },
-    { icon: WifiOff, title: 'Offline-First PWA', description: 'Funciona sin internet. Fichajes en IndexedDB con sincronizacion automatica al reconectar.', span: 'large' as const, tags: ['IndexedDB', 'Auto-sync', 'PWA nativa'] },
-    { icon: Calendar, title: 'Cuadrante Visual', description: 'Drag-and-drop con validacion de normativa laboral en tiempo real.', span: 'small' as const, tags: ['Drag & drop', 'Validacion ITSS'] },
-    { icon: Shield, title: 'Auditoria SHA-256', description: 'Cada registro genera un hash criptografico enlazado al anterior. Cadena inmutable.', span: 'small' as const, tags: ['Inmutable', 'Hash chain'] },
-    { icon: FileText, title: 'Export a Gestoria', description: 'CSV/XML compatible con A3, Sage y Nominaplus.', span: 'small' as const, tags: ['CSV/XML', 'A3/Sage'] },
-    { icon: QrCode, title: 'API Inspector ITSS', description: 'Token temporal de solo lectura para inspecciones. Sin cuentas, sin complicaciones.', span: 'small' as const, tags: ['Token temporal', 'Solo lectura'] },
+    { icon: Fingerprint, title: t('landing.features.items.clockMethods.title'), description: t('landing.features.items.clockMethods.description'), span: 'large' as const, tags: [t('landing.features.items.clockMethods.tags.tap'), 'NFC', 'QR Code', 'PIN', 'Geofencing'] },
+    { icon: WifiOff, title: t('landing.features.items.offlinePwa.title'), description: t('landing.features.items.offlinePwa.description'), span: 'large' as const, tags: ['IndexedDB', t('landing.features.items.offlinePwa.tags.autoSync'), t('landing.features.items.offlinePwa.tags.nativePwa')] },
+    { icon: Calendar, title: t('landing.features.items.visualRoster.title'), description: t('landing.features.items.visualRoster.description'), span: 'small' as const, tags: ['Drag & drop', t('landing.features.items.visualRoster.tags.itssValidation')] },
+    { icon: Shield, title: t('landing.features.items.audit.title'), description: t('landing.features.items.audit.description'), span: 'small' as const, tags: [t('landing.features.items.audit.tags.immutable'), t('landing.features.items.audit.tags.hashChain')] },
+    { icon: FileText, title: t('landing.features.items.export.title'), description: t('landing.features.items.export.description'), span: 'small' as const, tags: ['CSV/XML', 'A3/Sage'] },
+    { icon: QrCode, title: t('landing.features.items.inspector.title'), description: t('landing.features.items.inspector.description'), span: 'small' as const, tags: [t('landing.features.items.inspector.tags.temporaryToken'), t('landing.features.items.inspector.tags.readOnly')] },
   ];
 
   return (
@@ -498,9 +502,9 @@ function PricingSection(): JSX.Element {
   }>;
 
   const tiers = Array.isArray(pricingData) ? pricingData : [
-    { name: 'Basico', price: '2,50', annualPrice: '2,00', unit: '/usuario/mes', description: 'Fichaje y cumplimiento para equipos pequenos.', features: ['Control de presencia completo', 'Cumplimiento automatico ITSS', 'App movil PWA offline', 'Soporte por email', 'Hasta 15 empleados'], cta: 'Empezar Gratis', ctaLink: '/auth/signup' },
-    { name: 'Profesional', price: '4,50', annualPrice: '3,60', unit: '/usuario/mes', description: 'Planificacion, nominas y multi-sede.', features: ['Todo en Basico', 'Planificador visual de turnos', 'Exportacion a gestoria', 'API Inspector ITSS', 'Soporte prioritario', 'Empleados ilimitados'], cta: 'Probar 14 dias gratis', ctaLink: '/auth/signup' },
-    { name: 'Enterprise', price: 'A medida', annualPrice: 'A medida', unit: '', description: 'SLA dedicado para grandes organizaciones.', features: ['Todo en Profesional', 'SSO y provisioning', 'SLA 99.9% garantizado', 'Manager de cuenta dedicado', 'Formacion personalizada', 'Integraciones a medida'], cta: 'Contactar Ventas', ctaLink: 'mailto:ventas@lsltgroup.es' },
+    { name: t('landing.pricing.fallback.basic.name'), price: '2,50', annualPrice: '2,00', unit: t('landing.pricing.fallback.basic.unit'), description: t('landing.pricing.fallback.basic.description'), features: [t('landing.pricing.fallback.basic.features.0'), t('landing.pricing.fallback.basic.features.1'), t('landing.pricing.fallback.basic.features.2'), t('landing.pricing.fallback.basic.features.3'), t('landing.pricing.fallback.basic.features.4')], cta: t('landing.pricing.fallback.basic.cta'), ctaLink: '/auth/signup' },
+    { name: t('landing.pricing.fallback.professional.name'), price: '4,50', annualPrice: '3,60', unit: t('landing.pricing.fallback.professional.unit'), description: t('landing.pricing.fallback.professional.description'), features: [t('landing.pricing.fallback.professional.features.0'), t('landing.pricing.fallback.professional.features.1'), t('landing.pricing.fallback.professional.features.2'), t('landing.pricing.fallback.professional.features.3'), t('landing.pricing.fallback.professional.features.4'), t('landing.pricing.fallback.professional.features.5')], cta: t('landing.pricing.fallback.professional.cta'), ctaLink: '/auth/signup' },
+    { name: t('landing.pricing.fallback.enterprise.name'), price: t('landing.pricing.fallback.enterprise.price'), annualPrice: t('landing.pricing.fallback.enterprise.price'), unit: '', description: t('landing.pricing.fallback.enterprise.description'), features: [t('landing.pricing.fallback.enterprise.features.0'), t('landing.pricing.fallback.enterprise.features.1'), t('landing.pricing.fallback.enterprise.features.2'), t('landing.pricing.fallback.enterprise.features.3'), t('landing.pricing.fallback.enterprise.features.4'), t('landing.pricing.fallback.enterprise.features.5')], cta: t('landing.pricing.fallback.enterprise.cta'), ctaLink: 'mailto:ventas@lsltgroup.es' },
   ];
 
   return (
@@ -539,7 +543,7 @@ function PricingSection(): JSX.Element {
           </span>
           {isAnnual && (
             <span className="text-xs px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 font-medium">
-              -20%
+              {t('landing.pricing.discount')}
             </span>
           )}
         </div>
@@ -548,7 +552,7 @@ function PricingSection(): JSX.Element {
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5 lg:gap-6 max-w-5xl mx-auto">
           {tiers.map((tier, index) => {
             const displayPrice = isAnnual ? tier.annualPrice : tier.price;
-            const isCustom = tier.price === 'A medida';
+            const isCustom = !tier.unit;
             const highlighted = index === 1;
 
             return (
@@ -634,7 +638,7 @@ function FAQSection(): JSX.Element {
       <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-12">
           <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary-50 text-primary-600 text-sm font-medium mb-4">
-            FAQ
+            {t('landing.nav.faq')}
           </span>
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-zinc-900 mb-4 tracking-tight">
             {t('landing.faq.title')}
@@ -726,7 +730,7 @@ function Footer(): JSX.Element {
         { label: t('landing.nav.features'), href: '#funciones' },
         { label: t('landing.nav.pricing'), href: '#precios' },
         { label: t('landing.nav.howItWorks'), href: '#como-funciona' },
-        { label: 'FAQ', href: '#faq' },
+        { label: t('landing.nav.faq'), href: '#faq' },
       ],
     },
     {
@@ -742,7 +746,7 @@ function Footer(): JSX.Element {
       links: [
         { label: t('landing.footer.privacy'), href: '#' },
         { label: t('landing.footer.terms'), href: '#' },
-        { label: 'RGPD', href: '#' },
+        { label: t('landing.footer.gdpr'), href: '#' },
       ],
     },
   ];
@@ -762,7 +766,7 @@ function Footer(): JSX.Element {
                   Torre Tempo
                 </span>
                 <span className="text-[10px] text-zinc-500 leading-none">
-                  by LSLT Apps
+                  {t('landing.brandSubtitle')}
                 </span>
               </div>
             </Link>
@@ -801,7 +805,7 @@ function Footer(): JSX.Element {
         {/* Bottom bar */}
         <div className="mt-12 pt-8 border-t border-zinc-200 flex flex-col sm:flex-row items-center justify-between gap-4">
           <p className="text-xs text-zinc-400">
-            &copy; {new Date().getFullYear()} LSLT Apps — Una division de Lakeside La Torre (Murcia) Group SL
+            &copy; {new Date().getFullYear()} {t('landing.footer.copyright')}
           </p>
           <div className="flex items-center gap-4">
             <LanguageSwitcher />

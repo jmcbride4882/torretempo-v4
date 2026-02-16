@@ -73,7 +73,7 @@ export default function FeatureFlagsPage() {
         setFlags(response.flags || []);
       } catch (error) {
         console.error('Error fetching feature flags:', error);
-        toast.error('Failed to load feature flags');
+        toast.error(t('admin.featureFlags.failedToLoad'));
       } finally {
         setIsLoading(false);
         setIsRefreshing(false);
@@ -89,7 +89,7 @@ export default function FeatureFlagsPage() {
   // Handlers
   const handleCreate = async () => {
     if (!form.flag_key.trim()) {
-      toast.error('Flag key is required');
+      toast.error(t('admin.featureFlags.flagKeyRequired'));
       return;
     }
 
@@ -100,7 +100,7 @@ export default function FeatureFlagsPage() {
         description: form.description.trim() || undefined,
         enabled_globally: form.enabled_globally,
       });
-      toast.success('Feature flag created');
+      toast.success(t('admin.featureFlags.flagCreated'));
       setCreateModal(false);
       setForm({
         flag_key: '',
@@ -112,7 +112,7 @@ export default function FeatureFlagsPage() {
       loadFlags();
     } catch (error) {
       console.error('Error creating flag:', error);
-      toast.error('Failed to create feature flag');
+      toast.error(t('admin.featureFlags.failedToCreate'));
     } finally {
       setIsActionLoading(false);
     }
@@ -138,12 +138,12 @@ export default function FeatureFlagsPage() {
         enabled_for_orgs: enabledOrgs.length > 0 ? enabledOrgs : undefined,
         disabled_for_orgs: disabledOrgs.length > 0 ? disabledOrgs : undefined,
       });
-      toast.success('Feature flag updated');
+      toast.success(t('admin.featureFlags.flagUpdated'));
       setEditModal(null);
       loadFlags();
     } catch (error) {
       console.error('Error updating flag:', error);
-      toast.error('Failed to update feature flag');
+      toast.error(t('admin.featureFlags.failedToUpdate'));
     } finally {
       setIsActionLoading(false);
     }
@@ -155,12 +155,12 @@ export default function FeatureFlagsPage() {
     setIsActionLoading(true);
     try {
       await deleteFeatureFlag(deleteModal.id);
-      toast.success('Feature flag deleted');
+      toast.success(t('admin.featureFlags.flagDeleted'));
       setDeleteModal(null);
       loadFlags();
     } catch (error) {
       console.error('Error deleting flag:', error);
-      toast.error('Failed to delete feature flag');
+      toast.error(t('admin.featureFlags.failedToDelete'));
     } finally {
       setIsActionLoading(false);
     }
@@ -173,13 +173,13 @@ export default function FeatureFlagsPage() {
       });
       toast.success(
         flag.enabled_globally
-          ? 'Feature disabled globally'
-          : 'Feature enabled globally'
+          ? t('admin.featureFlags.disabledGlobally')
+          : t('admin.featureFlags.enabledGlobally')
       );
       loadFlags();
     } catch (error) {
       console.error('Error toggling flag:', error);
-      toast.error('Failed to toggle feature');
+      toast.error(t('admin.featureFlags.failedToToggle'));
     }
   };
 
@@ -239,7 +239,7 @@ export default function FeatureFlagsPage() {
               className="bg-amber-600 hover:bg-amber-500"
             >
               <Plus className="w-4 h-4 mr-2" />
-              Create Flag
+              {t('admin.featureFlags.createFlag')}
             </Button>
           </div>
         </div>
@@ -248,7 +248,7 @@ export default function FeatureFlagsPage() {
         <div className="relative">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-zinc-400" />
           <Input
-            placeholder="Search by flag key or description..."
+            placeholder={t('admin.featureFlags.searchPlaceholder')}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="pl-10 bg-white border-zinc-200 text-zinc-900 placeholder:text-zinc-400"
@@ -267,7 +267,7 @@ export default function FeatureFlagsPage() {
           <div className="text-center py-12">
             <Flag className="w-12 h-12 text-zinc-300 mx-auto mb-3" />
             <p className="text-zinc-500">
-              {searchQuery ? 'No flags match your search' : 'No feature flags yet'}
+              {searchQuery ? t('admin.featureFlags.noFlagsMatch') : t('admin.featureFlags.noFlagsYet')}
             </p>
             {!searchQuery && (
               <Button
@@ -276,7 +276,7 @@ export default function FeatureFlagsPage() {
                 className="mt-4 bg-amber-600 hover:bg-amber-500"
               >
                 <Plus className="w-4 h-4 mr-2" />
-                Create First Flag
+                {t('admin.featureFlags.createFirstFlag')}
               </Button>
             )}
           </div>
@@ -315,7 +315,7 @@ export default function FeatureFlagsPage() {
                           <div className="flex items-center gap-1">
                             <Building2 className="w-3 h-3" />
                             <span>
-                              Enabled for {flag.enabled_for_orgs.length} org(s)
+                              {t('admin.featureFlags.enabledForOrgs', { count: flag.enabled_for_orgs.length })}
                             </span>
                           </div>
                         )}
@@ -324,13 +324,12 @@ export default function FeatureFlagsPage() {
                           <div className="flex items-center gap-1">
                             <Building2 className="w-3 h-3" />
                             <span>
-                              Disabled for {flag.disabled_for_orgs.length} org(s)
+                              {t('admin.featureFlags.disabledForOrgs', { count: flag.disabled_for_orgs.length })}
                             </span>
                           </div>
                         )}
                       <span>
-                        Created{' '}
-                        {new Date(flag.created_at).toLocaleDateString()}
+                        {t('admin.featureFlags.createdOn', { date: new Date(flag.created_at).toLocaleDateString() })}
                       </span>
                     </div>
                   </div>
@@ -351,7 +350,7 @@ export default function FeatureFlagsPage() {
                       ) : (
                         <ToggleLeft className="w-4 h-4 mr-2" />
                       )}
-                      Toggle
+                      {t('admin.featureFlags.toggle')}
                     </Button>
                     <Button
                       variant="outline"
@@ -384,19 +383,19 @@ export default function FeatureFlagsPage() {
           <DialogContent className="bg-white border-zinc-200">
             <DialogHeader>
               <DialogTitle className="text-zinc-900">
-                Create Feature Flag
+                {t('admin.featureFlags.createFeatureFlag')}
               </DialogTitle>
               <DialogDescription className="text-zinc-500">
-                Create a new feature flag for per-organization toggling
+                {t('admin.featureFlags.createDescription')}
               </DialogDescription>
             </DialogHeader>
             <div className="space-y-4 py-4">
               <div>
                 <label className="text-sm font-medium text-zinc-700 mb-2 block">
-                  Flag Key *
+                  {t('admin.featureFlags.flagKeyLabel')} *
                 </label>
                 <Input
-                  placeholder="e.g., enable_advanced_reports"
+                  placeholder={t('admin.featureFlags.flagKeyPlaceholder')}
                   value={form.flag_key}
                   onChange={(e) =>
                     setForm({ ...form, flag_key: e.target.value })
@@ -404,15 +403,15 @@ export default function FeatureFlagsPage() {
                   className="bg-zinc-50 border-zinc-200 text-zinc-900 placeholder:text-zinc-400"
                 />
                 <p className="text-xs text-zinc-400 mt-1">
-                  Use snake_case for flag keys
+                  {t('admin.featureFlags.flagKeyHint')}
                 </p>
               </div>
               <div>
                 <label className="text-sm font-medium text-zinc-700 mb-2 block">
-                  Description
+                  {t('admin.featureFlags.descriptionLabel')}
                 </label>
                 <Input
-                  placeholder="Brief description of the feature"
+                  placeholder={t('admin.featureFlags.descriptionPlaceholder')}
                   value={form.description}
                   onChange={(e) =>
                     setForm({ ...form, description: e.target.value })
@@ -445,14 +444,14 @@ export default function FeatureFlagsPage() {
                 disabled={isActionLoading}
                 className="border-zinc-200 hover:bg-zinc-100"
               >
-                Cancel
+                {t('common.cancel')}
               </Button>
               <Button
                 onClick={handleCreate}
                 disabled={isActionLoading || !form.flag_key.trim()}
                 className="bg-amber-600 hover:bg-amber-500"
               >
-                {isActionLoading ? 'Creating...' : t('common.save')}
+                {isActionLoading ? t('admin.featureFlags.creating') : t('common.save')}
               </Button>
             </DialogFooter>
           </DialogContent>
@@ -465,16 +464,16 @@ export default function FeatureFlagsPage() {
           <DialogContent className="bg-white border-zinc-200 max-w-2xl">
             <DialogHeader>
               <DialogTitle className="text-zinc-900">
-                Edit Feature Flag
+                {t('admin.featureFlags.editFeatureFlag')}
               </DialogTitle>
               <DialogDescription className="text-zinc-500">
-                Update flag settings and per-organization overrides
+                {t('admin.featureFlags.editDescription')}
               </DialogDescription>
             </DialogHeader>
             <div className="space-y-4 py-4">
               <div>
                 <label className="text-sm font-medium text-zinc-700 mb-2 block">
-                  Flag Key (read-only)
+                  {t('admin.featureFlags.flagKeyReadOnly')}
                 </label>
                 <Input
                   value={form.flag_key}
@@ -484,10 +483,10 @@ export default function FeatureFlagsPage() {
               </div>
               <div>
                 <label className="text-sm font-medium text-zinc-700 mb-2 block">
-                  Description
+                  {t('admin.featureFlags.descriptionLabel')}
                 </label>
                 <Input
-                  placeholder="Brief description of the feature"
+                  placeholder={t('admin.featureFlags.descriptionPlaceholder')}
                   value={form.description}
                   onChange={(e) =>
                     setForm({ ...form, description: e.target.value })
@@ -514,10 +513,10 @@ export default function FeatureFlagsPage() {
               </div>
               <div>
                 <label className="text-sm font-medium text-zinc-700 mb-2 block">
-                  Enabled for Organizations (comma-separated IDs)
+                  {t('admin.featureFlags.enabledForOrgsLabel')}
                 </label>
                 <Input
-                  placeholder="org-uuid-1, org-uuid-2"
+                  placeholder={t('admin.featureFlags.orgIdsPlaceholder')}
                   value={form.enabled_for_orgs}
                   onChange={(e) =>
                     setForm({ ...form, enabled_for_orgs: e.target.value })
@@ -525,15 +524,15 @@ export default function FeatureFlagsPage() {
                   className="bg-zinc-50 border-zinc-200 text-zinc-900 placeholder:text-zinc-400"
                 />
                 <p className="text-xs text-zinc-400 mt-1">
-                  Override global setting for specific organizations
+                  {t('admin.featureFlags.enabledOrgsHint')}
                 </p>
               </div>
               <div>
                 <label className="text-sm font-medium text-zinc-700 mb-2 block">
-                  Disabled for Organizations (comma-separated IDs)
+                  {t('admin.featureFlags.disabledForOrgsLabel')}
                 </label>
                 <Input
-                  placeholder="org-uuid-3, org-uuid-4"
+                  placeholder={t('admin.featureFlags.orgIdsPlaceholder')}
                   value={form.disabled_for_orgs}
                   onChange={(e) =>
                     setForm({ ...form, disabled_for_orgs: e.target.value })
@@ -541,7 +540,7 @@ export default function FeatureFlagsPage() {
                   className="bg-zinc-50 border-zinc-200 text-zinc-900 placeholder:text-zinc-400"
                 />
                 <p className="text-xs text-zinc-400 mt-1">
-                  Disable for specific organizations even if globally enabled
+                  {t('admin.featureFlags.disabledOrgsHint')}
                 </p>
               </div>
             </div>
@@ -552,14 +551,14 @@ export default function FeatureFlagsPage() {
                 disabled={isActionLoading}
                 className="border-zinc-200 hover:bg-zinc-100"
               >
-                Cancel
+                {t('common.cancel')}
               </Button>
               <Button
                 onClick={handleUpdate}
                 disabled={isActionLoading}
                 className="bg-amber-600 hover:bg-amber-500"
               >
-                {isActionLoading ? 'Updating...' : t('common.save')}
+                {isActionLoading ? t('admin.featureFlags.updating') : t('common.save')}
               </Button>
             </DialogFooter>
           </DialogContent>
@@ -573,14 +572,10 @@ export default function FeatureFlagsPage() {
             <DialogHeader>
               <DialogTitle className="text-zinc-900 flex items-center gap-2">
                 <Trash2 className="w-5 h-5 text-red-600" />
-                Delete Feature Flag
+                {t('admin.featureFlags.deleteFeatureFlag')}
               </DialogTitle>
               <DialogDescription className="text-zinc-500">
-                Are you sure you want to delete{' '}
-                <code className="text-zinc-900 font-mono">
-                  {deleteModal.flag_key}
-                </code>
-                ? This action cannot be undone.
+                {t('admin.featureFlags.deleteConfirmation', { key: deleteModal.flag_key })}
               </DialogDescription>
             </DialogHeader>
             <DialogFooter>
@@ -590,14 +585,14 @@ export default function FeatureFlagsPage() {
                 disabled={isActionLoading}
                 className="border-zinc-200 hover:bg-zinc-100"
               >
-                Cancel
+                {t('common.cancel')}
               </Button>
               <Button
                 onClick={handleDelete}
                 disabled={isActionLoading}
                 className="bg-red-600 hover:bg-red-700"
               >
-                {isActionLoading ? 'Deleting...' : t('common.delete')}
+                {isActionLoading ? t('admin.featureFlags.deleting') : t('common.delete')}
               </Button>
             </DialogFooter>
           </DialogContent>

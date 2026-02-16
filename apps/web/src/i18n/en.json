@@ -149,7 +149,8 @@
     "published": "Published",
     "unpublished": "Unpublished",
     "overridden": "Overridden",
-    "generateNew": "Generate new"
+    "generateNew": "Generate new",
+    "done": "Done"
   },
   "nav": {
     "main": "Main",
@@ -210,7 +211,15 @@
     "termsLink": "terms of service",
     "privacyLink": "privacy policy",
     "continueWith": "Continue with",
-    "orContinueWith": "Or continue with"
+    "orContinueWith": "Or continue with",
+    "accountCreated": "Account created successfully",
+    "emailPlaceholder": "you@example.com",
+    "fullName": "Full name",
+    "getStarted": "Get started",
+    "minChars": "Minimum {{count}} characters",
+    "namePlaceholder": "John Smith",
+    "subtitle": "Your team is waiting",
+    "signInContinue": "Sign in to continue"
   },
   "onboarding": {
     "selectOrg": "Select organization",
@@ -237,7 +246,13 @@
   "landing": {
     "heroTitle": "Clock in, in 2 seconds",
     "heroSubtitle": "Digital time tracking for hospitality, retail and services. Automatic compliance with Spanish labor law.",
-    "cta": "Start for free",
+    "cta": {
+      "startFree": "Start for free",
+      "seeDemo": "See demo",
+      "startNow": "Start now",
+      "readyTitle": "Ready to get started?",
+      "readySubtitle": "14-day free trial. No credit card required."
+    },
     "ctaSecondary": "View demo",
     "login": "Sign in",
     "valueSpeed": "Fast",
@@ -261,7 +276,59 @@
     "step2Desc": "Your employees clock in via QR, geofence or PIN from their phone.",
     "step3Title": "Comply",
     "step3Desc": "The system automatically verifies hours, breaks and legal limits.",
-    "pricing": "Pricing",
+    "pricing": {
+      "title": "Pricing",
+      "subtitle": "Simple and transparent. No surprises.",
+      "monthly": "Monthly",
+      "annual": "Annual",
+      "discount": "2 months free",
+      "badge": "Most popular",
+      "tiers": "pricing tiers",
+      "trialNote": "14-day free trial. No credit card required.",
+      "fallback": {
+        "basic": {
+          "name": "Basic",
+          "description": "For small teams",
+          "unit": "/user/month",
+          "cta": "Start for free",
+          "features": [
+            "QR and manual clock-in",
+            "Basic schedules",
+            "Automatic compliance",
+            "Mobile app",
+            "Up to 15 employees"
+          ]
+        },
+        "professional": {
+          "name": "Professional",
+          "description": "For growing businesses",
+          "unit": "/user/month",
+          "cta": "Start for free",
+          "features": [
+            "Everything in Basic",
+            "Geofence and PIN",
+            "Shift swaps",
+            "Reports and export",
+            "Up to 100 employees",
+            "Priority support"
+          ]
+        },
+        "enterprise": {
+          "name": "Enterprise",
+          "description": "For large organizations",
+          "price": "Contact us",
+          "cta": "Contact sales",
+          "features": [
+            "Everything in Professional",
+            "Multi-location",
+            "ITSS inspector API",
+            "Payroll integration",
+            "Unlimited employees",
+            "Dedicated SLA"
+          ]
+        }
+      }
+    },
     "pricingSubtitle": "Simple and transparent. No surprises.",
     "planBasic": "Basic",
     "planBasicPrice": "2.50",
@@ -298,7 +365,12 @@
     "planRecommended": "Recommended",
     "planCta": "Start for free",
     "planContact": "Contact sales",
-    "faq": "Frequently asked questions",
+    "faq": {
+      "title": "Frequently asked questions",
+      "moreQuestions": "More questions?",
+      "contactSupport": "Contact support",
+      "items": "faqItems_legacy"
+    },
     "faqItems": [
       {
         "q": "Is digital time tracking mandatory?",
@@ -348,7 +420,192 @@
       "about": "About us",
       "contact": "Contact",
       "blog": "Blog",
-      "copyright": "LSLT Group. All rights reserved."
+      "copyright": "LSLT Group. All rights reserved.",
+      "tagline": "Digital time tracking for Spanish businesses",
+      "aboutUs": "About us",
+      "support": "Support",
+      "gdpr": "Data protection",
+      "madeIn": "Made in Spain"
+    },
+    "brandSubtitle": "Digital time tracking for Spanish businesses",
+    "hero": {
+      "badge": "Auto-compliant with Spanish labor law",
+      "title1": "Clock in, in",
+      "title2": "2 seconds",
+      "subtitle": "Digital time tracking for hospitality, retail and services. Automatic compliance with Spanish labor law.",
+      "trustSignals": "Used by 500+ Spanish businesses"
+    },
+    "nav": {
+      "features": "Features",
+      "howItWorks": "How it works",
+      "pricing": "Pricing",
+      "faq": "FAQ",
+      "menu": "Menu"
+    },
+    "metrics": {
+      "clockIn": "Clock in 2s",
+      "audit": "ITSS audit ready",
+      "payroll": "Payroll export"
+    },
+    "features": {
+      "title": "Everything you need",
+      "subtitle": "Complete features for time management",
+      "items": {
+        "clockMethods": {
+          "title": "Multiple clock-in methods",
+          "description": "QR, geofence, PIN or manual. Clock in your way.",
+          "tags": {
+            "tap": "1 tap"
+          }
+        },
+        "visualRoster": {
+          "title": "Visual roster",
+          "description": "Drag and drop to create schedules in minutes.",
+          "tags": {
+            "itssValidation": "ITSS validation"
+          }
+        },
+        "audit": {
+          "title": "Immutable audit trail",
+          "description": "Every clock-in verified with SHA-256.",
+          "tags": {
+            "hashChain": "Hash chain",
+            "immutable": "Immutable"
+          }
+        },
+        "inspector": {
+          "title": "Inspector access",
+          "description": "Read-only tokens for ITSS inspectors.",
+          "tags": {
+            "readOnly": "Read-only",
+            "temporaryToken": "Temporary token"
+          }
+        },
+        "offlinePwa": {
+          "title": "Works offline",
+          "description": "PWA with automatic sync.",
+          "tags": {
+            "nativePwa": "Native PWA",
+            "autoSync": "Auto sync"
+          }
+        },
+        "export": {
+          "title": "Payroll export",
+          "description": "CSV compatible with Sage, A3 and Meta4."
+        }
+      }
+    },
+    "personas": {
+      "title": "How it works for you",
+      "subtitle": "A typical day with Torre Tempo",
+      "maria": {
+        "name": "Maria",
+        "role": "Waitress",
+        "tagline": "Clock in in 2 seconds",
+        "steps": [
+          {
+            "title": "Arrives at work",
+            "detail": "Opens the app and clocks in with one tap"
+          },
+          {
+            "title": "Views her shifts",
+            "detail": "Checks her schedule for the week"
+          },
+          {
+            "title": "Starts break",
+            "detail": "15 min automatically recorded"
+          },
+          {
+            "title": "Returns from break",
+            "detail": "Continues clocking"
+          },
+          {
+            "title": "Ends shift",
+            "detail": "Day summary generated"
+          }
+        ]
+      },
+      "carlos": {
+        "name": "Carlos",
+        "role": "Restaurant manager",
+        "tagline": "Real-time management",
+        "steps": [
+          {
+            "title": "Reviews attendance",
+            "detail": "Live dashboard of who has clocked in"
+          },
+          {
+            "title": "Approves requests",
+            "detail": "Swaps and corrections with one tap"
+          },
+          {
+            "title": "Creates schedules",
+            "detail": "Drag & drop for next week"
+          },
+          {
+            "title": "Reviews compliance",
+            "detail": "Automatic labor law warnings"
+          },
+          {
+            "title": "Publishes schedule",
+            "detail": "Automatic notification to the team"
+          }
+        ]
+      },
+      "laura": {
+        "name": "Laura",
+        "role": "HR",
+        "tagline": "Compliance and payroll",
+        "steps": [
+          {
+            "title": "Reviews reports",
+            "detail": "Monthly summaries by employee"
+          },
+          {
+            "title": "Exports payroll",
+            "detail": "CSV compatible with payroll provider"
+          },
+          {
+            "title": "Verifies compliance",
+            "detail": "100% of staff within legal limits"
+          },
+          {
+            "title": "Manages contracts",
+            "detail": "Onboarding, offboarding and contract types"
+          },
+          {
+            "title": "Prepares audit",
+            "detail": "Data ready for ITSS inspection"
+          }
+        ]
+      },
+      "carmen": {
+        "name": "Carmen",
+        "role": "ITSS Inspector",
+        "tagline": "Immediate verification",
+        "steps": [
+          {
+            "title": "Receives token",
+            "detail": "Temporary read-only access"
+          },
+          {
+            "title": "Accesses records",
+            "detail": "Secure API with verified data"
+          },
+          {
+            "title": "Verifies hashes",
+            "detail": "Every record with SHA-256"
+          },
+          {
+            "title": "Checks compliance",
+            "detail": "Hours, breaks and legal limits"
+          },
+          {
+            "title": "Generates report",
+            "detail": "Exportable data for the file"
+          }
+        ]
+      }
     }
   },
   "dashboard": {
@@ -520,6 +777,14 @@
     "complianceIssues": "Compliance Issues:",
     "openShift": "Open shift",
     "breakLabel": "break",
+    "openShifts": {
+      "refreshed": "Open shifts refreshed",
+      "fetchError": "Failed to load open shifts",
+      "cannotClaim": "Cannot claim shift",
+      "claimError": "Failed to claim shift",
+      "claimSuccess": "Shift claimed successfully!",
+      "break": "break"
+    },
     "toasts": {
       "rosterRefreshed": "Roster refreshed",
       "loadShiftsFailed": "Failed to load shifts",
@@ -717,7 +982,7 @@
     "invitationSentDesc": "They will receive an email with instructions to join.",
     "invitationEmailSent": "Invitation email sent successfully",
     "emailAddress": "Email Address",
-    "emailPlaceholder": "colleague@example.com",
+    "emailPlaceholder": "employee@example.com",
     "roleDescription": "Members can view schedules and clock in/out. Admins can manage team and settings. Owners have full access.",
     "sendInvitation": "Send Invitation",
     "sending": "Sending...",
@@ -1246,7 +1511,24 @@
     "updating": "Updating...",
     "creating": "Creating...",
     "updateButton": "Update Template",
-    "createButton": "Create Template"
+    "createButton": "Create Template",
+    "createTemplate": "Create Template",
+    "editTemplate": "Edit Template",
+    "namePlaceholder": "e.g., Morning Shift",
+    "break": "Break",
+    "role": "Role"
+  },
+  "openShifts": {
+    "title": "Open Shifts",
+    "subtitle": "Available shifts to claim",
+    "loading": "Loading open shifts...",
+    "refresh": "Refresh",
+    "available": "{{count}} shift(s) available",
+    "shifts": "shift(s)",
+    "noShifts": "No open shifts",
+    "noShiftsDesc": "There are no shifts available to claim at the moment.",
+    "claimShift": "Claim Shift",
+    "claiming": "Claiming..."
   },
   "admin": {
     "panel": "Admin Panel",
@@ -1407,7 +1689,32 @@
       "active": "Active",
       "cancelled": "Cancelled",
       "pastDue": "Past due",
-      "trialing": "Trialing"
+      "trialing": "Trialing",
+      "subtitle": "Platform subscription management",
+      "freeAndPaidSummary": "{{free}} free, {{paid}} paid",
+      "customerIdPlaceholder": "cus_...",
+      "amountPlaceholder": "e.g., 5000",
+      "invoiceDescriptionPlaceholder": "e.g., Monthly service",
+      "creditDescriptionPlaceholder": "e.g., Credit for error",
+      "paymentIntentIdPlaceholder": "pi_...",
+      "selectReasonPlaceholder": "Select a reason",
+      "invoiceCreated": "Invoice created successfully",
+      "refundProcessed": "Refund processed successfully",
+      "creditApplied": "Credit applied successfully",
+      "failedToLoad": "Failed to load subscriptions",
+      "unexpectedError": "Unexpected error",
+      "validation": {
+        "customerIdRequired": "Customer ID is required",
+        "customerIdPrefix": "ID must start with cus_",
+        "amountRequired": "Amount is required",
+        "mustBePositive": "Must be a positive number",
+        "wholeCents": "Must be a whole number (cents)",
+        "descriptionRequired": "Description is required",
+        "minTenChars": "Minimum 10 characters",
+        "paymentIntentIdRequired": "Payment intent ID is required",
+        "paymentIntentIdPrefix": "ID must start with pi_",
+        "reasonRequired": "Reason is required"
+      }
     },
     "plans": {
       "title": "Plans",
@@ -1420,13 +1727,107 @@
       "interval": "Billing Interval",
       "monthly": "Monthly",
       "yearly": "Yearly",
-      "features": "Features"
+      "features": "Features",
+      "subtitle": "Manage platform subscription plans",
+      "createPlanDescription": "Create a new subscription plan.",
+      "editPlanDescription": "Update the plan details.",
+      "displayName": "Plan name",
+      "displayNamePlaceholder": "e.g., Professional",
+      "planCode": "Plan code",
+      "planCodePlaceholder": "e.g., professional",
+      "planCodeHint": "Unique lowercase identifier",
+      "descriptionLabel": "Description",
+      "descriptionPlaceholder": "Describe the plan features...",
+      "priceCents": "Price (cents)",
+      "pricePlaceholder": "e.g., 450",
+      "currency": "Currency",
+      "billingPeriod": "Billing period",
+      "mo": "/mo",
+      "year": "/yr",
+      "employeeLimit": "Employee limit",
+      "employeeLimitPlaceholder": "e.g., 100",
+      "unlimitedEmployees": "Unlimited employees",
+      "upToEmployees": "Up to {{count}} employees",
+      "includedModules": "Included modules",
+      "selectPlaceholder": "Select...",
+      "active": "Active",
+      "inactive": "Inactive",
+      "activePlans": "Active plans",
+      "inactivePlans": "Inactive plans",
+      "planIsActive": "Plan is active",
+      "deactivate": "Deactivate",
+      "deactivatePlan": "Deactivate Plan",
+      "deactivateConfirmation": "Are you sure you want to deactivate this plan? Current subscribers will keep their plan.",
+      "planDeactivated": "Plan deactivated successfully",
+      "reactivate": "Reactivate",
+      "reactivatePlan": "Reactivate Plan",
+      "reactivateConfirmation": "Are you sure you want to reactivate this plan?",
+      "planReactivated": "Plan reactivated successfully",
+      "activate": "Activate",
+      "planCreated": "Plan created successfully",
+      "planUpdated": "Plan updated successfully",
+      "failedToLoad": "Failed to load plans",
+      "failedToUpdateStatus": "Failed to update plan status",
+      "unexpectedError": "Unexpected error",
+      "createFirstPlan": "Create First Plan",
+      "validation": {
+        "nameRequired": "Name is required",
+        "nameMinLength": "Name must be at least 2 characters",
+        "codeRequired": "Code is required",
+        "codeFormat": "Only lowercase letters, numbers and hyphens",
+        "priceRequired": "Price is required",
+        "priceMinValue": "Price must be greater than 0",
+        "priceWholeNumber": "Price must be a whole number (cents)",
+        "currencyRequired": "Currency is required",
+        "billingPeriodRequired": "Billing period is required",
+        "employeeLimitRequired": "Employee limit is required",
+        "mustBeGreaterThanZero": "Must be greater than 0",
+        "mustBeWholeNumber": "Must be a whole number"
+      }
     },
     "billing": {
       "title": "Billing",
       "revenue": "Revenue",
       "mrrChart": "MRR Chart",
-      "churnMetrics": "Churn metrics"
+      "churnMetrics": "Churn metrics",
+      "subtitle": "Platform billing operations",
+      "allFieldsRequired": "All fields are required",
+      "amountEur": "Amount (EUR)",
+      "amountEurOptional": "Amount in EUR (optional)",
+      "amountPlaceholder": "e.g., 50.00",
+      "applyCredit": "Apply Credit",
+      "applyCreditDescription": "Add account credit",
+      "applyCreditModalDescription": "Add credit to a customer account.",
+      "createInvoice": "Create Invoice",
+      "createInvoiceDescription": "Generate manual invoice",
+      "createInvoiceModalDescription": "Create a manual invoice for a customer.",
+      "creditApplied": "Credit applied successfully",
+      "creditDescriptionPlaceholder": "e.g., Credit for billing error",
+      "description": "Description",
+      "duplicateCharge": "Duplicate charge",
+      "failedToApplyCredit": "Failed to apply credit",
+      "failedToCreateInvoice": "Failed to create invoice",
+      "failedToProcessRefund": "Failed to process refund",
+      "fraudulent": "Fraudulent",
+      "fullRefund": "Full refund",
+      "fullRefundLabel": "Full refund",
+      "invoiceCreated": "Invoice created successfully",
+      "invoiceDescriptionPlaceholder": "e.g., Monthly service invoice",
+      "noActionsThisSession": "No recent actions this session",
+      "noReasonProvided": "No reason provided",
+      "paymentIntentAndReasonRequired": "Payment ID and reason are required",
+      "paymentIntentId": "Payment Intent ID",
+      "paymentIntentIdPlaceholder": "pi_...",
+      "processRefund": "Process Refund",
+      "processRefundDescription": "Refund a payment",
+      "processRefundModalDescription": "Process a refund for a payment.",
+      "reason": "Reason",
+      "recentActions": "Recent Actions",
+      "refundProcessed": "Refund processed successfully",
+      "requestedByCustomer": "Requested by customer",
+      "selectReasonPlaceholder": "Select a reason",
+      "stripeCustomerId": "Stripe Customer ID",
+      "stripeCustomerIdPlaceholder": "cus_..."
     },
     "system": {
       "title": "System",
@@ -1440,7 +1841,46 @@
       "health": "System Health",
       "cpuUsage": "CPU Usage",
       "memoryUsage": "Memory Usage",
-      "diskUsage": "Disk Usage"
+      "diskUsage": "Disk Usage",
+      "liveMonitoring": "Live Monitoring",
+      "system": "System",
+      "apiServer": "API Server",
+      "hostname": "Hostname",
+      "responseTime": "Response Time",
+      "ping": "ping",
+      "load1m": "Load (1m)",
+      "online": "Online",
+      "offline": "Offline",
+      "memory": "Memory",
+      "disk": "Disk",
+      "used": "used",
+      "usage": "usage",
+      "connected": "Connected",
+      "disconnected": "Disconnected",
+      "queueMetrics": "Queue Metrics",
+      "queueHeader": "Queue",
+      "queue": "Queue",
+      "active": "Active",
+      "pending": "Pending",
+      "completed": "Completed",
+      "delayed": "Delayed",
+      "failed": "Failed",
+      "activeQueues": "Active Queues",
+      "noQueues": "No active queues",
+      "failedJobs": "Failed Jobs",
+      "noFailedJobs": "No failed jobs",
+      "jobId": "Job ID",
+      "failedAt": "Failed at",
+      "failedCount": "Failure count",
+      "retry": "Retry",
+      "delete": "Delete",
+      "jobQueuedForRetry": "Job queued for retry",
+      "failedJobDeleted": "Failed job deleted",
+      "failedToLoad": "Failed to load system data",
+      "failedToRetryJob": "Failed to retry job",
+      "failedToDeleteJob": "Failed to delete job",
+      "unknown": "Unknown",
+      "statusLabel": "Status"
     },
     "errors": {
       "title": "Error Log",
@@ -1467,7 +1907,43 @@
       "revoke": "Revoke Token",
       "active": "Active",
       "revoked": "Revoked",
-      "expired": "Expired"
+      "expired": "Expired",
+      "subtitle": "Generate temporary access tokens for ITSS inspectors",
+      "createTokenDescription": "Generate a new access token for an ITSS inspector.",
+      "selectOrg": "Select organization",
+      "selectOrgRequired": "You must select an organization",
+      "orgSlugNotFound": "Organization not found",
+      "days": "days",
+      "generating": "Generating...",
+      "tokenGeneratedTitle": "Token generated",
+      "tokenGenerated": "Inspector token generated successfully",
+      "copyTokenWarning": "Copy this token now. It won't be shown again.",
+      "copy": "Copy",
+      "copied": "Copied",
+      "tokenCopied": "Token copied to clipboard",
+      "failedToGenerate": "Failed to generate token",
+      "failedToLoadTokens": "Failed to load tokens",
+      "tokensRefreshed": "Tokens refreshed",
+      "tokenRevoked": "Token revoked successfully",
+      "failedToRevoke": "Failed to revoke token",
+      "revokeConfirmation": "Are you sure you want to revoke this token?",
+      "revoking": "Revoking...",
+      "searchByOrg": "Search by organization...",
+      "status": "Status",
+      "allStatus": "All statuses",
+      "activeLabel": "Active",
+      "expiredLabel": "Expired",
+      "revokedLabel": "Revoked",
+      "noMatchingTokens": "No tokens match your search",
+      "tryAdjustingFilters": "Try adjusting the filters",
+      "clearFilters": "Clear filters",
+      "noTokensDescription": "Generate temporary access tokens for ITSS inspectors",
+      "tokenPrefix": "Token: ",
+      "daysRemaining": "{{count}} days remaining",
+      "expiresSoon": "Expires soon",
+      "lastUsed": "Last used",
+      "today": "today",
+      "totalLabel": "total"
     },
     "featureFlags": {
       "title": "Feature Flags",
@@ -1479,13 +1955,85 @@
       "key": "Key",
       "rollout": "Rollout",
       "create": "Create Flag",
-      "percentage": "{{value}}%"
+      "percentage": "{{value}}%",
+      "createFlag": "Create Feature Flag",
+      "createFeatureFlag": "Create Feature Flag",
+      "searchPlaceholder": "Search flags...",
+      "noFlagsMatch": "No flags match your search",
+      "noFlagsYet": "No feature flags yet",
+      "createFirstFlag": "Create First Flag",
+      "enabledForOrgs": "Enabled for {{count}} orgs",
+      "disabledForOrgs": "Disabled for {{count}} orgs",
+      "createdOn": "Created on {{date}}",
+      "toggle": "Toggle",
+      "createDescription": "Create a new feature flag to control features.",
+      "flagKeyLabel": "Flag Key",
+      "flagKeyPlaceholder": "e.g., new_dashboard_v2",
+      "flagKeyHint": "Use snake_case (e.g., my_feature)",
+      "flagKeyRequired": "Flag key is required",
+      "flagKeyReadOnly": "Key cannot be changed",
+      "descriptionLabel": "Description",
+      "descriptionPlaceholder": "Describe what this flag does...",
+      "editFeatureFlag": "Edit Feature Flag",
+      "editDescription": "Update the feature flag details.",
+      "enabledForOrgsLabel": "Enabled for organizations",
+      "enabledOrgsHint": "Comma-separated organization IDs",
+      "disabledForOrgsLabel": "Disabled for organizations",
+      "disabledOrgsHint": "Comma-separated organization IDs",
+      "orgIdsPlaceholder": "org1, org2, org3",
+      "deleteFeatureFlag": "Delete Feature Flag",
+      "deleteConfirmation": "Are you sure you want to delete flag \"{{key}}\"? This cannot be undone.",
+      "flagCreated": "Feature flag created successfully",
+      "flagUpdated": "Feature flag updated successfully",
+      "flagDeleted": "Feature flag deleted successfully",
+      "failedToLoad": "Failed to load feature flags",
+      "failedToCreate": "Failed to create feature flag",
+      "failedToUpdate": "Failed to update feature flag",
+      "failedToDelete": "Failed to delete feature flag",
+      "failedToToggle": "Failed to toggle feature flag",
+      "enabledGlobally": "Flag enabled globally",
+      "disabledGlobally": "Flag disabled globally",
+      "creating": "Creating...",
+      "updating": "Updating...",
+      "deleting": "Deleting..."
     },
     "notifications": {
       "title": "Notifications",
       "createBroadcast": "Create broadcast",
       "broadcastHistory": "Broadcast history",
-      "noBroadcasts": "No broadcasts sent"
+      "noBroadcasts": "No broadcasts sent",
+      "subtitle": "Manage global platform notifications",
+      "sendDescription": "Send a notification to users or organizations.",
+      "titleLabel": "Title",
+      "titlePlaceholder": "Notification title",
+      "titleRequired": "Title is required",
+      "messageLabel": "Message",
+      "messagePlaceholder": "Type the notification message...",
+      "messageRequired": "Message is required",
+      "severityInfo": "Information",
+      "severityWarning": "Warning",
+      "severityUrgent": "Urgent",
+      "target": "Recipients",
+      "allUsers": "All users",
+      "specificOrgs": "Specific organizations",
+      "specificUsers": "Specific users",
+      "targetIdsLabel": "Recipient IDs",
+      "targetIdsPlaceholder": "ID1, ID2, ID3",
+      "targetIdsHint": "Comma-separated",
+      "expirationLabel": "Expiration",
+      "expirationHint": "Expiration date and time (optional)",
+      "sending": "Sending...",
+      "broadcastSent": "Notification sent successfully",
+      "failedToSend": "Failed to send notification",
+      "failedToLoad": "Failed to load notifications",
+      "deleteBroadcast": "Delete notification",
+      "deleteConfirmation": "Are you sure you want to delete this notification?",
+      "deleting": "Deleting...",
+      "broadcastDeleted": "Notification deleted successfully",
+      "failedToDelete": "Failed to delete notification",
+      "expired": "Expired",
+      "expiresOn": "Expires on {{date}}",
+      "severity": "Severity"
     },
     "audit": {
       "title": "Audit",
@@ -1564,7 +2112,50 @@
       "emailTemplates": "Email templates",
       "trialDuration": "Trial duration",
       "complianceDefaults": "Compliance Defaults",
-      "days": "days"
+      "days": "days",
+      "subtitle": "Platform configuration",
+      "environment": "Environment",
+      "environmentHint": "Application environment",
+      "defaultCurrency": "Default currency",
+      "defaultCurrencyHint": "Currency for billing",
+      "databaseConfig": "Database",
+      "databaseConfigDesc": "PostgreSQL database configuration",
+      "redisConfig": "Redis",
+      "redisConfigDesc": "Redis configuration for queues",
+      "authConfig": "Authentication",
+      "authConfigDesc": "Authentication configuration",
+      "adminCredsConfig": "Admin credentials",
+      "adminCredsConfigDesc": "Default administrator account",
+      "emailConfigDesc": "Email service configuration",
+      "stripeConfig": "Stripe",
+      "stripeConfigDesc": "Stripe payment configuration",
+      "gocardlessConfig": "GoCardless",
+      "gocardlessConfigDesc": "GoCardless payment configuration",
+      "paymentConfig": "Payments",
+      "paymentConfigDesc": "General payment configuration",
+      "frontendConfig": "Frontend",
+      "frontendConfigDesc": "Frontend configuration",
+      "show": "Show",
+      "hide": "Hide",
+      "modified": "Modified",
+      "unsavedChanges": "Unsaved changes",
+      "settingsSaved": "Settings saved successfully",
+      "failedToSave": "Failed to save settings",
+      "failedToLoad": "Failed to load settings",
+      "restartServer": "Restart Server",
+      "restartRequired": "Restart required to apply changes",
+      "restartConfirmation": "Are you sure you want to restart the server? This will cause a brief downtime.",
+      "restartNow": "Restart Now",
+      "restarting": "Restarting...",
+      "restartInitiated": "Server restart initiated",
+      "failedToRestart": "Failed to restart server",
+      "live": "Production",
+      "sandbox": "Sandbox",
+      "liveProduction": "Live production",
+      "sandboxTesting": "Sandbox testing",
+      "critical": "Critical",
+      "sessionCritical": "Session critical",
+      "retry": "Retry"
     },
     "title": "Administration",
     "broadcasts": {
@@ -1690,7 +2281,6 @@
       "active": "Active",
       "expired": "Expired",
       "impersonated": "Impersonated",
-      "allRoles": "All Roles",
       "owner": "Owner",
       "tenantAdmin": "Tenant Admin",
       "manager": "Manager",
@@ -1726,7 +2316,10 @@
     "requiredField": "This field is required.",
     "invalidEmail": "Invalid email address.",
     "passwordTooShort": "Password must be at least 8 characters.",
-    "passwordMismatch": "Passwords don't match."
+    "passwordMismatch": "Passwords don't match.",
+    "signInFailed": "Failed to sign in",
+    "signUpFailed": "Failed to create account",
+    "unexpected": "An unexpected error occurred"
   },
   "offline": {
     "status": "Status",

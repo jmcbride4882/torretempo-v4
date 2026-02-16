@@ -20,7 +20,7 @@ const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:3000';
 
 async function fetchTemplates(slug: string) {
   const res = await fetch(`${API_BASE}/api/v1/org/${slug}/shift-templates`, { credentials: 'include' });
-  if (!res.ok) throw new Error('Failed to fetch templates');
+  if (!res.ok) throw new Error('templates.fetchError');
   return res.json();
 }
 
@@ -31,7 +31,7 @@ async function createTemplate(slug: string, data: any) {
     credentials: 'include',
     body: JSON.stringify(data),
   });
-  if (!res.ok) throw new Error('Failed to create template');
+  if (!res.ok) throw new Error('templates.createError');
   return res.json();
 }
 
@@ -42,7 +42,7 @@ async function updateTemplate(slug: string, id: string, data: any) {
     credentials: 'include',
     body: JSON.stringify(data),
   });
-  if (!res.ok) throw new Error('Failed to update template');
+  if (!res.ok) throw new Error('templates.updateError');
   return res.json();
 }
 
@@ -51,7 +51,7 @@ async function deleteTemplate(slug: string, id: string) {
     method: 'DELETE',
     credentials: 'include',
   });
-  if (!res.ok) throw new Error('Failed to delete template');
+  if (!res.ok) throw new Error('templates.deleteError');
   return res.json();
 }
 

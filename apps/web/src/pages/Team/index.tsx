@@ -20,13 +20,13 @@ const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:3000';
 
 async function fetchMembers(slug: string) {
   const res = await fetch(`${API_BASE}/api/v1/org/${slug}/members`, { credentials: 'include' });
-  if (!res.ok) throw new Error('Failed to fetch members');
+  if (!res.ok) throw new Error('team.fetchMembersError');
   return res.json();
 }
 
 async function fetchEmployees(slug: string) {
   const res = await fetch(`${API_BASE}/api/v1/org/${slug}/employees`, { credentials: 'include' });
-  if (!res.ok) throw new Error('Failed to fetch employees');
+  if (!res.ok) throw new Error('team.fetchEmployeesError');
   return res.json();
 }
 
@@ -220,7 +220,7 @@ export default function TeamPage() {
                 <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-400" />
                 <Input
                   type="email"
-                  placeholder="email@example.com"
+                  placeholder={t('team.emailPlaceholder')}
                   value={inviteEmail}
                   onChange={(e) => setInviteEmail(e.target.value)}
                   className="pl-10"

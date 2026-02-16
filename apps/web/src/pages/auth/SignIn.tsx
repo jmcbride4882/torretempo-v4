@@ -72,7 +72,7 @@ export default function SignIn() {
                 <Input
                   id="email"
                   type="email"
-                  placeholder="tu@empresa.com"
+                  placeholder={t('auth.emailPlaceholder')}
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   className="pl-10 h-11"
