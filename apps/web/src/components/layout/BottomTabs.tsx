@@ -8,8 +8,10 @@ import {
   Users,
   MoreHorizontal,
   ArrowLeftRight,
+  CalendarPlus,
   CalendarOff,
   ClipboardCheck,
+  Copy,
   BarChart3,
   Bell,
   Settings,
@@ -28,8 +30,10 @@ const tabs = [
 
 const moreItems = [
   { icon: ArrowLeftRight, labelKey: 'nav.swaps', path: 'swaps' },
+  { icon: CalendarPlus, labelKey: 'nav.openShifts', path: 'open-shifts' },
   { icon: CalendarOff, labelKey: 'nav.leave', path: 'leave' },
   { icon: ClipboardCheck, labelKey: 'nav.corrections', path: 'corrections' },
+  { icon: Copy, labelKey: 'nav.templates', path: 'shift-templates' },
   { icon: BarChart3, labelKey: 'nav.reportsPage', path: 'reports' },
   { icon: Bell, labelKey: 'nav.notifications', path: 'notifications' },
   { icon: Settings, labelKey: 'nav.settings', path: 'settings' },

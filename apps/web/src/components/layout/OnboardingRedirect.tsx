@@ -92,14 +92,14 @@ export function OnboardingRedirect() {
   // Show loading state
   if (redirectState === 'loading' || authLoading || orgLoading) {
     return (
-      <div className="flex h-screen items-center justify-center bg-neutral-950">
+      <div className="flex h-screen items-center justify-center bg-zinc-50">
         <motion.div
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
           className="flex flex-col items-center gap-4"
         >
-          <div className="h-10 w-10 animate-spin rounded-full border-2 border-white/20 border-t-primary-600" />
-          <span className="text-sm text-neutral-400">Setting up your workspace...</span>
+          <div className="h-10 w-10 animate-spin rounded-full border-2 border-zinc-200 border-t-primary-600" />
+          <span className="text-sm text-zinc-500">Setting up your workspace...</span>
         </motion.div>
       </div>
     );
@@ -107,7 +107,7 @@ export function OnboardingRedirect() {
 
   // Redirect based on state
   if (redirectState === 'to-org' && targetSlug) {
-    return <Navigate to={`/t/${targetSlug}/roster`} replace />;
+    return <Navigate to={`/t/${targetSlug}/dashboard`} replace />;
   }
 
   if (redirectState === 'to-select') {
