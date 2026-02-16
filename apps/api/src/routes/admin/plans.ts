@@ -77,7 +77,7 @@ router.get('/:id', requireAdmin, async (req: Request, res: Response) => {
  */
 router.post('/', requireAdmin, async (req: Request, res: Response) => {
   try {
-    const actor = (req as any).actor;
+    const actor = req.user;
     if (!actor?.id) {
       return res.status(401).json({ message: 'Unauthorized' });
     }
@@ -173,7 +173,7 @@ router.post('/', requireAdmin, async (req: Request, res: Response) => {
  */
 router.put('/:id', requireAdmin, async (req: Request, res: Response) => {
   try {
-    const actor = (req as any).actor;
+    const actor = req.user;
     if (!actor?.id) {
       return res.status(401).json({ message: 'Unauthorized' });
     }
@@ -273,7 +273,7 @@ router.put('/:id', requireAdmin, async (req: Request, res: Response) => {
  */
 router.delete('/:id', requireAdmin, async (req: Request, res: Response) => {
   try {
-    const actor = (req as any).actor;
+    const actor = req.user;
     if (!actor?.id) {
       return res.status(401).json({ message: 'Unauthorized' });
     }

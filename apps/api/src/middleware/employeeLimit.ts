@@ -23,7 +23,7 @@ export function employeeLimit(): RequestHandler {
     try {
       // Get organization ID from request context
       // Assumes tenant middleware has already set req.organizationId
-      const organizationId = (req as any).organizationId;
+      const organizationId = req.organizationId;
 
       if (!organizationId) {
         res.status(400).json({ error: 'Organization ID not found in request' });

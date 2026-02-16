@@ -21,6 +21,7 @@ declare global {
         revoked_at?: Date;
         last_used_at?: Date;
       };
+      complianceWarnings?: Array<{ type: string; message: string; severity: string }>;
     }
   }
 }

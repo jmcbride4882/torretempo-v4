@@ -98,7 +98,7 @@ router.get('/', requireAdmin, async (req: Request, res: Response) => {
 router.delete('/:id', requireAdmin, async (req: Request, res: Response) => {
   try {
     const sessionId = req.params.id as string;
-    const actor = (req as any).actor;
+    const actor = req.user;
 
     if (!actor?.id) {
       return res.status(401).json({ message: 'Unauthorized' });
@@ -176,7 +176,7 @@ router.delete('/:id', requireAdmin, async (req: Request, res: Response) => {
 router.post('/bulk-revoke', requireAdmin, async (req: Request, res: Response) => {
   try {
     const { sessionIds } = req.body;
-    const actor = (req as any).actor;
+    const actor = req.user;
 
     if (!actor?.id) {
       return res.status(401).json({ message: 'Unauthorized' });

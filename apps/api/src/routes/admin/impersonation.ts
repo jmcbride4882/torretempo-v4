@@ -29,7 +29,7 @@ const router = Router();
 router.post('/:id/impersonate', requireAdmin, async (req: Request, res: Response) => {
   try {
     const targetUserId = req.params.id as string;
-    const actor = (req as any).actor;
+    const actor = req.user;
 
     if (!actor?.id) {
       return res.status(401).json({ message: 'Unauthorized' });
@@ -93,7 +93,7 @@ router.post('/:id/impersonate', requireAdmin, async (req: Request, res: Response
  */
 router.post('/stop-impersonation', requireAdmin, async (req: Request, res: Response) => {
   try {
-    const actor = (req as any).actor;
+    const actor = req.user;
 
     if (!actor?.id) {
       return res.status(401).json({ message: 'Unauthorized' });

@@ -1183,7 +1183,8 @@ router.post(
       });
 
       // Queue password reset email
-      const resetLink = `${process.env.AUTH_BASE_URL || 'http://localhost:3000'}/auth/reset-password?token=${token}`;
+      const baseUrl = process.env.AUTH_BASE_URL || process.env.VITE_API_URL || 'http://localhost:5173';
+      const resetLink = `${baseUrl}/auth/reset-password?token=${token}`;
       
       await emailQueue.add('password-reset', {
         to: targetUser!.email,
@@ -1277,7 +1278,8 @@ router.post(
       });
 
       // Queue email verification
-      const verifyLink = `${process.env.AUTH_BASE_URL || 'http://localhost:3000'}/auth/verify-email?token=${token}`;
+      const baseUrl = process.env.AUTH_BASE_URL || process.env.VITE_API_URL || 'http://localhost:5173';
+      const verifyLink = `${baseUrl}/auth/verify-email?token=${token}`;
       
       await emailQueue.add('email-verification', {
         to: targetUser!.email,

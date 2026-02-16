@@ -144,7 +144,7 @@ router.get(
         id: entry.id,
         adminId: entry.adminId,
         adminName: entry.adminName || 'Unknown Admin',
-        adminEmail: entry.adminEmail || 'unknown@unknown.com',
+        adminEmail: entry.adminEmail || '[deleted user]',
         action: entry.action,
         targetType: entry.targetType || null,
         targetId: entry.targetId || null,
@@ -275,7 +275,7 @@ router.get(
 
       for (const entry of entries) {
         const escapedAction = `"${(entry.action || '').replace(/"/g, '""')}"`;
-        const escapedEmail = `"${(entry.adminEmail || 'unknown@unknown.com').replace(/"/g, '""')}"`;
+        const escapedEmail = `"${(entry.adminEmail || '[deleted user]').replace(/"/g, '""')}"`;
         const targetType = entry.targetType || '';
         const targetId = entry.targetId || '';
         const createdAt = entry.createdAt.toISOString();

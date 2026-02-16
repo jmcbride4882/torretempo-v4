@@ -290,7 +290,7 @@ export async function checkComplianceMiddleware(
 
     // Attach warnings to request for logging
     if (violations.length > 0) {
-      (req as any).complianceWarnings = violations;
+      req.complianceWarnings = violations;
     }
 
     next();
