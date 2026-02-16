@@ -4,6 +4,7 @@ import { logAdminAction } from '../../services/adminAudit.service.js';
 import { db } from '../../db/index.js';
 import { session, user } from '../../db/schema.js';
 import { eq, desc, and, gt, inArray, sql } from 'drizzle-orm';
+import logger from '../../lib/logger.js';
 
 const router = Router();
 
@@ -78,7 +79,7 @@ router.get('/', requireAdmin, async (req: Request, res: Response) => {
       offset,
     });
   } catch (error) {
-    console.error('Error fetching sessions:', error);
+    logger.error('Error fetching sessions:', error);
     res.status(500).json({ message: 'Internal server error' });
   }
 });
@@ -154,7 +155,7 @@ router.delete('/:id', requireAdmin, async (req: Request, res: Response) => {
       sessionId,
     });
   } catch (error) {
-    console.error('Error revoking session:', error);
+    logger.error('Error revoking session:', error);
     res.status(500).json({ message: 'Internal server error' });
   }
 });
@@ -227,7 +228,7 @@ router.post('/bulk-revoke', requireAdmin, async (req: Request, res: Response) =>
       failed: sessionIds.length - safeSessions.length,
     });
   } catch (error) {
-    console.error('Error bulk revoking sessions:', error);
+    logger.error('Error bulk revoking sessions:', error);
     res.status(500).json({ message: 'Internal server error' });
   }
 });

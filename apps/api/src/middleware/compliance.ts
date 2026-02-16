@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 import { eq, and, gte, lte, sql } from 'drizzle-orm';
 import { db } from '../db/index.js';
 import { shifts } from '../db/schema.js';
+import logger from '../lib/logger.js';
 
 interface ComplianceViolation {
   type: '12h_rest' | 'weekly_limit' | 'daily_limit';
@@ -294,7 +295,7 @@ export async function checkComplianceMiddleware(
 
     next();
   } catch (error) {
-    console.error('Error checking compliance:', error);
+    logger.error('Error checking compliance:', error);
     res.status(500).json({ error: 'Failed to validate compliance' });
   }
 }

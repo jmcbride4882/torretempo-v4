@@ -1,6 +1,7 @@
 import { eq, and, gte, lte, or } from 'drizzle-orm';
 import { db } from '../db/index.js';
 import { shifts } from '../db/schema.js';
+import logger from '../lib/logger.js';
 
 interface ShiftConflict {
   conflictType: 'overlap' | 'double_booking';
@@ -97,7 +98,7 @@ export async function assignUserToShift(
 
     return { success: true };
   } catch (error) {
-    console.error('Error assigning user to shift:', error);
+    logger.error('Error assigning user to shift:', error);
     return { success: false, error: 'Failed to assign user to shift' };
   }
 }
@@ -122,7 +123,7 @@ export async function unassignUserFromShift(
 
     return { success: true };
   } catch (error) {
-    console.error('Error unassigning user from shift:', error);
+    logger.error('Error unassigning user from shift:', error);
     return { success: false, error: 'Failed to unassign user from shift' };
   }
 }

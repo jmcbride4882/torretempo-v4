@@ -3,6 +3,7 @@ import { db } from '../db/index.js';
 import { notifications, user } from '../db/schema.js';
 import { emailQueue, EmailJob } from '../lib/queue.js';
 import { NotificationType } from '../lib/notifications.js';
+import logger from '../lib/logger.js';
 
 export interface SwapEmailData {
   userName?: string;
@@ -122,7 +123,7 @@ export async function sendSwapNotification(
       .from(user)
       .where(inArray(user.id, uniqueRecipientIds));
   } catch (error) {
-    console.error('Failed to load recipients for swap notification:', error);
+    logger.error('Failed to load recipients for swap notification:', error);
   }
 
   const recipientMap = new Map(recipientRows.map((row) => [row.id, row]));
@@ -141,7 +142,7 @@ export async function sendSwapNotification(
         });
       }
     } catch (error) {
-      console.error('Failed to create in-app notification:', {
+      logger.error('Failed to create in-app notification:', {
         error,
         recipientId: id,
         type,
@@ -153,14 +154,14 @@ export async function sendSwapNotification(
     }
 
     if (!templateInfo) {
-      console.warn('Missing email template mapping for notification type:', type);
+      logger.warn('Missing email template mapping for notification type:', type);
       continue;
     }
 
     const recipient = recipientMap.get(id);
 
     if (!recipient?.email) {
-      console.warn('Notification recipient missing email:', { recipientId: id, type });
+      logger.warn('Notification recipient missing email:', { recipientId: id, type });
       continue;
     }
 
@@ -182,7 +183,7 @@ export async function sendSwapNotification(
     try {
       await emailQueue.add('send', job);
     } catch (error) {
-      console.error('Failed to enqueue email notification:', {
+      logger.error('Failed to enqueue email notification:', {
         error,
         recipientId: id,
         type,

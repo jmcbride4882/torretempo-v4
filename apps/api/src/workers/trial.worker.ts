@@ -33,19 +33,6 @@ export interface TrialExtension {
   newTrialEndsAt: Date;
 }
 
-export interface TrialGracePeriod {
-  organizationId: string;
-  email: string;
-  trialEndedAt: Date;
-  gracePeriodEndsAt: Date;
-}
-
-export interface TrialExtension {
-  organizationId: string;
-  daysAdded: number;
-  newTrialEndsAt: Date;
-}
-
 /**
  * Check for trial expirations and send notifications
  * Run this daily via scheduled job
@@ -210,7 +197,7 @@ async function downgradeToFreeTier(
     // }
     
     // Use sub variable to avoid unused warning
-    console.log('Processing subscription for organization:', sub.organization_id);
+    logger.info('Processing subscription for organization:', sub.organization_id);
 
     // Update to free tier (tier: 'free', status: 'expired')
     await db

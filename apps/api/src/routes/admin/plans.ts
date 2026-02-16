@@ -4,6 +4,7 @@ import { logAdminAction } from '../../services/adminAudit.service.js';
 import { db } from '../../db/index.js';
 import { subscription_plans } from '../../db/schema.js';
 import { eq } from 'drizzle-orm';
+import logger from '../../lib/logger.js';
 
 /**
  * Admin Subscription Plans Routes
@@ -30,7 +31,7 @@ router.get('/', requireAdmin, async (_req: Request, res: Response) => {
 
     res.json({ plans });
   } catch (error) {
-    console.error('Error fetching plans:', error);
+    logger.error('Error fetching plans:', error);
     res.status(500).json({ message: 'Internal server error' });
   }
 });
@@ -55,7 +56,7 @@ router.get('/:id', requireAdmin, async (req: Request, res: Response) => {
 
     res.json({ plan: plans[0] });
   } catch (error) {
-    console.error('Error fetching plan:', error);
+    logger.error('Error fetching plan:', error);
     res.status(500).json({ message: 'Internal server error' });
   }
 });
@@ -151,7 +152,7 @@ router.post('/', requireAdmin, async (req: Request, res: Response) => {
       plan: newPlan[0],
     });
   } catch (error: any) {
-    console.error('Error creating plan:', error);
+    logger.error('Error creating plan:', error);
     
     // Check for unique constraint violation
     if (error?.code === '23505' && error?.constraint?.includes('code')) {
@@ -259,7 +260,7 @@ router.put('/:id', requireAdmin, async (req: Request, res: Response) => {
       plan: updatedPlan[0],
     });
   } catch (error) {
-    console.error('Error updating plan:', error);
+    logger.error('Error updating plan:', error);
     res.status(500).json({ message: 'Internal server error' });
   }
 });
@@ -314,7 +315,7 @@ router.delete('/:id', requireAdmin, async (req: Request, res: Response) => {
 
     res.json({ message: 'Plan deactivated successfully' });
   } catch (error) {
-    console.error('Error deactivating plan:', error);
+    logger.error('Error deactivating plan:', error);
     res.status(500).json({ message: 'Internal server error' });
   }
 });

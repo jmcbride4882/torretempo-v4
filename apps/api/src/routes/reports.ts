@@ -7,6 +7,7 @@ import { logAudit } from '../services/audit.service.js';
 import { pdfQueue } from '../lib/queue.js';
 import { checkModuleAccess } from '../services/subscription.service.js';
 import { generatePayrollCSV } from '../services/payrollExport.service.js';
+import logger from '../lib/logger.js';
 
 const router = Router();
 
@@ -186,7 +187,7 @@ router.get('/', requireRole(['employee', 'manager', 'tenantAdmin', 'owner']), as
       },
     });
   } catch (error) {
-    console.error('Error fetching reports:', error);
+    logger.error('Error fetching reports:', error);
     res.status(500).json({ error: 'Failed to fetch reports' });
   }
 });
@@ -223,7 +224,7 @@ router.get('/:id', requireRole(['employee', 'manager', 'tenantAdmin', 'owner']),
 
     res.json({ report });
   } catch (error) {
-    console.error('Error fetching report:', error);
+    logger.error('Error fetching report:', error);
     res.status(500).json({ error: 'Failed to fetch report' });
   }
 });
@@ -344,7 +345,7 @@ router.post('/generate', requireRole(['employee', 'manager', 'tenantAdmin', 'own
       status: 'generating',
     });
   } catch (error) {
-    console.error('Error generating report:', error);
+    logger.error('Error generating report:', error);
     res.status(500).json({ error: 'Failed to generate report' });
   }
 });
@@ -403,7 +404,7 @@ router.get('/:id/download', requireRole(['employee', 'manager', 'tenantAdmin', '
       downloadUrl: report.pdf_url,
     });
   } catch (error) {
-    console.error('Error downloading report:', error);
+    logger.error('Error downloading report:', error);
     res.status(500).json({ error: 'Failed to download report' });
   }
 });
@@ -502,7 +503,7 @@ router.get('/monthly/:year/:month', requireRole(['employee', 'manager', 'tenantA
       message: 'Report generated successfully',
     });
   } catch (error) {
-    console.error('Error fetching monthly summary:', error);
+    logger.error('Error fetching monthly summary:', error);
     res.status(500).json({ error: 'Failed to fetch monthly summary' });
   }
 });
@@ -563,7 +564,7 @@ router.post('/payroll-export', requireRole(['tenantAdmin', 'owner']), async (req
     res.setHeader('Content-Disposition', `attachment; filename="payroll_${yearNum}_${String(monthNum).padStart(2, '0')}.csv"`);
     res.send(csv);
   } catch (error) {
-    console.error('Error generating payroll export:', error);
+    logger.error('Error generating payroll export:', error);
     
     // Handle specific errors
     if (error instanceof Error) {

@@ -16,7 +16,7 @@ import {
 } from '@/components/ui/dialog';
 import { toast } from 'sonner';
 
-const API_BASE = import.meta.env.VITE_API_URL || '';
+const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:3000';
 
 async function fetchTemplates(slug: string) {
   const res = await fetch(`${API_BASE}/api/v1/org/${slug}/shift-templates`, { credentials: 'include' });

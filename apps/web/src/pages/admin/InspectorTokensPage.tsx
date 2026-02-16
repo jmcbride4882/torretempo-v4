@@ -75,16 +75,30 @@ export default function InspectorTokensPage() {
   const [revokeModal, setRevokeModal] = useState<InspectorToken | null>(null);
   const [isRevoking, setIsRevoking] = useState(false);
 
-  // Fetch tokens
+  // Helper to get org slug from tenant list by org ID
+  const getOrgSlug = useCallback((orgId: string): string | undefined => {
+    const tenant = tenants.find((t) => t.id === orgId);
+    return tenant?.slug;
+  }, [tenants]);
+
+  // Fetch tokens across all tenants
   const loadTokens = useCallback(async (silent = false) => {
     if (!silent) setIsLoading(true);
     setIsRefreshing(silent);
 
     try {
-      const response = await fetchInspectorTokens({
-        status: statusFilter !== 'all' ? statusFilter : undefined,
-      });
-      setTokens(response.tokens || []);
+      const includeRevoked = statusFilter !== 'active';
+      const allTokens: InspectorToken[] = [];
+
+      for (const tenant of tenants) {
+        try {
+          const response = await fetchInspectorTokens(tenant.slug, { includeRevoked });
+          allTokens.push(...(response.tokens || []));
+        } catch {
+          // Skip tenants we can't access
+        }
+      }
+      setTokens(allTokens);
       if (silent) toast.success('Tokens refreshed');
     } catch (error) {
       console.error('Error fetching tokens:', error);
@@ -93,7 +107,7 @@ export default function InspectorTokensPage() {
       setIsLoading(false);
       setIsRefreshing(false);
     }
-  }, [statusFilter]);
+  }, [statusFilter, tenants]);
 
   // Fetch tenants for dropdown
   const loadTenants = useCallback(async () => {
@@ -105,10 +119,17 @@ export default function InspectorTokensPage() {
     }
   }, []);
 
+  // Load tenants first on mount
   useEffect(() => {
-    loadTokens();
     loadTenants();
-  }, [loadTokens, loadTenants]);
+  }, [loadTenants]);
+
+  // Load tokens after tenants are available
+  useEffect(() => {
+    if (tenants.length > 0) {
+      loadTokens();
+    }
+  }, [loadTokens, tenants.length]);
 
   // Handlers
   const handleRefresh = () => loadTokens(true);
@@ -119,10 +140,18 @@ export default function InspectorTokensPage() {
       return;
     }
 
+    const orgSlug = getOrgSlug(selectedOrgId);
+    if (!orgSlug) {
+      toast.error('Could not find organization slug');
+      return;
+    }
+
     setIsGenerating(true);
     try {
-      const result = await generateInspectorToken(selectedOrgId, parseInt(expiresInDays));
-      setGeneratedToken(result.token.token);
+      const result = await generateInspectorToken(orgSlug, {
+        expires_in_days: parseInt(expiresInDays),
+      });
+      setGeneratedToken(result.token);
       toast.success('Token generated successfully');
       loadTokens(true);
     } catch (error) {
@@ -144,9 +173,15 @@ export default function InspectorTokensPage() {
   const handleRevoke = async () => {
     if (!revokeModal) return;
 
+    const orgSlug = getOrgSlug(revokeModal.organizationId);
+    if (!orgSlug) {
+      toast.error('Could not find organization slug');
+      return;
+    }
+
     setIsRevoking(true);
     try {
-      await revokeInspectorToken(revokeModal.id);
+      await revokeInspectorToken(orgSlug, revokeModal.id);
       toast.success('Token revoked successfully');
       setRevokeModal(null);
       loadTokens(true);
@@ -166,13 +201,16 @@ export default function InspectorTokensPage() {
     setCopiedToken(false);
   };
 
-  // Filter tokens
+  // Filter tokens client-side by search query and status
   const filteredTokens = tokens.filter((token) => {
     if (searchQuery) {
       const query = searchQuery.toLowerCase();
       if (!token.organizationName.toLowerCase().includes(query)) {
         return false;
       }
+    }
+    if (statusFilter !== 'all' && token.status !== statusFilter) {
+      return false;
     }
     return true;
   });

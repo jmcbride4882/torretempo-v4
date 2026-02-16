@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction, RequestHandler } from 'express';
 import { auth } from '../lib/auth.js';
 import { fromNodeHeaders } from 'better-auth/node';
+import logger from '../lib/logger.js';
 
 /**
  * Admin Middleware (T10)
@@ -24,7 +25,7 @@ export const requireAdmin: RequestHandler = async (
 
     // Return 401 if no session
     if (!session) {
-      console.error('requireAdmin: No session found', {
+      logger.error('requireAdmin: No session found', {
         cookies: req.headers.cookie ? 'present' : 'missing',
         origin: req.headers.origin,
         path: req.path,
@@ -53,7 +54,7 @@ export const requireAdmin: RequestHandler = async (
 
     next();
   } catch (error) {
-    console.error('Admin middleware error:', error);
+    logger.error('Admin middleware error:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
 };

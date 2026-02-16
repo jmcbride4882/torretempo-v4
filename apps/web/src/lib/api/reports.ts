@@ -113,7 +113,7 @@ export async function downloadReportPDF(
   orgSlug: string,
   reportId: string
 ): Promise<PDFDownloadResponse> {
-  const url = `${API_URL}/api/v1/org/${orgSlug}/reports/${reportId}/pdf`;
+  const url = `${API_URL}/api/v1/org/${orgSlug}/reports/${reportId}/download`;
 
   const response = await fetch(url, {
     credentials: 'include',
@@ -124,6 +124,7 @@ export async function downloadReportPDF(
 
 /**
  * Fetch monthly report for specific year/month/user
+ * Backend route: GET /api/v1/org/:slug/reports/monthly/:year/:month?user_id=...
  */
 export async function fetchMonthlyReport(
   orgSlug: string,
@@ -131,14 +132,11 @@ export async function fetchMonthlyReport(
   month: number,
   userId?: string
 ): Promise<MonthlyReport> {
-  const params = new URLSearchParams({
-    year: year.toString(),
-    month: month.toString(),
-  });
-
+  const params = new URLSearchParams();
   if (userId) params.append('user_id', userId);
 
-  const url = `${API_URL}/api/v1/org/${orgSlug}/reports/monthly?${params.toString()}`;
+  const queryString = params.toString() ? `?${params.toString()}` : '';
+  const url = `${API_URL}/api/v1/org/${orgSlug}/reports/monthly/${year}/${month}${queryString}`;
 
   const response = await fetch(url, {
     credentials: 'include',
@@ -161,38 +159,5 @@ export async function fetchTeamMembers(orgSlug: string): Promise<TeamMember[]> {
   return data.members || [];
 }
 
-/**
- * Email report to user
- */
-export async function emailReport(
-  orgSlug: string,
-  reportId: string,
-  email: string
-): Promise<{ success: boolean; message: string }> {
-  const url = `${API_URL}/api/v1/org/${orgSlug}/reports/${reportId}/email`;
-
-  const response = await fetch(url, {
-    method: 'POST',
-    credentials: 'include',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ email }),
-  });
-
-  return handleResponse<{ success: boolean; message: string }>(response);
-}
-
-/**
- * Get report generation status
- */
-export async function getReportStatus(
-  orgSlug: string,
-  reportId: string
-): Promise<{ status: string; progress?: number; message?: string }> {
-  const url = `${API_URL}/api/v1/org/${orgSlug}/reports/${reportId}/status`;
-
-  const response = await fetch(url, {
-    credentials: 'include',
-  });
-
-  return handleResponse<{ status: string; progress?: number; message?: string }>(response);
-}
+// NOTE: emailReport and getReportStatus endpoints are not yet implemented on the backend.
+// TODO: Add backend routes POST /reports/:id/email and GET /reports/:id/status when needed.

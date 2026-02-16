@@ -6,6 +6,7 @@ import { requireRole } from '../middleware/requireRole.js';
 import { logAudit } from '../services/audit.service.js';
 import { validateGeofence, isValidCoordinates } from '../services/geofencing.service.js';
 import { logWarning } from '../services/errorLog.service.js';
+import logger from '../lib/logger.js';
 
 const router = Router();
 
@@ -68,7 +69,7 @@ router.get('/', async (req: Request, res: Response) => {
       offset,
     });
   } catch (error) {
-    console.error('Error fetching time entries:', error);
+    logger.error('Error fetching time entries:', error);
     res.status(500).json({ error: 'Failed to fetch time entries' });
   }
 });
@@ -101,7 +102,7 @@ router.get('/active', async (req: Request, res: Response) => {
 
     res.json({ entry: result[0] });
   } catch (error) {
-    console.error('Error fetching active time entry:', error);
+    logger.error('Error fetching active time entry:', error);
     res.status(500).json({ error: 'Failed to fetch active time entry' });
   }
 });
@@ -136,7 +137,7 @@ router.get('/:id', async (req: Request, res: Response) => {
 
     res.json({ entry });
   } catch (error) {
-    console.error('Error fetching time entry:', error);
+    logger.error('Error fetching time entry:', error);
     res.status(500).json({ error: 'Failed to fetch time entry' });
   }
 });
@@ -305,7 +306,7 @@ router.post('/', requireRole(['employee', 'manager', 'tenantAdmin', 'owner']), a
 
     res.status(201).json({ entry: created[0] });
   } catch (error) {
-    console.error('Error clocking in:', error);
+    logger.error('Error clocking in:', error);
     res.status(500).json({ error: 'Failed to clock in' });
   }
 });
@@ -399,7 +400,7 @@ router.patch('/:id', requireRole(['employee', 'manager', 'tenantAdmin', 'owner']
 
     res.json({ timeEntry: updated[0] });
   } catch (error) {
-    console.error('Error clocking out:', error);
+    logger.error('Error clocking out:', error);
     res.status(500).json({ error: 'Failed to clock out' });
   }
 });
@@ -463,7 +464,7 @@ router.put(
 
     res.json({ entry: updated[0] });
     } catch (error) {
-      console.error('Error verifying time entry:', error);
+      logger.error('Error verifying time entry:', error);
       res.status(500).json({ error: 'Failed to verify time entry' });
     }
   }
@@ -518,7 +519,7 @@ router.delete(
 
       res.status(204).send();
     } catch (error) {
-      console.error('Error deleting time entry:', error);
+      logger.error('Error deleting time entry:', error);
       res.status(500).json({ error: 'Failed to delete time entry' });
     }
   }

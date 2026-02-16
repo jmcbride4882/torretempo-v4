@@ -3,6 +3,7 @@ import { requireAdmin } from '../../middleware/requireAdmin.js';
 import { logAdminAction } from '../../services/adminAudit.service.js';
 import * as fs from 'fs/promises';
 import * as path from 'path';
+import logger from '../../lib/logger.js';
 
 /**
  * Admin Settings Routes
@@ -105,7 +106,7 @@ router.get('/', requireAdmin, async (_req: Request, res: Response) => {
 
     res.json({ settings });
   } catch (error) {
-    console.error('Error fetching settings:', error);
+    logger.error('Error fetching settings:', error);
     res.status(500).json({ message: 'Internal server error' });
   }
 });
@@ -318,7 +319,7 @@ router.put('/', requireAdmin, async (req: Request, res: Response) => {
       requiresRestart: true,
     });
   } catch (error) {
-    console.error('Error updating settings:', error);
+    logger.error('Error updating settings:', error);
     res.status(500).json({ message: 'Internal server error' });
   }
 });
@@ -356,7 +357,7 @@ router.post('/restart', requireAdmin, async (req: Request, res: Response) => {
       process.exit(0);
     }, 500);
   } catch (error) {
-    console.error('Error restarting server:', error);
+    logger.error('Error restarting server:', error);
     res.status(500).json({ message: 'Internal server error' });
   }
 });

@@ -174,12 +174,12 @@ export default function NotificationsPage() {
       try {
         const [notifRes, count] = await Promise.all([
           fetchNotifications(slug, {
-            read: filter === 'unread' ? false : undefined,
+            status: filter === 'unread' ? 'unread' : undefined,
             limit: 50,
           }),
           fetchUnreadCount(slug),
         ]);
-        setNotifications(notifRes.notifications || notifRes.data || []);
+        setNotifications(notifRes.data || []);
         setUnreadCount(count);
       } catch (err) {
         console.error('Error loading notifications:', err);

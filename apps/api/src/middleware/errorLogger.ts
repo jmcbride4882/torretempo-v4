@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import { logError, extractErrorContext } from '../services/errorLog.service.js';
+import logger from '../lib/logger.js';
 
 /**
  * Express error handling middleware
@@ -11,7 +12,7 @@ export function errorLogger(err: Error, req: Request, res: Response, _next: Next
   const statusCode = (err as any).statusCode || (err as any).status || 500;
 
   // Log to console (for development)
-  console.error('[API Error]', {
+  logger.error('[API Error]', {
     message: err.message,
     path: req.path,
     method: req.method,
@@ -21,7 +22,7 @@ export function errorLogger(err: Error, req: Request, res: Response, _next: Next
   // Log to database (async, non-blocking)
   const errorData = extractErrorContext(req, err, statusCode);
   logError(errorData).catch((logErr) => {
-    console.error('[ErrorLogger] Failed to log error to database:', logErr);
+    logger.error('[ErrorLogger] Failed to log error to database:', logErr);
   });
 
   // Send response

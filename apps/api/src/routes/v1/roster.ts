@@ -12,6 +12,7 @@ import { shifts, notifications } from '../../db/schema.js';
 import { rosterValidator } from '../../services/roster-validator.js';
 import { autoSchedule } from '../../services/auto-scheduler.js';
 import { logAudit } from '../../services/audit.service.js';
+import logger from '../../lib/logger.js';
 
 const router = Router();
 
@@ -74,7 +75,7 @@ async function handleValidateShift(req: Request, res: Response) {
 
     res.json(result);
   } catch (error) {
-    console.error('Error validating shift:', error);
+    logger.error('Error validating shift:', error);
     res.status(500).json({ message: 'Internal server error' });
   }
 }
@@ -189,7 +190,7 @@ async function handlePublishRoster(req: Request, res: Response) {
       warnings: validation.warnings.length > 0 ? validation.warnings : undefined,
     });
   } catch (error) {
-    console.error('Error publishing roster:', error);
+    logger.error('Error publishing roster:', error);
     res.status(500).json({ message: 'Internal server error' });
   }
 }
@@ -330,7 +331,7 @@ async function handleDuplicateRoster(req: Request, res: Response) {
       },
     });
   } catch (error) {
-    console.error('Error duplicating roster:', error);
+    logger.error('Error duplicating roster:', error);
     res.status(500).json({ message: 'Internal server error' });
   }
 }
@@ -362,7 +363,7 @@ async function handleGetUserHours(req: Request, res: Response) {
 
     res.json(hours);
   } catch (error) {
-    console.error('Error getting user hours:', error);
+    logger.error('Error getting user hours:', error);
     res.status(500).json({ message: 'Internal server error' });
   }
 }
@@ -407,7 +408,7 @@ async function handleAutoSchedule(req: Request, res: Response) {
 
     res.json(result);
   } catch (error) {
-    console.error('Error auto-scheduling:', error);
+    logger.error('Error auto-scheduling:', error);
     res.status(500).json({ message: 'Internal server error' });
   }
 }

@@ -12,7 +12,6 @@ import {
   FileText,
   ArrowLeft,
   Download,
-  Mail,
   Calendar,
   Clock,
   TrendingUp,
@@ -26,7 +25,7 @@ import { VarianceChart } from '@/components/reports/VarianceChart';
 import { PayrollBreakdown } from '@/components/reports/PayrollBreakdown';
 import { ComplianceStatus } from '@/components/reports/ComplianceStatus';
 import { cn } from '@/lib/utils';
-import { fetchReport, downloadReportPDF, emailReport } from '@/lib/api/reports';
+import { fetchReport, downloadReportPDF } from '@/lib/api/reports';
 import type { ReportResponse, MonthlyReport } from '@/types/reports';
 
 type ReportTab = 'summary' | 'variance' | 'payroll' | 'compliance';
@@ -52,7 +51,6 @@ export default function ReportDetailPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<ReportTab>('summary');
   const [isDownloading, setIsDownloading] = useState(false);
-  const [isEmailing, setIsEmailing] = useState(false);
 
   const loadReport = useCallback(async () => {
     if (!slug || !id) return;
@@ -91,21 +89,6 @@ export default function ReportDetailPage() {
       toast.error('Failed to download PDF');
     } finally {
       setIsDownloading(false);
-    }
-  }
-
-  async function handleEmail(): Promise<void> {
-    if (!slug || !id || !reportData?.report.userEmail) return;
-
-    setIsEmailing(true);
-    try {
-      await emailReport(slug, id, reportData.report.userEmail);
-      toast.success('Report sent via email');
-    } catch (error) {
-      console.error('Error emailing report:', error);
-      toast.error('Failed to send email');
-    } finally {
-      setIsEmailing(false);
     }
   }
 
@@ -157,36 +140,19 @@ export default function ReportDetailPage() {
 
         <div className="flex items-center gap-2">
           {report.status === 'ready' && (
-            <>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={handleEmail}
-                disabled={isEmailing}
-                className="gap-1.5 rounded-lg border border-zinc-200 bg-white text-zinc-700 hover:bg-zinc-50"
-              >
-                {isEmailing ? (
-                  <Loader2 className="h-4 w-4 animate-spin" />
-                ) : (
-                  <Mail className="h-4 w-4" />
-                )}
-                <span className="hidden sm:inline">{t('reports.email')}</span>
-              </Button>
-
-              <Button
-                size="sm"
-                onClick={handleDownload}
-                disabled={isDownloading}
-                className="gap-1.5 rounded-lg bg-blue-600 text-white hover:bg-blue-700"
-              >
-                {isDownloading ? (
-                  <Loader2 className="h-4 w-4 animate-spin" />
-                ) : (
-                  <Download className="h-4 w-4" />
-                )}
-                <span className="hidden sm:inline">{t('reports.downloadPdf')}</span>
-              </Button>
-            </>
+            <Button
+              size="sm"
+              onClick={handleDownload}
+              disabled={isDownloading}
+              className="gap-1.5 rounded-lg bg-blue-600 text-white hover:bg-blue-700"
+            >
+              {isDownloading ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                <Download className="h-4 w-4" />
+              )}
+              <span className="hidden sm:inline">{t('reports.downloadPdf')}</span>
+            </Button>
           )}
         </div>
       </div>

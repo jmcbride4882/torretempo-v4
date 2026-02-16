@@ -2,6 +2,7 @@ import { createHash } from 'crypto';
 import { db } from '../db/index.js';
 import { audit_log } from '../db/schema.js';
 import { eq, desc, and } from 'drizzle-orm';
+import logger from '../lib/logger.js';
 
 interface LogAuditParams {
   orgId: string;
@@ -94,7 +95,7 @@ export async function logAudit(params: LogAuditParams): Promise<void> {
       entry_hash: entryHash,
     });
   } catch (error) {
-    console.error('Failed to log audit entry:', error);
+    logger.error('Failed to log audit entry:', error);
     throw error;
   }
 }
@@ -160,7 +161,7 @@ export async function logTimeEntryAudit(params: LogTimeEntryAuditParams): Promis
 
     return entryHash;
   } catch (error) {
-    console.error('Failed to log time entry audit:', error);
+    logger.error('Failed to log time entry audit:', error);
     throw error;
   }
 }
@@ -263,7 +264,7 @@ export async function verifyAuditChain(params: VerifyAuditChainParams): Promise<
       lastHash: lastEntry?.entry_hash || '',
     };
   } catch (error) {
-    console.error('Failed to verify audit chain:', error);
+    logger.error('Failed to verify audit chain:', error);
     throw error;
   }
 }

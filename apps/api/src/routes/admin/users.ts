@@ -7,9 +7,10 @@ import { logAdminAction } from '../../services/adminAudit.service.js';
 import { emailQueue } from '../../lib/queue.js';
 import crypto from 'crypto';
 import type {
-  UserDetailResponse, 
-  BanUserResponse 
+  UserDetailResponse,
+  BanUserResponse
 } from '../../types/admin-types.js';
+import logger from '../../lib/logger.js';
 
 /**
  * Admin User Management Routes
@@ -151,7 +152,7 @@ router.get(
 
       res.json(response);
     } catch (error) {
-      console.error('Error listing users:', error);
+      logger.error('Error listing users:', error);
       res.status(500).json({ 
         error: 'Failed to list users',
         details: error instanceof Error ? error.message : 'Unknown error'
@@ -250,7 +251,7 @@ router.get(
 
       res.send(csvContent);
     } catch (error) {
-      console.error('Error exporting users:', error);
+      logger.error('Error exporting users:', error);
       res.status(500).json({
         error: 'Failed to export users',
         details: error instanceof Error ? error.message : 'Unknown error',
@@ -324,7 +325,7 @@ router.delete(
         userId,
       });
     } catch (error) {
-      console.error('Error deleting user:', error);
+      logger.error('Error deleting user:', error);
       res.status(500).json({ 
         error: 'Failed to delete user',
         details: error instanceof Error ? error.message : 'Unknown error'
@@ -417,7 +418,7 @@ router.get(
 
       res.json(response);
     } catch (error) {
-      console.error('Error getting user details:', error);
+      logger.error('Error getting user details:', error);
       res.status(500).json({ 
         error: 'Failed to get user details',
         details: error instanceof Error ? error.message : 'Unknown error'
@@ -558,7 +559,7 @@ router.patch(
         },
       });
     } catch (error) {
-      console.error('Error updating user:', error);
+      logger.error('Error updating user:', error);
       res.status(500).json({
         error: 'Failed to update user',
         details: error instanceof Error ? error.message : 'Unknown error',
@@ -671,7 +672,7 @@ router.post(
 
       res.json(response);
     } catch (error) {
-      console.error('Error banning user:', error);
+      logger.error('Error banning user:', error);
       res.status(500).json({ 
         error: 'Failed to ban user',
         details: error instanceof Error ? error.message : 'Unknown error'
@@ -753,7 +754,7 @@ router.post(
         userId,
       });
     } catch (error) {
-      console.error('Error unbanning user:', error);
+      logger.error('Error unbanning user:', error);
       res.status(500).json({ 
         error: 'Failed to unban user',
         details: error instanceof Error ? error.message : 'Unknown error'
@@ -832,7 +833,7 @@ router.post(
         role: 'admin',
       });
     } catch (error) {
-      console.error('Error granting admin role:', error);
+      logger.error('Error granting admin role:', error);
       res.status(500).json({ 
         error: 'Failed to grant admin role',
         details: error instanceof Error ? error.message : 'Unknown error'
@@ -922,7 +923,7 @@ router.post(
          userId,
        });
      } catch (error) {
-       console.error('Error revoking admin role:', error);
+       logger.error('Error revoking admin role:', error);
        res.status(500).json({ 
          error: 'Failed to revoke admin role',
          details: error instanceof Error ? error.message : 'Unknown error'
@@ -1035,7 +1036,7 @@ router.post(
          errors,
        });
      } catch (error) {
-       console.error('Error in bulk ban:', error);
+       logger.error('Error in bulk ban:', error);
        res.status(500).json({ 
          error: 'Failed to process bulk ban',
          details: error instanceof Error ? error.message : 'Unknown error'
@@ -1125,7 +1126,7 @@ router.post(
          errors,
        });
      } catch (error) {
-       console.error('Error in bulk delete:', error);
+       logger.error('Error in bulk delete:', error);
        res.status(500).json({ 
          error: 'Failed to process bulk delete',
          details: error instanceof Error ? error.message : 'Unknown error'
@@ -1214,7 +1215,7 @@ router.post(
         expiresIn: '1 hour',
       });
     } catch (error) {
-      console.error('Error sending password reset:', error);
+      logger.error('Error sending password reset:', error);
       res.status(500).json({ error: 'Failed to send password reset email' });
     }
   }
@@ -1308,7 +1309,7 @@ router.post(
         expiresIn: '24 hours',
       });
     } catch (error) {
-      console.error('Error sending verification email:', error);
+      logger.error('Error sending verification email:', error);
       res.status(500).json({ error: 'Failed to send verification email' });
     }
   }

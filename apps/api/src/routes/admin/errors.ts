@@ -4,6 +4,7 @@ import { and, eq, desc, like, sql, or, gte, lte } from 'drizzle-orm';
 import { db } from '../../db/index.js';
 import { error_logs } from '../../db/schema.js';
 import { requireAdmin } from '../../middleware/requireAdmin.js';
+import logger from '../../lib/logger.js';
 
 /**
  * Admin Error Logs Routes
@@ -137,7 +138,7 @@ router.get(
         page,
       });
     } catch (error) {
-      console.error('Error fetching error logs:', error);
+      logger.error('Error fetching error logs:', error);
       res.status(500).json({
         error: 'Failed to fetch error logs',
         details: error instanceof Error ? error.message : 'Unknown error',
@@ -226,7 +227,7 @@ router.get(
         })),
       });
     } catch (error) {
-      console.error('Error fetching error stats:', error);
+      logger.error('Error fetching error stats:', error);
       res.status(500).json({
         error: 'Failed to fetch error stats',
         details: error instanceof Error ? error.message : 'Unknown error',
@@ -312,7 +313,7 @@ router.get(
       res.setHeader('Content-Disposition', 'attachment; filename=error-logs-export.csv');
       res.send(csvLines.join('\n'));
     } catch (error) {
-      console.error('Error exporting error logs:', error);
+      logger.error('Error exporting error logs:', error);
       res.status(500).json({
         error: 'Failed to export error logs',
         details: error instanceof Error ? error.message : 'Unknown error',

@@ -5,6 +5,7 @@ import { db } from '../../db/index.js';
 import { inspector_tokens, member } from '../../db/schema.js';
 import { requireRole } from '../../middleware/requireRole.js';
 import { logAdminAction } from '../../services/adminAudit.service.js';
+import logger from '../../lib/logger.js';
 
 /**
  * Admin Inspector Tokens Routes
@@ -140,7 +141,7 @@ router.post(
         message: 'Token generated successfully. Save this token - it cannot be retrieved again.',
       });
     } catch (error) {
-      console.error('Error generating inspector token:', error);
+      logger.error('Error generating inspector token:', error);
       res.status(500).json({ 
         error: 'Failed to generate inspector token',
         details: error instanceof Error ? error.message : 'Unknown error'
@@ -251,7 +252,7 @@ router.delete(
         }
       });
     } catch (error) {
-      console.error('Error revoking inspector token:', error);
+      logger.error('Error revoking inspector token:', error);
       res.status(500).json({ 
         error: 'Failed to revoke token',
         details: error instanceof Error ? error.message : 'Unknown error'
@@ -349,7 +350,7 @@ router.get(
         active_count: tokensWithStatus.filter(t => t.status === 'active').length,
       });
     } catch (error) {
-      console.error('Error fetching inspector tokens:', error);
+      logger.error('Error fetching inspector tokens:', error);
       res.status(500).json({ 
         error: 'Failed to fetch tokens',
         details: error instanceof Error ? error.message : 'Unknown error'

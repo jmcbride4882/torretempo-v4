@@ -5,6 +5,7 @@ import { db } from '../../db/index.js';
 import { user } from '../../db/schema.js';
 import { eq } from 'drizzle-orm';
 import { auth } from '../../lib/auth.js';
+import logger from '../../lib/logger.js';
 
 const router = Router();
 
@@ -79,7 +80,7 @@ router.post('/:id/impersonate', requireAdmin, async (req: Request, res: Response
       session: impersonationResult.session,
     });
   } catch (error) {
-    console.error('Error during impersonation:', error);
+    logger.error('Error during impersonation:', error);
     res.status(500).json({ message: 'Internal server error' });
   }
 });
@@ -121,7 +122,7 @@ router.post('/stop-impersonation', requireAdmin, async (req: Request, res: Respo
 
     res.json({ message: 'Impersonation stopped' });
   } catch (error) {
-    console.error('Error stopping impersonation:', error);
+    logger.error('Error stopping impersonation:', error);
     res.status(500).json({ message: 'Internal server error' });
   }
 });

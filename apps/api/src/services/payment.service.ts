@@ -10,6 +10,7 @@ import type {
   SubscriptionIntervalUnit,
   PaymentCurrency,
 } from 'gocardless-nodejs/types/Types.js';
+import logger from '../lib/logger.js';
 import 'dotenv/config';
 
 // Re-export GoCardless types for external use
@@ -278,14 +279,14 @@ export function verifyStripeWebhook(payload: string, signature: string): Stripe.
   
   const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
   if (!webhookSecret) {
-    console.error('Stripe webhook secret not configured');
+    logger.error('Stripe webhook secret not configured');
     return null;
   }
   
   try {
     return stripe.webhooks.constructEvent(payload, signature, webhookSecret);
   } catch (err) {
-    console.error('Stripe webhook signature verification failed:', err);
+    logger.error('Stripe webhook signature verification failed:', err);
     return null;
   }
 }
@@ -293,7 +294,7 @@ export function verifyStripeWebhook(payload: string, signature: string): Stripe.
 export function verifyGoCardlessWebhook(payload: string, signature: string): boolean {
   const webhookSecret = process.env.GOCARDLESS_WEBHOOK_SECRET;
   if (!webhookSecret) {
-    console.error('GoCardless webhook secret not configured');
+    logger.error('GoCardless webhook secret not configured');
     return false;
   }
   

@@ -8,6 +8,7 @@ import {
   removeSubscription,
   getVapidPublicKey,
 } from '../../services/push-notification.service.js';
+import logger from '../../lib/logger.js';
 
 const router = Router();
 
@@ -65,7 +66,7 @@ router.get('/', async (req: Request, res: Response) => {
       },
     });
   } catch (error) {
-    console.error('Error fetching notifications:', error);
+    logger.error('Error fetching notifications:', error);
     res.status(500).json({ message: 'Failed to fetch notifications' });
   }
 });
@@ -91,7 +92,7 @@ router.get('/unread-count', async (req: Request, res: Response) => {
     const count = countResult[0]?.count || 0;
     res.json({ count });
   } catch (error) {
-    console.error('Error fetching unread count:', error);
+    logger.error('Error fetching unread count:', error);
     res.status(500).json({ message: 'Failed to fetch unread count' });
   }
 });
@@ -128,7 +129,7 @@ router.patch('/read-all', async (req: Request, res: Response) => {
 
     res.json({ message: 'All notifications marked as read' });
   } catch (error) {
-    console.error('Error marking all notifications as read:', error);
+    logger.error('Error marking all notifications as read:', error);
     res.status(500).json({ message: 'Failed to mark all notifications as read' });
   }
 });
@@ -179,7 +180,7 @@ router.patch('/:id/read', async (req: Request, res: Response) => {
 
     res.json({ message: 'Notification marked as read' });
   } catch (error) {
-    console.error('Error marking notification as read:', error);
+    logger.error('Error marking notification as read:', error);
     res.status(500).json({ message: 'Failed to mark notification as read' });
   }
 });
@@ -216,7 +217,7 @@ router.post('/push/subscribe', async (req: Request, res: Response) => {
     const result = await saveSubscription(userId, subscription, req.headers['user-agent']);
     res.json({ message: 'Push subscription registered', id: result.id });
   } catch (error) {
-    console.error('Error saving push subscription:', error);
+    logger.error('Error saving push subscription:', error);
     res.status(500).json({ message: 'Failed to save push subscription' });
   }
 });
@@ -237,7 +238,7 @@ router.post('/push/unsubscribe', async (req: Request, res: Response) => {
     await removeSubscription(userId, endpoint);
     res.json({ message: 'Push subscription removed' });
   } catch (error) {
-    console.error('Error removing push subscription:', error);
+    logger.error('Error removing push subscription:', error);
     res.status(500).json({ message: 'Failed to remove push subscription' });
   }
 });

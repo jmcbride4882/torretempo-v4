@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
-const API_BASE = import.meta.env.VITE_API_URL || '';
+const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:3000';
 
 async function fetchEmployee(slug: string, id: string) {
   const res = await fetch(`${API_BASE}/api/v1/org/${slug}/employees/${id}`, { credentials: 'include' });

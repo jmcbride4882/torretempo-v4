@@ -4,6 +4,7 @@ import { readFile } from 'fs/promises';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { EmailJob, redisConnection } from '../lib/queue.js';
+import logger from '../lib/logger.js';
 
 // Only initialize Resend if API key is provided
 const resendApiKey = process.env.RESEND_API_KEY || '';
@@ -50,7 +51,7 @@ const emailWorker = new Worker<EmailJob>(
     const { to, subject, template, data } = job.data;
 
     if (!resend) {
-      console.warn(`⚠️  RESEND_API_KEY not configured - skipping email to ${to} (${subject})`);
+      logger.warn(`⚠️  RESEND_API_KEY not configured - skipping email to ${to} (${subject})`);
       return; // Skip email sending but don't fail the job
     }
 
@@ -68,7 +69,7 @@ const emailWorker = new Worker<EmailJob>(
       throw new Error(error.message || 'Failed to send email');
     }
 
-    console.log(`📧 Email sent to ${to} (${subject})`);
+    logger.info(`📧 Email sent to ${to} (${subject})`);
   },
   {
     connection: redisConnection,
@@ -76,11 +77,11 @@ const emailWorker = new Worker<EmailJob>(
 );
 
 emailWorker.on('completed', (job) => {
-  console.log('✅ Email job completed', { jobId: job.id });
+  logger.info('✅ Email job completed', { jobId: job.id });
 });
 
 emailWorker.on('failed', (job, err) => {
-  console.error('❌ Email job failed', {
+  logger.error('❌ Email job failed', {
     jobId: job?.id,
     attemptsMade: job?.attemptsMade,
     error: err,

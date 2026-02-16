@@ -38,7 +38,7 @@ export function NotificationPopover({
       setIsLoading(true);
       setError(null);
       const data = await fetchNotifications(slug, { limit: 10 });
-      const items = data.notifications || data.data || [];
+      const items = data.data || [];
       setNotifications(items);
 
       // Update unread count

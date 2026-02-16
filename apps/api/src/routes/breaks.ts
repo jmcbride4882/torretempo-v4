@@ -4,6 +4,7 @@ import { db } from '../db/index.js';
 import { break_entries, time_entries } from '../db/schema.js';
 import { requireRole } from '../middleware/requireRole.js';
 import { logAudit } from '../services/audit.service.js';
+import logger from '../lib/logger.js';
 
 const router = Router();
 
@@ -61,7 +62,7 @@ router.get('/:timeEntryId/breaks', async (req: Request, res: Response) => {
 
     res.json({ breaks });
   } catch (error) {
-    console.error('Error fetching breaks:', error);
+    logger.error('Error fetching breaks:', error);
     res.status(500).json({ error: 'Failed to fetch breaks' });
   }
 });
@@ -154,7 +155,7 @@ router.post(
 
       res.status(201).json({ break: created[0] });
     } catch (error) {
-      console.error('Error starting break:', error);
+      logger.error('Error starting break:', error);
       res.status(500).json({ error: 'Failed to start break' });
     }
   }
@@ -261,7 +262,7 @@ router.patch(
 
       res.json({ break: updated[0] });
     } catch (error) {
-      console.error('Error ending break:', error);
+      logger.error('Error ending break:', error);
       res.status(500).json({ error: 'Failed to end break' });
     }
   }
@@ -365,7 +366,7 @@ router.delete(
 
       res.status(204).send();
     } catch (error) {
-      console.error('Error deleting break:', error);
+      logger.error('Error deleting break:', error);
       res.status(500).json({ error: 'Failed to delete break' });
     }
   }
