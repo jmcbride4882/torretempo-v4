@@ -150,7 +150,28 @@
     "unpublished": "Sin publicar",
     "overridden": "Anulado",
     "generateNew": "Generar nuevo",
-    "done": "Hecho"
+    "done": "Hecho",
+    "addDetails": "Anadir detalles",
+    "addNotes": "Anadir notas",
+    "backToHome": "Volver al inicio",
+    "connecting": "Conectando...",
+    "creating": "Creando...",
+    "employee": "Empleado",
+    "enter": "Introducir",
+    "fetching": "Obteniendo...",
+    "filters": "Filtros",
+    "live": "En vivo",
+    "location": "Ubicacion",
+    "message": "Mensaje",
+    "noPreference": "Sin preferencia",
+    "notes": "Notas",
+    "notesOptional": "Notas (opcional)",
+    "offline": "Sin conexion",
+    "pleaseWait": "Por favor espera...",
+    "scanning": "Escaneando...",
+    "soon": "Pronto",
+    "submitting": "Enviando...",
+    "unavailable": "No disponible"
   },
   "nav": {
     "main": "Principal",
@@ -219,7 +240,19 @@
     "minChars": "Minimo {{count}} caracteres",
     "namePlaceholder": "Juan Garcia",
     "subtitle": "Tu equipo te espera",
-    "signInContinue": "Inicia sesion para continuar"
+    "signInContinue": "Inicia sesion para continuar",
+    "backToSignIn": "Volver a iniciar sesion",
+    "confirmNewPassword": "Confirmar nueva contrasena",
+    "emailVerifiedRedirect": "Email verificado. Redirigiendo...",
+    "enterNewPassword": "Introduce tu nueva contrasena",
+    "goToSignIn": "Ir a iniciar sesion",
+    "invalidToken": "Token invalido o expirado",
+    "passwordReset": "Restablecer contrasena",
+    "passwordUpdated": "Contrasena actualizada correctamente",
+    "passwordsMismatch": "Las contrasenas no coinciden",
+    "resetFailed": "Error al restablecer la contrasena",
+    "verificationFailed": "Error en la verificacion",
+    "verifyingEmail": "Verificando email..."
   },
   "onboarding": {
     "selectOrg": "Seleccionar organizacion",
@@ -241,7 +274,33 @@
     "invitationInvalid": "Invitacion no valida",
     "members": "miembro | miembros",
     "owner": "Propietario",
-    "step": "Paso {{current}} de {{total}}"
+    "step": "Paso {{current}} de {{total}}",
+    "acceptingInvitation": "Aceptando invitacion...",
+    "addingToOrg": "Anadiendo a la organizacion...",
+    "alreadyMember": "Ya eres miembro de esta organizacion",
+    "autoAccept": "Aceptacion automatica",
+    "createAndJoin": "Crear y unirse",
+    "enterName": "Introduce el nombre",
+    "enterSlug": "Introduce el identificador URL",
+    "hey": "Hola",
+    "invalidInvitation": "Invitacion no valida",
+    "invitationError": "Error en la invitacion",
+    "invitationFailed": "Error al procesar la invitacion",
+    "joinWithInvitation": "Unirse con invitacion",
+    "joinedRedirect": "Unido correctamente. Redirigiendo...",
+    "loadingInvitation": "Cargando invitacion...",
+    "loadingOrgs": "Cargando organizaciones...",
+    "orgDescription": "Descripcion de la organizacion",
+    "orgDetails": "Detalles de la organizacion",
+    "setupWorkspace": "Configurar espacio de trabajo",
+    "signInAndJoin": "Inicia sesion y unete",
+    "signUpToAccept": "Registrate para aceptar",
+    "urlSlug": "Identificador URL",
+    "verifyingInvitation": "Verificando invitacion...",
+    "welcome": "Bienvenido",
+    "welcomeAboard": "Bienvenido a bordo",
+    "yourOrgs": "Tus organizaciones",
+    "youreInvited": "Has sido invitado"
   },
   "landing": {
     "heroTitle": "Fichaje en 2 segundos",
@@ -503,11 +562,26 @@
         "role": "Camarera",
         "tagline": "Ficha en 2 segundos",
         "steps": [
-          { "title": "Llega al trabajo", "detail": "Abre la app y ficha con un toque" },
-          { "title": "Ve sus turnos", "detail": "Consulta su horario de la semana" },
-          { "title": "Inicia descanso", "detail": "15 min registrados automaticamente" },
-          { "title": "Vuelve del descanso", "detail": "Continua fichando" },
-          { "title": "Termina el turno", "detail": "Resumen del dia generado" }
+          {
+            "title": "Llega al trabajo",
+            "detail": "Abre la app y ficha con un toque"
+          },
+          {
+            "title": "Ve sus turnos",
+            "detail": "Consulta su horario de la semana"
+          },
+          {
+            "title": "Inicia descanso",
+            "detail": "15 min registrados automaticamente"
+          },
+          {
+            "title": "Vuelve del descanso",
+            "detail": "Continua fichando"
+          },
+          {
+            "title": "Termina el turno",
+            "detail": "Resumen del dia generado"
+          }
         ]
       },
       "carlos": {
@@ -515,11 +589,26 @@
         "role": "Gerente de restaurante",
         "tagline": "Gestion en tiempo real",
         "steps": [
-          { "title": "Revisa asistencia", "detail": "Panel en vivo de quien ha fichado" },
-          { "title": "Aprueba solicitudes", "detail": "Intercambios y correcciones con un toque" },
-          { "title": "Crea horarios", "detail": "Drag & drop para la proxima semana" },
-          { "title": "Revisa cumplimiento", "detail": "Avisos automaticos de la ley laboral" },
-          { "title": "Publica el horario", "detail": "Notificacion automatica al equipo" }
+          {
+            "title": "Revisa asistencia",
+            "detail": "Panel en vivo de quien ha fichado"
+          },
+          {
+            "title": "Aprueba solicitudes",
+            "detail": "Intercambios y correcciones con un toque"
+          },
+          {
+            "title": "Crea horarios",
+            "detail": "Drag & drop para la proxima semana"
+          },
+          {
+            "title": "Revisa cumplimiento",
+            "detail": "Avisos automaticos de la ley laboral"
+          },
+          {
+            "title": "Publica el horario",
+            "detail": "Notificacion automatica al equipo"
+          }
         ]
       },
       "laura": {
@@ -527,11 +616,26 @@
         "role": "RRHH",
         "tagline": "Cumplimiento y nominas",
         "steps": [
-          { "title": "Revisa informes", "detail": "Resumenes mensuales por empleado" },
-          { "title": "Exporta nominas", "detail": "CSV compatible con su gestoria" },
-          { "title": "Verifica cumplimiento", "detail": "100% de la plantilla dentro de ley" },
-          { "title": "Gestiona contratos", "detail": "Altas, bajas y tipos de contrato" },
-          { "title": "Prepara auditoria", "detail": "Datos listos para inspeccion ITSS" }
+          {
+            "title": "Revisa informes",
+            "detail": "Resumenes mensuales por empleado"
+          },
+          {
+            "title": "Exporta nominas",
+            "detail": "CSV compatible con su gestoria"
+          },
+          {
+            "title": "Verifica cumplimiento",
+            "detail": "100% de la plantilla dentro de ley"
+          },
+          {
+            "title": "Gestiona contratos",
+            "detail": "Altas, bajas y tipos de contrato"
+          },
+          {
+            "title": "Prepara auditoria",
+            "detail": "Datos listos para inspeccion ITSS"
+          }
         ]
       },
       "carmen": {
@@ -539,11 +643,26 @@
         "role": "Inspectora ITSS",
         "tagline": "Verificacion inmediata",
         "steps": [
-          { "title": "Recibe token", "detail": "Acceso temporal de solo lectura" },
-          { "title": "Accede a registros", "detail": "API segura con datos verificados" },
-          { "title": "Verifica hashes", "detail": "Cada registro con SHA-256" },
-          { "title": "Comprueba cumplimiento", "detail": "Horas, descansos y limites legales" },
-          { "title": "Genera informe", "detail": "Datos exportables para el expediente" }
+          {
+            "title": "Recibe token",
+            "detail": "Acceso temporal de solo lectura"
+          },
+          {
+            "title": "Accede a registros",
+            "detail": "API segura con datos verificados"
+          },
+          {
+            "title": "Verifica hashes",
+            "detail": "Cada registro con SHA-256"
+          },
+          {
+            "title": "Comprueba cumplimiento",
+            "detail": "Horas, descansos y limites legales"
+          },
+          {
+            "title": "Genera informe",
+            "detail": "Datos exportables para el expediente"
+          }
         ]
       }
     }
@@ -579,7 +698,30 @@
     "closed": "Cerrado",
     "clockedCount": "{{count}} fichados",
     "averagePerDay": "media por dia",
-    "generated": "Generado"
+    "generated": "Generado",
+    "awaitingResponse": "Esperando respuesta",
+    "connectToSee": "Conecta para ver",
+    "enjoyDayOff": "Disfruta de tu dia libre",
+    "goodAfternoon": "Buenas tardes",
+    "goodEvening": "Buenas noches",
+    "goodMorning": "Buenos dias",
+    "hoursThisWeek": "Horas esta semana",
+    "noEmployeesClockedIn": "Ningun empleado fichado",
+    "noShifts": "Sin turnos",
+    "of": "de",
+    "onBreak": "En descanso",
+    "overtime": "Horas extra",
+    "overtimeAlert": "Alerta de horas extra",
+    "pendingSwaps": "Intercambios pendientes",
+    "realtimeStatus": "Estado en tiempo real",
+    "scheduled": "Programado",
+    "spanishLaborLaw": "Legislacion laboral espanola",
+    "teamOverview": "Vista del equipo",
+    "today": "Hoy",
+    "unread": "No leidas",
+    "upcomingShifts": "Proximos turnos",
+    "viewRoster": "Ver horario",
+    "waitingForEvents": "Esperando eventos..."
   },
   "clock": {
     "title": "Fichar",
@@ -630,7 +772,78 @@
       "breakStarted": "Descanso iniciado",
       "breakEnded": "Descanso finalizado",
       "error": "Error al fichar"
-    }
+    },
+    "accuracy": "Precision",
+    "active": "Activo",
+    "activeShift": "Turno activo",
+    "addBreak": "Anadir descanso",
+    "addShiftNotes": "Anadir notas del turno",
+    "alreadyClockedIn": "Ya tienes un fichaje activo",
+    "applyFilters": "Aplicar filtros",
+    "avgPerDay": "Media por dia",
+    "breakError": "Error en el descanso",
+    "breakManagementSoon": "Gestion de descansos disponible pronto",
+    "breaks": "Descansos",
+    "cameraBrowserNotSupported": "La camara no esta soportada en este navegador",
+    "cameraNotAvailable": "Camara no disponible",
+    "clockInNow": "Fichar ahora",
+    "clockMethod": "Metodo de fichaje",
+    "clockOutLocation": "Ubicacion de salida",
+    "clockedInAt": "Fichado a las {{time}}",
+    "clockedInSuccess": "Fichaje de entrada registrado",
+    "clockedOutSuccess": "Fichaje de salida registrado",
+    "clockingIn": "Fichando entrada...",
+    "clockingOut": "Fichando salida...",
+    "codeScanned": "Codigo escaneado",
+    "completed": "Completado",
+    "coordinates": "Coordenadas",
+    "custom": "Personalizado",
+    "dateRange": "Rango de fechas",
+    "disputed": "Disputado",
+    "duration": "Duracion",
+    "durationSummary": "Resumen de duracion",
+    "enableLocationPermissions": "Activa los permisos de ubicacion",
+    "endBreakBeforeClockOut": "Termina el descanso antes de fichar salida",
+    "enter4DigitPin": "Introduce tu PIN de 4 digitos",
+    "enterPin": "Introduce PIN",
+    "failedToClockIn": "Error al fichar entrada",
+    "failedToClockOut": "Error al fichar salida",
+    "fetchingLocation": "Obteniendo ubicacion...",
+    "holdNfcNearDevice": "Acerca la tarjeta NFC al dispositivo",
+    "hours": "horas",
+    "loadError": "Error al cargar",
+    "locationRequired": "Se requiere ubicacion",
+    "locations": "Ubicaciones",
+    "lowAccuracy": "Precision baja",
+    "minutes": "minutos",
+    "netWorkTime": "Tiempo neto de trabajo",
+    "nfcBrowserNotSupported": "NFC no soportado en este navegador",
+    "nfcError": "Error NFC",
+    "nfcNotSupported": "NFC no soportado",
+    "nfcTag": "Etiqueta NFC",
+    "noActiveEntry": "Sin fichaje activo",
+    "noActiveEntryDescription": "No tienes ningun fichaje activo en este momento",
+    "noBreaksTaken": "Sin descansos registrados",
+    "noEntriesDesc": "No hay registros para este periodo",
+    "outsideAllowedArea": "Fuera del area permitida",
+    "pending": "Pendiente",
+    "pointCameraAtQR": "Apunta la camara al codigo QR",
+    "qrCode": "Codigo QR",
+    "qrScannerError": "Error del escaner QR",
+    "serialNumber": "Numero de serie",
+    "shiftProgress": "Progreso del turno",
+    "startedAt": "Iniciado a las",
+    "status": "Estado",
+    "subtitle": "Control de fichaje",
+    "tagRead": "Etiqueta leida",
+    "thisMonth": "Este mes",
+    "thisWeek": "Esta semana",
+    "today": "Hoy",
+    "total": "Total",
+    "totalBreaks": "Total descansos",
+    "verified": "Verificado",
+    "withinGeofence": "Dentro del area permitida",
+    "yesterday": "Ayer"
   },
   "roster": {
     "title": "Horario",
@@ -736,7 +949,31 @@
       "autoScheduleComplete": "Auto-programacion completada",
       "validationErrors": "Errores de validacion encontrados",
       "shiftClaimed": "Turno reclamado correctamente"
-    }
+    },
+    "addTeamMembersDescription": "Anade miembros al equipo para crear turnos",
+    "breakDuration": "Duracion del descanso",
+    "clearAll": "Limpiar todo",
+    "complianceViolations": "Violaciones de cumplimiento",
+    "confirmed": "Confirmado",
+    "createNewShift": "Crear nuevo turno",
+    "createShiftDescription": "Configura los detalles del nuevo turno",
+    "currentWeek": "Semana actual",
+    "drafts": "Borradores",
+    "endAfterStart": "La hora de fin debe ser posterior a la de inicio",
+    "failedToCreateShift": "Error al crear el turno",
+    "filterBy": "Filtrar por",
+    "loading": "Cargando...",
+    "loadingEmployees": "Cargando empleados...",
+    "newShift": "Nuevo turno",
+    "noTeamMembers": "Sin miembros del equipo",
+    "pleaseSelectLocation": "Por favor selecciona una ubicacion",
+    "refresh": "Actualizar",
+    "selectLocation": "Seleccionar ubicacion",
+    "staffMember": "Miembro del equipo",
+    "subtitle": "Gestion de horarios",
+    "today": "Hoy",
+    "unassigned": "Sin asignar",
+    "unassignedShifts": "Turnos sin asignar"
   },
   "openShifts": {
     "title": "Turnos abiertos",
@@ -849,7 +1086,28 @@
       "swapRequested": "Intercambio solicitado",
       "swapDeclined": "Intercambio rechazado",
       "error": "Error al procesar el intercambio"
-    }
+    },
+    "adjustFilters": "Ajusta los filtros",
+    "allStatuses": "Todos los estados",
+    "approved": "Aprobado",
+    "cancelled": "Cancelado",
+    "clearFilters": "Limpiar filtros",
+    "completed": "Completado",
+    "noMatching": "Sin resultados que coincidan",
+    "noPending": "Sin intercambios pendientes",
+    "noPendingDesc": "No tienes intercambios pendientes de aprobacion",
+    "noRequests": "Sin solicitudes",
+    "noRequestsDesc": "No hay solicitudes de intercambio",
+    "noSwapsDesc": "No hay intercambios para mostrar",
+    "pending": "Pendiente",
+    "pendingForMe": "Pendientes para mi",
+    "pendingManager": "Pendientes de gerente",
+    "pendingPeer": "Pendientes de companero",
+    "refresh": "Actualizar",
+    "rejected": "Rechazado",
+    "searchPlaceholder": "Buscar intercambios...",
+    "subtitle": "Intercambios de turno",
+    "total": "Total"
   },
   "team": {
     "title": "Equipo",
@@ -956,7 +1214,22 @@
     "failedInvitation": "Error al enviar la invitacion",
     "roleMember": "Miembro",
     "roleAdmin": "Administrador",
-    "roleOwner": "Propietario"
+    "roleOwner": "Propietario",
+    "bankAccount": "Cuenta bancaria",
+    "contractFormacion": "Contrato de formacion",
+    "contractIndefinido": "Contrato indefinido",
+    "contractPracticas": "Contrato en practicas",
+    "contractTemporal": "Contrato temporal",
+    "createEmployee": "Crear empleado",
+    "documentsEncryptedNotice": "Los documentos estan cifrados con AES-256-GCM",
+    "fullName": "Nombre completo",
+    "member": "Miembro",
+    "phone": "Telefono",
+    "preferredShift": "Turno preferido",
+    "shiftAfternoon": "Tarde",
+    "shiftMorning": "Manana",
+    "shiftNight": "Noche",
+    "socialSecurityNumber": "Numero de la Seguridad Social"
   },
   "leave": {
     "title": "Ausencias",
@@ -989,7 +1262,14 @@
     "sickDaysUsed": "{{count}} dias de baja este ano",
     "teamCalendarTitle": "Calendario del equipo",
     "offToday": "Ausentes hoy",
-    "unknown": "Desconocido"
+    "unknown": "Desconocido",
+    "daysRemaining": "Dias restantes",
+    "daysUsed": "Dias usados",
+    "noTeamLeave": "Ningun miembro del equipo de permiso",
+    "sickDays": "Dias de baja",
+    "total": "Total",
+    "used": "Usados",
+    "vacation": "Vacaciones"
   },
   "corrections": {
     "title": "Correcciones",
@@ -1033,7 +1313,10 @@
     "submitting": "Enviando...",
     "submitRequest": "Enviar solicitud",
     "failedSubmit": "Error al enviar la solicitud de correccion",
-    "failedSubmitRequest": "Error al enviar la solicitud"
+    "failedSubmitRequest": "Error al enviar la solicitud",
+    "chooseEntry": "Elige un registro",
+    "noClockOut": "Sin fichaje de salida",
+    "requestedTime": "Hora solicitada"
   },
   "reports": {
     "title": "Informes",
@@ -1293,7 +1576,16 @@
       "daysAgo": "hace {{count}}d"
     },
     "empty": "No tienes notificaciones",
-    "refresh": "Actualizar"
+    "refresh": "Actualizar",
+    "allCaughtUpMsg": "Estas al dia con tus notificaciones",
+    "disable": "Desactivar",
+    "enable": "Activar",
+    "enablePushDesc": "Recibe notificaciones push en tu dispositivo",
+    "noNotificationsDesc": "No tienes notificaciones",
+    "noUnread": "Sin notificaciones no leidas",
+    "pushBlocked": "Push bloqueadas",
+    "pushBlockedDesc": "Las notificaciones push estan bloqueadas en tu navegador",
+    "pushNotSupported": "Push no soportado"
   },
   "settings": {
     "title": "Ajustes",
@@ -1387,7 +1679,59 @@
       "title": "Idioma",
       "current": "Idioma actual",
       "select": "Seleccionar idioma"
-    }
+    },
+    "activeSessions": "Sesiones activas",
+    "activeSessionsDesc": "Gestiona tus sesiones activas en otros dispositivos",
+    "atLeast8": "Al menos 8 caracteres",
+    "changePassword": "Cambiar contrasena",
+    "changePasswordDesc": "Actualiza tu contrasena de acceso",
+    "confirmPassword": "Confirmar contrasena",
+    "current": "Actual",
+    "currentPassword": "Contrasena actual",
+    "disable": "Desactivar",
+    "dnd": "No molestar",
+    "dndDesc": "Desactiva notificaciones fuera de horario laboral",
+    "emailDigest": "Resumen por email",
+    "emailDigestDesc": "Recibe un resumen semanal por correo",
+    "enable": "Activar",
+    "enableDnd": "Activar no molestar",
+    "enableDndDesc": "Derecho a la desconexion digital",
+    "enterCurrentPassword": "Introduce tu contrasena actual",
+    "from": "Desde",
+    "lastActive": "Ultima actividad",
+    "locationsDesc": "Configura las ubicaciones de fichaje",
+    "newPassword": "Nueva contrasena",
+    "notificationsDesc": "Configura tus preferencias de notificaciones",
+    "passwordUpdated": "Contrasena actualizada",
+    "passwordsNoMatch": "Las contrasenas no coinciden",
+    "preferences": "Preferencias",
+    "preferencesDesc": "Configura tus preferencias de la aplicacion",
+    "pushBlocked": "Push bloqueadas",
+    "pushBlockedDesc": "Notificaciones bloqueadas por el navegador",
+    "pushDisabled": "Push desactivadas",
+    "pushDisabledDesc": "Activa las notificaciones push para recibir alertas",
+    "pushEnabled": "Push activadas",
+    "pushEnabledDesc": "Estas recibiendo notificaciones push",
+    "pushNotSupported": "Push no soportado",
+    "pushNotifications": "Notificaciones push",
+    "pushNotificationsDesc": "Recibe alertas en tu dispositivo",
+    "reenterPassword": "Vuelve a introducir la contrasena",
+    "revoke": "Revocar",
+    "scheduleChanges": "Cambios de horario",
+    "scheduleChangesDesc": "Notificaciones cuando cambia tu horario",
+    "securityDesc": "Gestiona la seguridad de tu cuenta",
+    "shiftReminders": "Recordatorios de turno",
+    "shiftRemindersDesc": "Recibe recordatorios antes de tu turno",
+    "signOutAll": "Cerrar todas las sesiones",
+    "signOutEverywhere": "Cerrar sesion en todos los dispositivos",
+    "signOutEverywhereDesc": "Cierra la sesion en todos los dispositivos conectados",
+    "subtitle": "Configuracion de tu cuenta",
+    "swapUpdates": "Actualizaciones de intercambios",
+    "swapUpdatesDesc": "Notificaciones sobre intercambios de turno",
+    "team": "Equipo",
+    "teamDesc": "Gestiona los miembros de tu equipo",
+    "to": "Hasta",
+    "updatePassword": "Actualizar contrasena"
   },
   "billing": {
     "title": "Facturacion",
@@ -2190,7 +2534,13 @@
       "auditExportSuccess": "Registro de auditoria exportado",
       "failedExportAudit": "Error al exportar registro de auditoria",
       "analyticsRefreshed": "Analiticas actualizadas",
-      "failedLoadAnalytics": "Error al cargar analiticas"
+      "failedLoadAnalytics": "Error al cargar analiticas",
+      "confirmationMismatch": "El texto de confirmacion no coincide",
+      "failedDeleteTenants": "Error al eliminar tenants",
+      "failedExport": "Error al exportar",
+      "failedLoadTenants": "Error al cargar tenants",
+      "failedUpdateTenant": "Error al actualizar tenant",
+      "orgNameRequired": "El nombre de la organizacion es obligatorio"
     },
     "confirm": {
       "areYouSure": "¿Estas seguro?",
@@ -2221,7 +2571,15 @@
       "tenantAdmin": "Admin de org",
       "manager": "Gestor",
       "employee": "Empleado",
-      "allStatus": "Todos los estados"
+      "allStatus": "Todos los estados",
+      "allTiers": "Todos los planes",
+      "cancelled": "Cancelado",
+      "enterprise": "Enterprise",
+      "free": "Gratis",
+      "pastDue": "Vencido",
+      "pro": "Profesional",
+      "starter": "Basico",
+      "suspended": "Suspendido"
     },
     "bulkBan": {
       "title": "Banear usuarios seleccionados",
@@ -2233,7 +2591,8 @@
       "cannotUndo": "Esta accion no se puede deshacer.",
       "usersWarning": "Todas las cuentas de usuario seleccionadas y sus datos se eliminaran permanentemente.",
       "typeDeleteLabel": "Escribe DELETE para confirmar",
-      "deleteCount": "Eliminar {{count}} usuarios"
+      "deleteCount": "Eliminar {{count}} usuarios",
+      "tenantsWarning": "Esto eliminara permanentemente los tenants seleccionados y todos sus datos."
     }
   },
   "errors": {
@@ -2255,7 +2614,9 @@
     "passwordMismatch": "Las contrasenas no coinciden.",
     "signInFailed": "Error al iniciar sesion",
     "signUpFailed": "Error al crear cuenta",
-    "unexpected": "Ha ocurrido un error inesperado"
+    "unexpected": "Ha ocurrido un error inesperado",
+    "loadFailed": "Error al cargar",
+    "tryAgain": "Intentar de nuevo"
   },
   "offline": {
     "status": "Estado",
@@ -2267,5 +2628,10 @@
     "willSync": "Se sincronizara cuando haya conexion",
     "failed": "{{count}} fallidos",
     "processing": "Procesando"
+  },
+  "roles": {
+    "admin": "Administrador",
+    "member": "Miembro",
+    "owner": "Propietario"
   }
 }
