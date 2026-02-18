@@ -40,7 +40,7 @@ interface GoCardlessWebhookPayload {
   events: GoCardlessEvent[];
 }
 
-router.post('/gocardless', async (req: Request, res: Response) => {
+router.post('/', async (req: Request, res: Response) => {
   const signature = req.headers['webhook-signature'] as string;
 
   if (!signature) {

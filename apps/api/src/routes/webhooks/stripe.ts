@@ -16,7 +16,7 @@ import logger from '../../lib/logger.js';
 
 const router = Router();
 
-router.post('/stripe', async (req: Request, res: Response) => {
+router.post('/', async (req: Request, res: Response) => {
   const signature = req.headers['stripe-signature'] as string;
 
   if (!signature) {
