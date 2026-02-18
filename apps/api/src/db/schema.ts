@@ -281,6 +281,10 @@ export const swap_requests = pgTable(
     manager_id: text('manager_id'), // nullable
     resolved_at: timestamp('resolved_at', { withTimezone: true }),
     reason: text('reason'),
+    rejection_reason: text('rejection_reason'),
+    rejected_by: text('rejected_by'),
+    peer_responded_at: timestamp('peer_responded_at', { withTimezone: true }),
+    expires_at: timestamp('expires_at', { withTimezone: true }),
     created_at: timestamp('created_at', { withTimezone: true })
       .notNull()
       .defaultNow(),
@@ -393,6 +397,7 @@ export const correction_requests = pgTable(
     requested_data: jsonb('requested_data').notNull(),
     reason: text('reason').notNull(),
     status: varchar('status', { length: 20 }).notNull().default('pending'), // pending, approved, rejected
+    rejection_reason: text('rejection_reason'),
     reviewed_at: timestamp('reviewed_at', { withTimezone: true }),
     created_at: timestamp('created_at', { withTimezone: true })
       .notNull()

@@ -440,19 +440,13 @@ async function handleRejectCorrectionRequest(req: Request, res: Response) {
 
     // 2. Update correction request and notify employee (transaction)
     await db.transaction(async (tx) => {
-      // Update correction request with rejection reason
-      const updatedRequestedData = {
-        ...(correctionRequest.requested_data as any),
-        rejection_reason: rejection_reason as string,
-      };
-
       await tx
         .update(correction_requests)
         .set({
           status: 'rejected',
           reviewed_by: userId,
           reviewed_at: new Date(),
-          requested_data: updatedRequestedData,
+          rejection_reason: rejection_reason as string,
         })
         .where(eq(correction_requests.id, id as string));
 

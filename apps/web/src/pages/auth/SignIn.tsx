@@ -58,8 +58,8 @@ export default function SignIn() {
             </div>
             <span className="text-xl font-bold text-white">Torre Tempo</span>
           </div>
-          <h2 className="text-3xl font-bold text-white mb-4">Control horario digital<br/>para tu equipo</h2>
-          <p className="text-slate-400 text-lg">Cumplimiento automatico con el Estatuto de los Trabajadores.</p>
+          <h2 className="text-3xl font-bold text-white mb-4">{t('auth.heroTitle')}</h2>
+          <p className="text-slate-400 text-lg">{t('auth.heroSubtitle')}</p>
         </div>
 
         <div className="relative z-10 space-y-4">
@@ -67,23 +67,23 @@ export default function SignIn() {
             <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-white/10">
               <Shield className="h-4 w-4 text-primary-400" />
             </div>
-            <span className="text-sm">Cumplimiento legal automatico</span>
+            <span className="text-sm">{t('auth.featureLegalCompliance')}</span>
           </div>
           <div className="flex items-center gap-3 text-slate-300">
             <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-white/10">
               <Clock className="h-4 w-4 text-accent-400" />
             </div>
-            <span className="text-sm">Fichaje en 2 segundos</span>
+            <span className="text-sm">{t('auth.featureFastClockIn')}</span>
           </div>
           <div className="flex items-center gap-3 text-slate-300">
             <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-white/10">
               <FileText className="h-4 w-4 text-emerald-400" />
             </div>
-            <span className="text-sm">Exportacion de nominas integrada</span>
+            <span className="text-sm">{t('auth.featurePayrollExport')}</span>
           </div>
         </div>
 
-        <p className="relative z-10 text-xs text-slate-500">Usado por +500 empresas espanolas</p>
+        <p className="relative z-10 text-xs text-slate-500">{t('auth.usedByCompanies')}</p>
       </div>
 
       {/* Right form panel */}

@@ -49,6 +49,8 @@ import './workers/email.worker.js';
 import './workers/trial.worker.js';
 import './workers/trial-scheduler.worker.js';
 import './workers/payment.worker.js';
+import './workers/pdf.worker.js';
+import './workers/monthly.worker.js';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
