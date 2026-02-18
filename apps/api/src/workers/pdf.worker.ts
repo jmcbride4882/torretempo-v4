@@ -16,8 +16,12 @@ const __dirname = path.dirname(__filename);
 const publicDir = path.resolve(__dirname, '../../public');
 const pdfsDir = path.join(publicDir, 'pdfs');
 
-// Ensure PDFs directory exists
-await mkdir(pdfsDir, { recursive: true });
+// Ensure PDFs directory exists (graceful failure - will retry at job time)
+try {
+  await mkdir(pdfsDir, { recursive: true });
+} catch (err) {
+  logger.warn('Could not create PDFs directory at startup, will retry when generating PDFs', { error: (err as Error).message, pdfsDir });
+}
 
 /**
  * Generate HTML-like content for monthly summary report
