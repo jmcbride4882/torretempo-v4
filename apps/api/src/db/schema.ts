@@ -600,6 +600,8 @@ export const subscription_plans = pgTable(
     currency: varchar('currency', { length: 3 }).notNull().default('EUR'),
     billing_period: varchar('billing_period', { length: 20 }).notNull().default('monthly'),
     employee_limit: integer('employee_limit'), // NULL = unlimited
+    stripe_price_id: varchar('stripe_price_id', { length: 255 }), // Stripe Price ID from dashboard
+    gocardless_plan_name: varchar('gocardless_plan_name', { length: 255 }), // GoCardless subscription name
     included_modules: jsonb('included_modules').notNull().default('{}'),
     is_active: boolean('is_active').notNull().default(true),
     created_at: timestamp('created_at', { withTimezone: true })

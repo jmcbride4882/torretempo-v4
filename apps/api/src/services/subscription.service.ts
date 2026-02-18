@@ -1,4 +1,4 @@
-import { eq } from 'drizzle-orm';
+import { eq, sql } from 'drizzle-orm';
 import { db } from '../db/index.js';
 import { subscription_details, subscription_plans } from '../db/schema.js';
 import logger from '../lib/logger.js';
@@ -202,28 +202,21 @@ export async function incrementEmployeeCount(
   organizationId: string
 ): Promise<{ success: boolean; error?: string; newCount?: number }> {
   try {
-    // First get current count
-    const current = await db
-      .select({ count: subscription_details.current_employee_count })
-      .from(subscription_details)
+    // Atomic increment to prevent race conditions
+    const result = await db
+      .update(subscription_details)
+      .set({
+        current_employee_count: sql`COALESCE(${subscription_details.current_employee_count}, 0) + 1`,
+        updated_at: new Date(),
+      })
       .where(eq(subscription_details.organization_id, organizationId))
-      .limit(1);
+      .returning({ count: subscription_details.current_employee_count });
 
-    if (current.length === 0) {
+    if (result.length === 0) {
       return { success: false, error: 'Subscription not found' };
     }
 
-    const newCount = (current[0]!.count || 0) + 1;
-
-    await db
-      .update(subscription_details)
-      .set({
-        current_employee_count: newCount,
-        updated_at: new Date(),
-      })
-      .where(eq(subscription_details.organization_id, organizationId));
-
-    return { success: true, newCount };
+    return { success: true, newCount: result[0]!.count || 0 };
   } catch (error) {
     logger.error('Error incrementing employee count:', error);
     return { success: false, error: 'Failed to increment employee count' };
@@ -238,28 +231,21 @@ export async function decrementEmployeeCount(
   organizationId: string
 ): Promise<{ success: boolean; error?: string; newCount?: number }> {
   try {
-    // First get current count
-    const current = await db
-      .select({ count: subscription_details.current_employee_count })
-      .from(subscription_details)
+    // Atomic decrement with floor at 0 to prevent race conditions
+    const result = await db
+      .update(subscription_details)
+      .set({
+        current_employee_count: sql`GREATEST(0, COALESCE(${subscription_details.current_employee_count}, 0) - 1)`,
+        updated_at: new Date(),
+      })
       .where(eq(subscription_details.organization_id, organizationId))
-      .limit(1);
+      .returning({ count: subscription_details.current_employee_count });
 
-    if (current.length === 0) {
+    if (result.length === 0) {
       return { success: false, error: 'Subscription not found' };
     }
 
-    const newCount = Math.max(0, (current[0]!.count || 0) - 1);
-
-    await db
-      .update(subscription_details)
-      .set({
-        current_employee_count: newCount,
-        updated_at: new Date(),
-      })
-      .where(eq(subscription_details.organization_id, organizationId));
-
-    return { success: true, newCount };
+    return { success: true, newCount: result[0]!.count || 0 };
   } catch (error) {
     logger.error('Error decrementing employee count:', error);
     return { success: false, error: 'Failed to decrement employee count' };

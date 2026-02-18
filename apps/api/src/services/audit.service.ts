@@ -65,34 +65,37 @@ export async function logAudit(params: LogAuditParams): Promise<void> {
   } = params;
 
   try {
-    // Fetch the previous entry hash for this organization
-    const previousEntry = await db
-      .select({ entry_hash: audit_log.entry_hash })
-      .from(audit_log)
-      .where(eq(audit_log.organization_id, orgId))
-      .orderBy(desc(audit_log.created_at))
-      .limit(1);
+    // Use a transaction to prevent race conditions that could fork the hash chain
+    await db.transaction(async (tx) => {
+      // Fetch the previous entry hash for this organization
+      const previousEntry = await tx
+        .select({ entry_hash: audit_log.entry_hash })
+        .from(audit_log)
+        .where(eq(audit_log.organization_id, orgId))
+        .orderBy(desc(audit_log.created_at))
+        .limit(1);
 
-    const prevHash = previousEntry.length > 0 ? previousEntry[0]!.entry_hash : null;
+      const prevHash = previousEntry.length > 0 ? previousEntry[0]!.entry_hash : null;
 
-    // Compute the entry hash for this audit log
-    const timestamp = new Date().toISOString();
-    const hashInput = `${prevHash || 'GENESIS'}${action}${entityType}${entityId || ''}${JSON.stringify(newData || {})}${timestamp}`;
-    const entryHash = computeHash(hashInput);
+      // Compute the entry hash for this audit log
+      const timestamp = new Date().toISOString();
+      const hashInput = `${prevHash || 'GENESIS'}|${timestamp}|${action}|${entityType}|${entityId || ''}|${JSON.stringify(newData || {})}`;
+      const entryHash = computeHash(hashInput);
 
-    // Insert the audit log entry
-    await db.insert(audit_log).values({
-      organization_id: orgId,
-      actor_id: actorId,
-      action,
-      entity_type: entityType,
-      entity_id: entityId,
-      old_data: oldData || null,
-      new_data: newData || null,
-      ip_address: ip ? (ip as any) : null,
-      user_agent: userAgent || null,
-      prev_hash: prevHash,
-      entry_hash: entryHash,
+      // Insert the audit log entry
+      await tx.insert(audit_log).values({
+        organization_id: orgId,
+        actor_id: actorId,
+        action,
+        entity_type: entityType,
+        entity_id: entityId,
+        old_data: oldData || null,
+        new_data: newData || null,
+        ip_address: ip ? (ip as any) : null,
+        user_agent: userAgent || null,
+        prev_hash: prevHash,
+        entry_hash: entryHash,
+      });
     });
   } catch (error) {
     logger.error('Failed to log audit entry:', error);
@@ -117,46 +120,51 @@ export async function logTimeEntryAudit(params: LogTimeEntryAuditParams): Promis
   } = params;
 
   try {
-    // Fetch the previous entry hash for this organization
-    const previousEntry = await db
-      .select({ entry_hash: audit_log.entry_hash })
-      .from(audit_log)
-      .where(
-        and(
-          eq(audit_log.organization_id, orgId),
-          eq(audit_log.entity_type, 'timeEntry')
+    // Use a transaction to prevent race conditions that could fork the hash chain
+    const entryHash = await db.transaction(async (tx) => {
+      // Fetch the previous entry hash for this organization
+      const previousEntry = await tx
+        .select({ entry_hash: audit_log.entry_hash })
+        .from(audit_log)
+        .where(
+          and(
+            eq(audit_log.organization_id, orgId),
+            eq(audit_log.entity_type, 'timeEntry')
+          )
         )
-      )
-      .orderBy(desc(audit_log.created_at))
-      .limit(1);
+        .orderBy(desc(audit_log.created_at))
+        .limit(1);
 
-    // Use genesis hash if no previous entry
-    const prevHash = previousEntry.length > 0 ? previousEntry[0]!.entry_hash : '0000000000000000';
+      // Use genesis hash if no previous entry
+      const prevHash = previousEntry.length > 0 ? previousEntry[0]!.entry_hash : '0000000000000000';
 
-    // Compute the entry hash for time entry
-    const clockInStr = clockIn.toISOString();
-    const clockOutStr = clockOut ? clockOut.toISOString() : 'null';
-    const hashInput = `${userId}:${clockInStr}:${clockOutStr}:${breakMinutes}:${prevHash}`;
-    const entryHash = computeHash(hashInput);
+      // Compute the entry hash for time entry
+      const clockInStr = clockIn.toISOString();
+      const clockOutStr = clockOut ? clockOut.toISOString() : 'null';
+      const hashInput = `${userId}:${clockInStr}:${clockOutStr}:${breakMinutes}:${prevHash}`;
+      const hash = computeHash(hashInput);
 
-    // Insert the audit log entry
-    await db.insert(audit_log).values({
-      organization_id: orgId,
-      actor_id: userId,
-      action,
-      entity_type: 'timeEntry',
-      entity_id: timeEntryId,
-      old_data: null,
-      new_data: {
-        userId,
-        clockIn: clockInStr,
-        clockOut: clockOutStr,
-        breakMinutes,
-      },
-      ip_address: null,
-      user_agent: null,
-      prev_hash: prevHash,
-      entry_hash: entryHash,
+      // Insert the audit log entry
+      await tx.insert(audit_log).values({
+        organization_id: orgId,
+        actor_id: userId,
+        action,
+        entity_type: 'timeEntry',
+        entity_id: timeEntryId,
+        old_data: null,
+        new_data: {
+          userId,
+          clockIn: clockInStr,
+          clockOut: clockOutStr,
+          breakMinutes,
+        },
+        ip_address: null,
+        user_agent: null,
+        prev_hash: prevHash,
+        entry_hash: hash,
+      });
+
+      return hash;
     });
 
     return entryHash;

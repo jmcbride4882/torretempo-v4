@@ -87,7 +87,7 @@ export async function checkTrialExpirations() {
         and(
           eq(subscription_details.subscription_status, 'trial'),
           lt(subscription_details.trial_ends_at, now),
-          lt(subscription_details.trial_ends_at, twoDaysAgo)
+          gt(subscription_details.trial_ends_at, twoDaysAgo)
         )
       );
 
@@ -145,9 +145,9 @@ async function sendTrialReminder(
 ) {
   await emailQueue.add('trial-reminder', {
     to: email,
-    organizationId,
-    daysUntilTrialEnds,
-    trialEndsAt,
+    subject: `Tu prueba gratuita termina en ${daysUntilTrialEnds} días`,
+    template: 'trial-reminder.html',
+    data: { organizationId, daysUntilTrialEnds, trialEndsAt: trialEndsAt.toISOString() },
   });
 }
 
@@ -161,8 +161,9 @@ async function sendPaymentPrompt(
 ) {
   await emailQueue.add('trial-expired', {
     to: email,
-    organizationId,
-    trialEndedAt,
+    subject: 'Tu prueba gratuita ha terminado — Activa tu plan',
+    template: 'trial-expired.html',
+    data: { organizationId, trialEndedAt: trialEndedAt.toISOString() },
   });
 }
 
@@ -223,8 +224,9 @@ async function downgradeToFreeTier(
     // Send notification email
     await emailQueue.add('trial-downgraded', {
       to: email,
-      organizationId,
-      trialEndedAt,
+      subject: 'Tu cuenta ha sido degradada al plan gratuito',
+      template: 'trial-downgraded.html',
+      data: { organizationId, trialEndedAt: trialEndedAt.toISOString() },
     });
 
   } catch (error) {
@@ -289,9 +291,9 @@ export async function extendTrialPeriod(
   // Send extension notification
   await emailQueue.add('trial-extended', {
     to: adminEmail,
-    organizationId,
-    daysAdded: daysToAdd,
-    newTrialEndsAt,
+    subject: `Tu prueba se ha extendido ${daysToAdd} días`,
+    template: 'trial-extended.html',
+    data: { organizationId, daysAdded: daysToAdd, newTrialEndsAt: newTrialEndsAt.toISOString() },
   });
 
   return {

@@ -10,6 +10,8 @@
 
 import { useState, useEffect, useCallback } from 'react';
 
+const API_BASE = import.meta.env.VITE_API_URL || '';
+
 interface UsePushNotificationsReturn {
   isSupported: boolean;
   permission: NotificationPermission | 'unsupported';
@@ -53,7 +55,7 @@ export function usePushNotifications(orgSlug?: string): UsePushNotificationsRetu
     async function init() {
       try {
         // Fetch VAPID key
-        const res = await fetch(`/api/v1/org/${orgSlug}/notifications/push/vapid-key`);
+        const res = await fetch(`${API_BASE}/api/v1/org/${orgSlug}/notifications/push/vapid-key`, { credentials: 'include' });
         if (res.ok) {
           const { publicKey } = await res.json();
           setVapidKey(publicKey);
@@ -95,8 +97,9 @@ export function usePushNotifications(orgSlug?: string): UsePushNotificationsRetu
 
       // Send subscription to server
       const subJSON = subscription.toJSON();
-      const res = await fetch(`/api/v1/org/${orgSlug}/notifications/push/subscribe`, {
+      const res = await fetch(`${API_BASE}/api/v1/org/${orgSlug}/notifications/push/subscribe`, {
         method: 'POST',
+        credentials: 'include',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           subscription: {
@@ -130,8 +133,9 @@ export function usePushNotifications(orgSlug?: string): UsePushNotificationsRetu
 
       if (subscription) {
         // Notify server
-        await fetch(`/api/v1/org/${orgSlug}/notifications/push/unsubscribe`, {
+        await fetch(`${API_BASE}/api/v1/org/${orgSlug}/notifications/push/unsubscribe`, {
           method: 'POST',
+          credentials: 'include',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ endpoint: subscription.endpoint }),
         });

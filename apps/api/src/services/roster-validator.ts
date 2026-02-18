@@ -10,7 +10,7 @@
  * - Shift creation/update validation
  */
 
-import { and, eq, gte, lte, ne } from 'drizzle-orm';
+import { and, eq, gte, lte, ne, desc } from 'drizzle-orm';
 import { db } from '../db/index.js';
 import { shifts, organization_settings } from '../db/schema.js';
 
@@ -247,7 +247,7 @@ export class RosterValidator {
       .select({ end_time: shifts.end_time })
       .from(shifts)
       .where(and(...conditions))
-      .orderBy(shifts.end_time)
+      .orderBy(desc(shifts.end_time))
       .limit(1);
 
     if (recentShifts.length === 0) {
