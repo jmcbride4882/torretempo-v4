@@ -224,8 +224,9 @@ function calculateNightWorkHours(entry: TimeEntry): number {
 
   // Approximate adjustment for partial hours
   const totalHours = calculateHours(entry.clock_in, entry.clock_out);
+  if (totalHours === 0) return 0; // Guard against division by zero
   const ratio = nightHours / totalHours;
-  return totalHours * ratio - entry.break_minutes / 60;
+  return Math.max(0, totalHours * ratio - entry.break_minutes / 60);
 }
 
 // ============================================================================

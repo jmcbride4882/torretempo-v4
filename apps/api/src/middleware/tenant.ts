@@ -74,7 +74,7 @@ export const tenantMiddleware: RequestHandler = async (
     }
 
     // Set app.organization_id for RLS policies (session-scoped)
-    await db.execute(sql.raw(`SET app.organization_id = '${organizationId}'`));
+    await db.execute(sql`SET app.organization_id = ${organizationId}`);
 
     // Attach session and organizationId to request
     req.session = session;

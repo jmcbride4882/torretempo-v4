@@ -1,4 +1,4 @@
-import { eq, and, gte, lte, or } from 'drizzle-orm';
+import { eq, ne, and, gte, lte, or } from 'drizzle-orm';
 import { db } from '../db/index.js';
 import { shifts } from '../db/schema.js';
 import logger from '../lib/logger.js';
@@ -35,7 +35,7 @@ export async function checkShiftConflicts(
 
   // Exclude the shift being updated
   if (excludeShiftId) {
-    conditions.push(eq(shifts.id, excludeShiftId));
+    conditions.push(ne(shifts.id, excludeShiftId));
   }
 
   const conflicting = await db

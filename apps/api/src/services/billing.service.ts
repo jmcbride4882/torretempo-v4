@@ -133,9 +133,14 @@ async function createStripeSubscriptionFlow(params: {
     });
   }
 
-  // Create Stripe price ID from plan (or use existing)
-  // For now, we'll create a subscription with the plan price
-  const priceId = `price_${plan.code}_${plan.billing_period}`;
+  // Use stripe_price_id from the plan (set in seed/admin panel)
+  const priceId = plan.stripe_price_id;
+  if (!priceId) {
+    const error = new Error(`Plan "${plan.code}" has no Stripe Price ID configured`) as BillingError;
+    error.code = 'STRIPE_PRICE_NOT_CONFIGURED';
+    error.processor = 'stripe';
+    throw error;
+  }
 
   // Create subscription
   const subscription = await createStripeSubscription(customerId, priceId, {
@@ -143,10 +148,30 @@ async function createStripeSubscriptionFlow(params: {
     plan_id: plan.id,
   });
 
-  // Update subscription_details
-  await db
-    .update(subscription_details)
-    .set({
+  // Upsert subscription_details (INSERT if not exists, UPDATE if exists)
+  const existingDetails = await db
+    .select({ id: subscription_details.id })
+    .from(subscription_details)
+    .where(eq(subscription_details.organization_id, organizationId))
+    .limit(1);
+
+  if (existingDetails.length > 0) {
+    await db
+      .update(subscription_details)
+      .set({
+        stripe_customer_id: customerId,
+        stripe_subscription_id: subscription.id,
+        subscription_status: 'active',
+        tier: plan.code as 'starter' | 'professional' | 'enterprise',
+        plan_id: plan.id,
+        plan_price_cents: plan.price_cents,
+        plan_employee_limit: plan.employee_limit,
+        updated_at: new Date(),
+      })
+      .where(eq(subscription_details.organization_id, organizationId));
+  } else {
+    await db.insert(subscription_details).values({
+      organization_id: organizationId,
       stripe_customer_id: customerId,
       stripe_subscription_id: subscription.id,
       subscription_status: 'active',
@@ -154,9 +179,8 @@ async function createStripeSubscriptionFlow(params: {
       plan_id: plan.id,
       plan_price_cents: plan.price_cents,
       plan_employee_limit: plan.employee_limit,
-      updated_at: new Date(),
-    })
-    .where(eq(subscription_details.organization_id, organizationId));
+    });
+  }
 
   return {
     processor: 'stripe',
@@ -238,10 +262,31 @@ async function createGoCardlessSubscriptionFlow(params: {
   // Extract subscription ID from result
   const subscriptionId = (subscriptionResult as { subscriptions?: { id: string } }).subscriptions?.id || '';
 
-  // Update subscription_details
-  await db
-    .update(subscription_details)
-    .set({
+  // Upsert subscription_details (INSERT if not exists, UPDATE if exists)
+  const existingGc = await db
+    .select({ id: subscription_details.id })
+    .from(subscription_details)
+    .where(eq(subscription_details.organization_id, organizationId))
+    .limit(1);
+
+  if (existingGc.length > 0) {
+    await db
+      .update(subscription_details)
+      .set({
+        gocardless_customer_id: customerId,
+        gocardless_mandate_id: mandateId,
+        gocardless_subscription_id: subscriptionId,
+        subscription_status: 'active',
+        tier: plan.code as 'starter' | 'professional' | 'enterprise',
+        plan_id: plan.id,
+        plan_price_cents: plan.price_cents,
+        plan_employee_limit: plan.employee_limit,
+        updated_at: new Date(),
+      })
+      .where(eq(subscription_details.organization_id, organizationId));
+  } else {
+    await db.insert(subscription_details).values({
+      organization_id: organizationId,
       gocardless_customer_id: customerId,
       gocardless_mandate_id: mandateId,
       gocardless_subscription_id: subscriptionId,
@@ -250,9 +295,8 @@ async function createGoCardlessSubscriptionFlow(params: {
       plan_id: plan.id,
       plan_price_cents: plan.price_cents,
       plan_employee_limit: plan.employee_limit,
-      updated_at: new Date(),
-    })
-    .where(eq(subscription_details.organization_id, organizationId));
+    });
+  }
 
   return {
     processor: 'gocardless',
@@ -349,9 +393,15 @@ export async function changeSubscriptionPlan(
 
   // For Stripe, update the subscription
   if (sub.stripe_subscription_id && stripe) {
+    const priceId = newPlan.stripe_price_id;
+    if (!priceId) {
+      const error = new Error(`Plan "${newPlan.code}" has no Stripe Price ID configured`) as BillingError;
+      error.code = 'STRIPE_PRICE_NOT_CONFIGURED';
+      throw error;
+    }
+
     const subscription = await stripe.subscriptions.retrieve(sub.stripe_subscription_id);
-    const priceId = `price_${newPlan.code}_${newPlan.billing_period}`;
-    
+
     await stripe.subscriptions.update(sub.stripe_subscription_id, {
       items: [{
         id: subscription.items.data[0]?.id,

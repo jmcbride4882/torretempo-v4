@@ -10,6 +10,7 @@ import type {
   SubscriptionIntervalUnit,
   PaymentCurrency,
 } from 'gocardless-nodejs/types/Types.js';
+import { createHmac, timingSafeEqual } from 'crypto';
 import logger from '../lib/logger.js';
 import 'dotenv/config';
 
@@ -297,12 +298,19 @@ export function verifyGoCardlessWebhook(payload: string, signature: string): boo
     logger.error('GoCardless webhook secret not configured');
     return false;
   }
-  
-  const crypto = require('crypto');
-  const computedSignature = crypto
-    .createHmac('sha256', webhookSecret)
+
+  const computedSignature = createHmac('sha256', webhookSecret)
     .update(payload)
     .digest('hex');
-  
-  return computedSignature === signature;
+
+  // Use timing-safe comparison to prevent timing attacks
+  try {
+    return timingSafeEqual(
+      Buffer.from(computedSignature, 'hex'),
+      Buffer.from(signature, 'hex')
+    );
+  } catch {
+    // Lengths differ — signatures don't match
+    return false;
+  }
 }
