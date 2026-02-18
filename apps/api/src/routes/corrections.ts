@@ -372,10 +372,7 @@ router.put(
       };
 
       if (rejection_reason) {
-        // Store rejection reason in reason field or extend schema
-        const requestedData = correction.requested_data as any;
-        requestedData._rejection_reason = rejection_reason;
-        updateData.requested_data = requestedData;
+        updateData.rejection_reason = rejection_reason;
       }
 
       const updated = await db

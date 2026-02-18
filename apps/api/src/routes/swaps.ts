@@ -141,14 +141,14 @@ router.get('/mine', async (req: Request, res: Response) => {
       manager_id: r.manager_id || null,
       status: r.status,
       reason: r.reason || null,
-      rejection_reason: null,
-      rejected_by: null,
+      rejection_reason: r.rejection_reason || null,
+      rejected_by: r.rejected_by || null,
       created_at: r.created_at.toISOString(),
       updated_at: r.created_at.toISOString(),
-      peer_responded_at: null,
+      peer_responded_at: r.peer_responded_at?.toISOString() || null,
       manager_responded_at: r.resolved_at?.toISOString() || null,
       completed_at: r.status === 'completed' ? r.resolved_at?.toISOString() || null : null,
-      expires_at: null,
+      expires_at: r.expires_at?.toISOString() || null,
     }));
 
     res.json({ swaps });
@@ -202,14 +202,14 @@ router.get('/pending', async (req: Request, res: Response) => {
       manager_id: r.manager_id || null,
       status: r.status,
       reason: r.reason || null,
-      rejection_reason: null, // TODO: Add to schema
-      rejected_by: null, // TODO: Add to schema
+      rejection_reason: r.rejection_reason || null,
+      rejected_by: r.rejected_by || null,
       created_at: r.created_at.toISOString(),
-      updated_at: r.created_at.toISOString(), // Use created_at as fallback
-      peer_responded_at: null, // TODO: Add to schema
+      updated_at: r.created_at.toISOString(),
+      peer_responded_at: r.peer_responded_at?.toISOString() || null,
       manager_responded_at: r.resolved_at?.toISOString() || null,
       completed_at: r.status === 'completed' ? r.resolved_at?.toISOString() || null : null,
-      expires_at: null, // TODO: Add to schema
+      expires_at: r.expires_at?.toISOString() || null,
     }));
 
     res.json({ swaps });

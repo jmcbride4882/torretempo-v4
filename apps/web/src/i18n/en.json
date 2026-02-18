@@ -252,7 +252,15 @@
     "passwordsMismatch": "Passwords do not match",
     "resetFailed": "Failed to reset password",
     "verificationFailed": "Verification failed",
-    "verifyingEmail": "Verifying email..."
+    "verifyingEmail": "Verifying email...",
+    "heroTitle": "Digital time tracking for your team",
+    "heroSubtitle": "Automatic compliance with Spanish labor law.",
+    "signupHeroTitle": "Start managing your team today",
+    "signupHeroSubtitle": "14-day free trial. No credit card required.",
+    "featureLegalCompliance": "Automatic legal compliance",
+    "featureFastClockIn": "Clock in within 2 seconds",
+    "featurePayrollExport": "Integrated payroll export",
+    "usedByCompanies": "Used by 500+ Spanish companies"
   },
   "onboarding": {
     "selectOrg": "Select organization",
@@ -932,7 +940,16 @@
       "shiftCreated": "Shift created successfully",
       "shiftNotFound": "Shift not found",
       "complianceViolation": "Compliance Violation",
-      "shiftMoved": "Shift moved successfully"
+      "shiftMoved": "Shift moved successfully",
+      "shiftUpdated": "Shift updated",
+      "shiftDeleted": "Shift deleted",
+      "rosterPublished": "Roster published",
+      "rosterUnpublished": "Roster unpublished",
+      "templateApplied": "Template applied",
+      "weekDuplicated": "Week duplicated",
+      "autoScheduleComplete": "Auto-scheduling completed",
+      "validationErrors": "Validation errors found",
+      "shiftClaimed": "Shift claimed successfully"
     },
     "addTeamMembersDescription": "Add team members to create shifts",
     "breakDuration": "Break duration",
@@ -1006,7 +1023,11 @@
       "leaveOpenOrSelect": "Leave open or select specific shift",
       "openRequestAnyone": "Open Request (anyone can offer)",
       "anyoneOnTeam": "Anyone on team",
-      "reasonPlaceholder": "Why are you requesting this swap? (helps with approval)"
+      "reasonPlaceholder": "Why are you requesting this swap? (helps with approval)",
+      "yourShift": "Your shift",
+      "theirShift": "Their shift",
+      "requestedOn": "Requested on",
+      "noReason": "No reason provided"
     },
     "statuses": {
       "pendingPeer": "Pending Peer",
@@ -1050,7 +1071,10 @@
       "swapClaimed": "Swap claimed!",
       "claimFailed": "Failed to claim swap",
       "swapCancelled": "Swap request cancelled",
-      "cancelFailed": "Failed to cancel swap"
+      "cancelFailed": "Failed to cancel swap",
+      "swapRequested": "Swap requested",
+      "swapDeclined": "Swap declined",
+      "error": "Failed to process swap"
     },
     "adjustFilters": "Adjust filters",
     "allStatuses": "All statuses",
@@ -1365,7 +1389,9 @@
       "generating": "Generating",
       "ready": "Ready",
       "delivered": "Delivered",
-      "failed": "Failed"
+      "failed": "Failed",
+      "completed": "Completed",
+      "queued": "Queued"
     },
     "totalHoursLabel": "Total Hours",
     "daysWorkedLabel": "Days Worked",
@@ -1412,7 +1438,11 @@
       "loadFailed": "Failed to load reports",
       "pdfStarted": "PDF download started",
       "pdfFailed": "Failed to download PDF",
-      "reportLoadFailed": "Failed to load report"
+      "reportLoadFailed": "Failed to load report",
+      "generated": "Report generated",
+      "downloaded": "Report downloaded",
+      "exported": "Report exported",
+      "error": "Failed to generate report"
     },
     "months": {
       "january": "January",
@@ -1499,7 +1529,10 @@
       "compliant": "Compliant",
       "nonCompliant": "Non-compliant",
       "pendingReview": "Pending review",
-      "overridden": "Overridden"
+      "overridden": "Overridden",
+      "warning": "Warning",
+      "violation": "Violation",
+      "override": "Override"
     },
     "overrideReason": "Override reason",
     "overrideConfirm": "Are you sure you want to override this compliance check?"
@@ -1933,7 +1966,8 @@
       "notifications": "Notifications",
       "audit": "Audit",
       "analytics": "Analytics",
-      "settings": "Settings"
+      "settings": "Settings",
+      "broadcasts": "Broadcasts"
     },
     "sections": {
       "tenants": "Tenants",
@@ -2617,7 +2651,21 @@
       "failedExport": "Failed to export",
       "failedLoadTenants": "Failed to load tenants",
       "failedUpdateTenant": "Failed to update tenant",
-      "orgNameRequired": "Organization name is required"
+      "orgNameRequired": "Organization name is required",
+      "saved": "Saved successfully",
+      "created": "Created successfully",
+      "updated": "Updated successfully",
+      "deleted": "Deleted successfully",
+      "error": "An error occurred",
+      "exported": "Exported successfully",
+      "copied": "Copied to clipboard",
+      "suspended": "Organization suspended",
+      "unsuspended": "Organization reactivated",
+      "banned": "User banned",
+      "unbanned": "User unbanned",
+      "impersonating": "Impersonating user",
+      "impersonationStopped": "Impersonation ended",
+      "broadcastSent": "Broadcast sent"
     },
     "confirm": {
       "suspendTitle": "Suspend Organization",
@@ -2632,10 +2680,15 @@
       "deleteFlagTitle": "Delete Feature Flag",
       "deletePlanTitle": "Delete Plan",
       "irreversible": "This action cannot be undone.",
-      "typeToConfirm": "Type {{value}} to confirm"
+      "typeToConfirm": "Type {{value}} to confirm",
+      "areYouSure": "Are you sure?",
+      "cannotUndo": "This action cannot be undone."
     },
     "filters": {
+      "all": "All",
       "searchPlaceholder": "Search...",
+      "dateFrom": "From",
+      "dateTo": "To",
       "statusFilter": "Status",
       "roleFilter": "Role",
       "dateFilter": "Date range",
