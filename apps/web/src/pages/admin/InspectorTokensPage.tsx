@@ -48,7 +48,7 @@ import type { InspectorToken, Tenant } from '@/lib/api/admin';
 // Status badge colors
 const statusColors: Record<string, string> = {
   active: 'bg-emerald-50 text-emerald-700 border-emerald-200',
-  expired: 'bg-zinc-100 text-zinc-600 border-zinc-200',
+  expired: 'bg-slate-100 text-slate-600 border-slate-200',
   revoked: 'bg-red-50 text-red-700 border-red-200',
 };
 
@@ -227,12 +227,12 @@ export default function InspectorTokensPage() {
         className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between"
       >
         <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-amber-50 shadow-sm">
-            <Key className="h-5 w-5 text-amber-600" />
+          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-violet-50 shadow-sm">
+            <Key className="h-5 w-5 text-violet-600" />
           </div>
           <div>
-            <h1 className="text-xl font-bold text-zinc-900 sm:text-2xl">{t('admin.inspectorTokens.title')}</h1>
-            <p className="text-sm text-zinc-500">{t('admin.inspectorTokens.subtitle')}</p>
+            <h1 className="text-xl font-bold text-slate-900 sm:text-2xl">{t('admin.inspectorTokens.title')}</h1>
+            <p className="text-sm text-slate-500">{t('admin.inspectorTokens.subtitle')}</p>
           </div>
         </div>
 
@@ -243,7 +243,7 @@ export default function InspectorTokensPage() {
               size="sm"
               onClick={handleRefresh}
               disabled={isRefreshing}
-              className="gap-1.5 rounded-lg border border-zinc-200 bg-zinc-50 text-zinc-700 hover:bg-zinc-100"
+              className="gap-1.5 rounded-lg border border-slate-200 bg-slate-50 text-slate-700 hover:bg-slate-100"
             >
               <RefreshCw className={cn('h-4 w-4', isRefreshing && 'animate-spin')} />
               <span className="hidden sm:inline">{t('admin.refresh')}</span>
@@ -254,7 +254,7 @@ export default function InspectorTokensPage() {
             <Button
               onClick={() => setShowGenerateModal(true)}
               size="sm"
-              className="gap-1.5 rounded-lg bg-amber-600 text-white hover:bg-amber-500"
+              className="gap-1.5 rounded-lg bg-violet-600 text-white hover:bg-violet-500"
             >
               <Plus className="h-4 w-4" />
               <span className="hidden sm:inline">{t('admin.inspectorTokens.createToken')}</span>
@@ -269,26 +269,26 @@ export default function InspectorTokensPage() {
       >
         {/* Search */}
         <div className="relative flex-1 sm:max-w-xs">
-          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-400" />
+          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
           <Input
             type="text"
             placeholder={t('admin.inspectorTokens.searchByOrg')}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="rounded-xl border border-zinc-200 bg-white shadow-sm pl-9 text-zinc-900 placeholder:text-zinc-400 focus:border-amber-500"
+            className="rounded-xl border border-slate-200 bg-white shadow-sm pl-9 text-slate-900 placeholder:text-slate-400 focus:border-violet-500"
           />
         </div>
 
         {/* Status filter */}
         <Select value={statusFilter} onValueChange={setStatusFilter}>
-          <SelectTrigger className="w-[140px] rounded-xl border border-zinc-200 bg-white shadow-sm text-zinc-900">
+          <SelectTrigger className="w-[140px] rounded-xl border border-slate-200 bg-white shadow-sm text-slate-900">
             <SelectValue placeholder={t('admin.inspectorTokens.status')} />
           </SelectTrigger>
-          <SelectContent className="rounded-xl border border-zinc-200 bg-white shadow-sm">
-            <SelectItem value="all" className="text-zinc-700">{t('admin.inspectorTokens.allStatus')}</SelectItem>
-            <SelectItem value="active" className="text-zinc-700">{t('admin.inspectorTokens.active')}</SelectItem>
-            <SelectItem value="expired" className="text-zinc-700">{t('admin.inspectorTokens.expired')}</SelectItem>
-            <SelectItem value="revoked" className="text-zinc-700">{t('admin.inspectorTokens.revoked')}</SelectItem>
+          <SelectContent className="rounded-xl border border-slate-200 bg-white shadow-sm">
+            <SelectItem value="all" className="text-slate-700">{t('admin.inspectorTokens.allStatus')}</SelectItem>
+            <SelectItem value="active" className="text-slate-700">{t('admin.inspectorTokens.active')}</SelectItem>
+            <SelectItem value="expired" className="text-slate-700">{t('admin.inspectorTokens.expired')}</SelectItem>
+            <SelectItem value="revoked" className="text-slate-700">{t('admin.inspectorTokens.revoked')}</SelectItem>
           </SelectContent>
         </Select>
       </div>
@@ -298,30 +298,30 @@ export default function InspectorTokensPage() {
         className="flex flex-wrap items-center gap-4 text-sm sm:gap-6"
       >
         <div className="flex items-center gap-2">
-          <div className="h-2 w-2 rounded-full bg-amber-500" />
-          <span className="text-zinc-500">
-            <span className="font-medium text-zinc-700">{tokens.length}</span> {t('admin.inspectorTokens.totalLabel')}
+          <div className="h-2 w-2 rounded-full bg-violet-500" />
+          <span className="text-slate-500">
+            <span className="font-medium text-slate-700">{tokens.length}</span> {t('admin.inspectorTokens.totalLabel')}
           </span>
         </div>
         <div className="flex items-center gap-2">
           <div className="h-2 w-2 rounded-full bg-emerald-500" />
-          <span className="text-zinc-500">
-            <span className="font-medium text-zinc-700">{activeCount}</span> {t('admin.inspectorTokens.activeLabel')}
+          <span className="text-slate-500">
+            <span className="font-medium text-slate-700">{activeCount}</span> {t('admin.inspectorTokens.activeLabel')}
           </span>
         </div>
         {expiredCount > 0 && (
           <div className="flex items-center gap-2">
-            <div className="h-2 w-2 rounded-full bg-zinc-400" />
-            <span className="text-zinc-500">
-              <span className="font-medium text-zinc-700">{expiredCount}</span> {t('admin.inspectorTokens.expiredLabel')}
+            <div className="h-2 w-2 rounded-full bg-slate-400" />
+            <span className="text-slate-500">
+              <span className="font-medium text-slate-700">{expiredCount}</span> {t('admin.inspectorTokens.expiredLabel')}
             </span>
           </div>
         )}
         {revokedCount > 0 && (
           <div className="flex items-center gap-2">
             <div className="h-2 w-2 rounded-full bg-red-500" />
-            <span className="text-zinc-500">
-              <span className="font-medium text-zinc-700">{revokedCount}</span> {t('admin.inspectorTokens.revokedLabel')}
+            <span className="text-slate-500">
+              <span className="font-medium text-slate-700">{revokedCount}</span> {t('admin.inspectorTokens.revokedLabel')}
             </span>
           </div>
         )}
@@ -374,11 +374,11 @@ export default function InspectorTokensPage() {
                   <CheckCircle2 className="h-4 w-4" />
                   <span className="text-sm font-medium">{t('admin.inspectorTokens.tokenGeneratedTitle')}</span>
                 </div>
-                <p className="mb-3 text-xs text-zinc-500">
+                <p className="mb-3 text-xs text-slate-500">
                   {t('admin.inspectorTokens.copyTokenWarning')}
                 </p>
                 <div className="flex items-center gap-2">
-                  <code className="flex-1 overflow-hidden text-ellipsis rounded bg-zinc-100 px-3 py-2 font-mono text-sm text-zinc-900">
+                  <code className="flex-1 overflow-hidden text-ellipsis rounded bg-slate-100 px-3 py-2 font-mono text-sm text-slate-900">
                     {generatedToken.slice(0, 32)}...
                   </code>
                   <Button
@@ -409,16 +409,16 @@ export default function InspectorTokensPage() {
             <>
               <div className="space-y-4">
                 <div>
-                  <label className="mb-2 block text-sm font-medium text-zinc-700">
+                  <label className="mb-2 block text-sm font-medium text-slate-700">
                     {t('admin.inspectorTokens.tenant')}
                   </label>
                   <Select value={selectedOrgId} onValueChange={setSelectedOrgId}>
-                    <SelectTrigger className="w-full rounded-xl border border-zinc-200 bg-white shadow-sm text-zinc-900">
+                    <SelectTrigger className="w-full rounded-xl border border-slate-200 bg-white shadow-sm text-slate-900">
                       <SelectValue placeholder={t('admin.inspectorTokens.selectOrg')} />
                     </SelectTrigger>
-                    <SelectContent className="rounded-xl border border-zinc-200 bg-white shadow-sm">
+                    <SelectContent className="rounded-xl border border-slate-200 bg-white shadow-sm">
                       {tenants.map((tenant) => (
-                        <SelectItem key={tenant.id} value={tenant.id} className="text-zinc-700">
+                        <SelectItem key={tenant.id} value={tenant.id} className="text-slate-700">
                           {tenant.name}
                         </SelectItem>
                       ))}
@@ -427,18 +427,18 @@ export default function InspectorTokensPage() {
                 </div>
 
                 <div>
-                  <label className="mb-2 block text-sm font-medium text-zinc-700">
+                  <label className="mb-2 block text-sm font-medium text-slate-700">
                     {t('admin.inspectorTokens.expiresAt')}
                   </label>
                   <Select value={expiresInDays} onValueChange={setExpiresInDays}>
-                    <SelectTrigger className="w-full rounded-xl border border-zinc-200 bg-white shadow-sm text-zinc-900">
+                    <SelectTrigger className="w-full rounded-xl border border-slate-200 bg-white shadow-sm text-slate-900">
                       <SelectValue />
                     </SelectTrigger>
-                    <SelectContent className="rounded-xl border border-zinc-200 bg-white shadow-sm">
-                      <SelectItem value="7" className="text-zinc-700">{t('admin.inspectorTokens.days', { count: 7 })}</SelectItem>
-                      <SelectItem value="14" className="text-zinc-700">{t('admin.inspectorTokens.days', { count: 14 })}</SelectItem>
-                      <SelectItem value="30" className="text-zinc-700">{t('admin.inspectorTokens.days', { count: 30 })}</SelectItem>
-                      <SelectItem value="90" className="text-zinc-700">{t('admin.inspectorTokens.days', { count: 90 })}</SelectItem>
+                    <SelectContent className="rounded-xl border border-slate-200 bg-white shadow-sm">
+                      <SelectItem value="7" className="text-slate-700">{t('admin.inspectorTokens.days', { count: 7 })}</SelectItem>
+                      <SelectItem value="14" className="text-slate-700">{t('admin.inspectorTokens.days', { count: 14 })}</SelectItem>
+                      <SelectItem value="30" className="text-slate-700">{t('admin.inspectorTokens.days', { count: 30 })}</SelectItem>
+                      <SelectItem value="90" className="text-slate-700">{t('admin.inspectorTokens.days', { count: 90 })}</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -451,7 +451,7 @@ export default function InspectorTokensPage() {
                 <Button
                   onClick={handleGenerate}
                   disabled={isGenerating || !selectedOrgId}
-                  className="bg-amber-600 hover:bg-amber-500"
+                  className="bg-violet-600 hover:bg-violet-500"
                 >
                   {isGenerating ? t('admin.inspectorTokens.generating') : t('common.create')}
                 </Button>
@@ -500,20 +500,20 @@ function TokenCard({ token, onRevoke }: TokenCardProps) {
   return (
     <div
       className={cn(
-        'group relative overflow-hidden rounded-xl border border-zinc-200 bg-white shadow-sm transition-all duration-300',
-        'hover:border-zinc-300 hover:shadow-md'
+        'group relative overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm transition-all duration-300',
+        'hover:border-slate-300 hover:shadow-md'
       )}
     >
       <div className="relative p-5">
         {/* Header */}
         <div className="mb-4 flex items-start justify-between gap-3">
           <div className="flex items-center gap-3">
-            <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-amber-50 shadow-sm">
-              <Key className="h-5 w-5 text-amber-600" />
+            <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-violet-50 shadow-sm">
+              <Key className="h-5 w-5 text-violet-600" />
             </div>
             <div className="min-w-0">
-              <h3 className="truncate font-semibold text-zinc-900">{token.organizationName}</h3>
-              <p className="truncate text-sm text-zinc-500">
+              <h3 className="truncate font-semibold text-slate-900">{token.organizationName}</h3>
+              <p className="truncate text-sm text-slate-500">
                 {t('admin.inspectorTokens.tokenPrefix')}: {token.token.slice(0, 12)}...
               </p>
             </div>
@@ -526,20 +526,20 @@ function TokenCard({ token, onRevoke }: TokenCardProps) {
         {/* Info */}
         <div className="mb-4 space-y-2 text-sm">
           <div className="flex items-center justify-between">
-            <span className="flex items-center gap-1.5 text-zinc-500">
+            <span className="flex items-center gap-1.5 text-slate-500">
               <Building2 className="h-3.5 w-3.5" />
               {t('admin.inspectorTokens.createdBy')}
             </span>
-            <span className="text-zinc-700">{token.createdBy}</span>
+            <span className="text-slate-700">{token.createdBy}</span>
           </div>
           <div className="flex items-center justify-between">
-            <span className="flex items-center gap-1.5 text-zinc-500">
+            <span className="flex items-center gap-1.5 text-slate-500">
               <Clock className="h-3.5 w-3.5" />
               {t('admin.inspectorTokens.expiresAt')}
             </span>
             <span className={cn(
               'font-medium',
-              isActive && daysUntilExpiry <= 7 ? 'text-amber-600' : 'text-zinc-700'
+              isActive && daysUntilExpiry <= 7 ? 'text-violet-600' : 'text-slate-700'
             )}>
               {isActive ? (
                 daysUntilExpiry > 0 ? t('admin.inspectorTokens.daysRemaining', { count: daysUntilExpiry }) : t('admin.inspectorTokens.today')
@@ -550,8 +550,8 @@ function TokenCard({ token, onRevoke }: TokenCardProps) {
           </div>
           {token.lastUsedAt && (
             <div className="flex items-center justify-between">
-              <span className="text-zinc-500">{t('admin.inspectorTokens.lastUsed')}</span>
-              <span className="text-zinc-700">
+              <span className="text-slate-500">{t('admin.inspectorTokens.lastUsed')}</span>
+              <span className="text-slate-700">
                 {new Date(token.lastUsedAt).toLocaleDateString()}
               </span>
             </div>
@@ -560,9 +560,9 @@ function TokenCard({ token, onRevoke }: TokenCardProps) {
 
         {/* Expiry warning */}
         {isActive && daysUntilExpiry <= 7 && (
-          <div className="mb-4 flex items-center gap-2 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2">
-            <AlertTriangle className="h-4 w-4 text-amber-600" />
-            <span className="text-sm font-medium text-amber-700">
+          <div className="mb-4 flex items-center gap-2 rounded-lg border border-violet-200 bg-violet-50 px-3 py-2">
+            <AlertTriangle className="h-4 w-4 text-violet-600" />
+            <span className="text-sm font-medium text-violet-700">
               {t('admin.inspectorTokens.expiresSoon')}
             </span>
           </div>
@@ -570,7 +570,7 @@ function TokenCard({ token, onRevoke }: TokenCardProps) {
 
         {/* Actions */}
         {isActive && (
-          <div className="border-t border-zinc-200 pt-4">
+          <div className="border-t border-slate-200 pt-4">
             <Button
               variant="ghost"
               size="sm"
@@ -590,23 +590,23 @@ function TokenCard({ token, onRevoke }: TokenCardProps) {
 // Skeleton
 function TokenCardSkeleton() {
   return (
-    <div className="animate-pulse rounded-xl border border-zinc-200 bg-white shadow-sm p-5">
+    <div className="animate-pulse rounded-xl border border-slate-200 bg-white shadow-sm p-5">
       <div className="mb-4 flex items-start justify-between">
         <div className="flex items-center gap-3">
-          <div className="h-11 w-11 rounded-xl bg-zinc-100" />
+          <div className="h-11 w-11 rounded-xl bg-slate-100" />
           <div className="space-y-1.5">
-            <div className="h-5 w-32 rounded bg-zinc-100" />
-            <div className="h-4 w-24 rounded bg-zinc-100" />
+            <div className="h-5 w-32 rounded bg-slate-100" />
+            <div className="h-4 w-24 rounded bg-slate-100" />
           </div>
         </div>
-        <div className="h-6 w-16 rounded-full bg-zinc-100" />
+        <div className="h-6 w-16 rounded-full bg-slate-100" />
       </div>
       <div className="mb-4 space-y-2">
-        <div className="h-4 w-full rounded bg-zinc-100" />
-        <div className="h-4 w-full rounded bg-zinc-100" />
+        <div className="h-4 w-full rounded bg-slate-100" />
+        <div className="h-4 w-full rounded bg-slate-100" />
       </div>
-      <div className="border-t border-zinc-200 pt-4">
-        <div className="h-8 w-full rounded bg-zinc-100" />
+      <div className="border-t border-slate-200 pt-4">
+        <div className="h-8 w-full rounded bg-slate-100" />
       </div>
     </div>
   );
@@ -627,19 +627,19 @@ function EmptyState({
   if (hasFilters) {
     return (
       <div
-        className="flex flex-col items-center justify-center rounded-xl border border-dashed border-zinc-200 bg-zinc-50 px-6 py-16 text-center"
+        className="flex flex-col items-center justify-center rounded-xl border border-dashed border-slate-200 bg-slate-50 px-6 py-16 text-center"
       >
-        <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-xl bg-zinc-100">
-          <Search className="h-7 w-7 text-zinc-400" />
+        <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-xl bg-slate-100">
+          <Search className="h-7 w-7 text-slate-400" />
         </div>
-        <h3 className="mb-1 text-lg font-semibold text-zinc-900">{t('admin.inspectorTokens.noMatchingTokens')}</h3>
-        <p className="mb-4 max-w-sm text-sm text-zinc-500">
+        <h3 className="mb-1 text-lg font-semibold text-slate-900">{t('admin.inspectorTokens.noMatchingTokens')}</h3>
+        <p className="mb-4 max-w-sm text-sm text-slate-500">
           {t('admin.inspectorTokens.tryAdjustingFilters')}
         </p>
         <Button
           variant="ghost"
           onClick={onClearFilters}
-          className="gap-2 rounded-lg border border-zinc-200 text-zinc-700 hover:bg-zinc-50"
+          className="gap-2 rounded-lg border border-slate-200 text-slate-700 hover:bg-slate-50"
         >
           {t('admin.inspectorTokens.clearFilters')}
         </Button>
@@ -649,19 +649,19 @@ function EmptyState({
 
   return (
     <div
-      className="flex flex-col items-center justify-center rounded-xl border border-dashed border-zinc-200 bg-zinc-50 px-6 py-16 text-center"
+      className="flex flex-col items-center justify-center rounded-xl border border-dashed border-slate-200 bg-slate-50 px-6 py-16 text-center"
     >
       <div
-        className="mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-amber-50"
+        className="mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-violet-50"
       >
-        <Key className="h-8 w-8 text-amber-600" />
+        <Key className="h-8 w-8 text-violet-600" />
       </div>
-      <h3 className="mb-1 text-lg font-semibold text-zinc-900">{t('admin.inspectorTokens.noTokens')}</h3>
-      <p className="mb-6 max-w-sm text-sm text-zinc-500">
+      <h3 className="mb-1 text-lg font-semibold text-slate-900">{t('admin.inspectorTokens.noTokens')}</h3>
+      <p className="mb-6 max-w-sm text-sm text-slate-500">
         {t('admin.inspectorTokens.noTokensDescription')}
       </p>
       <div>
-        <Button onClick={onGenerate} className="gap-2 rounded-lg bg-amber-600 text-white hover:bg-amber-500">
+        <Button onClick={onGenerate} className="gap-2 rounded-lg bg-violet-600 text-white hover:bg-violet-500">
           <Plus className="h-4 w-4" />
           {t('admin.inspectorTokens.createToken')}
         </Button>

@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
-import { Building2, Link as LinkIcon, ArrowRight, ArrowLeft, Clock } from 'lucide-react';
+import { Building2, Link as LinkIcon, ArrowRight, ArrowLeft, Clock, CheckCircle2, Sparkles } from 'lucide-react';
 import { useOrganization } from '@/hooks/useOrganization';
 import { useAuth } from '@/hooks/useAuth';
 import { Button } from '@/components/ui/button';
@@ -30,6 +30,7 @@ export default function CreateTenant() {
   const [slugEdited, setSlugEdited] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [hasExistingOrgs, setHasExistingOrgs] = useState(false);
+  const [showSuccess, setShowSuccess] = useState(false);
 
   useEffect(() => {
     const checkExistingOrgs = async () => {
@@ -80,8 +81,21 @@ export default function CreateTenant() {
 
       await setActiveOrganization(org.id);
 
+      // Provision 14-day trial
+      try {
+        await fetch(`${import.meta.env.VITE_API_URL}/api/v1/org/${org.slug}/billing/provision-trial`, {
+          method: 'POST',
+          credentials: 'include',
+          headers: { 'Content-Type': 'application/json' },
+        });
+      } catch (err) {
+        // Non-blocking — trial provisioning failure shouldn't block org creation
+        console.error('Trial provisioning failed:', err);
+      }
+
       toast.success(t('onboarding.orgCreated'));
-      navigate(`/t/${org.slug}/dashboard`);
+      setShowSuccess(true);
+      setTimeout(() => navigate(`/t/${org.slug}/dashboard`), 2500);
     } catch (error) {
       if (error instanceof Error) {
         toast.error(error.message);
@@ -94,7 +108,7 @@ export default function CreateTenant() {
   };
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center bg-zinc-50 px-4 py-12">
+    <div className="flex min-h-screen flex-col items-center justify-center bg-slate-50 px-4 py-12">
       {/* Back button */}
       {cameFromSelection && (
         <div className="absolute left-4 top-4 z-10 sm:left-6 sm:top-6">
@@ -112,82 +126,105 @@ export default function CreateTenant() {
       <div className="w-full max-w-sm">
         {/* Logo */}
         <div className="mb-10 flex flex-col items-center gap-3">
-          <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-primary-500 shadow-lg shadow-primary-500/20">
+          <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-primary-500 shadow-glow">
             <Clock className="h-7 w-7 text-white" />
           </div>
           <div className="text-center">
-            <h1 className="text-xl font-bold text-zinc-900">
+            <h1 className="text-xl font-bold text-slate-900">
               {t('onboarding.welcome')}{user?.name ? `, ${user.name.split(' ')[0]}` : ''}!
             </h1>
-            <p className="text-sm text-zinc-500 mt-1">{t('onboarding.setupWorkspace')}</p>
+            <p className="text-sm text-slate-500 mt-1">{t('onboarding.setupWorkspace')}</p>
           </div>
         </div>
 
         {/* Card */}
-        <div className="rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm space-y-6">
-          <div>
-            <h2 className="text-lg font-semibold text-zinc-900 flex items-center gap-2">
-              <Building2 className="h-5 w-5 text-primary-600" />
-              {t('onboarding.orgDetails')}
-            </h2>
-            <p className="text-sm text-zinc-500 mt-1">{t('onboarding.orgDescription')}</p>
-          </div>
-
-          <form onSubmit={handleSubmit} className="space-y-5">
-            <div className="space-y-2">
-              <Label htmlFor="name" className="text-zinc-700">{t('onboarding.orgName')}</Label>
-              <div className="relative">
-                <Building2 className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-400" />
-                <Input
-                  id="name"
-                  type="text"
-                  placeholder="Hotel La Torre"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  className="pl-10 h-11"
-                  required
-                  autoFocus
-                />
+        <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-card space-y-6">
+          {showSuccess ? (
+            <div className="text-center py-8 space-y-4">
+              <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-emerald-50 border border-emerald-200">
+                <CheckCircle2 className="h-8 w-8 text-emerald-600" />
+              </div>
+              <h2 className="text-xl font-bold text-slate-900">{t('trial.startedTitle')}</h2>
+              <p className="text-sm text-slate-500">{t('trial.startedDescription')}</p>
+              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary-50 border border-primary-200">
+                <Sparkles className="h-4 w-4 text-primary-600" />
+                <span className="text-sm text-primary-700 font-medium">14 {t('common.days')} {t('trial.badge')}</span>
               </div>
             </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="slug" className="text-zinc-700">{t('onboarding.urlSlug')}</Label>
-              <div className="relative">
-                <LinkIcon className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-400" />
-                <Input
-                  id="slug"
-                  type="text"
-                  placeholder="hotel-la-torre"
-                  value={slug}
-                  onChange={(e) => handleSlugChange(e.target.value)}
-                  className="pl-10 h-11"
-                  required
-                />
+          ) : (
+            <>
+              <div>
+                <h2 className="text-lg font-semibold text-slate-900 flex items-center gap-2">
+                  <Building2 className="h-5 w-5 text-primary-600" />
+                  {t('onboarding.orgDetails')}
+                </h2>
+                <p className="text-sm text-slate-500 mt-1">{t('onboarding.orgDescription')}</p>
               </div>
-              <p className="flex items-center gap-1 text-xs text-zinc-500">
-                <span>URL:</span>
-                <code className="rounded-md bg-zinc-100 px-1.5 py-0.5 font-mono text-primary-600 border border-zinc-200">
-                  tempo.app/t/{slug || 'tu-org'}
-                </code>
-              </p>
-            </div>
 
-            <Button
-              type="submit"
-              className="w-full h-12 min-h-touch"
-              disabled={isLoading || !name.trim() || !slug.trim()}
-            >
-              {isLoading ? (
-                <div className="h-4 w-4 animate-spin rounded-full border-2 border-white/20 border-t-white" />
-              ) : (
-                <>
-                  {t('onboarding.createOrg')}
-                  <ArrowRight className="ml-2 h-4 w-4" />
-                </>
-              )}
-            </Button>
-          </form>
+              <form onSubmit={handleSubmit} className="space-y-5">
+                <div className="space-y-2">
+                  <Label htmlFor="name" className="text-slate-700">{t('onboarding.orgName')}</Label>
+                  <div className="relative">
+                    <Building2 className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+                    <Input
+                      id="name"
+                      type="text"
+                      placeholder="Hotel La Torre"
+                      value={name}
+                      onChange={(e) => setName(e.target.value)}
+                      className="pl-10 h-11"
+                      required
+                      autoFocus
+                    />
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="slug" className="text-slate-700">{t('onboarding.urlSlug')}</Label>
+                  <div className="relative">
+                    <LinkIcon className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+                    <Input
+                      id="slug"
+                      type="text"
+                      placeholder="hotel-la-torre"
+                      value={slug}
+                      onChange={(e) => handleSlugChange(e.target.value)}
+                      className="pl-10 h-11"
+                      required
+                    />
+                  </div>
+                  <p className="flex items-center gap-1 text-xs text-slate-500">
+                    <span>URL:</span>
+                    <code className="rounded-md bg-slate-100 px-1.5 py-0.5 font-mono text-primary-600 border border-slate-200">
+                      tempo.app/t/{slug || 'tu-org'}
+                    </code>
+                  </p>
+                </div>
+
+                {/* Trial messaging */}
+                <div className="rounded-xl bg-primary-50 border border-primary-200 p-3 text-center">
+                  <p className="text-xs text-primary-700 font-medium">
+                    {t('trial.startedDescription')}
+                  </p>
+                </div>
+
+                <Button
+                  type="submit"
+                  className="w-full h-12 min-h-touch"
+                  disabled={isLoading || !name.trim() || !slug.trim()}
+                >
+                  {isLoading ? (
+                    <div className="h-4 w-4 animate-spin rounded-full border-2 border-white/20 border-t-white" />
+                  ) : (
+                    <>
+                      {t('onboarding.createOrg')}
+                      <ArrowRight className="ml-2 h-4 w-4" />
+                    </>
+                  )}
+                </Button>
+              </form>
+            </>
+          )}
         </div>
 
         <div className="mt-6 flex justify-center">

@@ -165,8 +165,8 @@ export function ShiftTemplateManager({ organizationSlug }: ShiftTemplateManagerP
   if (isLoading) {
     return (
       <div className="flex items-center justify-center py-12">
-        <Loader2 className="h-6 w-6 animate-spin text-zinc-400" />
-        <span className="ml-2 text-sm text-zinc-400">{t('templates.loadingTemplates')}</span>
+        <Loader2 className="h-6 w-6 animate-spin text-slate-400" />
+        <span className="ml-2 text-sm text-slate-400">{t('templates.loadingTemplates')}</span>
       </div>
     );
   }
@@ -176,8 +176,8 @@ export function ShiftTemplateManager({ organizationSlug }: ShiftTemplateManagerP
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h3 className="text-lg font-semibold text-zinc-900">{t('templates.title')}</h3>
-          <p className="text-sm text-zinc-500">{t('templates.subtitle')}</p>
+          <h3 className="text-lg font-semibold text-slate-900">{t('templates.title')}</h3>
+          <p className="text-sm text-slate-500">{t('templates.subtitle')}</p>
         </div>
         <Button onClick={() => setShowCreateModal(true)} className="gap-2">
           <Plus className="h-4 w-4" />
@@ -187,12 +187,12 @@ export function ShiftTemplateManager({ organizationSlug }: ShiftTemplateManagerP
 
       {/* Templates Grid */}
       {templates.length === 0 ? (
-        <div className="rounded-xl border border-zinc-200 bg-zinc-50 p-12 text-center">
-          <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-zinc-100">
-            <Clock className="h-8 w-8 text-zinc-400" />
+        <div className="rounded-xl border border-slate-200 bg-slate-50 p-12 text-center">
+          <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-slate-100">
+            <Clock className="h-8 w-8 text-slate-400" />
           </div>
-          <h3 className="mb-2 text-lg font-semibold text-zinc-900">{t('templates.noTemplatesTitle')}</h3>
-          <p className="mb-6 text-sm text-zinc-500">
+          <h3 className="mb-2 text-lg font-semibold text-slate-900">{t('templates.noTemplatesTitle')}</h3>
+          <p className="mb-6 text-sm text-slate-500">
             {t('templates.noTemplatesDescription')}
           </p>
           <Button onClick={() => setShowCreateModal(true)} className="gap-2">
@@ -211,8 +211,8 @@ export function ShiftTemplateManager({ organizationSlug }: ShiftTemplateManagerP
                 exit={{ opacity: 0, scale: 0.95 }}
                 transition={{ delay: index * 0.05 }}
                 className={cn(
-                  'group relative overflow-hidden rounded-xl border bg-white p-4 shadow-sm transition-all hover:bg-zinc-50',
-                  'border-zinc-200 hover:border-zinc-300'
+                  'group relative overflow-hidden rounded-xl border bg-white p-4 shadow-sm transition-all hover:bg-slate-50',
+                  'border-slate-200 hover:border-slate-300'
                 )}
               >
                 {/* Color indicator */}
@@ -227,9 +227,9 @@ export function ShiftTemplateManager({ organizationSlug }: ShiftTemplateManagerP
                   {/* Header */}
                   <div className="flex items-start justify-between">
                     <div className="flex-1">
-                      <h4 className="font-semibold text-zinc-900">{template.name}</h4>
+                      <h4 className="font-semibold text-slate-900">{template.name}</h4>
                       {template.location_name && (
-                        <div className="mt-1 flex items-center gap-1 text-xs text-zinc-500">
+                        <div className="mt-1 flex items-center gap-1 text-xs text-slate-500">
                           <MapPin className="h-3 w-3" />
                           <span>{template.location_name}</span>
                         </div>
@@ -240,7 +240,7 @@ export function ShiftTemplateManager({ organizationSlug }: ShiftTemplateManagerP
                         variant="ghost"
                         size="sm"
                         onClick={() => setEditingTemplate(template)}
-                        className="h-8 w-8 p-0 hover:bg-zinc-100"
+                        className="h-8 w-8 p-0 hover:bg-slate-100"
                       >
                         <Edit className="h-3.5 w-3.5" />
                       </Button>
@@ -257,8 +257,8 @@ export function ShiftTemplateManager({ organizationSlug }: ShiftTemplateManagerP
 
                   {/* Time details */}
                   <div className="space-y-2">
-                    <div className="flex items-center gap-2 text-sm text-zinc-700">
-                      <Clock className="h-4 w-4 text-zinc-400" />
+                    <div className="flex items-center gap-2 text-sm text-slate-700">
+                      <Clock className="h-4 w-4 text-slate-400" />
                       <span>
                         {template.start_time} - {template.end_time}
                       </span>
@@ -307,10 +307,10 @@ export function ShiftTemplateManager({ organizationSlug }: ShiftTemplateManagerP
 
       {/* Delete Confirmation */}
       <Dialog open={!!deletingTemplate} onOpenChange={() => setDeletingTemplate(null)}>
-        <DialogContent className="border-zinc-200 bg-white">
+        <DialogContent className="border-slate-200 bg-white">
           <DialogHeader>
-            <DialogTitle className="text-zinc-900">{t('templates.deleteTitle')}</DialogTitle>
-            <DialogDescription className="text-zinc-500">
+            <DialogTitle className="text-slate-900">{t('templates.deleteTitle')}</DialogTitle>
+            <DialogDescription className="text-slate-500">
               {t('templates.deleteConfirmMessage', { name: deletingTemplate?.name })}
             </DialogDescription>
           </DialogHeader>
@@ -443,13 +443,13 @@ function TemplateFormModal({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="border-zinc-200 bg-white sm:max-w-[500px]">
+      <DialogContent className="border-slate-200 bg-white sm:max-w-[500px]">
         <form onSubmit={handleSubmit}>
           <DialogHeader>
-            <DialogTitle className="text-zinc-900">
+            <DialogTitle className="text-slate-900">
               {editingTemplate ? t('templates.editTitle') : t('templates.createTitle')}
             </DialogTitle>
-            <DialogDescription className="text-zinc-500">
+            <DialogDescription className="text-slate-500">
               {editingTemplate
                 ? t('templates.editDescription')
                 : t('templates.createDescription')}
@@ -471,7 +471,7 @@ function TemplateFormModal({
 
             {/* Template name */}
             <div className="space-y-2">
-              <Label htmlFor="name" className="text-zinc-700">
+              <Label htmlFor="name" className="text-slate-700">
                 {t('templates.name')} *
               </Label>
               <Input
@@ -479,7 +479,7 @@ function TemplateFormModal({
                 placeholder={t('templates.templateNamePlaceholder')}
                 value={formData.name}
                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                className="border-zinc-200 bg-white text-zinc-900 placeholder:text-zinc-400"
+                className="border-slate-200 bg-white text-slate-900 placeholder:text-slate-400"
                 required
               />
             </div>
@@ -487,7 +487,7 @@ function TemplateFormModal({
             {/* Time range */}
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="start_time" className="text-zinc-700">
+                <Label htmlFor="start_time" className="text-slate-700">
                   {t('templates.startTimeRequired')} *
                 </Label>
                 <Input
@@ -495,13 +495,13 @@ function TemplateFormModal({
                   type="time"
                   value={formData.start_time}
                   onChange={(e) => setFormData({ ...formData, start_time: e.target.value })}
-                  className="border-zinc-200 bg-white text-zinc-900"
+                  className="border-slate-200 bg-white text-slate-900"
                   required
                 />
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="end_time" className="text-zinc-700">
+                <Label htmlFor="end_time" className="text-slate-700">
                   {t('templates.endTimeRequired')} *
                 </Label>
                 <Input
@@ -509,7 +509,7 @@ function TemplateFormModal({
                   type="time"
                   value={formData.end_time}
                   onChange={(e) => setFormData({ ...formData, end_time: e.target.value })}
-                  className="border-zinc-200 bg-white text-zinc-900"
+                  className="border-slate-200 bg-white text-slate-900"
                   required
                 />
               </div>
@@ -517,7 +517,7 @@ function TemplateFormModal({
 
             {/* Break minutes */}
             <div className="space-y-2">
-              <Label htmlFor="break_minutes" className="text-zinc-700">
+              <Label htmlFor="break_minutes" className="text-slate-700">
                 {t('templates.breakMinutes')}
               </Label>
               <Input
@@ -527,13 +527,13 @@ function TemplateFormModal({
                 max="120"
                 value={formData.break_minutes}
                 onChange={(e) => setFormData({ ...formData, break_minutes: parseInt(e.target.value) || 0 })}
-                className="border-zinc-200 bg-white text-zinc-900"
+                className="border-slate-200 bg-white text-slate-900"
               />
             </div>
 
             {/* Location */}
             <div className="space-y-2">
-              <Label htmlFor="location" className="text-zinc-700">
+              <Label htmlFor="location" className="text-slate-700">
                 {t('templates.defaultLocation')}
               </Label>
               <Select
@@ -541,10 +541,10 @@ function TemplateFormModal({
                 onValueChange={(value) => setFormData({ ...formData, location_id: value === 'none' ? null : value })}
                 disabled={isLoadingLocations}
               >
-                <SelectTrigger className="border-zinc-200 bg-white text-zinc-900">
+                <SelectTrigger className="border-slate-200 bg-white text-slate-900">
                   <SelectValue placeholder={isLoadingLocations ? t('common.loading') : t('templates.selectLocation')} />
                 </SelectTrigger>
-                <SelectContent className="border-zinc-200 bg-white">
+                <SelectContent className="border-slate-200 bg-white">
                   <SelectItem value="none">{t('templates.noDefaultLocation')}</SelectItem>
                   {locations.map((loc) => (
                     <SelectItem key={loc.id} value={loc.id}>
@@ -557,7 +557,7 @@ function TemplateFormModal({
 
             {/* Color picker */}
             <div className="space-y-2">
-              <Label htmlFor="color" className="text-zinc-700">
+              <Label htmlFor="color" className="text-slate-700">
                 {t('templates.colorLabel')}
               </Label>
               <div className="flex items-center gap-3">
@@ -566,9 +566,9 @@ function TemplateFormModal({
                   type="color"
                   value={formData.color}
                   onChange={(e) => setFormData({ ...formData, color: e.target.value })}
-                  className="h-10 w-20 cursor-pointer border-zinc-200 bg-white"
+                  className="h-10 w-20 cursor-pointer border-slate-200 bg-white"
                 />
-                <span className="text-sm text-zinc-500">{formData.color}</span>
+                <span className="text-sm text-slate-500">{formData.color}</span>
               </div>
             </div>
           </div>

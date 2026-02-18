@@ -45,24 +45,24 @@ function CustomTooltip({ active, payload, label }: { active?: boolean; payload?:
   const item = data.payload;
 
   return (
-    <div className="rounded-xl border border-zinc-200 bg-white p-3 shadow-sm">
-      <p className="mb-2 font-medium text-zinc-900">{label}</p>
+    <div className="rounded-xl border border-slate-200 bg-white p-3 shadow-sm">
+      <p className="mb-2 font-medium text-slate-900">{label}</p>
       <div className="space-y-1.5 text-sm">
         <div className="flex items-center justify-between gap-4">
-          <span className="text-zinc-500">{t('reports.scheduledLabel')}:</span>
+          <span className="text-slate-500">{t('reports.scheduledLabel')}:</span>
           <span className="font-medium text-emerald-600">{item.scheduledHours.toFixed(1)}h</span>
         </div>
         <div className="flex items-center justify-between gap-4">
-          <span className="text-zinc-500">{t('reports.actualLabel')}:</span>
+          <span className="text-slate-500">{t('reports.actualLabel')}:</span>
           <span className="font-medium text-amber-600">{item.actualHours.toFixed(1)}h</span>
         </div>
-        <div className="border-t border-zinc-200 pt-1.5">
+        <div className="border-t border-slate-200 pt-1.5">
           <div className="flex items-center justify-between gap-4">
-            <span className="text-zinc-500">{t('reports.varianceLabel')}:</span>
+            <span className="text-slate-500">{t('reports.varianceLabel')}:</span>
             <span
               className={cn(
                 'font-medium',
-                item.difference > 0 ? 'text-amber-600' : item.difference < 0 ? 'text-red-600' : 'text-zinc-500'
+                item.difference > 0 ? 'text-amber-600' : item.difference < 0 ? 'text-red-600' : 'text-slate-500'
               )}
             >
               {item.difference > 0 ? '+' : ''}
@@ -71,7 +71,7 @@ function CustomTooltip({ active, payload, label }: { active?: boolean; payload?:
           </div>
         </div>
         {item.reason && (
-          <p className="mt-2 text-xs italic text-zinc-500">{item.reason}</p>
+          <p className="mt-2 text-xs italic text-slate-500">{item.reason}</p>
         )}
       </div>
     </div>
@@ -93,15 +93,15 @@ function StatCard({
   className?: string;
 }) {
   return (
-    <div className={cn('rounded-xl border border-zinc-200 bg-zinc-50 p-3', className)}>
-      <div className="mb-1 flex items-center gap-1.5 text-zinc-500">
+    <div className={cn('rounded-xl border border-slate-200 bg-slate-50 p-3', className)}>
+      <div className="mb-1 flex items-center gap-1.5 text-slate-500">
         <Icon className="h-3.5 w-3.5" />
         <span className="text-[10px] font-medium uppercase tracking-wider">{label}</span>
       </div>
       <p
         className={cn(
           'text-lg font-bold',
-          trend === 'up' ? 'text-amber-600' : trend === 'down' ? 'text-red-600' : 'text-zinc-900'
+          trend === 'up' ? 'text-amber-600' : trend === 'down' ? 'text-red-600' : 'text-slate-900'
         )}
       >
         {value}
@@ -147,13 +147,13 @@ export function VarianceChart({ data, className }: VarianceChartProps) {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         className={cn(
-          'flex flex-col items-center justify-center rounded-2xl border border-dashed border-zinc-200 bg-zinc-50 px-6 py-12 text-center',
+          'flex flex-col items-center justify-center rounded-2xl border border-dashed border-slate-200 bg-slate-50 px-6 py-12 text-center',
           className
         )}
       >
-        <Calendar className="mb-4 h-12 w-12 text-zinc-400" />
-        <h3 className="mb-1 text-lg font-semibold text-zinc-900">{t('reports.noVarianceData')}</h3>
-        <p className="text-sm text-zinc-500">
+        <Calendar className="mb-4 h-12 w-12 text-slate-400" />
+        <h3 className="mb-1 text-lg font-semibold text-slate-900">{t('reports.noVarianceData')}</h3>
+        <p className="text-sm text-slate-500">
           {t('reports.noVarianceDesc')}
         </p>
       </motion.div>
@@ -193,8 +193,8 @@ export function VarianceChart({ data, className }: VarianceChartProps) {
       </div>
 
       {/* Chart */}
-      <div className="rounded-2xl border border-zinc-200 bg-white p-4 shadow-sm">
-        <h4 className="mb-4 text-sm font-medium text-zinc-700">{t('reports.dailyVariance')}</h4>
+      <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+        <h4 className="mb-4 text-sm font-medium text-slate-700">{t('reports.dailyVariance')}</h4>
         <div className="h-64 w-full sm:h-80">
           <ResponsiveContainer width="100%" height="100%">
             <BarChart data={chartData} margin={{ top: 10, right: 10, left: -10, bottom: 0 }}>
@@ -214,7 +214,7 @@ export function VarianceChart({ data, className }: VarianceChartProps) {
               <Tooltip content={<CustomTooltip />} cursor={{ fill: 'rgba(0,0,0,0.04)' }} />
               <Legend
                 wrapperStyle={{ paddingTop: '16px' }}
-                formatter={(value: string) => <span className="text-sm text-zinc-500">{value}</span>}
+                formatter={(value: string) => <span className="text-sm text-slate-500">{value}</span>}
               />
               <Bar
                 dataKey="scheduledHours"
@@ -243,7 +243,7 @@ export function VarianceChart({ data, className }: VarianceChartProps) {
       </div>
 
       {/* Variance days note */}
-      <p className="text-center text-xs text-zinc-500">
+      <p className="text-center text-xs text-slate-500">
         {t('reports.varianceDaysNote', { withVariance: stats.daysWithVariance, totalDays: stats.totalDays })}
       </p>
     </motion.div>

@@ -306,11 +306,11 @@
     "heroTitle": "Fichaje en 2 segundos",
     "heroSubtitle": "Control horario digital para hosteleria, comercio y servicios. Cumplimiento automatico con el Estatuto de los Trabajadores.",
     "cta": {
-      "startFree": "Empezar gratis",
+      "startFree": "Empezar prueba gratis",
       "seeDemo": "Ver demo",
       "startNow": "Empezar ahora",
-      "readyTitle": "Listo para empezar?",
-      "readySubtitle": "Prueba gratuita de 14 dias. Sin tarjeta de credito."
+      "readyTitle": "¿Listo para empezar?",
+      "readySubtitle": "Prueba gratuita de 14 días. Sin tarjeta de crédito. Cancela cuando quieras."
     },
     "ctaSecondary": "Ver demo",
     "login": "Iniciar sesion",
@@ -336,97 +336,70 @@
     "step3Title": "Cumple",
     "step3Desc": "El sistema verifica automaticamente horas, descansos y limites legales.",
     "pricing": {
-      "title": "Precios",
-      "subtitle": "Simple y transparente. Sin sorpresas.",
-      "monthly": "Mensual",
-      "annual": "Anual",
-      "discount": "2 meses gratis",
-      "badge": "Mas popular",
-      "tiers": "niveles de precio",
-      "trialNote": "14 dias de prueba gratis. Sin tarjeta de credito.",
-      "fallback": {
-        "basic": {
-          "name": "Basico",
-          "description": "Para pequenos equipos",
-          "unit": "/usuario/mes",
-          "cta": "Empezar gratis",
+      "title": "Precios simples y transparentes",
+      "subtitle": "Elige el plan que mejor se adapte a tu equipo. Sin costes ocultos.",
+      "badge": "Precios",
+      "trialNote": "14 días de prueba gratis en todos los planes. Sin tarjeta de crédito.",
+      "perMonth": "/mes",
+      "employees": "empleados",
+      "unlimited": "ilimitados",
+      "upTo": "Hasta {{count}} empleados",
+      "unlimitedEmployees": "Empleados ilimitados",
+      "popular": "Más popular",
+      "allPlansInclude": "Todos los planes incluyen",
+      "allPlansFeatures": ["App móvil PWA", "Cumplimiento automático ET", "Cifrado AES-256", "Soporte por email"],
+      "plans": [
+        {
+          "name": "Starter",
+          "price": "29",
+          "description": "Ideal para equipos pequeños. Gestión básica de turnos y fichaje.",
+          "employeeLimit": "10",
+          "cta": "Empezar prueba gratis",
           "features": [
-            "Fichaje QR y manual",
-            "Horarios basicos",
-            "Cumplimiento automatico",
-            "App movil",
-            "Hasta 15 empleados"
+            "Gestión de turnos",
+            "Fichaje (QR, PIN, manual)",
+            "Cumplimiento legal automático",
+            "Informes básicos",
+            "Gestión de ausencias",
+            "Hasta 10 empleados"
           ]
         },
-        "professional": {
-          "name": "Profesional",
-          "description": "Para empresas en crecimiento",
-          "unit": "/usuario/mes",
-          "cta": "Empezar gratis",
+        {
+          "name": "Growth",
+          "price": "69",
+          "description": "Para empresas en crecimiento. Turnos abiertos, intercambios y geofencing.",
+          "employeeLimit": "30",
+          "cta": "Empezar prueba gratis",
+          "highlighted": true,
           "features": [
-            "Todo en Basico",
-            "Geofence y PIN",
+            "Todo en Starter",
+            "Turnos abiertos",
             "Intercambios de turno",
-            "Informes y exportacion",
-            "Hasta 100 empleados",
-            "Soporte prioritario"
+            "Geofencing",
+            "Plantillas de turno",
+            "Hasta 30 empleados"
           ]
         },
-        "enterprise": {
-          "name": "Enterprise",
-          "description": "Para grandes organizaciones",
-          "price": "Contactar",
-          "cta": "Contactar ventas",
+        {
+          "name": "Business",
+          "price": "149",
+          "description": "Para empresas establecidas. Empleados ilimitados y soporte prioritario.",
+          "employeeLimit": "unlimited",
+          "cta": "Empezar prueba gratis",
           "features": [
-            "Todo en Profesional",
-            "Multi-centro",
-            "API de inspector ITSS",
-            "Integracion nominas",
-            "Empleados ilimitados",
-            "SLA dedicado"
+            "Todo en Growth",
+            "API inspector ITSS",
+            "Informes avanzados",
+            "Exportación nóminas",
+            "Soporte prioritario",
+            "Empleados ilimitados"
           ]
         }
-      }
+      ]
     },
-    "pricingSubtitle": "Simple y transparente. Sin sorpresas.",
-    "planBasic": "Basico",
-    "planBasicPrice": "2,50",
-    "planBasicPer": "/usuario/mes",
-    "planBasicFeatures": [
-      "Fichaje QR y manual",
-      "Horarios basicos",
-      "Cumplimiento automatico",
-      "App movil",
-      "Hasta 15 empleados"
-    ],
-    "planPro": "Profesional",
-    "planProPrice": "4,50",
-    "planProPer": "/usuario/mes",
-    "planProFeatures": [
-      "Todo en Basico",
-      "Geofence y PIN",
-      "Intercambios de turno",
-      "Informes y exportacion",
-      "Hasta 100 empleados",
-      "Soporte prioritario"
-    ],
-    "planEnterprise": "Enterprise",
-    "planEnterprisePrice": "Contactar",
-    "planEnterprisePer": "",
-    "planEnterpriseFeatures": [
-      "Todo en Profesional",
-      "Multi-centro",
-      "API de inspector ITSS",
-      "Integracion nominas",
-      "Empleados ilimitados",
-      "SLA dedicado"
-    ],
-    "planRecommended": "Recomendado",
-    "planCta": "Empezar gratis",
-    "planContact": "Contactar ventas",
     "faq": {
       "title": "Preguntas frecuentes",
-      "moreQuestions": "Mas preguntas?",
+      "moreQuestions": "¿Más preguntas?",
       "contactSupport": "Contacta con soporte",
       "items": "faqItems_legacy"
     },
@@ -457,7 +430,11 @@
       },
       {
         "q": "Hay compromiso de permanencia?",
-        "a": "No. Facturacion mensual sin permanencia. Puedes cancelar cuando quieras."
+        "a": "No. Planes desde €29/mes sin permanencia. Puedes cancelar cuando quieras."
+      },
+      {
+        "q": "¿Cómo funciona el precio?",
+        "a": "Ofrecemos 3 planes de tarifa plana mensual: Starter (€29/mes, hasta 10 empleados), Growth (€69/mes, hasta 30 empleados) y Business (€149/mes, empleados ilimitados). Todos incluyen prueba gratuita de 14 días."
       },
       {
         "q": "Cumple con la RGPD?",
@@ -712,6 +689,7 @@
     "onBreak": "En descanso",
     "overtime": "Horas extra",
     "overtimeAlert": "Alerta de horas extra",
+    "overtimeMessage": "Has superado tu limite semanal en {{hours}}h. Art. 34 ET: maximo 40h semanales.",
     "pendingSwaps": "Intercambios pendientes",
     "realtimeStatus": "Estado en tiempo real",
     "scheduled": "Programado",
@@ -721,7 +699,16 @@
     "unread": "No leidas",
     "upcomingShifts": "Proximos turnos",
     "viewRoster": "Ver horario",
-    "waitingForEvents": "Esperando eventos..."
+    "waitingForEvents": "Esperando eventos...",
+    "subscription": {
+      "title": "Suscripcion",
+      "freeTrial": "Prueba gratuita",
+      "trialRemaining": "Tiempo restante de prueba",
+      "days": "dias",
+      "employees": "Empleados",
+      "upgrade": "Mejorar plan",
+      "expired": "Tu suscripcion ha expirado. Mejora tu plan para continuar usando todas las funciones."
+    }
   },
   "clock": {
     "title": "Fichar",
@@ -1734,33 +1721,115 @@
     "updatePassword": "Actualizar contrasena"
   },
   "billing": {
-    "title": "Facturacion",
+    "title": "Facturación y suscripción",
+    "subtitle": "Gestiona tu plan, uso y pagos",
     "currentPlan": "Plan actual",
     "changePlan": "Cambiar plan",
-    "cancelSubscription": "Cancelar suscripcion",
-    "cancelConfirm": "Seguro que quieres cancelar tu suscripcion?",
-    "cancelWarning": "Perderas acceso a todas las funcionalidades al final del periodo de facturacion",
+    "choosePlan": "Elige un plan",
+    "cancelSubscription": "Cancelar suscripción",
+    "cancelConfirm": "¿Seguro que quieres cancelar?",
+    "cancelWarning": "Perderás acceso a todas las funcionalidades al final del período de facturación. Esta acción no se puede deshacer.",
+    "cancelDescription": "Cancela tu suscripción. El acceso continúa hasta el final del período de facturación actual.",
+    "dangerZone": "Zona de peligro",
     "usage": "Uso",
     "employeesUsed": "{{used}} de {{limit}} empleados",
+    "employeesUnlimited": "{{used}} empleados (ilimitado)",
     "unlimited": "Ilimitado",
     "features": "Funcionalidades incluidas",
-    "paymentMethod": "Metodo de pago",
+    "paymentMethod": "Método de pago",
     "endingIn": "Terminada en {{last4}}",
-    "nextBilling": "Proxima facturacion",
-    "billingHistory": "Historial de facturacion",
+    "nextBilling": "Próxima fecha de cobro",
+    "billingHistory": "Historial de pagos",
     "invoice": "Factura",
     "amount": "Importe",
+    "date": "Fecha",
+    "status": "Estado",
     "paid": "Pagado",
     "failed": "Fallido",
-    "downloadInvoice": "Descargar factura",
-    "noInvoices": "No hay facturas",
+    "downloadInvoice": "Descargar",
+    "noInvoices": "Sin facturas aún",
+    "noInvoicesDesc": "Tu historial de pagos aparecerá aquí después de tu primer pago.",
     "upgrade": "Mejorar plan",
+    "upgradeTo": "Mejorar a {{plan}}",
     "downgrade": "Reducir plan",
+    "downgradeTo": "Reducir a {{plan}}",
     "currentLabel": "Plan actual",
-    "recommended": "Recomendado",
-    "perUserMonth": "/usuario/mes",
+    "recommended": "Más popular",
+    "perMonth": "/mes",
+    "flatRate": "Tarifa plana",
     "free": "Gratis",
-    "planFeatures": "Funcionalidades del plan"
+    "planFeatures": "Qué incluye",
+    "trialBanner": "Prueba: {{days}} días restantes",
+    "trialEndsOn": "La prueba termina el {{date}}",
+    "trialActive": "Prueba gratuita",
+    "pastDueBanner": "Pago vencido. Por favor actualiza tu información de facturación.",
+    "updateBilling": "Actualizar facturación",
+    "expiredTitle": "Suscripción expirada",
+    "expiredDescription": "Tu prueba o suscripción ha terminado. Mejora tu plan para seguir usando Torre Tempo.",
+    "selectPlan": "Selecciona un plan para continuar",
+    "checkoutSuccess": "¡Pago realizado con éxito!",
+    "checkoutSuccessDesc": "Tu suscripción ya está activa. ¡Bienvenido a bordo!",
+    "planLabel": "Plan {{plan}}",
+    "goToDashboard": "Ir al panel",
+    "manageBilling": "Gestionar facturación",
+    "starterPlan": "Starter",
+    "starterDesc": "Perfecto para equipos pequeños que empiezan",
+    "growthPlan": "Growth",
+    "growthDesc": "Para equipos en crecimiento que necesitan más",
+    "businessPlan": "Business",
+    "businessDesc": "Para grandes organizaciones con necesidades avanzadas",
+    "employeeLimit": "Hasta {{limit}} empleados",
+    "unlimitedEmployees": "Empleados ilimitados",
+    "allFeatures": "Todas las funcionalidades incluidas",
+    "prioritySupport": "Soporte prioritario",
+    "dedicatedManager": "Gestor de cuenta dedicado",
+    "customIntegrations": "Integraciones personalizadas",
+    "complianceReports": "Informes de cumplimiento",
+    "advancedAnalytics": "Analíticas avanzadas",
+    "redirectingToCheckout": "Redirigiendo al pago...",
+    "checkoutError": "Error al iniciar el pago. Inténtalo de nuevo.",
+    "trialBannerSubtitle": "Mejora ahora para conservar todos tus datos y funcionalidades",
+    "daysRemaining": "días restantes",
+    "nearCapacity": "Te estás acercando al límite de empleados. Considera mejorar tu plan.",
+    "pending": "Pendiente",
+    "planChanged": "Plan cambiado correctamente",
+    "changePlanError": "Error al cambiar de plan. Inténtalo de nuevo.",
+    "subscriptionCancelled": "Suscripción cancelada correctamente",
+    "cancelError": "Error al cancelar la suscripción. Inténtalo de nuevo.",
+    "cancelConsequence1": "Todos los miembros del equipo perderán acceso al final del período de facturación",
+    "cancelConsequence2": "Los datos de horarios y fichajes se conservarán durante 90 días",
+    "cancelConsequence3": "Puedes reactivar tu suscripción en cualquier momento",
+    "keepSubscription": "Mantener suscripción",
+    "confirmCancel": "Sí, cancelar suscripción",
+    "statusLabels": {
+      "active": "Activo",
+      "trial": "Prueba",
+      "past_due": "Pago vencido",
+      "cancelled": "Cancelado",
+      "expired": "Expirado",
+      "trial_expired": "Prueba expirada",
+      "inactive": "Inactivo",
+      "unknown": "Desconocido"
+    },
+    "planFeatures": {
+      "timeTracking": "Fichaje y control horario",
+      "basicScheduling": "Programación básica de turnos",
+      "mobileApp": "App móvil con modo offline",
+      "complianceAlerts": "Alertas de cumplimiento laboral español",
+      "emailSupport": "Soporte por email",
+      "everythingInStarter": "Todo lo de Starter",
+      "advancedScheduling": "Programación avanzada y plantillas",
+      "shiftSwaps": "Solicitudes de intercambio de turno",
+      "leaveManagement": "Gestión de vacaciones y ausencias",
+      "reportsAnalytics": "Informes y analíticas",
+      "prioritySupport": "Soporte prioritario",
+      "everythingInGrowth": "Todo lo de Growth",
+      "unlimitedEmployees": "Empleados ilimitados",
+      "apiAccess": "Acceso API e integraciones",
+      "customReports": "Informes de cumplimiento personalizados",
+      "auditLog": "Registro de auditoría completo y acceso ITSS",
+      "dedicatedSupport": "Gestor de cuenta dedicado"
+    }
   },
   "templates": {
     "title": "Plantillas de turno",
@@ -1831,9 +1900,17 @@
   },
   "admin": {
     "panel": "Panel de Admin",
-    "adminPanel": "Panel de Administracion",
+    "adminPanel": "Panel de Administración",
     "backToApp": "Volver a la App",
-    "signOut": "Cerrar sesion",
+    "signOut": "Cerrar sesión",
+    "adminBadge": "Admin",
+    "sections": {
+      "tenants": "Organizaciones",
+      "users": "Usuarios",
+      "system": "Sistema",
+      "compliance": "Cumplimiento",
+      "config": "Configuración"
+    },
     "liveMonitoring": "Monitoreo en vivo - Actualiza cada 10s",
     "refresh": "Actualizar",
     "exportCsv": "Exportar CSV",
@@ -1873,6 +1950,13 @@
       "analytics": "Analiticas",
       "settings": "Configuracion",
       "broadcasts": "Notificaciones"
+    },
+    "sections": {
+      "tenants": "Organizaciones",
+      "users": "Usuarios",
+      "system": "Sistema",
+      "compliance": "Cumplimiento",
+      "config": "Configuracion"
     },
     "tenants": {
       "title": "Organizaciones",
@@ -2633,5 +2717,26 @@
     "admin": "Administrador",
     "member": "Miembro",
     "owner": "Propietario"
+  },
+  "trial": {
+    "badge": "Prueba gratis",
+    "daysRemaining": "{{count}} días restantes de prueba",
+    "expired": "Tu prueba ha expirado",
+    "upgradeNow": "Actualizar ahora",
+    "startedTitle": "¡Tu prueba de 14 días ha comenzado!",
+    "startedDescription": "Tienes acceso completo a todas las funcionalidades. Sin tarjeta de crédito.",
+    "expiringTitle": "Tu prueba expira pronto",
+    "expiringDescription": "Quedan {{count}} días. Actualiza tu plan para no perder acceso."
+  },
+  "checkout": {
+    "title": "Suscripción",
+    "successTitle": "¡Suscripción activada!",
+    "successDescription": "Tu plan {{plan}} está activo. Ya puedes disfrutar de todas las funcionalidades.",
+    "goToDashboard": "Ir al panel",
+    "changePlan": "Cambiar plan",
+    "cancelPlan": "Cancelar suscripción",
+    "currentPlan": "Plan actual",
+    "usage": "Uso",
+    "employeesUsed": "{{used}} de {{limit}} empleados"
   }
 }

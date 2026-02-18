@@ -1,7 +1,7 @@
 import { Router, Request, Response } from 'express';
 import { verifyStripeWebhook } from '../../services/payment.service.js';
 import { db } from '../../db/index.js';
-import { subscription_details } from '../../db/schema.js';
+import { subscription_details, subscription_plans } from '../../db/schema.js';
 import { eq } from 'drizzle-orm';
 import { paymentQueue } from '../../lib/queue.js';
 import type Stripe from 'stripe';
@@ -35,6 +35,15 @@ router.post('/stripe', async (req: Request, res: Response) => {
   try {
     // Handle events that need immediate DB updates
     switch (event.type) {
+      // ================================================================
+      // Checkout Session Completed — activate subscription after payment
+      // ================================================================
+      case 'checkout.session.completed': {
+        const session = event.data.object as Stripe.Checkout.Session;
+        await handleCheckoutCompleted(session);
+        break;
+      }
+
       case 'customer.subscription.created':
       case 'customer.subscription.updated': {
         const subscription = event.data.object as Stripe.Subscription;
@@ -114,6 +123,63 @@ router.post('/stripe', async (req: Request, res: Response) => {
     res.status(500).json({ error: 'Webhook processing failed' });
   }
 });
+
+/**
+ * Handle checkout.session.completed
+ * This fires after the customer completes Stripe Checkout.
+ * Activates the subscription in our database.
+ */
+async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
+  const organizationId = session.metadata?.organization_id;
+  const planId = session.metadata?.plan_id;
+  const subscriptionId = session.subscription as string;
+  const customerId = session.customer as string;
+
+  if (!organizationId) {
+    logger.error('No organization_id in checkout session metadata');
+    return;
+  }
+
+  logger.info(`Checkout completed for org ${organizationId}, subscription ${subscriptionId}`);
+
+  // Look up the plan to get tier and limits
+  let tier = 'starter';
+  let planPriceCents = 2900;
+  let planEmployeeLimit: number | null = 10;
+
+  if (planId) {
+    const plans = await db
+      .select()
+      .from(subscription_plans)
+      .where(eq(subscription_plans.id, planId))
+      .limit(1);
+
+    if (plans.length > 0) {
+      const plan = plans[0]!;
+      tier = plan.code;
+      planPriceCents = plan.price_cents;
+      planEmployeeLimit = plan.employee_limit;
+    }
+  }
+
+  // Update subscription_details: trial → active paid subscription
+  await db
+    .update(subscription_details)
+    .set({
+      subscription_status: 'active',
+      tier: tier as 'starter' | 'professional' | 'enterprise',
+      stripe_customer_id: customerId,
+      stripe_subscription_id: subscriptionId,
+      plan_id: planId || null,
+      plan_price_cents: planPriceCents,
+      plan_employee_limit: planEmployeeLimit,
+      trial_ends_at: null, // Clear trial — they're now a paying customer
+      updated_at: new Date(),
+    })
+    .where(eq(subscription_details.organization_id, organizationId));
+
+  logger.info(`✅ Subscription activated for org ${organizationId}: ${tier} plan`);
+}
 
 async function handleSubscriptionUpdate(subscription: Stripe.Subscription) {
   const organizationId = subscription.metadata.organization_id;

@@ -72,28 +72,28 @@ export default function ResetPassword() {
   };
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center bg-zinc-50 px-4">
+    <div className="flex min-h-screen flex-col items-center justify-center bg-slate-50 px-4">
       <div className="w-full max-w-sm">
         {/* Logo */}
         <div className="mb-10 flex flex-col items-center gap-3">
-          <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-primary-500 shadow-lg shadow-primary-500/20">
+          <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-primary-500 shadow-glow">
             <Clock className="h-7 w-7 text-white" />
           </div>
           <div className="text-center">
-            <h1 className="text-xl font-bold text-zinc-900">Torre Tempo</h1>
-            <p className="text-sm text-zinc-500 mt-1">{t('auth.subtitle')}</p>
+            <h1 className="text-xl font-bold text-slate-900">Torre Tempo</h1>
+            <p className="text-sm text-slate-500 mt-1">{t('auth.subtitle')}</p>
           </div>
         </div>
 
         {/* Card */}
-        <div className="rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm space-y-6">
+        <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-card space-y-6">
           {success ? (
             <div className="text-center py-4">
               <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-emerald-50 border border-emerald-200">
                 <CheckCircle2 className="h-7 w-7 text-emerald-600" />
               </div>
-              <h2 className="text-lg font-semibold text-zinc-900">{t('auth.passwordReset')}</h2>
-              <p className="mt-2 text-sm text-zinc-500">
+              <h2 className="text-lg font-semibold text-slate-900">{t('auth.passwordReset')}</h2>
+              <p className="mt-2 text-sm text-slate-500">
                 {t('auth.passwordUpdated')}
               </p>
             </div>
@@ -103,8 +103,8 @@ export default function ResetPassword() {
                 <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-primary-50 border border-primary-200">
                   <KeyRound className="h-6 w-6 text-primary-600" />
                 </div>
-                <h2 className="text-lg font-semibold text-zinc-900">{t('auth.resetPassword')}</h2>
-                <p className="text-sm text-zinc-500 mt-1">{t('auth.enterNewPassword')}</p>
+                <h2 className="text-lg font-semibold text-slate-900">{t('auth.resetPassword')}</h2>
+                <p className="text-sm text-slate-500 mt-1">{t('auth.enterNewPassword')}</p>
               </div>
 
               {error && (
@@ -116,7 +116,7 @@ export default function ResetPassword() {
 
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="password" className="text-zinc-700">{t('auth.newPassword')}</Label>
+                  <Label htmlFor="password" className="text-slate-700">{t('auth.newPassword')}</Label>
                   <Input
                     id="password"
                     type="password"
@@ -128,11 +128,11 @@ export default function ResetPassword() {
                     required
                     minLength={8}
                   />
-                  <p className="text-xs text-zinc-500">{t('auth.minChars')}</p>
+                  <p className="text-xs text-slate-500">{t('auth.minChars')}</p>
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="confirmPassword" className="text-zinc-700">{t('auth.confirmPassword')}</Label>
+                  <Label htmlFor="confirmPassword" className="text-slate-700">{t('auth.confirmPassword')}</Label>
                   <Input
                     id="confirmPassword"
                     type="password"
@@ -165,7 +165,7 @@ export default function ResetPassword() {
         <div className="mt-6 text-center">
           <button
             onClick={() => navigate('/auth/signin')}
-            className="inline-flex items-center gap-2 text-sm text-zinc-500 transition-colors hover:text-zinc-900"
+            className="inline-flex items-center gap-2 text-sm text-slate-500 transition-colors hover:text-slate-900"
           >
             <ArrowLeft className="h-4 w-4" />
             {t('auth.backToSignIn')}

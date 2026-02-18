@@ -66,9 +66,9 @@ function App() {
         </Route>
 
         {/* Design playground prototypes (temporary) */}
-        <Route path="/playground/a" element={<Suspense fallback={<div className="flex items-center justify-center min-h-screen"><div className="h-8 w-8 animate-spin rounded-full border-4 border-zinc-200 border-t-indigo-500" /></div>}><DesignA /></Suspense>} />
-        <Route path="/playground/b" element={<Suspense fallback={<div className="flex items-center justify-center min-h-screen"><div className="h-8 w-8 animate-spin rounded-full border-4 border-zinc-200 border-t-teal-500" /></div>}><DesignB /></Suspense>} />
-        <Route path="/playground/c" element={<Suspense fallback={<div className="flex items-center justify-center min-h-screen"><div className="h-8 w-8 animate-spin rounded-full border-4 border-zinc-200 border-t-violet-500" /></div>}><DesignC /></Suspense>} />
+        <Route path="/playground/a" element={<Suspense fallback={<div className="flex items-center justify-center min-h-screen"><div className="h-8 w-8 animate-spin rounded-full border-4 border-slate-200 border-t-indigo-500" /></div>}><DesignA /></Suspense>} />
+        <Route path="/playground/b" element={<Suspense fallback={<div className="flex items-center justify-center min-h-screen"><div className="h-8 w-8 animate-spin rounded-full border-4 border-slate-200 border-t-teal-500" /></div>}><DesignB /></Suspense>} />
+        <Route path="/playground/c" element={<Suspense fallback={<div className="flex items-center justify-center min-h-screen"><div className="h-8 w-8 animate-spin rounded-full border-4 border-slate-200 border-t-violet-500" /></div>}><DesignC /></Suspense>} />
 
         {/* Fallback redirects */}
         <Route path="*" element={<Navigate to="/auth/signin" replace />} />

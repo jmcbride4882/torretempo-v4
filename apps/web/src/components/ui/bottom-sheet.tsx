@@ -121,7 +121,7 @@ export function BottomSheet({
             }}
             className={cn(
               'fixed bottom-0 left-0 right-0 z-50',
-              'bg-white border-t border-zinc-200 rounded-t-3xl shadow-xl',
+              'bg-white border-t border-slate-200 rounded-t-3xl shadow-xl dark:bg-slate-800 dark:border-slate-700',
               'flex flex-col',
               'touch-pan-y',
               className
@@ -129,7 +129,7 @@ export function BottomSheet({
           >
             {showHandle && (
               <div className="flex items-center justify-center py-3 cursor-grab active:cursor-grabbing">
-                <div className="w-12 h-1.5 rounded-full bg-zinc-300" />
+                <div className="w-12 h-1.5 rounded-full bg-slate-300 dark:bg-slate-700" />
               </div>
             )}
 
@@ -139,7 +139,7 @@ export function BottomSheet({
                   {title && (
                     <h2
                       id="bottom-sheet-title"
-                      className="text-lg font-semibold text-zinc-900"
+                      className="text-lg font-semibold text-slate-900 dark:text-white"
                     >
                       {title}
                     </h2>
@@ -147,7 +147,7 @@ export function BottomSheet({
                   {description && (
                     <p
                       id="bottom-sheet-description"
-                      className="mt-1 text-sm text-zinc-500"
+                      className="mt-1 text-sm text-slate-500 dark:text-slate-400"
                     >
                       {description}
                     </p>
@@ -155,7 +155,7 @@ export function BottomSheet({
                 </div>
                 <button
                   onClick={onClose}
-                  className="ml-4 rounded-full p-1.5 text-zinc-400 transition-colors hover:bg-zinc-100 hover:text-zinc-700"
+                  className="ml-4 rounded-full p-1.5 text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-700 dark:text-slate-500 dark:hover:bg-slate-700 dark:hover:text-slate-300"
                   aria-label="Close"
                 >
                   <X className="h-5 w-5" />

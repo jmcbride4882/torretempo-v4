@@ -96,7 +96,7 @@ const TABS: TabDefinition[] = [
     id: 'email',
     labelKey: 'admin.settings.tabEmail',
     icon: Mail,
-    color: 'text-amber-600',
+    color: 'text-violet-600',
   },
   {
     id: 'general',
@@ -327,10 +327,10 @@ function SecretField({ field, value, editedValue, onEdit }: SecretFieldProps) {
   return (
     <div className="space-y-2">
       <div className="flex items-center justify-between">
-        <label className="text-sm font-medium text-zinc-700">
+        <label className="text-sm font-medium text-slate-700">
           {t(field.labelKey)}
           {isEdited && (
-            <Badge className="ml-2 border border-amber-300 bg-amber-50 text-amber-700 text-[10px]">
+            <Badge className="ml-2 border border-violet-300 bg-violet-50 text-violet-700 text-[10px]">
               {t('admin.settings.modified')}
             </Badge>
           )}
@@ -339,7 +339,7 @@ function SecretField({ field, value, editedValue, onEdit }: SecretFieldProps) {
           <button
             type="button"
             onClick={() => setVisible(!visible)}
-            className="flex items-center gap-1 rounded-md px-2 py-1 text-xs text-zinc-400 transition-colors hover:bg-zinc-50 hover:text-zinc-700"
+            className="flex items-center gap-1 rounded-md px-2 py-1 text-xs text-slate-400 transition-colors hover:bg-slate-50 hover:text-slate-700"
           >
             {visible ? (
               <>
@@ -356,20 +356,20 @@ function SecretField({ field, value, editedValue, onEdit }: SecretFieldProps) {
         )}
       </div>
       <div className="relative">
-        <Key className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-400" />
+        <Key className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
         <Input
           type={field.sensitive && !visible ? 'password' : 'text'}
           placeholder={isMasked ? value : field.placeholder}
           value={isEdited ? editedValue : (isMasked ? '' : value)}
           onChange={(e) => onEdit(field.key, e.target.value)}
           className={cn(
-            'pl-10 rounded-xl border border-zinc-200 bg-white text-zinc-900 font-mono text-sm placeholder:text-zinc-400',
-            isEdited && 'border-amber-300 bg-amber-50'
+            'pl-10 rounded-xl border border-slate-200 bg-white text-slate-900 font-mono text-sm placeholder:text-slate-400',
+            isEdited && 'border-violet-300 bg-violet-50'
           )}
         />
       </div>
       {field.descriptionKey && (
-        <p className="text-xs text-zinc-400">{t(field.descriptionKey)}</p>
+        <p className="text-xs text-slate-400">{t(field.descriptionKey)}</p>
       )}
     </div>
   );
@@ -653,12 +653,12 @@ export default function SettingsPage() {
       {/* Page header */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-amber-50 shadow-sm">
-            <Settings className="h-5 w-5 text-amber-600" />
+          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-violet-50 shadow-sm">
+            <Settings className="h-5 w-5 text-violet-600" />
           </div>
           <div>
-            <h1 className="text-xl font-bold text-zinc-900 sm:text-2xl">{t('admin.settings.title')}</h1>
-            <p className="text-sm text-zinc-500">
+            <h1 className="text-xl font-bold text-slate-900 sm:text-2xl">{t('admin.settings.title')}</h1>
+            <p className="text-sm text-slate-500">
               {t('admin.settings.subtitle')}
             </p>
           </div>
@@ -692,8 +692,8 @@ export default function SettingsPage() {
               className={cn(
                 'gap-1.5 rounded-lg transition-all',
                 hasChanges
-                  ? 'bg-amber-600 text-white hover:bg-amber-500 shadow-sm'
-                  : 'border border-zinc-200 bg-zinc-50 text-zinc-400'
+                  ? 'bg-violet-600 text-white hover:bg-violet-500 shadow-sm'
+                  : 'border border-slate-200 bg-slate-50 text-slate-400'
               )}
             >
               {isSaving ? (
@@ -712,9 +712,9 @@ export default function SettingsPage() {
       {/* Warning banner */}
       {requiresRestart && (
         <div className="overflow-hidden">
-          <div className="flex items-center gap-3 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3">
-            <AlertTriangle className="h-5 w-5 shrink-0 text-amber-600" />
-            <p className="text-sm text-amber-800">
+          <div className="flex items-center gap-3 rounded-xl border border-violet-200 bg-violet-50 px-4 py-3">
+            <AlertTriangle className="h-5 w-5 shrink-0 text-violet-600" />
+            <p className="text-sm text-violet-800">
               {t('admin.settings.restartRequired')}
             </p>
             <Button
@@ -722,7 +722,7 @@ export default function SettingsPage() {
               size="sm"
               onClick={() => setRestartDialog(true)}
               disabled={isRestarting}
-              className="ml-auto shrink-0 text-amber-600 hover:bg-amber-100 hover:text-amber-700"
+              className="ml-auto shrink-0 text-violet-600 hover:bg-violet-100 hover:text-violet-700"
             >
               {isRestarting ? t('admin.settings.restarting') : t('admin.settings.restartNow')}
             </Button>
@@ -744,19 +744,19 @@ export default function SettingsPage() {
 
       {/* Loading state */}
       {isLoading ? (
-        <div className="flex flex-col items-center justify-center rounded-2xl border border-zinc-200 bg-zinc-50 px-6 py-16 text-center">
-          <RefreshCw className="mb-3 h-8 w-8 animate-spin text-zinc-400" />
-          <p className="text-zinc-500">{t('common.loading')}</p>
+        <div className="flex flex-col items-center justify-center rounded-2xl border border-slate-200 bg-slate-50 px-6 py-16 text-center">
+          <RefreshCw className="mb-3 h-8 w-8 animate-spin text-slate-400" />
+          <p className="text-slate-500">{t('common.loading')}</p>
         </div>
       ) : fetchError ? (
         <div className="flex flex-col items-center justify-center rounded-2xl border border-red-200 bg-red-50 px-6 py-16 text-center">
           <AlertTriangle className="mb-3 h-8 w-8 text-red-600" />
-          <p className="mb-4 text-zinc-500">{fetchError}</p>
+          <p className="mb-4 text-slate-500">{fetchError}</p>
           <Button
             variant="ghost"
             size="sm"
             onClick={loadSettings}
-            className="gap-2 border border-zinc-200 text-zinc-700 hover:bg-zinc-50"
+            className="gap-2 border border-slate-200 text-slate-700 hover:bg-slate-50"
           >
             <RefreshCw className="h-4 w-4" />
             {t('admin.settings.retry')}
@@ -776,19 +776,19 @@ export default function SettingsPage() {
                   className={cn(
                     'group relative flex shrink-0 items-center gap-2 rounded-xl px-4 py-2.5 text-sm font-medium transition-all duration-200',
                     isActive
-                      ? 'border border-zinc-200 bg-white text-zinc-900 shadow-sm'
-                      : 'border border-transparent text-zinc-500 hover:bg-zinc-50 hover:text-zinc-900'
+                      ? 'border border-slate-200 bg-white text-slate-900 shadow-sm'
+                      : 'border border-transparent text-slate-500 hover:bg-slate-50 hover:text-slate-900'
                   )}
                 >
-                  <tab.icon className={cn('h-4 w-4', isActive ? tab.color : 'text-zinc-400 group-hover:text-zinc-700')} />
+                  <tab.icon className={cn('h-4 w-4', isActive ? tab.color : 'text-slate-400 group-hover:text-slate-700')} />
                   {t(tab.labelKey)}
                   {changeCount > 0 && (
-                    <span className="flex h-5 min-w-5 items-center justify-center rounded-full bg-amber-50 px-1.5 text-[10px] font-semibold text-amber-700">
+                    <span className="flex h-5 min-w-5 items-center justify-center rounded-full bg-violet-50 px-1.5 text-[10px] font-semibold text-violet-700">
                       {changeCount}
                     </span>
                   )}
                   {isActive && (
-                    <div className="absolute inset-x-0 -bottom-0.5 h-0.5 rounded-full bg-amber-500" />
+                    <div className="absolute inset-x-0 -bottom-0.5 h-0.5 rounded-full bg-violet-500" />
                   )}
                 </button>
               );
@@ -837,7 +837,7 @@ export default function SettingsPage() {
                         'border text-xs',
                         currentEnvironment === 'live'
                           ? 'border-emerald-300 bg-emerald-50 text-emerald-700'
-                          : 'border-amber-300 bg-amber-50 text-amber-700'
+                          : 'border-violet-300 bg-violet-50 text-violet-700'
                       )}
                     >
                       {currentEnvironment === 'live' ? (
@@ -863,10 +863,10 @@ export default function SettingsPage() {
                     {/* Environment selector */}
                     <div className="space-y-2">
                       <div className="flex items-center justify-between">
-                        <label className="text-sm font-medium text-zinc-700">
+                        <label className="text-sm font-medium text-slate-700">
                           {t('admin.settings.environment')}
                           {editedGoCardless.environment !== undefined && (
-                            <Badge className="ml-2 border border-amber-300 bg-amber-50 text-amber-700 text-[10px]">
+                            <Badge className="ml-2 border border-violet-300 bg-violet-50 text-violet-700 text-[10px]">
                               {t('admin.settings.modified')}
                             </Badge>
                           )}
@@ -876,19 +876,19 @@ export default function SettingsPage() {
                         value={currentEnvironment}
                         onValueChange={handleEnvironmentChange}
                       >
-                        <SelectTrigger className="rounded-xl border border-zinc-200 bg-white text-zinc-900">
+                        <SelectTrigger className="rounded-xl border border-slate-200 bg-white text-slate-900">
                           <SelectValue />
                         </SelectTrigger>
-                        <SelectContent className="rounded-xl border border-zinc-200 bg-white">
-                          <SelectItem value="sandbox" className="text-zinc-700">
+                        <SelectContent className="rounded-xl border border-slate-200 bg-white">
+                          <SelectItem value="sandbox" className="text-slate-700">
                             {t('admin.settings.sandboxTesting')}
                           </SelectItem>
-                          <SelectItem value="live" className="text-zinc-700">
+                          <SelectItem value="live" className="text-slate-700">
                             {t('admin.settings.liveProduction')}
                           </SelectItem>
                         </SelectContent>
                       </Select>
-                      <p className="text-xs text-zinc-400">
+                      <p className="text-xs text-slate-400">
                         {t('admin.settings.environmentHint')}
                       </p>
                     </div>
@@ -904,8 +904,8 @@ export default function SettingsPage() {
                   title={t('admin.settings.emailTemplates')}
                   description={t('admin.settings.emailConfigDesc')}
                   icon={Mail}
-                  iconColor="text-amber-600"
-                  iconBg="bg-amber-50"
+                  iconColor="text-violet-600"
+                  iconBg="bg-violet-50"
                 >
                   <div className="space-y-5">
                     {EMAIL_FIELDS.map((field) => (
@@ -934,10 +934,10 @@ export default function SettingsPage() {
                  >
                    <div className="space-y-2">
                      <div className="flex items-center justify-between">
-                       <label className="text-sm font-medium text-zinc-700">
+                       <label className="text-sm font-medium text-slate-700">
                          {t('admin.settings.defaultCurrency')}
                          {editedPayment.currency !== undefined && (
-                           <Badge className="ml-2 border border-amber-300 bg-amber-50 text-amber-700 text-[10px]">
+                           <Badge className="ml-2 border border-violet-300 bg-violet-50 text-violet-700 text-[10px]">
                              {t('admin.settings.modified')}
                            </Badge>
                          )}
@@ -947,22 +947,22 @@ export default function SettingsPage() {
                        value={currentCurrency}
                        onValueChange={handleCurrencyChange}
                      >
-                       <SelectTrigger className="rounded-xl border border-zinc-200 bg-white text-zinc-900">
+                       <SelectTrigger className="rounded-xl border border-slate-200 bg-white text-slate-900">
                          <SelectValue />
                        </SelectTrigger>
-                       <SelectContent className="rounded-xl border border-zinc-200 bg-white">
+                       <SelectContent className="rounded-xl border border-slate-200 bg-white">
                          {CURRENCY_OPTIONS.map((opt) => (
                            <SelectItem
                              key={opt.value}
                              value={opt.value}
-                             className="text-zinc-700"
+                             className="text-slate-700"
                            >
                              {t(opt.labelKey)}
                            </SelectItem>
                          ))}
                        </SelectContent>
                      </Select>
-                     <p className="text-xs text-zinc-400">
+                     <p className="text-xs text-slate-400">
                        {t('admin.settings.defaultCurrencyHint')}
                      </p>
                    </div>
@@ -1114,11 +1114,11 @@ export default function SettingsPage() {
       <Dialog open={restartDialog} onOpenChange={setRestartDialog}>
         <DialogContent className="sm:max-w-[440px]">
           <DialogHeader>
-            <DialogTitle className="flex items-center gap-2 text-zinc-900">
+            <DialogTitle className="flex items-center gap-2 text-slate-900">
               <RefreshCw className="h-5 w-5 text-red-600" />
               {t('admin.settings.restartServer')}
             </DialogTitle>
-            <DialogDescription className="text-zinc-500">
+            <DialogDescription className="text-slate-500">
               {t('admin.settings.restartConfirmation')}
             </DialogDescription>
           </DialogHeader>
@@ -1176,7 +1176,7 @@ function SectionCard({
   children,
 }: SectionCardProps) {
   return (
-    <div className="group relative overflow-hidden rounded-2xl border border-zinc-200 bg-white shadow-sm">
+    <div className="group relative overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
       <div className="p-6">
         {/* Card header */}
         <div className="mb-6 flex items-start justify-between">
@@ -1190,8 +1190,8 @@ function SectionCard({
               <Icon className={cn('h-5 w-5', iconColor)} />
             </div>
             <div>
-              <h2 className="text-lg font-semibold text-zinc-900">{title}</h2>
-              <p className="text-sm text-zinc-500">{description}</p>
+              <h2 className="text-lg font-semibold text-slate-900">{title}</h2>
+              <p className="text-sm text-slate-500">{description}</p>
             </div>
           </div>
           {badge}

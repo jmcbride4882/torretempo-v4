@@ -1,13 +1,14 @@
 import { useState, lazy, Suspense } from 'react';
 import { Routes, Route, Navigate, useParams, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { Menu, Clock, Shield, X } from 'lucide-react';
+import { Menu, Clock, Shield, X, AlertTriangle, Sparkles } from 'lucide-react';
 import { Sidebar } from './Sidebar';
 import { BottomTabs } from './BottomTabs';
 import { NotificationBell } from '@/components/notifications/NotificationBell';
 import { OfflineIndicator } from '@/components/ui/offline-indicator';
 import { useAuth } from '@/hooks/useAuth';
 import { useOrganization } from '@/hooks/useOrganization';
+import { useSubscription } from '@/hooks/useSubscription';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -29,18 +30,98 @@ import GenerateReportPage from '@/pages/Reports/GenerateReport';
 import SettingsPage from '@/pages/Settings';
 import NotificationsPage from '@/pages/Notifications';
 
-// New pages (lazy loaded)
+// Lazy-loaded pages
 const TeamPage = lazy(() => import('@/pages/Team'));
 const EmployeeProfilePage = lazy(() => import('@/pages/Team/EmployeeProfile'));
 const LeavePage = lazy(() => import('@/pages/Leave'));
 const CorrectionsPage = lazy(() => import('@/pages/Corrections'));
 const BillingPage = lazy(() => import('@/pages/Billing'));
+const CheckoutSuccess = lazy(() => import('@/pages/Billing/CheckoutSuccess'));
 const ShiftTemplatesPage = lazy(() => import('@/pages/ShiftTemplates'));
 
 function PageLoader() {
   return (
     <div className="flex items-center justify-center py-24">
-      <div className="h-8 w-8 animate-spin rounded-full border-4 border-zinc-200 border-t-primary-500" />
+      <div className="h-8 w-8 animate-spin rounded-full border-4 border-slate-200 border-t-primary-500" />
+    </div>
+  );
+}
+
+function TrialBanner({ daysRemaining, slug }: { daysRemaining: number | null; slug: string }) {
+  const { t } = useTranslation();
+  const navigate = useNavigate();
+  const daysText = daysRemaining !== null ? daysRemaining : '?';
+
+  return (
+    <div className="bg-gradient-to-r from-primary-600 via-primary-500 to-accent-500 px-4 py-2.5">
+      <div className="flex items-center justify-between gap-3">
+        <div className="flex items-center gap-2 text-white">
+          <Sparkles className="h-4 w-4 flex-shrink-0" />
+          <p className="text-sm font-medium">
+            {t('billing.trialBanner', { days: daysText, defaultValue: `Trial: ${daysText} days remaining` })}
+          </p>
+        </div>
+        <Button
+          size="sm"
+          onClick={() => navigate(`/t/${slug}/billing`)}
+          className="bg-white text-primary-700 hover:bg-white/90 text-xs font-semibold px-4 shadow-sm"
+        >
+          {t('billing.upgrade', { defaultValue: 'Upgrade' })}
+        </Button>
+      </div>
+    </div>
+  );
+}
+
+function PastDueBanner({ slug }: { slug: string }) {
+  const { t } = useTranslation();
+  const navigate = useNavigate();
+
+  return (
+    <div className="bg-amber-50 border-b border-amber-200 px-4 py-2.5">
+      <div className="flex items-center justify-between gap-3">
+        <div className="flex items-center gap-2 text-amber-800">
+          <AlertTriangle className="h-4 w-4 flex-shrink-0" />
+          <p className="text-sm font-medium">
+            {t('billing.pastDueBanner', { defaultValue: 'Payment past due. Please update your billing information.' })}
+          </p>
+        </div>
+        <Button
+          size="sm"
+          variant="outline"
+          onClick={() => navigate(`/t/${slug}/billing`)}
+          className="border-amber-300 text-amber-800 hover:bg-amber-100 text-xs font-semibold"
+        >
+          {t('billing.updateBilling', { defaultValue: 'Update billing' })}
+        </Button>
+      </div>
+    </div>
+  );
+}
+
+function ExpiredOverlay({ slug }: { slug: string }) {
+  const { t } = useTranslation();
+  const navigate = useNavigate();
+
+  return (
+    <div className="fixed inset-0 z-[60] flex items-center justify-center bg-slate-900/70 backdrop-blur-sm">
+      <div className="mx-4 w-full max-w-md rounded-2xl bg-white p-8 text-center shadow-elevated">
+        <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-primary-100">
+          <AlertTriangle className="h-8 w-8 text-primary-600" />
+        </div>
+        <h2 className="mb-2 text-xl font-bold text-slate-900">
+          {t('billing.expiredTitle', { defaultValue: 'Subscription expired' })}
+        </h2>
+        <p className="mb-6 text-sm text-slate-500">
+          {t('billing.expiredDescription', { defaultValue: 'Your trial or subscription has ended. Upgrade to continue using Torre Tempo.' })}
+        </p>
+        <Button
+          onClick={() => navigate(`/t/${slug}/billing`)}
+          className="w-full bg-gradient-primary text-white hover:opacity-90 shadow-glow"
+        >
+          {t('billing.choosePlan', { defaultValue: 'Choose a plan' })}
+        </Button>
+      </div>
     </div>
   );
 }
@@ -52,9 +133,14 @@ export default function AppShell() {
   const { user, signOut } = useAuth();
   const { organization } = useOrganization();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const subscription = useSubscription();
+
+  const showTrialBanner = subscription.isTrialing && !subscription.isLoading;
+  const showPastDueBanner = subscription.subscriptionStatus === 'past_due' && !subscription.isLoading;
+  const showExpiredOverlay = subscription.isExpired && !subscription.isLoading;
 
   return (
-    <div className="min-h-screen bg-zinc-50">
+    <div className="min-h-screen bg-slate-50">
       {/* Desktop sidebar */}
       <Sidebar />
 
@@ -65,12 +151,12 @@ export default function AppShell() {
             className="fixed inset-0 z-40 bg-black/40 lg:hidden animate-fade-in"
             onClick={() => setMobileMenuOpen(false)}
           />
-          <div className="fixed inset-y-0 left-0 z-50 w-72 lg:hidden bg-white shadow-xl">
+          <div className="fixed inset-y-0 left-0 z-50 w-72 lg:hidden bg-surface-dark shadow-xl">
             <div className="relative h-full">
               <Sidebar />
               <button
                 onClick={() => setMobileMenuOpen(false)}
-                className="absolute right-3 top-4 rounded-xl p-2 text-zinc-400 hover:bg-zinc-100 hover:text-zinc-700 transition-colors"
+                className="absolute right-3 top-4 rounded-xl p-2 text-slate-500 hover:bg-white/10 hover:text-slate-300 transition-colors"
               >
                 <X className="h-5 w-5" />
               </button>
@@ -84,22 +170,26 @@ export default function AppShell() {
 
       {/* Main content area */}
       <div className="lg:pl-64">
+        {/* Subscription banners */}
+        {showTrialBanner && <TrialBanner daysRemaining={subscription.daysRemaining} slug={slug || ''} />}
+        {showPastDueBanner && <PastDueBanner slug={slug || ''} />}
+
         {/* Header */}
-        <header className="sticky top-0 z-30 h-16 bg-white border-b border-zinc-200">
+        <header className="sticky top-0 z-30 h-16 bg-white border-b border-slate-200">
           <div className="flex h-full items-center justify-between px-4 lg:px-6">
             {/* Mobile: menu + brand */}
             <div className="flex items-center gap-3 lg:hidden">
               <button
                 onClick={() => setMobileMenuOpen(true)}
-                className="flex h-10 w-10 items-center justify-center rounded-xl text-zinc-500 hover:bg-zinc-100 hover:text-zinc-700 transition-colors min-h-touch"
+                className="flex h-10 w-10 items-center justify-center rounded-xl text-slate-500 hover:bg-slate-100 hover:text-slate-700 transition-colors min-h-touch"
               >
                 <Menu className="h-5 w-5" />
               </button>
               <div className="flex items-center gap-2.5">
-                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary-500">
+                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-primary shadow-glow">
                   <Clock className="h-4 w-4 text-white" />
                 </div>
-                <span className="font-semibold text-zinc-900 text-sm">{organization?.name || 'Tempo'}</span>
+                <span className="font-semibold text-slate-900 text-sm">{organization?.name || 'Tempo'}</span>
               </div>
             </div>
 
@@ -113,10 +203,10 @@ export default function AppShell() {
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button variant="ghost" className="gap-2 px-2 h-10 min-h-touch">
-                    <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary-500 text-sm font-semibold text-white">
+                    <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-primary text-sm font-semibold text-white">
                       {user?.name?.charAt(0).toUpperCase() || 'U'}
                     </div>
-                    <span className="hidden text-sm font-medium text-zinc-700 md:inline">
+                    <span className="hidden text-sm font-medium text-slate-700 md:inline">
                       {user?.name?.split(' ')[0]}
                     </span>
                   </Button>
@@ -125,12 +215,12 @@ export default function AppShell() {
                   <DropdownMenuLabel>
                     <div className="flex flex-col">
                       <div className="flex items-center gap-2">
-                        <span className="text-zinc-900">{user?.name}</span>
+                        <span className="text-slate-900">{user?.name}</span>
                         {(user as any)?.role === 'admin' && (
                           <span className="badge-warning text-[10px] py-0 px-1.5">Admin</span>
                         )}
                       </div>
-                      <span className="text-xs font-normal text-zinc-500">{user?.email}</span>
+                      <span className="text-xs font-normal text-slate-500">{user?.email}</span>
                     </div>
                   </DropdownMenuLabel>
                   <DropdownMenuSeparator />
@@ -170,6 +260,7 @@ export default function AppShell() {
                 <Route path="team/:id" element={<EmployeeProfilePage />} />
                 <Route path="leave" element={<LeavePage />} />
                 <Route path="corrections" element={<CorrectionsPage />} />
+                <Route path="billing/success" element={<CheckoutSuccess />} />
                 <Route path="billing" element={<BillingPage />} />
                 <Route path="shift-templates" element={<ShiftTemplatesPage />} />
                 <Route path="notifications" element={<NotificationsPage />} />
@@ -186,6 +277,9 @@ export default function AppShell() {
 
       {/* Mobile bottom tabs */}
       <BottomTabs />
+
+      {/* Expired paywall overlay (renders on top of everything) */}
+      {showExpiredOverlay && <ExpiredOverlay slug={slug || ''} />}
     </div>
   );
 }

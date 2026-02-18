@@ -140,7 +140,7 @@ function DroppableCell({
     <div
       ref={setNodeRef}
       className={cn(
-        'relative min-h-[80px] border-r border-b border-zinc-200 p-2 last:border-r-0',
+        'relative min-h-[80px] border-r border-b border-slate-200 p-2 last:border-r-0',
         className,
         isOver && 'bg-primary-500/10 ring-2 ring-primary-500 ring-inset'
       )}
@@ -205,7 +205,7 @@ export function StaffRosterGrid({ shifts, staff, currentDate, isLoading, onShift
       <div className="flex min-h-[400px] items-center justify-center">
         <div className="flex flex-col items-center gap-3">
           <Loader2 className="h-8 w-8 animate-spin text-primary-500" />
-          <p className="text-sm text-zinc-500">{t('roster.loading')}</p>
+          <p className="text-sm text-slate-500">{t('roster.loading')}</p>
         </div>
       </div>
     );
@@ -215,11 +215,11 @@ export function StaffRosterGrid({ shifts, staff, currentDate, isLoading, onShift
     return (
       <div className="flex min-h-[400px] items-center justify-center">
         <div className="flex flex-col items-center gap-3 text-center">
-          <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-zinc-100">
-            <UserPlus className="h-8 w-8 text-zinc-400" />
+          <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-slate-100">
+            <UserPlus className="h-8 w-8 text-slate-400" />
           </div>
-          <h3 className="text-lg font-semibold text-zinc-900">{t('roster.noTeamMembers')}</h3>
-          <p className="max-w-sm text-sm text-zinc-500">
+          <h3 className="text-lg font-semibold text-slate-900">{t('roster.noTeamMembers')}</h3>
+          <p className="max-w-sm text-sm text-slate-500">
             {t('roster.addTeamMembersDescription')}
           </p>
         </div>
@@ -240,14 +240,14 @@ export function StaffRosterGrid({ shifts, staff, currentDate, isLoading, onShift
 
       {/* Desktop grid view */}
       <div className="overflow-x-auto">
-        <div className="inline-block min-w-full overflow-hidden rounded-xl border border-zinc-200 bg-white">
+        <div className="inline-block min-w-full overflow-hidden rounded-xl border border-slate-200 bg-white">
           {/* Header row with day names */}
-          <div className="grid grid-cols-[200px_repeat(7,minmax(120px,1fr))] border-b border-zinc-200">
+          <div className="grid grid-cols-[200px_repeat(7,minmax(120px,1fr))] border-b border-slate-200">
             {/* Staff column header */}
-            <div className="border-r border-zinc-200 bg-zinc-50 p-3">
+            <div className="border-r border-slate-200 bg-slate-50 p-3">
               <div className="flex items-center gap-2">
-                <Users className="h-4 w-4 text-zinc-400" />
-                <span className="text-xs font-medium uppercase text-zinc-500">{t('roster.staffMember')}</span>
+                <Users className="h-4 w-4 text-slate-400" />
+                <span className="text-xs font-medium uppercase text-slate-500">{t('roster.staffMember')}</span>
               </div>
             </div>
 
@@ -256,14 +256,14 @@ export function StaffRosterGrid({ shifts, staff, currentDate, isLoading, onShift
               <div
                 key={day.date.toISOString()}
                 className={cn(
-                  'flex flex-col items-center justify-center border-r border-zinc-200 p-3 last:border-r-0',
+                  'flex flex-col items-center justify-center border-r border-slate-200 p-3 last:border-r-0',
                   day.isToday && 'bg-primary-50/50',
-                  day.isWeekend && !day.isToday && 'bg-zinc-50'
+                  day.isWeekend && !day.isToday && 'bg-slate-50'
                 )}
               >
                 <span className={cn(
                   'text-xs font-medium uppercase',
-                  day.isToday ? 'text-primary-600' : day.isWeekend ? 'text-zinc-400' : 'text-zinc-500'
+                  day.isToday ? 'text-primary-600' : day.isWeekend ? 'text-slate-400' : 'text-slate-500'
                 )}>
                   {day.dayName}
                 </span>
@@ -272,8 +272,8 @@ export function StaffRosterGrid({ shifts, staff, currentDate, isLoading, onShift
                   day.isToday
                     ? 'bg-primary-500 text-white'
                     : day.isWeekend
-                      ? 'text-zinc-400'
-                      : 'text-zinc-900'
+                      ? 'text-slate-400'
+                      : 'text-slate-900'
                 )}>
                   {day.dayNumber}
                 </span>
@@ -292,7 +292,7 @@ export function StaffRosterGrid({ shifts, staff, currentDate, isLoading, onShift
               >
                 {/* Staff name cell */}
                 <div className={cn(
-                  'flex items-center gap-3 border-r border-b border-zinc-200 bg-zinc-50 p-3',
+                  'flex items-center gap-3 border-r border-b border-slate-200 bg-slate-50 p-3',
                   member.id === 'unassigned' && 'bg-amber-50'
                 )}>
                   <div className={cn(
@@ -306,12 +306,12 @@ export function StaffRosterGrid({ shifts, staff, currentDate, isLoading, onShift
                   <div className="min-w-0 flex-1">
                     <p className={cn(
                       'truncate text-sm font-medium',
-                      member.id === 'unassigned' ? 'text-amber-700' : 'text-zinc-900'
+                      member.id === 'unassigned' ? 'text-amber-700' : 'text-slate-900'
                     )}>
                       {member.name}
                     </p>
                     {member.email && (
-                      <p className="truncate text-xs text-zinc-400">{member.email}</p>
+                      <p className="truncate text-xs text-slate-400">{member.email}</p>
                     )}
                   </div>
                 </div>
@@ -328,7 +328,7 @@ export function StaffRosterGrid({ shifts, staff, currentDate, isLoading, onShift
                       day={day}
                       className={cn(
                         day.isToday && 'bg-primary-50/30',
-                        day.isWeekend && !day.isToday && 'bg-zinc-50/50'
+                        day.isWeekend && !day.isToday && 'bg-slate-50/50'
                       )}
                     >
                       {dayShifts.length > 0 ? (
@@ -347,7 +347,7 @@ export function StaffRosterGrid({ shifts, staff, currentDate, isLoading, onShift
                         </div>
                       ) : (
                         <div className="flex h-full min-h-[60px] items-center justify-center">
-                          <span className="text-xs text-zinc-300">&mdash;</span>
+                          <span className="text-xs text-slate-300">&mdash;</span>
                         </div>
                       )}
                     </DroppableCell>

@@ -106,8 +106,8 @@ function EmployeeRow({ entry }: EmployeeRowProps) {
     <div
       className={cn(
         "flex items-center gap-3 p-3 rounded-xl",
-        "bg-zinc-50 border border-zinc-200",
-        "hover:bg-zinc-100 transition-colors"
+        "bg-slate-50 border border-slate-200",
+        "hover:bg-slate-100 transition-colors"
       )}
     >
       {/* Avatar */}
@@ -122,11 +122,11 @@ function EmployeeRow({ entry }: EmployeeRowProps) {
 
       {/* Name and Location */}
       <div className="flex-1 min-w-0">
-        <p className="text-sm font-medium text-zinc-900 truncate">
+        <p className="text-sm font-medium text-slate-900 truncate">
           {entry.userName}
         </p>
         {entry.location && (
-          <p className="text-xs text-zinc-500 truncate">
+          <p className="text-xs text-slate-500 truncate">
             {entry.location}
           </p>
         )}
@@ -182,7 +182,7 @@ export function LiveAttendanceWidget({ className }: LiveAttendanceWidgetProps) {
 
   return (
     <div className={cn(
-      "bg-white border border-zinc-200 shadow-sm rounded-2xl p-5",
+      "bg-white border border-slate-200 shadow-sm rounded-2xl p-5",
       className
     )}>
       {/* Header */}
@@ -192,8 +192,8 @@ export function LiveAttendanceWidget({ className }: LiveAttendanceWidgetProps) {
             <Users className="h-5 w-5 text-primary-600" />
           </div>
           <div>
-            <h3 className="text-lg font-semibold text-zinc-900">{t('dashboard.liveAttendance')}</h3>
-            <p className="text-xs text-zinc-500">{t('dashboard.realtimeStatus')}</p>
+            <h3 className="text-lg font-semibold text-slate-900">{t('dashboard.liveAttendance')}</h3>
+            <p className="text-xs text-slate-500">{t('dashboard.realtimeStatus')}</p>
           </div>
         </div>
 
@@ -251,11 +251,11 @@ export function LiveAttendanceWidget({ className }: LiveAttendanceWidgetProps) {
           ))
         ) : (
           <div className="flex flex-col items-center justify-center py-8 text-center">
-            <div className="h-12 w-12 rounded-full bg-zinc-100 flex items-center justify-center mb-3">
-              <Users className="h-6 w-6 text-zinc-400" />
+            <div className="h-12 w-12 rounded-full bg-slate-100 flex items-center justify-center mb-3">
+              <Users className="h-6 w-6 text-slate-400" />
             </div>
-            <p className="text-sm text-zinc-500">{t('dashboard.noEmployeesClockedIn')}</p>
-            <p className="text-xs text-zinc-400 mt-1">
+            <p className="text-sm text-slate-500">{t('dashboard.noEmployeesClockedIn')}</p>
+            <p className="text-xs text-slate-400 mt-1">
               {isConnected
                 ? t('dashboard.waitingForEvents')
                 : t('dashboard.connectToSee')
@@ -266,18 +266,18 @@ export function LiveAttendanceWidget({ className }: LiveAttendanceWidgetProps) {
       </div>
 
       {/* Footer - Legend */}
-      <div className="flex items-center justify-center gap-4 mt-4 pt-4 border-t border-zinc-200">
+      <div className="flex items-center justify-center gap-4 mt-4 pt-4 border-t border-slate-200">
         <div className="flex items-center gap-1.5">
           <div className="h-2 w-2 rounded-full bg-emerald-500" />
-          <span className="text-xs text-zinc-500">&lt;7.5h</span>
+          <span className="text-xs text-slate-500">&lt;7.5h</span>
         </div>
         <div className="flex items-center gap-1.5">
           <div className="h-2 w-2 rounded-full bg-amber-500" />
-          <span className="text-xs text-zinc-500">7.5-9h</span>
+          <span className="text-xs text-slate-500">7.5-9h</span>
         </div>
         <div className="flex items-center gap-1.5">
           <div className="h-2 w-2 rounded-full bg-red-500" />
-          <span className="text-xs text-zinc-500">&gt;9h</span>
+          <span className="text-xs text-slate-500">&gt;9h</span>
         </div>
       </div>
     </div>

@@ -120,11 +120,11 @@ export function PINInput({
             disabled={disabled}
             className={cn(
               'w-14 h-16 text-center text-2xl font-bold rounded-xl',
-              'bg-zinc-50 border-2 transition-all duration-200',
+              'bg-slate-50 border-2 transition-all duration-200',
               'focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-white',
               error
                 ? 'border-red-300 text-red-600 focus:border-red-500 focus:ring-red-500/50'
-                : 'border-zinc-200 text-zinc-900 focus:border-emerald-500 focus:ring-emerald-500/50',
+                : 'border-slate-200 text-slate-900 focus:border-emerald-500 focus:ring-emerald-500/50',
               disabled && 'opacity-50 cursor-not-allowed',
               digit !== ' ' && !error && 'border-emerald-400'
             )}

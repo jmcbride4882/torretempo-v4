@@ -8,6 +8,7 @@ import { createWebSocketServer } from './lib/websocket.js';
 import { tenantMiddleware } from './middleware/tenant.js';
 import { requireAdmin } from './middleware/requireAdmin.js';
 import { errorLogger } from './middleware/errorLogger.js';
+import { subscriptionEnforcement } from './middleware/subscriptionEnforcement.js';
 import { testConnection } from './db/index.js';
 import shiftsRouter from './routes/shifts.js';
 import shiftTemplatesRouter from './routes/shift-templates.js';
@@ -122,22 +123,25 @@ app.use('/api/admin/*', requireAdmin, (_req: Request, res: Response) => {
 // Inspector routes (read-only for ITSS labor inspectors)
 app.use('/api/inspector/v1', inspectorRouter);
 
-// Tenant routes
-app.use('/api/v1/org/:slug/locations', tenantMiddleware, locationsRouter);
-app.use('/api/v1/org/:slug/shifts', tenantMiddleware, shiftsRouter);
-app.use('/api/v1/org/:slug/shift-templates', tenantMiddleware, shiftTemplatesRouter);
-app.use('/api/v1/org/:slug/swaps', tenantMiddleware, swapsRouter);
-app.use('/api/v1/org/:slug/notifications', tenantMiddleware, notificationsRouter);
-app.use('/api/v1/org/:slug/time-entries', tenantMiddleware, timeEntriesRouter);
-app.use('/api/v1/org/:slug/breaks', tenantMiddleware, breaksRouter);
-app.use('/api/v1/org/:slug/corrections', tenantMiddleware, correctionsRouter);
-app.use('/api/v1/org/:slug/members', tenantMiddleware, membersRouter);
-app.use('/api/v1/org/:slug/reports', tenantMiddleware, reportsRouter);
-app.use('/api/v1/org/:slug/employees', tenantMiddleware, employeeProfilesRouter);
-app.use('/api/v1/org/:slug/leave-requests', tenantMiddleware, leaveRequestsRouter);
-app.use('/api/v1/org/:slug/audit/verify', tenantMiddleware, auditChainRouter);
-app.use('/api/v1/org/:slug/roster', tenantMiddleware, rosterRouter);
+// Tenant routes — EXEMPT from subscription enforcement (billing + notifications)
+// These must work even when subscription is expired so users can upgrade
 app.use('/api/v1/org/:slug/billing', tenantMiddleware, tenantBillingRouter);
+app.use('/api/v1/org/:slug/notifications', tenantMiddleware, notificationsRouter);
+
+// Tenant routes — ENFORCED (require active subscription or valid trial)
+app.use('/api/v1/org/:slug/locations', tenantMiddleware, subscriptionEnforcement, locationsRouter);
+app.use('/api/v1/org/:slug/shifts', tenantMiddleware, subscriptionEnforcement, shiftsRouter);
+app.use('/api/v1/org/:slug/shift-templates', tenantMiddleware, subscriptionEnforcement, shiftTemplatesRouter);
+app.use('/api/v1/org/:slug/swaps', tenantMiddleware, subscriptionEnforcement, swapsRouter);
+app.use('/api/v1/org/:slug/time-entries', tenantMiddleware, subscriptionEnforcement, timeEntriesRouter);
+app.use('/api/v1/org/:slug/breaks', tenantMiddleware, subscriptionEnforcement, breaksRouter);
+app.use('/api/v1/org/:slug/corrections', tenantMiddleware, subscriptionEnforcement, correctionsRouter);
+app.use('/api/v1/org/:slug/members', tenantMiddleware, subscriptionEnforcement, membersRouter);
+app.use('/api/v1/org/:slug/reports', tenantMiddleware, subscriptionEnforcement, reportsRouter);
+app.use('/api/v1/org/:slug/employees', tenantMiddleware, subscriptionEnforcement, employeeProfilesRouter);
+app.use('/api/v1/org/:slug/leave-requests', tenantMiddleware, subscriptionEnforcement, leaveRequestsRouter);
+app.use('/api/v1/org/:slug/audit/verify', tenantMiddleware, subscriptionEnforcement, auditChainRouter);
+app.use('/api/v1/org/:slug/roster', tenantMiddleware, subscriptionEnforcement, rosterRouter);
 
 // 404 handler
 app.use((_req: Request, res: Response) => {

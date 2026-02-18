@@ -8,14 +8,14 @@ export function ProtectedRoute() {
 
   if (isLoading) {
     return (
-      <div className="flex h-screen items-center justify-center bg-zinc-50">
+      <div className="flex h-screen items-center justify-center bg-slate-50">
         <motion.div
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
           className="flex flex-col items-center gap-4"
         >
-          <div className="h-8 w-8 animate-spin rounded-full border-2 border-zinc-200 border-t-primary-600" />
-          <span className="text-sm text-zinc-500">Loading...</span>
+          <div className="h-8 w-8 animate-spin rounded-full border-2 border-slate-200 border-t-primary-600" />
+          <span className="text-sm text-slate-500">Loading...</span>
         </motion.div>
       </div>
     );

@@ -42,7 +42,7 @@ export function LocationMap({
   
   return (
     <div 
-      className="overflow-hidden rounded-lg border border-zinc-200" 
+      className="overflow-hidden rounded-lg border border-slate-200" 
       style={{ height }}
     >
       <MapContainer

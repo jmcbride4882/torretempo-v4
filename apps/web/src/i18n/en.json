@@ -306,11 +306,11 @@
     "heroTitle": "Clock in, in 2 seconds",
     "heroSubtitle": "Digital time tracking for hospitality, retail and services. Automatic compliance with Spanish labor law.",
     "cta": {
-      "startFree": "Start for free",
+      "startFree": "Start free trial",
       "seeDemo": "See demo",
       "startNow": "Start now",
       "readyTitle": "Ready to get started?",
-      "readySubtitle": "14-day free trial. No credit card required."
+      "readySubtitle": "14-day free trial. No credit card required. Cancel anytime."
     },
     "ctaSecondary": "View demo",
     "login": "Sign in",
@@ -336,94 +336,67 @@
     "step3Title": "Comply",
     "step3Desc": "The system automatically verifies hours, breaks and legal limits.",
     "pricing": {
-      "title": "Pricing",
-      "subtitle": "Simple and transparent. No surprises.",
-      "monthly": "Monthly",
-      "annual": "Annual",
-      "discount": "2 months free",
-      "badge": "Most popular",
-      "tiers": "pricing tiers",
-      "trialNote": "14-day free trial. No credit card required.",
-      "fallback": {
-        "basic": {
-          "name": "Basic",
-          "description": "For small teams",
-          "unit": "/user/month",
-          "cta": "Start for free",
+      "title": "Simple, transparent pricing",
+      "subtitle": "Choose the plan that fits your team. No hidden costs.",
+      "badge": "Pricing",
+      "trialNote": "14-day free trial on all plans. No credit card required.",
+      "perMonth": "/month",
+      "employees": "employees",
+      "unlimited": "unlimited",
+      "upTo": "Up to {{count}} employees",
+      "unlimitedEmployees": "Unlimited employees",
+      "popular": "Most popular",
+      "allPlansInclude": "All plans include",
+      "allPlansFeatures": ["Mobile PWA app", "Auto ET compliance", "AES-256 encryption", "Email support"],
+      "plans": [
+        {
+          "name": "Starter",
+          "price": "29",
+          "description": "Ideal for small teams. Basic shift management and time tracking.",
+          "employeeLimit": "10",
+          "cta": "Start free trial",
           "features": [
-            "QR and manual clock-in",
-            "Basic schedules",
-            "Automatic compliance",
-            "Mobile app",
-            "Up to 15 employees"
+            "Shift management",
+            "Clock-in (QR, PIN, manual)",
+            "Automatic legal compliance",
+            "Basic reports",
+            "Leave management",
+            "Up to 10 employees"
           ]
         },
-        "professional": {
-          "name": "Professional",
-          "description": "For growing businesses",
-          "unit": "/user/month",
-          "cta": "Start for free",
+        {
+          "name": "Growth",
+          "price": "69",
+          "description": "For growing businesses. Open shifts, swaps and geofencing.",
+          "employeeLimit": "30",
+          "cta": "Start free trial",
+          "highlighted": true,
           "features": [
-            "Everything in Basic",
-            "Geofence and PIN",
+            "Everything in Starter",
+            "Open shifts",
             "Shift swaps",
-            "Reports and export",
-            "Up to 100 employees",
-            "Priority support"
+            "Geofencing",
+            "Shift templates",
+            "Up to 30 employees"
           ]
         },
-        "enterprise": {
-          "name": "Enterprise",
-          "description": "For large organizations",
-          "price": "Contact us",
-          "cta": "Contact sales",
+        {
+          "name": "Business",
+          "price": "149",
+          "description": "For established businesses. Unlimited employees and priority support.",
+          "employeeLimit": "unlimited",
+          "cta": "Start free trial",
           "features": [
-            "Everything in Professional",
-            "Multi-location",
+            "Everything in Growth",
             "ITSS inspector API",
-            "Payroll integration",
-            "Unlimited employees",
-            "Dedicated SLA"
+            "Advanced reports",
+            "Payroll export",
+            "Priority support",
+            "Unlimited employees"
           ]
         }
-      }
+      ]
     },
-    "pricingSubtitle": "Simple and transparent. No surprises.",
-    "planBasic": "Basic",
-    "planBasicPrice": "2.50",
-    "planBasicPer": "/user/month",
-    "planBasicFeatures": [
-      "QR and manual clock-in",
-      "Basic schedules",
-      "Automatic compliance",
-      "Mobile app",
-      "Up to 15 employees"
-    ],
-    "planPro": "Professional",
-    "planProPrice": "4.50",
-    "planProPer": "/user/month",
-    "planProFeatures": [
-      "Everything in Basic",
-      "Geofence and PIN",
-      "Shift swaps",
-      "Reports and export",
-      "Up to 100 employees",
-      "Priority support"
-    ],
-    "planEnterprise": "Enterprise",
-    "planEnterprisePrice": "Contact us",
-    "planEnterprisePer": "",
-    "planEnterpriseFeatures": [
-      "Everything in Professional",
-      "Multi-site",
-      "ITSS inspector API",
-      "Payroll integration",
-      "Unlimited employees",
-      "Dedicated SLA"
-    ],
-    "planRecommended": "Recommended",
-    "planCta": "Start for free",
-    "planContact": "Contact sales",
     "faq": {
       "title": "Frequently asked questions",
       "moreQuestions": "More questions?",
@@ -457,7 +430,11 @@
       },
       {
         "q": "Is there a minimum commitment?",
-        "a": "No. Monthly billing with no commitment. You can cancel anytime."
+        "a": "No. Plans from €29/month with no commitment. You can cancel anytime."
+      },
+      {
+        "q": "How does pricing work?",
+        "a": "We offer 3 flat-rate monthly plans: Starter (€29/month, up to 10 employees), Growth (€69/month, up to 30 employees) and Business (€149/month, unlimited employees). All include a 14-day free trial."
       },
       {
         "q": "Is it GDPR compliant?",
@@ -712,6 +689,7 @@
     "onBreak": "On break",
     "overtime": "Overtime",
     "overtimeAlert": "Overtime alert",
+    "overtimeMessage": "You have exceeded your weekly limit by {{hours}}h. Art. 34 ET: max 40h per week.",
     "pendingSwaps": "Pending swaps",
     "realtimeStatus": "Real-time status",
     "scheduled": "Scheduled",
@@ -721,7 +699,16 @@
     "unread": "Unread",
     "upcomingShifts": "Upcoming shifts",
     "viewRoster": "View roster",
-    "waitingForEvents": "Waiting for events..."
+    "waitingForEvents": "Waiting for events...",
+    "subscription": {
+      "title": "Subscription",
+      "freeTrial": "Free Trial",
+      "trialRemaining": "Trial time remaining",
+      "days": "days",
+      "employees": "Employees",
+      "upgrade": "Upgrade Plan",
+      "expired": "Your subscription has expired. Upgrade your plan to continue using all features."
+    }
   },
   "clock": {
     "title": "Clock",
@@ -1707,33 +1694,115 @@
     "updatePassword": "Update password"
   },
   "billing": {
-    "title": "Billing",
+    "title": "Billing & Subscription",
+    "subtitle": "Manage your plan, usage, and payment",
     "currentPlan": "Current plan",
     "changePlan": "Change plan",
+    "choosePlan": "Choose a plan",
     "cancelSubscription": "Cancel subscription",
-    "cancelConfirm": "Are you sure you want to cancel your subscription?",
-    "cancelWarning": "You'll lose access to all features at the end of the billing period",
+    "cancelConfirm": "Are you sure you want to cancel?",
+    "cancelWarning": "You'll lose access to all features at the end of the billing period. This action cannot be undone.",
+    "cancelDescription": "Cancel your subscription. Access continues until the end of your current billing period.",
+    "dangerZone": "Danger zone",
     "usage": "Usage",
     "employeesUsed": "{{used}} of {{limit}} employees",
+    "employeesUnlimited": "{{used}} employees (unlimited)",
     "unlimited": "Unlimited",
     "features": "Features included",
     "paymentMethod": "Payment method",
     "endingIn": "Ending in {{last4}}",
-    "nextBilling": "Next billing",
-    "billingHistory": "Billing history",
+    "nextBilling": "Next billing date",
+    "billingHistory": "Payment history",
     "invoice": "Invoice",
     "amount": "Amount",
+    "date": "Date",
+    "status": "Status",
     "paid": "Paid",
     "failed": "Failed",
-    "downloadInvoice": "Download invoice",
-    "noInvoices": "No invoices",
+    "downloadInvoice": "Download",
+    "noInvoices": "No invoices yet",
+    "noInvoicesDesc": "Your payment history will appear here after your first payment.",
     "upgrade": "Upgrade",
+    "upgradeTo": "Upgrade to {{plan}}",
     "downgrade": "Downgrade",
+    "downgradeTo": "Downgrade to {{plan}}",
     "currentLabel": "Current plan",
-    "recommended": "Recommended",
-    "perUserMonth": "/user/month",
+    "recommended": "Most popular",
+    "perMonth": "/month",
+    "flatRate": "Flat rate",
     "free": "Free",
-    "planFeatures": "Plan features"
+    "planFeatures": "What's included",
+    "trialBanner": "Trial: {{days}} days remaining",
+    "trialEndsOn": "Trial ends on {{date}}",
+    "trialActive": "Free trial",
+    "pastDueBanner": "Payment past due. Please update your billing information.",
+    "updateBilling": "Update billing",
+    "expiredTitle": "Subscription expired",
+    "expiredDescription": "Your trial or subscription has ended. Upgrade to continue using Torre Tempo.",
+    "selectPlan": "Select a plan to continue",
+    "checkoutSuccess": "Payment successful!",
+    "checkoutSuccessDesc": "Your subscription is now active. Welcome aboard!",
+    "planLabel": "{{plan}} plan",
+    "goToDashboard": "Go to Dashboard",
+    "manageBilling": "Manage Billing",
+    "starterPlan": "Starter",
+    "starterDesc": "Perfect for small teams getting started",
+    "growthPlan": "Growth",
+    "growthDesc": "For growing teams that need more",
+    "businessPlan": "Business",
+    "businessDesc": "For large organizations with advanced needs",
+    "employeeLimit": "Up to {{limit}} employees",
+    "unlimitedEmployees": "Unlimited employees",
+    "allFeatures": "All features included",
+    "prioritySupport": "Priority support",
+    "dedicatedManager": "Dedicated account manager",
+    "customIntegrations": "Custom integrations",
+    "complianceReports": "Compliance reports",
+    "advancedAnalytics": "Advanced analytics",
+    "redirectingToCheckout": "Redirecting to checkout...",
+    "checkoutError": "Failed to start checkout. Please try again.",
+    "trialBannerSubtitle": "Upgrade now to keep all your data and features",
+    "daysRemaining": "days remaining",
+    "nearCapacity": "You're approaching your employee limit. Consider upgrading your plan.",
+    "pending": "Pending",
+    "planChanged": "Plan changed successfully",
+    "changePlanError": "Failed to change plan. Please try again.",
+    "subscriptionCancelled": "Subscription cancelled successfully",
+    "cancelError": "Failed to cancel subscription. Please try again.",
+    "cancelConsequence1": "All team members will lose access at the end of the billing period",
+    "cancelConsequence2": "Scheduling and time tracking data will be retained for 90 days",
+    "cancelConsequence3": "You can reactivate your subscription at any time",
+    "keepSubscription": "Keep subscription",
+    "confirmCancel": "Yes, cancel subscription",
+    "statusLabels": {
+      "active": "Active",
+      "trial": "Trial",
+      "past_due": "Past due",
+      "cancelled": "Cancelled",
+      "expired": "Expired",
+      "trial_expired": "Trial expired",
+      "inactive": "Inactive",
+      "unknown": "Unknown"
+    },
+    "planFeatures": {
+      "timeTracking": "Time tracking & clock-in/out",
+      "basicScheduling": "Basic shift scheduling",
+      "mobileApp": "Mobile app with offline support",
+      "complianceAlerts": "Spanish labor law compliance alerts",
+      "emailSupport": "Email support",
+      "everythingInStarter": "Everything in Starter",
+      "advancedScheduling": "Advanced scheduling & templates",
+      "shiftSwaps": "Shift swap requests",
+      "leaveManagement": "Leave management",
+      "reportsAnalytics": "Reports & analytics",
+      "prioritySupport": "Priority support",
+      "everythingInGrowth": "Everything in Growth",
+      "unlimitedEmployees": "Unlimited employees",
+      "apiAccess": "API access & integrations",
+      "customReports": "Custom compliance reports",
+      "auditLog": "Full audit log & ITSS access",
+      "dedicatedSupport": "Dedicated account manager"
+    }
   },
   "templates": {
     "title": "Shift templates",
@@ -1819,6 +1888,14 @@
     "adminPanel": "Administration Panel",
     "backToApp": "Back to App",
     "signOut": "Sign Out",
+    "adminBadge": "Admin",
+    "sections": {
+      "tenants": "Tenants",
+      "users": "Users",
+      "system": "System",
+      "compliance": "Compliance",
+      "config": "Configuration"
+    },
     "liveMonitoring": "Live monitoring - Refreshes every 10s",
     "refresh": "Refresh",
     "exportCsv": "Export CSV",
@@ -1857,6 +1934,13 @@
       "audit": "Audit",
       "analytics": "Analytics",
       "settings": "Settings"
+    },
+    "sections": {
+      "tenants": "Tenants",
+      "users": "Users",
+      "system": "System",
+      "compliance": "Compliance",
+      "config": "Config"
     },
     "tenants": {
       "title": "Organizations",
@@ -2637,5 +2721,26 @@
     "admin": "Admin",
     "member": "Member",
     "owner": "Owner"
+  },
+  "trial": {
+    "badge": "Free trial",
+    "daysRemaining": "{{count}} trial days remaining",
+    "expired": "Your trial has expired",
+    "upgradeNow": "Upgrade now",
+    "startedTitle": "Your 14-day trial has started!",
+    "startedDescription": "You have full access to all features. No credit card required.",
+    "expiringTitle": "Your trial is expiring soon",
+    "expiringDescription": "{{count}} days remaining. Upgrade your plan to keep access."
+  },
+  "checkout": {
+    "title": "Subscription",
+    "successTitle": "Subscription activated!",
+    "successDescription": "Your {{plan}} plan is active. You can now enjoy all features.",
+    "goToDashboard": "Go to dashboard",
+    "changePlan": "Change plan",
+    "cancelPlan": "Cancel subscription",
+    "currentPlan": "Current plan",
+    "usage": "Usage",
+    "employeesUsed": "{{used}} of {{limit}} employees"
   }
 }

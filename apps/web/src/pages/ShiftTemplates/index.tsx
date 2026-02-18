@@ -154,16 +154,16 @@ export default function ShiftTemplatesPage() {
       ) : templateList.length === 0 ? (
         <div className="empty-state">
           <div className="empty-state-icon">
-            <Clock className="h-8 w-8 text-zinc-400" />
+            <Clock className="h-8 w-8 text-slate-400" />
           </div>
-          <p className="text-zinc-500">{t('templates.noTemplates')}</p>
+          <p className="text-slate-500">{t('templates.noTemplates')}</p>
         </div>
       ) : (
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
           {templateList.map((tpl: any) => (
             <Card key={tpl.id} className="p-5">
               <div className="flex items-start justify-between mb-3">
-                <h3 className="font-semibold text-zinc-900">{tpl.name}</h3>
+                <h3 className="font-semibold text-slate-900">{tpl.name}</h3>
                 <div className="flex gap-1">
                   <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => openEdit(tpl)}>
                     <Pencil className="h-3.5 w-3.5" />
@@ -175,11 +175,11 @@ export default function ShiftTemplatesPage() {
               </div>
               <div className="space-y-2 text-sm">
                 <div className="flex items-center gap-2">
-                  <Clock className="h-3.5 w-3.5 text-zinc-400" />
-                  <span className="text-zinc-700">{tpl.startTime} - {tpl.endTime}</span>
+                  <Clock className="h-3.5 w-3.5 text-slate-400" />
+                  <span className="text-slate-700">{tpl.startTime} - {tpl.endTime}</span>
                 </div>
                 {tpl.breakMinutes && (
-                  <p className="text-zinc-500">{t('templates.breakMinutes', { minutes: tpl.breakMinutes })}</p>
+                  <p className="text-slate-500">{t('templates.breakMinutes', { minutes: tpl.breakMinutes })}</p>
                 )}
                 {tpl.role && (
                   <Badge variant="secondary">{tpl.role}</Badge>
@@ -203,25 +203,25 @@ export default function ShiftTemplatesPage() {
           </DialogHeader>
           <div className="space-y-4 py-4">
             <div>
-              <label className="text-sm font-medium text-zinc-700 mb-1.5 block">{t('common.name')}</label>
+              <label className="text-sm font-medium text-slate-700 mb-1.5 block">{t('common.name')}</label>
               <Input value={name} onChange={(e) => setName(e.target.value)} placeholder={t('templates.namePlaceholder')} />
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="text-sm font-medium text-zinc-700 mb-1.5 block">{t('templates.startTime')}</label>
+                <label className="text-sm font-medium text-slate-700 mb-1.5 block">{t('templates.startTime')}</label>
                 <Input type="time" value={startTime} onChange={(e) => setStartTime(e.target.value)} />
               </div>
               <div>
-                <label className="text-sm font-medium text-zinc-700 mb-1.5 block">{t('templates.endTime')}</label>
+                <label className="text-sm font-medium text-slate-700 mb-1.5 block">{t('templates.endTime')}</label>
                 <Input type="time" value={endTime} onChange={(e) => setEndTime(e.target.value)} />
               </div>
             </div>
             <div>
-              <label className="text-sm font-medium text-zinc-700 mb-1.5 block">{t('templates.break')}</label>
+              <label className="text-sm font-medium text-slate-700 mb-1.5 block">{t('templates.break')}</label>
               <Input type="number" value={breakMinutes} onChange={(e) => setBreakMinutes(e.target.value)} min="0" max="120" />
             </div>
             <div>
-              <label className="text-sm font-medium text-zinc-700 mb-1.5 block">{t('templates.role')}</label>
+              <label className="text-sm font-medium text-slate-700 mb-1.5 block">{t('templates.role')}</label>
               <Input value={role} onChange={(e) => setRole(e.target.value)} placeholder={t('common.optional')} />
             </div>
           </div>

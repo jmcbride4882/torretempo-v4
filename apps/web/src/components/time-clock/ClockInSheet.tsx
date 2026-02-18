@@ -295,22 +295,22 @@ export function ClockInSheet({ isOpen, onClose, organizationSlug, shiftId }: Clo
         <div className="text-center">
           <div className="flex items-center justify-center gap-2 mb-2">
             <Clock className="h-5 w-5 text-emerald-600" />
-            <h2 className="text-xl font-semibold text-zinc-900">{t('clock.clockIn')}</h2>
+            <h2 className="text-xl font-semibold text-slate-900">{t('clock.clockIn')}</h2>
           </div>
-          <div className="text-4xl font-mono font-bold text-zinc-900 tracking-tight">
+          <div className="text-4xl font-mono font-bold text-slate-900 tracking-tight">
             {timeFormatter.format(currentTime)}
           </div>
-          <p className="text-sm text-zinc-500 mt-1">
+          <p className="text-sm text-slate-500 mt-1">
             {dateFormatter.format(currentTime)}
           </p>
         </div>
 
         {/* Location Section */}
-        <div className="bg-white border border-zinc-200 shadow-sm rounded-xl p-4 space-y-3">
+        <div className="bg-white border border-slate-200 shadow-sm rounded-xl p-4 space-y-3">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <MapPin className="h-4 w-4 text-zinc-500" />
-              <span className="text-sm font-medium text-zinc-700">{t('clock.location')}</span>
+              <MapPin className="h-4 w-4 text-slate-500" />
+              <span className="text-sm font-medium text-slate-700">{t('clock.location')}</span>
             </div>
             {geoLoading ? (
               <Badge variant="ghost" className="gap-1">
@@ -345,34 +345,34 @@ export function ClockInSheet({ isOpen, onClose, organizationSlug, shiftId }: Clo
                 <p className="text-sm font-medium text-red-600">
                   {t('clock.locationRequired')}
                 </p>
-                <p className="text-xs text-zinc-500 mt-1">
+                <p className="text-xs text-slate-500 mt-1">
                   {t('clock.enableLocationPermissions')}
                 </p>
               </div>
             </div>
           ) : geoLoading ? (
             <div className="flex items-center gap-3 py-2">
-              <div className="h-10 w-10 rounded-full bg-zinc-100 flex items-center justify-center">
+              <div className="h-10 w-10 rounded-full bg-slate-100 flex items-center justify-center">
                 <Loader2 className="h-5 w-5 text-emerald-600 animate-spin" />
               </div>
               <div>
-                <p className="text-sm text-zinc-700">{t('clock.fetchingLocation')}</p>
-                <p className="text-xs text-zinc-500">{t('common.pleaseWait')}</p>
+                <p className="text-sm text-slate-700">{t('clock.fetchingLocation')}</p>
+                <p className="text-xs text-slate-500">{t('common.pleaseWait')}</p>
               </div>
             </div>
           ) : position ? (
             <div className="space-y-2">
               <div className="flex items-center justify-between text-xs">
-                <span className="text-zinc-500">{t('clock.coordinates')}</span>
-                <span className="text-zinc-700 font-mono">
+                <span className="text-slate-500">{t('clock.coordinates')}</span>
+                <span className="text-slate-700 font-mono">
                   {position.coords.latitude.toFixed(5)}, {position.coords.longitude.toFixed(5)}
                 </span>
               </div>
               <div className="flex items-center justify-between text-xs">
-                <span className="text-zinc-500">{t('clock.accuracy')}</span>
+                <span className="text-slate-500">{t('clock.accuracy')}</span>
                 <span className={cn(
                   "font-mono",
-                  hasLowAccuracy ? "text-amber-600" : "text-zinc-700"
+                  hasLowAccuracy ? "text-amber-600" : "text-slate-700"
                 )}>
                   {formatAccuracy(accuracy ?? 0)}
                 </span>
@@ -405,11 +405,11 @@ export function ClockInSheet({ isOpen, onClose, organizationSlug, shiftId }: Clo
 
         {/* NFC Status Section (shown when NFC method is selected) */}
         {selectedMethod === 'nfc' && (
-          <div className="bg-white border border-zinc-200 shadow-sm rounded-xl p-4 space-y-3">
+          <div className="bg-white border border-slate-200 shadow-sm rounded-xl p-4 space-y-3">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <Wifi className="h-4 w-4 text-zinc-500" />
-                <span className="text-sm font-medium text-zinc-700">{t('clock.nfcTag')}</span>
+                <Wifi className="h-4 w-4 text-slate-500" />
+                <span className="text-sm font-medium text-slate-700">{t('clock.nfcTag')}</span>
               </div>
               {nfcScanning ? (
                 <Badge variant="ghost" className="gap-1">
@@ -429,7 +429,7 @@ export function ClockInSheet({ isOpen, onClose, organizationSlug, shiftId }: Clo
                 <AlertCircle className="h-5 w-5 text-red-600 flex-shrink-0 mt-0.5" />
                 <div>
                   <p className="text-sm font-medium text-red-600">{t('clock.nfcError')}</p>
-                  <p className="text-xs text-zinc-500 mt-1">{nfcError}</p>
+                  <p className="text-xs text-slate-500 mt-1">{nfcError}</p>
                 </div>
               </div>
             ) : nfcScanning ? (
@@ -437,18 +437,18 @@ export function ClockInSheet({ isOpen, onClose, organizationSlug, shiftId }: Clo
                 <div className="h-16 w-16 rounded-full bg-primary-50 flex items-center justify-center">
                   <Wifi className="h-8 w-8 text-primary-600" />
                 </div>
-                <p className="text-sm text-zinc-700">{t('clock.holdNfcNearDevice')}</p>
+                <p className="text-sm text-slate-700">{t('clock.holdNfcNearDevice')}</p>
               </div>
             ) : nfcData ? (
               <div className="space-y-2">
                 <div className="flex items-center justify-between text-xs">
-                  <span className="text-zinc-500">{t('clock.serialNumber')}</span>
-                  <span className="text-zinc-700 font-mono">{nfcData.serialNumber.substring(0, 16)}...</span>
+                  <span className="text-slate-500">{t('clock.serialNumber')}</span>
+                  <span className="text-slate-700 font-mono">{nfcData.serialNumber.substring(0, 16)}...</span>
                 </div>
                 {nfcData.message && (
                   <div className="flex items-center justify-between text-xs">
-                    <span className="text-zinc-500">{t('common.message')}</span>
-                    <span className="text-zinc-700">{nfcData.message}</span>
+                    <span className="text-slate-500">{t('common.message')}</span>
+                    <span className="text-slate-700">{nfcData.message}</span>
                   </div>
                 )}
               </div>
@@ -457,7 +457,7 @@ export function ClockInSheet({ isOpen, onClose, organizationSlug, shiftId }: Clo
                 <AlertTriangle className="h-5 w-5 text-amber-600 flex-shrink-0 mt-0.5" />
                 <div>
                   <p className="text-sm font-medium text-amber-600">{t('clock.nfcNotSupported')}</p>
-                  <p className="text-xs text-zinc-500 mt-1">
+                  <p className="text-xs text-slate-500 mt-1">
                     {t('clock.nfcBrowserNotSupported')}
                   </p>
                 </div>
@@ -468,11 +468,11 @@ export function ClockInSheet({ isOpen, onClose, organizationSlug, shiftId }: Clo
 
         {/* QR Scanner Section (shown when QR method is selected) */}
         {selectedMethod === 'qr' && (
-          <div className="bg-white border border-zinc-200 shadow-sm rounded-xl p-4 space-y-3">
+          <div className="bg-white border border-slate-200 shadow-sm rounded-xl p-4 space-y-3">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <QrCode className="h-4 w-4 text-zinc-500" />
-                <span className="text-sm font-medium text-zinc-700">{t('clock.qrCode')}</span>
+                <QrCode className="h-4 w-4 text-slate-500" />
+                <span className="text-sm font-medium text-slate-700">{t('clock.qrCode')}</span>
               </div>
               {qrScanning ? (
                 <Badge variant="ghost" className="gap-1">
@@ -492,7 +492,7 @@ export function ClockInSheet({ isOpen, onClose, organizationSlug, shiftId }: Clo
                 <AlertCircle className="h-5 w-5 text-red-600 flex-shrink-0 mt-0.5" />
                 <div>
                   <p className="text-sm font-medium text-red-600">{t('clock.qrScannerError')}</p>
-                  <p className="text-xs text-zinc-500 mt-1">{qrError}</p>
+                  <p className="text-xs text-slate-500 mt-1">{qrError}</p>
                 </div>
               </div>
             ) : qrScanning ? (
@@ -502,19 +502,19 @@ export function ClockInSheet({ isOpen, onClose, organizationSlug, shiftId }: Clo
                   id="qr-reader-preview"
                   className="w-full aspect-square rounded-lg overflow-hidden bg-black"
                 />
-                <p className="text-sm text-center text-zinc-500">
+                <p className="text-sm text-center text-slate-500">
                   {t('clock.pointCameraAtQR')}
                 </p>
               </div>
             ) : qrData ? (
               <div className="space-y-2">
                 <div className="flex items-center justify-between text-xs">
-                  <span className="text-zinc-500">{t('clock.location')}</span>
-                  <span className="text-zinc-700">{qrData.locationName || 'Unknown'}</span>
+                  <span className="text-slate-500">{t('clock.location')}</span>
+                  <span className="text-slate-700">{qrData.locationName || 'Unknown'}</span>
                 </div>
                 <div className="flex items-center justify-between text-xs">
-                  <span className="text-zinc-500">Location ID</span>
-                  <span className="text-zinc-700 font-mono">{qrData.locationId}</span>
+                  <span className="text-slate-500">Location ID</span>
+                  <span className="text-slate-700 font-mono">{qrData.locationId}</span>
                 </div>
               </div>
             ) : !qrSupported ? (
@@ -522,7 +522,7 @@ export function ClockInSheet({ isOpen, onClose, organizationSlug, shiftId }: Clo
                 <AlertTriangle className="h-5 w-5 text-amber-600 flex-shrink-0 mt-0.5" />
                 <div>
                   <p className="text-sm font-medium text-amber-600">{t('clock.cameraNotAvailable')}</p>
-                  <p className="text-xs text-zinc-500 mt-1">
+                  <p className="text-xs text-slate-500 mt-1">
                     {t('clock.cameraBrowserNotSupported')}
                   </p>
                 </div>
@@ -533,16 +533,16 @@ export function ClockInSheet({ isOpen, onClose, organizationSlug, shiftId }: Clo
 
         {/* PIN Input Section (shown when PIN method is selected) */}
         {selectedMethod === 'pin' && (
-          <div className="bg-white border border-zinc-200 shadow-sm rounded-xl p-4 space-y-4">
+          <div className="bg-white border border-slate-200 shadow-sm rounded-xl p-4 space-y-4">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <Hash className="h-4 w-4 text-zinc-500" />
-                <span className="text-sm font-medium text-zinc-700">{t('clock.enterPin')}</span>
+                <Hash className="h-4 w-4 text-slate-500" />
+                <span className="text-sm font-medium text-slate-700">{t('clock.enterPin')}</span>
               </div>
             </div>
 
             <div className="space-y-3">
-              <p className="text-xs text-center text-zinc-500">
+              <p className="text-xs text-center text-slate-500">
                 {t('clock.enter4DigitPin')}
               </p>
               <PINInput
@@ -564,7 +564,7 @@ export function ClockInSheet({ isOpen, onClose, organizationSlug, shiftId }: Clo
 
         {/* Clock Method Tabs */}
         <div className="space-y-2">
-          <Label className="text-zinc-500">{t('clock.clockMethod')}</Label>
+          <Label className="text-slate-500">{t('clock.clockMethod')}</Label>
           <div className="grid grid-cols-4 gap-2">
             {CLOCK_METHODS.map((method) => {
               const Icon = method.icon;
@@ -587,14 +587,14 @@ export function ClockInSheet({ isOpen, onClose, organizationSlug, shiftId }: Clo
                     "border",
                     isSelected && method.available
                       ? "bg-emerald-50 border-emerald-200 text-emerald-600"
-                      : "bg-zinc-50 border-zinc-200 text-zinc-500",
+                      : "bg-slate-50 border-slate-200 text-slate-500",
                     isDisabled && "opacity-50 cursor-not-allowed"
                   )}
                 >
                   <Icon className="h-5 w-5" />
                   <span className="text-xs font-medium">{t(method.labelKey)}</span>
                   {isDisabled && (
-                    <span className="text-[10px] text-zinc-500">{t('common.soon')}</span>
+                    <span className="text-[10px] text-slate-500">{t('common.soon')}</span>
                   )}
                 </button>
               );
@@ -604,7 +604,7 @@ export function ClockInSheet({ isOpen, onClose, organizationSlug, shiftId }: Clo
 
         {/* Notes */}
         <div className="space-y-2">
-          <Label htmlFor="clock-in-notes" className="text-zinc-500">
+          <Label htmlFor="clock-in-notes" className="text-slate-500">
             {t('common.notesOptional')}
           </Label>
           <textarea
@@ -615,8 +615,8 @@ export function ClockInSheet({ isOpen, onClose, organizationSlug, shiftId }: Clo
             rows={2}
             className={cn(
               "w-full px-3 py-2 rounded-xl resize-none",
-              "bg-zinc-50 border border-zinc-200",
-              "text-zinc-900 placeholder:text-zinc-400",
+              "bg-slate-50 border border-slate-200",
+              "text-slate-900 placeholder:text-slate-400",
               "focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-300",
               "text-sm"
             )}
@@ -637,8 +637,8 @@ export function ClockInSheet({ isOpen, onClose, organizationSlug, shiftId }: Clo
             <div className="h-16 w-16 rounded-full bg-emerald-50 flex items-center justify-center">
               <CheckCircle2 className="h-8 w-8 text-emerald-600" />
             </div>
-            <p className="text-lg font-semibold text-zinc-900">{t('clock.clockedInSuccess')}</p>
-            <p className="text-sm text-zinc-500">
+            <p className="text-lg font-semibold text-slate-900">{t('clock.clockedInSuccess')}</p>
+            <p className="text-sm text-slate-500">
               {timeFormatter.format(currentTime)}
             </p>
           </div>
@@ -653,7 +653,7 @@ export function ClockInSheet({ isOpen, onClose, organizationSlug, shiftId }: Clo
               className={cn(
                 "h-14 text-lg font-semibold rounded-xl",
                 "bg-emerald-600 hover:bg-emerald-700",
-                "disabled:bg-zinc-200 disabled:text-zinc-400"
+                "disabled:bg-slate-200 disabled:text-slate-400"
               )}
             >
               {submitting ? (
@@ -670,7 +670,7 @@ export function ClockInSheet({ isOpen, onClose, organizationSlug, shiftId }: Clo
               variant="ghost"
               onClick={onClose}
               disabled={submitting}
-              className="h-12 text-zinc-500 hover:text-zinc-900"
+              className="h-12 text-slate-500 hover:text-slate-900"
             >
               {t('common.cancel')}
             </Button>

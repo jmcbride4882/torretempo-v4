@@ -131,8 +131,8 @@ export default function GenerateReportPage() {
         <div className="mb-6 flex h-20 w-20 items-center justify-center rounded-2xl bg-emerald-50">
           <CheckCircle2 className="h-10 w-10 text-emerald-600" />
         </div>
-        <h2 className="mb-2 text-2xl font-bold text-zinc-900">{t('reports.generating')}</h2>
-        <p className="mb-4 text-zinc-500">
+        <h2 className="mb-2 text-2xl font-bold text-slate-900">{t('reports.generating')}</h2>
+        <p className="mb-4 text-slate-500">
           {t('reports.redirecting')}
         </p>
         <Loader2 className="h-6 w-6 animate-spin text-blue-600" />
@@ -158,7 +158,7 @@ export default function GenerateReportPage() {
           variant="ghost"
           size="sm"
           onClick={handleBack}
-          className="gap-1.5 rounded-lg border border-zinc-200 bg-white text-zinc-700 hover:bg-zinc-50"
+          className="gap-1.5 rounded-lg border border-slate-200 bg-white text-slate-700 hover:bg-slate-50"
         >
           <ArrowLeft className="h-4 w-4" />
           {t('common.back')}
@@ -168,29 +168,29 @@ export default function GenerateReportPage() {
           <Sparkles className="h-5 w-5 text-blue-600" />
         </div>
         <div>
-          <h1 className="text-xl font-bold text-zinc-900 sm:text-2xl">{t('reports.generateTitle')}</h1>
-          <p className="text-sm text-zinc-500">{t('reports.generateSubtitle')}</p>
+          <h1 className="text-xl font-bold text-slate-900 sm:text-2xl">{t('reports.generateTitle')}</h1>
+          <p className="text-sm text-slate-500">{t('reports.generateSubtitle')}</p>
         </div>
       </div>
 
       {/* Form */}
-      <div className="space-y-6 rounded-xl border border-zinc-200 bg-white p-6">
+      <div className="space-y-6 rounded-xl border border-slate-200 bg-white p-6">
         {/* Report Type */}
         <div>
-          <label className="mb-2 block text-sm font-medium text-zinc-700">{t('reports.reportType')}</label>
+          <label className="mb-2 block text-sm font-medium text-slate-700">{t('reports.reportType')}</label>
           <Select
             value={reportType}
             onValueChange={(value) => setReportType(value as ReportType)}
           >
-            <SelectTrigger className="rounded-lg border-zinc-200 bg-white text-zinc-900">
+            <SelectTrigger className="rounded-lg border-slate-200 bg-white text-slate-900">
               <SelectValue placeholder={t('reports.reportType')} />
             </SelectTrigger>
-            <SelectContent className="rounded-lg border-zinc-200 bg-white">
+            <SelectContent className="rounded-lg border-slate-200 bg-white">
               {reportTypeOptions.map((type) => (
-                <SelectItem key={type.value} value={type.value} className="text-zinc-900">
+                <SelectItem key={type.value} value={type.value} className="text-slate-900">
                   <div className="flex flex-col">
                     <span>{t(type.labelKey)}</span>
-                    <span className="text-xs text-zinc-500">{t(type.descKey)}</span>
+                    <span className="text-xs text-slate-500">{t(type.descKey)}</span>
                   </div>
                 </SelectItem>
               ))}
@@ -202,18 +202,18 @@ export default function GenerateReportPage() {
         <div className="grid gap-4 sm:grid-cols-2">
           {/* Year */}
           <div>
-            <label className="mb-2 block text-sm font-medium text-zinc-700">{t('reports.year')}</label>
+            <label className="mb-2 block text-sm font-medium text-slate-700">{t('reports.year')}</label>
             <Select
               value={year.toString()}
               onValueChange={(value) => setYear(parseInt(value, 10))}
             >
-              <SelectTrigger className="rounded-lg border-zinc-200 bg-white text-zinc-900">
-                <Calendar className="mr-2 h-4 w-4 text-zinc-400" />
+              <SelectTrigger className="rounded-lg border-slate-200 bg-white text-slate-900">
+                <Calendar className="mr-2 h-4 w-4 text-slate-400" />
                 <SelectValue placeholder={t('reports.year')} />
               </SelectTrigger>
-              <SelectContent className="rounded-lg border-zinc-200 bg-white">
+              <SelectContent className="rounded-lg border-slate-200 bg-white">
                 {yearOptions.map((y) => (
-                  <SelectItem key={y} value={y.toString()} className="text-zinc-900">
+                  <SelectItem key={y} value={y.toString()} className="text-slate-900">
                     {y}
                   </SelectItem>
                 ))}
@@ -223,18 +223,18 @@ export default function GenerateReportPage() {
 
           {/* Month */}
           <div>
-            <label className="mb-2 block text-sm font-medium text-zinc-700">{t('reports.month')}</label>
+            <label className="mb-2 block text-sm font-medium text-slate-700">{t('reports.month')}</label>
             <Select
               value={month.toString()}
               onValueChange={(value) => setMonth(parseInt(value, 10))}
             >
-              <SelectTrigger className="rounded-lg border-zinc-200 bg-white text-zinc-900">
-                <Calendar className="mr-2 h-4 w-4 text-zinc-400" />
+              <SelectTrigger className="rounded-lg border-slate-200 bg-white text-slate-900">
+                <Calendar className="mr-2 h-4 w-4 text-slate-400" />
                 <SelectValue placeholder={t('reports.month')} />
               </SelectTrigger>
-              <SelectContent className="rounded-lg border-zinc-200 bg-white">
+              <SelectContent className="rounded-lg border-slate-200 bg-white">
                 {MONTHS.map((m) => (
-                  <SelectItem key={m.value} value={m.value.toString()} className="text-zinc-900">
+                  <SelectItem key={m.value} value={m.value.toString()} className="text-slate-900">
                     {m.label}
                   </SelectItem>
                 ))}
@@ -246,29 +246,29 @@ export default function GenerateReportPage() {
         {/* User Selection (Managers only) */}
         {isManager && teamMembers.length > 0 && (
           <div>
-            <label className="mb-2 block text-sm font-medium text-zinc-700">
+            <label className="mb-2 block text-sm font-medium text-slate-700">
               {t('reports.teamMember')}
             </label>
             <Select
               value={userId || 'all'}
               onValueChange={(value) => setUserId(value === 'all' ? undefined : value)}
             >
-              <SelectTrigger className="rounded-lg border-zinc-200 bg-white text-zinc-900">
-                <User className="mr-2 h-4 w-4 text-zinc-400" />
+              <SelectTrigger className="rounded-lg border-slate-200 bg-white text-slate-900">
+                <User className="mr-2 h-4 w-4 text-slate-400" />
                 <SelectValue placeholder={t('reports.allMembers')} />
               </SelectTrigger>
-              <SelectContent className="rounded-lg border-zinc-200 bg-white">
-                <SelectItem value="all" className="text-zinc-900">
+              <SelectContent className="rounded-lg border-slate-200 bg-white">
+                <SelectItem value="all" className="text-slate-900">
                   {t('reports.allMembers')}
                 </SelectItem>
                 {teamMembers.map((member) => (
-                  <SelectItem key={member.id} value={member.id} className="text-zinc-900">
+                  <SelectItem key={member.id} value={member.id} className="text-slate-900">
                     {member.name}
                   </SelectItem>
                 ))}
               </SelectContent>
             </Select>
-            <p className="mt-1.5 text-xs text-zinc-500">
+            <p className="mt-1.5 text-xs text-slate-500">
               {t('reports.leaveEmpty')}
             </p>
           </div>
@@ -289,48 +289,48 @@ export default function GenerateReportPage() {
       </div>
 
       {/* Preview */}
-      <div className="rounded-xl border border-zinc-200 bg-white p-6">
-        <h3 className="mb-4 text-sm font-medium text-zinc-700">{t('reports.preview')}</h3>
+      <div className="rounded-xl border border-slate-200 bg-white p-6">
+        <h3 className="mb-4 text-sm font-medium text-slate-700">{t('reports.preview')}</h3>
 
         <div className="space-y-3">
-          <div className="flex items-center justify-between rounded-lg border border-zinc-100 bg-zinc-50 p-3">
-            <div className="flex items-center gap-2 text-zinc-500">
+          <div className="flex items-center justify-between rounded-lg border border-slate-100 bg-slate-50 p-3">
+            <div className="flex items-center gap-2 text-slate-500">
               <FileText className="h-4 w-4" />
               <span className="text-sm">{t('reports.type')}</span>
             </div>
-            <span className="font-medium text-zinc-900">
+            <span className="font-medium text-slate-900">
               {selectedReportType ? t(selectedReportType.labelKey) : ''}
             </span>
           </div>
 
-          <div className="flex items-center justify-between rounded-lg border border-zinc-100 bg-zinc-50 p-3">
-            <div className="flex items-center gap-2 text-zinc-500">
+          <div className="flex items-center justify-between rounded-lg border border-slate-100 bg-slate-50 p-3">
+            <div className="flex items-center gap-2 text-slate-500">
               <Calendar className="h-4 w-4" />
               <span className="text-sm">{t('reports.period')}</span>
             </div>
-            <span className="font-medium text-zinc-900">
+            <span className="font-medium text-slate-900">
               {selectedMonth?.label} {year}
             </span>
           </div>
 
-          <div className="flex items-center justify-between rounded-lg border border-zinc-100 bg-zinc-50 p-3">
-            <div className="flex items-center gap-2 text-zinc-500">
+          <div className="flex items-center justify-between rounded-lg border border-slate-100 bg-slate-50 p-3">
+            <div className="flex items-center gap-2 text-slate-500">
               <User className="h-4 w-4" />
               <span className="text-sm">{t('reports.employee')}</span>
             </div>
-            <span className="font-medium text-zinc-900">
+            <span className="font-medium text-slate-900">
               {userId
                 ? teamMembers.find((m) => m.id === userId)?.name || 'Selected user'
                 : t('reports.allMembers')}
             </span>
           </div>
 
-          <div className="flex items-center justify-between rounded-lg border border-zinc-100 bg-zinc-50 p-3">
-            <div className="flex items-center gap-2 text-zinc-500">
+          <div className="flex items-center justify-between rounded-lg border border-slate-100 bg-slate-50 p-3">
+            <div className="flex items-center gap-2 text-slate-500">
               <Clock className="h-4 w-4" />
               <span className="text-sm">{t('reports.estimatedTime')}</span>
             </div>
-            <span className="font-medium text-zinc-900">~30 seconds</span>
+            <span className="font-medium text-slate-900">~30 seconds</span>
           </div>
         </div>
       </div>
@@ -341,7 +341,7 @@ export default function GenerateReportPage() {
           variant="ghost"
           onClick={handleBack}
           disabled={isSubmitting}
-          className="rounded-lg border border-zinc-200 text-zinc-700 hover:bg-zinc-50"
+          className="rounded-lg border border-slate-200 text-slate-700 hover:bg-slate-50"
         >
           {t('reports.cancel')}
         </Button>

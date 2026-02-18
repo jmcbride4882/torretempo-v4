@@ -92,9 +92,9 @@ export type RosterViewMode = 'week' | 'day' | 'month';
 // Status color mapping
 export const SHIFT_STATUS_COLORS: Record<ShiftStatus, { bg: string; text: string; border: string }> = {
   draft: {
-    bg: 'bg-zinc-100',
-    text: 'text-zinc-600',
-    border: 'border-zinc-200',
+    bg: 'bg-slate-100',
+    text: 'text-slate-600',
+    border: 'border-slate-200',
   },
   published: {
     bg: 'bg-blue-50',

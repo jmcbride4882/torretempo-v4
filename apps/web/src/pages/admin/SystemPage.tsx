@@ -63,7 +63,7 @@ function formatPercent(value: number): string {
 // Status colors
 const statusColors = {
   healthy: 'bg-emerald-500',
-  degraded: 'bg-amber-500',
+  degraded: 'bg-violet-500',
   unhealthy: 'bg-red-500',
   down: 'bg-red-500',
   connected: 'bg-emerald-500',
@@ -144,12 +144,12 @@ export default function SystemPage() {
       {/* Page header */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-amber-50 shadow-sm">
-            <Server className="h-5 w-5 text-amber-600" />
+          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-violet-50 shadow-sm">
+            <Server className="h-5 w-5 text-violet-600" />
           </div>
           <div>
-            <h1 className="text-xl font-bold text-zinc-900 sm:text-2xl">{t('admin.system.title')}</h1>
-            <p className="text-sm text-zinc-500">
+            <h1 className="text-xl font-bold text-slate-900 sm:text-2xl">{t('admin.system.title')}</h1>
+            <p className="text-sm text-slate-500">
               {t('admin.system.liveMonitoring')}
             </p>
           </div>
@@ -163,7 +163,7 @@ export default function SystemPage() {
               health?.status === 'healthy'
                 ? 'border-emerald-500/30 bg-emerald-50 text-emerald-700'
                 : health?.status === 'degraded'
-                ? 'border-amber-500/30 bg-amber-50 text-amber-700'
+                ? 'border-violet-500/30 bg-violet-50 text-violet-700'
                 : 'border-red-500/30 bg-red-50 text-red-700'
             )}
           >
@@ -177,7 +177,7 @@ export default function SystemPage() {
               size="sm"
               onClick={handleRefresh}
               disabled={isRefreshing}
-              className="gap-1.5 rounded-lg border border-zinc-200 bg-zinc-50 text-zinc-700 hover:bg-zinc-100"
+              className="gap-1.5 rounded-lg border border-slate-200 bg-slate-50 text-slate-700 hover:bg-slate-100"
             >
               <RefreshCw className={cn('h-4 w-4', isRefreshing && 'animate-spin')} />
               <span className="hidden sm:inline">{t('admin.refresh')}</span>
@@ -306,38 +306,38 @@ export default function SystemPage() {
       </div>
 
       {/* Queue details */}
-      <div className="rounded-xl border border-zinc-200 bg-white shadow-sm p-6">
-        <h2 className="mb-4 text-lg font-semibold text-zinc-900">{t('admin.system.queueMetrics')}</h2>
+      <div className="rounded-xl border border-slate-200 bg-white shadow-sm p-6">
+        <h2 className="mb-4 text-lg font-semibold text-slate-900">{t('admin.system.queueMetrics')}</h2>
         {health?.queues && health.queues.length > 0 ? (
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead>
-                <tr className="border-b border-zinc-200">
-                  <th className="pb-3 text-left text-xs font-medium uppercase tracking-wider text-zinc-500">{t('admin.system.queue')}</th>
-                  <th className="pb-3 text-right text-xs font-medium uppercase tracking-wider text-zinc-500">{t('admin.system.pending')}</th>
-                  <th className="pb-3 text-right text-xs font-medium uppercase tracking-wider text-zinc-500">{t('admin.system.active')}</th>
-                  <th className="pb-3 text-right text-xs font-medium uppercase tracking-wider text-zinc-500">{t('admin.system.completed')}</th>
-                  <th className="pb-3 text-right text-xs font-medium uppercase tracking-wider text-zinc-500">{t('admin.system.delayed')}</th>
-                  <th className="pb-3 text-right text-xs font-medium uppercase tracking-wider text-zinc-500">{t('admin.system.failed')}</th>
+                <tr className="border-b border-slate-200">
+                  <th className="pb-3 text-left text-xs font-medium uppercase tracking-wider text-slate-500">{t('admin.system.queue')}</th>
+                  <th className="pb-3 text-right text-xs font-medium uppercase tracking-wider text-slate-500">{t('admin.system.pending')}</th>
+                  <th className="pb-3 text-right text-xs font-medium uppercase tracking-wider text-slate-500">{t('admin.system.active')}</th>
+                  <th className="pb-3 text-right text-xs font-medium uppercase tracking-wider text-slate-500">{t('admin.system.completed')}</th>
+                  <th className="pb-3 text-right text-xs font-medium uppercase tracking-wider text-slate-500">{t('admin.system.delayed')}</th>
+                  <th className="pb-3 text-right text-xs font-medium uppercase tracking-wider text-slate-500">{t('admin.system.failed')}</th>
                 </tr>
               </thead>
               <tbody>
                 {health.queues.map((queue) => (
                   <tr
                     key={queue.name}
-                    className="border-b border-zinc-200"
+                    className="border-b border-slate-200"
                   >
-                    <td className="py-3 font-medium text-zinc-900">{queue.name}</td>
-                    <td className="py-3 text-right text-zinc-700">{queue.pending}</td>
+                    <td className="py-3 font-medium text-slate-900">{queue.name}</td>
+                    <td className="py-3 text-right text-slate-700">{queue.pending}</td>
                     <td className="py-3 text-right">
-                      <span className={cn(queue.active > 0 ? 'text-blue-600' : 'text-zinc-500')}>
+                      <span className={cn(queue.active > 0 ? 'text-blue-600' : 'text-slate-500')}>
                         {queue.active}
                       </span>
                     </td>
                     <td className="py-3 text-right text-emerald-600">{queue.completed}</td>
-                    <td className="py-3 text-right text-amber-600">{queue.delayed}</td>
+                    <td className="py-3 text-right text-violet-600">{queue.delayed}</td>
                     <td className="py-3 text-right">
-                      <span className={cn(queue.failed > 0 ? 'text-red-600' : 'text-zinc-500')}>
+                      <span className={cn(queue.failed > 0 ? 'text-red-600' : 'text-slate-500')}>
                         {queue.failed}
                       </span>
                     </td>
@@ -347,17 +347,17 @@ export default function SystemPage() {
             </table>
           </div>
         ) : (
-          <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-zinc-200 bg-zinc-50 py-12 text-center">
-            <Layers className="mb-3 h-8 w-8 text-zinc-400" />
-            <p className="text-sm text-zinc-500">{t('admin.system.noQueues')}</p>
+          <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-slate-200 bg-slate-50 py-12 text-center">
+            <Layers className="mb-3 h-8 w-8 text-slate-400" />
+            <p className="text-sm text-slate-500">{t('admin.system.noQueues')}</p>
           </div>
         )}
       </div>
 
       {/* Failed jobs */}
-      <div className="rounded-xl border border-zinc-200 bg-white shadow-sm p-6">
+      <div className="rounded-xl border border-slate-200 bg-white shadow-sm p-6">
         <div className="mb-4 flex items-center justify-between">
-          <h2 className="text-lg font-semibold text-zinc-900">{t('admin.system.failedJobs')}</h2>
+          <h2 className="text-lg font-semibold text-slate-900">{t('admin.system.failedJobs')}</h2>
           {health?.failedJobs && health.failedJobs.length > 0 && (
             <Badge className="border border-red-500/30 bg-red-50 text-red-700">
               {t('admin.system.failedCount', { count: health.failedJobs.reduce((sum, queue) => sum + queue.failedCount, 0) })}
@@ -372,11 +372,11 @@ export default function SystemPage() {
                 <div key={queueSummary.queueName} className="space-y-3">
                   {/* Queue header */}
                   <div className="flex items-center gap-2">
-                    <div className="h-px flex-1 bg-zinc-200" />
-                    <p className="text-xs font-medium uppercase tracking-wider text-zinc-500">
+                    <div className="h-px flex-1 bg-slate-200" />
+                    <p className="text-xs font-medium uppercase tracking-wider text-slate-500">
                       {t('admin.system.queueHeader', { name: queueSummary.queueName, count: queueSummary.failedCount })}
                     </p>
-                    <div className="h-px flex-1 bg-zinc-200" />
+                    <div className="h-px flex-1 bg-slate-200" />
                   </div>
 
                   {/* Recent errors */}
@@ -391,8 +391,8 @@ export default function SystemPage() {
                             <XCircle className="h-4 w-4 text-red-600" />
                           </div>
                           <div>
-                            <p className="font-medium text-zinc-900">{t('admin.system.jobId')}: {error.jobId.slice(0, 16)}{error.jobId.length > 16 ? '...' : ''}</p>
-                            <p className="text-sm text-zinc-500">
+                            <p className="font-medium text-slate-900">{t('admin.system.jobId')}: {error.jobId.slice(0, 16)}{error.jobId.length > 16 ? '...' : ''}</p>
+                            <p className="text-sm text-slate-500">
                               {t('admin.system.queue')}: {queueSummary.queueName}
                             </p>
                           </div>
@@ -419,10 +419,10 @@ export default function SystemPage() {
                           </Button>
                         </div>
                       </div>
-                      <div className="rounded-lg bg-zinc-100 p-3">
+                      <div className="rounded-lg bg-slate-100 p-3">
                         <p className="font-mono text-sm text-red-700">{error.error}</p>
                       </div>
-                      <div className="mt-2 flex items-center gap-1 text-xs text-zinc-500">
+                      <div className="mt-2 flex items-center gap-1 text-xs text-slate-500">
                         <Clock className="h-3 w-3" />
                         {t('admin.system.failedAt', { date: new Date(error.failedAt).toLocaleString() })}
                       </div>
@@ -433,9 +433,9 @@ export default function SystemPage() {
             ))}
           </div>
         ) : (
-          <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-zinc-200 bg-zinc-50 py-12 text-center">
+          <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-slate-200 bg-slate-50 py-12 text-center">
             <CheckCircle2 className="mb-3 h-8 w-8 text-emerald-500" />
-            <p className="text-sm text-zinc-500">{t('admin.system.noFailedJobs')}</p>
+            <p className="text-sm text-slate-500">{t('admin.system.noFailedJobs')}</p>
           </div>
         )}
       </div>
@@ -458,11 +458,11 @@ function ServiceCard({ icon: Icon, label, status, metrics, color }: ServiceCardP
     violet: 'bg-violet-50 text-violet-600',
     blue: 'bg-blue-50 text-blue-600',
     red: 'bg-red-50 text-red-600',
-    amber: 'bg-amber-50 text-amber-600',
+    amber: 'bg-violet-50 text-violet-600',
   };
 
   return (
-    <div className="rounded-xl border border-zinc-200 bg-white shadow-sm p-5">
+    <div className="rounded-xl border border-slate-200 bg-white shadow-sm p-5">
       <div className="mb-3 flex items-center justify-between">
         <div
           className={cn(
@@ -479,12 +479,12 @@ function ServiceCard({ icon: Icon, label, status, metrics, color }: ServiceCardP
           </span>
         </div>
       </div>
-      <h3 className="mb-3 font-semibold text-zinc-900">{label}</h3>
+      <h3 className="mb-3 font-semibold text-slate-900">{label}</h3>
       <div className="space-y-2">
         {metrics.map((metric) => (
           <div key={metric.label} className="flex items-center justify-between text-sm">
-            <span className="text-zinc-500">{metric.label}</span>
-            <span className={cn('font-medium', metric.alert ? 'text-red-600' : 'text-zinc-700')}>
+            <span className="text-slate-500">{metric.label}</span>
+            <span className={cn('font-medium', metric.alert ? 'text-red-600' : 'text-slate-700')}>
               {metric.value}
             </span>
           </div>
@@ -501,38 +501,38 @@ function SystemPageSkeleton() {
       {/* Header skeleton */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className="h-10 w-10 animate-pulse rounded-xl bg-zinc-100" />
+          <div className="h-10 w-10 animate-pulse rounded-xl bg-slate-100" />
           <div className="space-y-1.5">
-            <div className="h-6 w-32 animate-pulse rounded bg-zinc-100" />
-            <div className="h-4 w-48 animate-pulse rounded bg-zinc-100" />
+            <div className="h-6 w-32 animate-pulse rounded bg-slate-100" />
+            <div className="h-4 w-48 animate-pulse rounded bg-slate-100" />
           </div>
         </div>
-        <div className="h-9 w-24 animate-pulse rounded-lg bg-zinc-100" />
+        <div className="h-9 w-24 animate-pulse rounded-lg bg-slate-100" />
       </div>
 
       {/* Service cards skeleton */}
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {[...Array(4)].map((_, i) => (
-          <div key={i} className="animate-pulse rounded-xl border border-zinc-200 bg-zinc-50 p-5">
+          <div key={i} className="animate-pulse rounded-xl border border-slate-200 bg-slate-50 p-5">
             <div className="mb-3 flex items-center justify-between">
-              <div className="h-10 w-10 rounded-xl bg-zinc-100" />
-              <div className="h-4 w-12 rounded bg-zinc-100" />
+              <div className="h-10 w-10 rounded-xl bg-slate-100" />
+              <div className="h-4 w-12 rounded bg-slate-100" />
             </div>
-            <div className="mb-3 h-5 w-24 rounded bg-zinc-100" />
+            <div className="mb-3 h-5 w-24 rounded bg-slate-100" />
             <div className="space-y-2">
-              <div className="h-4 w-full rounded bg-zinc-100" />
-              <div className="h-4 w-full rounded bg-zinc-100" />
+              <div className="h-4 w-full rounded bg-slate-100" />
+              <div className="h-4 w-full rounded bg-slate-100" />
             </div>
           </div>
         ))}
       </div>
 
       {/* Queue table skeleton */}
-      <div className="animate-pulse rounded-xl border border-zinc-200 bg-zinc-50 p-6">
-        <div className="mb-4 h-6 w-32 rounded bg-zinc-100" />
+      <div className="animate-pulse rounded-xl border border-slate-200 bg-slate-50 p-6">
+        <div className="mb-4 h-6 w-32 rounded bg-slate-100" />
         <div className="space-y-3">
           {[...Array(3)].map((_, i) => (
-            <div key={i} className="h-12 w-full rounded bg-zinc-100" />
+            <div key={i} className="h-12 w-full rounded bg-slate-100" />
           ))}
         </div>
       </div>
