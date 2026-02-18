@@ -53,12 +53,12 @@ import type { SubscriptionPlan, CreatePlanRequest, UpdatePlanRequest } from '@/l
 // CONSTANTS
 // ============================================================================
 
-const MODULE_OPTIONS: { key: string; label: string }[] = [
-  { key: 'timeTracking', label: 'Time Tracking' },
-  { key: 'scheduling', label: 'Scheduling' },
-  { key: 'swapRequests', label: 'Swap Requests' },
-  { key: 'reporting', label: 'Reporting' },
-  { key: 'mobileApp', label: 'Mobile App' },
+const MODULE_OPTIONS: { key: string; labelKey: string }[] = [
+  { key: 'timeTracking', labelKey: 'admin.plans.moduleTimeTracking' },
+  { key: 'scheduling', labelKey: 'admin.plans.moduleScheduling' },
+  { key: 'swapRequests', labelKey: 'admin.plans.moduleSwapRequests' },
+  { key: 'reporting', labelKey: 'admin.plans.moduleReporting' },
+  { key: 'mobileApp', labelKey: 'admin.plans.moduleMobileApp' },
 ];
 
 const CURRENCY_OPTIONS = [
@@ -68,8 +68,8 @@ const CURRENCY_OPTIONS = [
 ];
 
 const BILLING_PERIOD_OPTIONS = [
-  { value: 'monthly', label: 'Monthly' },
-  { value: 'annual', label: 'Annual' },
+  { value: 'monthly', labelKey: 'admin.plans.monthly' },
+  { value: 'annual', labelKey: 'admin.plans.annual' },
 ];
 
 const DEFAULT_MODULES: Record<string, boolean> = {
@@ -122,55 +122,55 @@ const INITIAL_FORM: PlanFormState = {
   is_active: true,
 };
 
-function validateForm(form: PlanFormState): Record<string, string | null> {
+function validateForm(form: PlanFormState, t: (key: string) => string): Record<string, string | null> {
   const errors: Record<string, string | null> = {};
 
   // code: required, lowercase, alphanumeric + underscore/dash
   if (!form.code.trim()) {
-    errors.code = 'Plan code is required';
+    errors.code = t('admin.plans.validation.codeRequired');
   } else if (!/^[a-z0-9_-]+$/.test(form.code.trim())) {
-    errors.code = 'Only lowercase letters, numbers, underscores, and dashes allowed';
+    errors.code = t('admin.plans.validation.codeFormat');
   }
 
   // name: required, min 3 chars
   if (!form.name.trim()) {
-    errors.name = 'Plan name is required';
+    errors.name = t('admin.plans.validation.nameRequired');
   } else if (form.name.trim().length < 3) {
-    errors.name = 'Name must be at least 3 characters';
+    errors.name = t('admin.plans.validation.nameMinLength');
   }
 
   // price_cents: required, >= 0
   if (!form.price_cents.trim()) {
-    errors.price_cents = 'Price is required';
+    errors.price_cents = t('admin.plans.validation.priceRequired');
   } else {
     const cents = Number(form.price_cents);
     if (isNaN(cents) || cents < 0) {
-      errors.price_cents = 'Price must be 0 or greater';
+      errors.price_cents = t('admin.plans.validation.priceMinValue');
     } else if (!Number.isInteger(cents)) {
-      errors.price_cents = 'Price must be a whole number (cents)';
+      errors.price_cents = t('admin.plans.validation.priceWholeNumber');
     }
   }
 
   // currency: required
   if (!form.currency) {
-    errors.currency = 'Currency is required';
+    errors.currency = t('admin.plans.validation.currencyRequired');
   }
 
   // billing_period: required
   if (!form.billing_period) {
-    errors.billing_period = 'Billing period is required';
+    errors.billing_period = t('admin.plans.validation.billingPeriodRequired');
   }
 
   // employee_limit: if not unlimited, must be > 0
   if (!form.unlimited_employees) {
     if (!form.employee_limit.trim()) {
-      errors.employee_limit = 'Employee limit is required when not unlimited';
+      errors.employee_limit = t('admin.plans.validation.employeeLimitRequired');
     } else {
       const limit = Number(form.employee_limit);
       if (isNaN(limit) || limit <= 0) {
-        errors.employee_limit = 'Must be greater than 0';
+        errors.employee_limit = t('admin.plans.validation.mustBeGreaterThanZero');
       } else if (!Number.isInteger(limit)) {
-        errors.employee_limit = 'Must be a whole number';
+        errors.employee_limit = t('admin.plans.validation.mustBeWholeNumber');
       }
     }
   }
@@ -209,7 +209,7 @@ export default function PlansPage() {
       setPlans(response.plans || []);
     } catch (error) {
       console.error('Error fetching plans:', error);
-      toast.error('Failed to load subscription plans');
+      toast.error(t('admin.plans.failedToLoad'));
     } finally {
       setIsLoading(false);
       setIsRefreshing(false);
@@ -267,7 +267,7 @@ export default function PlansPage() {
 
   // ---- Handlers ----
   const handleCreate = async () => {
-    const errors = validateForm(form);
+    const errors = validateForm(form, t);
     setFieldErrors(errors);
     if (Object.values(errors).some(Boolean)) return;
 
@@ -287,7 +287,7 @@ export default function PlansPage() {
         is_active: form.is_active,
       };
       await createPlan(payload);
-      toast.success('Plan created successfully');
+      toast.success(t('admin.plans.planCreated'));
       setCreateModalOpen(false);
       resetForm();
       loadPlans();
@@ -295,7 +295,7 @@ export default function PlansPage() {
       if (err instanceof AdminApiError) {
         setApiError(err.message);
       } else {
-        setApiError('An unexpected error occurred');
+        setApiError(t('admin.plans.unexpectedError'));
       }
     } finally {
       setIsActionLoading(false);
@@ -305,7 +305,7 @@ export default function PlansPage() {
   const handleUpdate = async () => {
     if (!editingPlan) return;
 
-    const errors = validateForm(form);
+    const errors = validateForm(form, t);
     setFieldErrors(errors);
     if (Object.values(errors).some(Boolean)) return;
 
@@ -324,7 +324,7 @@ export default function PlansPage() {
         is_active: form.is_active,
       };
       await updatePlan(editingPlan.id, payload);
-      toast.success('Plan updated successfully');
+      toast.success(t('admin.plans.planUpdated'));
       setEditingPlan(null);
       resetForm();
       loadPlans();
@@ -332,7 +332,7 @@ export default function PlansPage() {
       if (err instanceof AdminApiError) {
         setApiError(err.message);
       } else {
-        setApiError('An unexpected error occurred');
+        setApiError(t('admin.plans.unexpectedError'));
       }
     } finally {
       setIsActionLoading(false);
@@ -346,10 +346,10 @@ export default function PlansPage() {
     try {
       if (deactivateTarget.is_active) {
         await deactivatePlan(deactivateTarget.id);
-        toast.success('Plan deactivated');
+        toast.success(t('admin.plans.planDeactivated'));
       } else {
         await updatePlan(deactivateTarget.id, { is_active: true });
-        toast.success('Plan reactivated');
+        toast.success(t('admin.plans.planReactivated'));
       }
       setDeactivateTarget(null);
       loadPlans();
@@ -357,7 +357,7 @@ export default function PlansPage() {
       if (err instanceof AdminApiError) {
         toast.error(err.message);
       } else {
-        toast.error('Failed to update plan status');
+        toast.error(t('admin.plans.failedToUpdateStatus'));
       }
     } finally {
       setIsActionLoading(false);
@@ -377,13 +377,13 @@ export default function PlansPage() {
       {/* Page header */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-amber-50 shadow-sm">
-            <CreditCard className="h-5 w-5 text-amber-600" />
+          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-violet-50 shadow-sm">
+            <CreditCard className="h-5 w-5 text-violet-600" />
           </div>
           <div>
-            <h1 className="text-xl font-bold text-zinc-900 sm:text-2xl">{t('admin.plans.title')}</h1>
-            <p className="text-sm text-zinc-500">
-              Manage pricing tiers and feature bundles
+            <h1 className="text-xl font-bold text-slate-900 sm:text-2xl">{t('admin.plans.title')}</h1>
+            <p className="text-sm text-slate-500">
+              {t('admin.plans.subtitle')}
             </p>
           </div>
         </div>
@@ -395,17 +395,17 @@ export default function PlansPage() {
               size="sm"
               onClick={() => loadPlans(true)}
               disabled={isRefreshing}
-              className="gap-1.5 rounded-lg border border-zinc-200 bg-zinc-50 text-zinc-700 hover:bg-zinc-100"
+              className="gap-1.5 rounded-lg border border-slate-200 bg-slate-50 text-slate-700 hover:bg-slate-100"
             >
               <RefreshCw className={cn('h-4 w-4', isRefreshing && 'animate-spin')} />
-              <span className="hidden sm:inline">Refresh</span>
+              <span className="hidden sm:inline">{t('admin.refresh')}</span>
             </Button>
           </div>
           <div>
             <Button
               size="sm"
               onClick={openCreateModal}
-              className="gap-1.5 bg-amber-600 hover:bg-amber-700"
+              className="gap-1.5 bg-violet-600 hover:bg-violet-700"
             >
               <Plus className="h-4 w-4" />
               {t('admin.plans.createPlan')}
@@ -418,14 +418,14 @@ export default function PlansPage() {
       {isLoading ? (
         <PlansPageSkeleton />
       ) : plans.length === 0 ? (
-        <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-zinc-200 bg-zinc-50 py-16 text-center">
-          <CreditCard className="mb-3 h-10 w-10 text-zinc-400" />
-          <p className="text-lg font-medium text-zinc-700">{t('admin.plans.title')}</p>
-          <p className="mt-1 text-sm text-zinc-500">Create your first plan to get started</p>
+        <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-slate-200 bg-slate-50 py-16 text-center">
+          <CreditCard className="mb-3 h-10 w-10 text-slate-400" />
+          <p className="text-lg font-medium text-slate-700">{t('admin.plans.title')}</p>
+          <p className="mt-1 text-sm text-slate-500">{t('admin.plans.createFirstPlan')}</p>
           <Button
             size="sm"
             onClick={openCreateModal}
-            className="mt-5 gap-1.5 bg-amber-600 hover:bg-amber-700"
+            className="mt-5 gap-1.5 bg-violet-600 hover:bg-violet-700"
           >
             <Plus className="h-4 w-4" />
             {t('admin.plans.createPlan')}
@@ -436,9 +436,9 @@ export default function PlansPage() {
           {/* Active Plans */}
           {activePlans.length > 0 && (
             <div>
-              <h2 className="mb-4 text-lg font-semibold text-zinc-900">
-                Active Plans
-                <span className="ml-2 text-sm font-normal text-zinc-500">
+              <h2 className="mb-4 text-lg font-semibold text-slate-900">
+                {t('admin.plans.activePlans')}
+                <span className="ml-2 text-sm font-normal text-slate-500">
                   ({activePlans.length})
                 </span>
               </h2>
@@ -458,9 +458,9 @@ export default function PlansPage() {
           {/* Inactive Plans */}
           {inactivePlans.length > 0 && (
             <div>
-              <h2 className="mb-4 text-lg font-semibold text-zinc-500">
-                Inactive Plans
-                <span className="ml-2 text-sm font-normal text-zinc-400">
+              <h2 className="mb-4 text-lg font-semibold text-slate-500">
+                {t('admin.plans.inactivePlans')}
+                <span className="ml-2 text-sm font-normal text-slate-400">
                   ({inactivePlans.length})
                 </span>
               </h2>
@@ -493,19 +493,19 @@ export default function PlansPage() {
         <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-lg">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
-              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-amber-50">
+              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-violet-50">
                 {isEditMode ? (
-                  <Edit className="h-4 w-4 text-amber-600" />
+                  <Edit className="h-4 w-4 text-violet-600" />
                 ) : (
-                  <Plus className="h-4 w-4 text-amber-600" />
+                  <Plus className="h-4 w-4 text-violet-600" />
                 )}
               </div>
               {isEditMode ? t('admin.plans.editPlan') : t('admin.plans.createPlan')}
             </DialogTitle>
             <DialogDescription>
               {isEditMode
-                ? 'Update the plan details, pricing, and included modules.'
-                : 'Define a new subscription plan with pricing and features.'}
+                ? t('admin.plans.editPlanDescription')
+                : t('admin.plans.createPlanDescription')}
             </DialogDescription>
           </DialogHeader>
 
@@ -513,11 +513,11 @@ export default function PlansPage() {
             {/* Code */}
             <div className="space-y-2">
               <Label htmlFor="plan-code">
-                Plan Code <span className="text-red-500">*</span>
+                {t('admin.plans.planCode')} <span className="text-red-500">*</span>
               </Label>
               <Input
                 id="plan-code"
-                placeholder="e.g., starter, pro, enterprise"
+                placeholder={t('admin.plans.planCodePlaceholder')}
                 value={form.code}
                 onChange={(e) => updateField('code', e.target.value.toLowerCase().replace(/\s/g, ''))}
                 disabled={isEditMode}
@@ -526,8 +526,8 @@ export default function PlansPage() {
                   fieldErrors.code && 'border-red-500/50 focus-visible:ring-red-500'
                 )}
               />
-              <p className="text-xs text-zinc-500">
-                Lowercase, no spaces. Used internally as an identifier.
+              <p className="text-xs text-slate-500">
+                {t('admin.plans.planCodeHint')}
               </p>
               {fieldErrors.code && <FieldError message={fieldErrors.code} />}
             </div>
@@ -535,11 +535,11 @@ export default function PlansPage() {
             {/* Name */}
             <div className="space-y-2">
               <Label htmlFor="plan-name">
-                Display Name <span className="text-red-500">*</span>
+                {t('admin.plans.displayName')} <span className="text-red-500">*</span>
               </Label>
               <Input
                 id="plan-name"
-                placeholder="e.g., Starter Plan"
+                placeholder={t('admin.plans.displayNamePlaceholder')}
                 value={form.name}
                 onChange={(e) => updateField('name', e.target.value)}
                 className={cn(fieldErrors.name && 'border-red-500/50 focus-visible:ring-red-500')}
@@ -549,14 +549,14 @@ export default function PlansPage() {
 
             {/* Description */}
             <div className="space-y-2">
-              <Label htmlFor="plan-description">Description</Label>
+              <Label htmlFor="plan-description">{t('admin.plans.descriptionLabel')}</Label>
               <textarea
                 id="plan-description"
-                placeholder="Brief description of what this plan includes..."
+                placeholder={t('admin.plans.descriptionPlaceholder')}
                 value={form.description}
                 onChange={(e) => updateField('description', e.target.value)}
                 rows={3}
-                className="flex w-full rounded-lg border border-zinc-200 bg-white px-3 py-2 text-sm text-zinc-900 placeholder:text-zinc-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-600 focus-visible:ring-offset-2 focus-visible:ring-offset-white disabled:cursor-not-allowed disabled:opacity-50 transition-all duration-200 resize-none"
+                className="flex w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 placeholder:text-slate-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-600 focus-visible:ring-offset-2 focus-visible:ring-offset-white disabled:cursor-not-allowed disabled:opacity-50 transition-all duration-200 resize-none"
               />
             </div>
 
@@ -564,12 +564,12 @@ export default function PlansPage() {
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="plan-price">
-                  Price (cents) <span className="text-red-500">*</span>
+                  {t('admin.plans.priceCents')} <span className="text-red-500">*</span>
                 </Label>
                 <Input
                   id="plan-price"
                   type="number"
-                  placeholder="2900"
+                  placeholder={t('admin.plans.pricePlaceholder')}
                   min="0"
                   step="1"
                   value={form.price_cents}
@@ -577,7 +577,7 @@ export default function PlansPage() {
                   className={cn(fieldErrors.price_cents && 'border-red-500/50 focus-visible:ring-red-500')}
                 />
                 {form.price_cents && !fieldErrors.price_cents && form.currency && (
-                  <p className="text-xs text-amber-600">
+                  <p className="text-xs text-violet-600">
                     = {formatPrice(Number(form.price_cents) || 0, form.currency)}
                   </p>
                 )}
@@ -586,14 +586,14 @@ export default function PlansPage() {
 
               <div className="space-y-2">
                 <Label>
-                  Currency <span className="text-red-500">*</span>
+                  {t('admin.plans.currency')} <span className="text-red-500">*</span>
                 </Label>
                 <Select
                   value={form.currency}
                   onValueChange={(val) => updateField('currency', val)}
                 >
                   <SelectTrigger className={cn(fieldErrors.currency && 'border-red-500/50')}>
-                    <SelectValue placeholder="Select..." />
+                    <SelectValue placeholder={t('admin.plans.selectPlaceholder')} />
                   </SelectTrigger>
                   <SelectContent>
                     {CURRENCY_OPTIONS.map((opt) => (
@@ -610,19 +610,19 @@ export default function PlansPage() {
             {/* Billing Period */}
             <div className="space-y-2">
               <Label>
-                Billing Period <span className="text-red-500">*</span>
+                {t('admin.plans.billingPeriod')} <span className="text-red-500">*</span>
               </Label>
               <Select
                 value={form.billing_period}
                 onValueChange={(val) => updateField('billing_period', val as 'monthly' | 'annual')}
               >
                 <SelectTrigger className={cn(fieldErrors.billing_period && 'border-red-500/50')}>
-                  <SelectValue placeholder="Select..." />
+                  <SelectValue placeholder={t('admin.plans.selectPlaceholder')} />
                 </SelectTrigger>
                 <SelectContent>
                   {BILLING_PERIOD_OPTIONS.map((opt) => (
                     <SelectItem key={opt.value} value={opt.value}>
-                      {opt.label}
+                      {t(opt.labelKey)}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -632,7 +632,7 @@ export default function PlansPage() {
 
             {/* Employee Limit */}
             <div className="space-y-3">
-              <Label>Employee Limit</Label>
+              <Label>{t('admin.plans.employeeLimit')}</Label>
               <div className="flex items-center gap-2">
                 <input
                   type="checkbox"
@@ -645,17 +645,17 @@ export default function PlansPage() {
                       setFieldErrors((prev) => ({ ...prev, employee_limit: null }));
                     }
                   }}
-                  className="h-4 w-4 rounded border-zinc-300 bg-white"
+                  className="h-4 w-4 rounded border-slate-300 bg-white"
                 />
-                <label htmlFor="unlimited-employees" className="text-sm text-zinc-700">
-                  Unlimited employees
+                <label htmlFor="unlimited-employees" className="text-sm text-slate-700">
+                  {t('admin.plans.unlimitedEmployees')}
                 </label>
               </div>
               {!form.unlimited_employees && (
                 <div>
                   <Input
                     type="number"
-                    placeholder="e.g., 50"
+                    placeholder={t('admin.plans.employeeLimitPlaceholder')}
                     min="1"
                     step="1"
                     value={form.employee_limit}
@@ -671,7 +671,7 @@ export default function PlansPage() {
 
             {/* Included Modules */}
             <div className="space-y-3">
-              <Label>Included Modules</Label>
+              <Label>{t('admin.plans.includedModules')}</Label>
               <div className="grid grid-cols-2 gap-2">
                 {MODULE_OPTIONS.map((mod) => (
                   <label
@@ -679,8 +679,8 @@ export default function PlansPage() {
                     className={cn(
                       'flex cursor-pointer items-center gap-2.5 rounded-lg border px-3 py-2.5 text-sm transition-all duration-200',
                       form.included_modules[mod.key]
-                        ? 'border-amber-500/40 bg-amber-50 text-amber-700'
-                        : 'border-zinc-200 bg-zinc-50 text-zinc-500 hover:border-zinc-300 hover:bg-zinc-100'
+                        ? 'border-violet-500/40 bg-violet-50 text-violet-700'
+                        : 'border-slate-200 bg-slate-50 text-slate-500 hover:border-slate-300 hover:bg-slate-100'
                     )}
                   >
                     <input
@@ -693,15 +693,15 @@ export default function PlansPage() {
                       className={cn(
                         'flex h-4 w-4 shrink-0 items-center justify-center rounded border transition-all duration-150',
                         form.included_modules[mod.key]
-                          ? 'border-amber-500 bg-amber-500'
-                          : 'border-zinc-300 bg-transparent'
+                          ? 'border-violet-500 bg-violet-500'
+                          : 'border-slate-300 bg-transparent'
                       )}
                     >
                       {form.included_modules[mod.key] && (
                         <Check className="h-3 w-3 text-white" />
                       )}
                     </div>
-                    {mod.label}
+                    {t(mod.labelKey)}
                   </label>
                 ))}
               </div>
@@ -709,16 +709,16 @@ export default function PlansPage() {
 
             {/* Active toggle (edit mode) */}
             {isEditMode && (
-              <div className="flex items-center gap-2 rounded-lg border border-zinc-200 bg-zinc-50 p-3">
+              <div className="flex items-center gap-2 rounded-lg border border-slate-200 bg-slate-50 p-3">
                 <input
                   type="checkbox"
                   id="plan-active"
                   checked={form.is_active}
                   onChange={(e) => updateField('is_active', e.target.checked)}
-                  className="h-4 w-4 rounded border-zinc-300 bg-white"
+                  className="h-4 w-4 rounded border-slate-300 bg-white"
                 />
-                <label htmlFor="plan-active" className="text-sm text-zinc-700">
-                  Plan is active and available for purchase
+                <label htmlFor="plan-active" className="text-sm text-slate-700">
+                  {t('admin.plans.planIsActive')}
                 </label>
               </div>
             )}
@@ -736,14 +736,14 @@ export default function PlansPage() {
                 resetForm();
               }}
               disabled={isActionLoading}
-              className="text-zinc-500 hover:text-zinc-900"
+              className="text-slate-500 hover:text-slate-900"
             >
               {t('common.cancel')}
             </Button>
             <Button
               onClick={isEditMode ? handleUpdate : handleCreate}
               disabled={isActionLoading}
-              className="gap-2 bg-amber-600 hover:bg-amber-700"
+              className="gap-2 bg-violet-600 hover:bg-violet-700"
             >
               {isActionLoading && <Loader2 className="h-4 w-4 animate-spin" />}
               {isEditMode ? t('common.save') : t('common.create')}
@@ -760,32 +760,22 @@ export default function PlansPage() {
               <div
                 className={cn(
                   'flex h-8 w-8 items-center justify-center rounded-lg',
-                  deactivateTarget?.is_active ? 'bg-red-50' : 'bg-amber-50'
+                  deactivateTarget?.is_active ? 'bg-red-50' : 'bg-violet-50'
                 )}
               >
                 <Power
                   className={cn(
                     'h-4 w-4',
-                    deactivateTarget?.is_active ? 'text-red-500' : 'text-amber-600'
+                    deactivateTarget?.is_active ? 'text-red-500' : 'text-violet-600'
                   )}
                 />
               </div>
-              {deactivateTarget?.is_active ? t('admin.plans.deletePlan') : 'Reactivate Plan'}
+              {deactivateTarget?.is_active ? t('admin.plans.deactivatePlan') : t('admin.plans.reactivatePlan')}
             </DialogTitle>
             <DialogDescription>
-              {deactivateTarget?.is_active ? (
-                <>
-                  Are you sure you want to deactivate{' '}
-                  <span className="font-semibold text-zinc-900">{deactivateTarget.name}</span>?
-                  It will no longer be available for new subscriptions.
-                </>
-              ) : (
-                <>
-                  Reactivate{' '}
-                  <span className="font-semibold text-zinc-900">{deactivateTarget?.name}</span>?
-                  It will become available for subscriptions again.
-                </>
-              )}
+              {deactivateTarget?.is_active
+                ? t('admin.plans.deactivateConfirmation', { name: deactivateTarget.name })
+                : t('admin.plans.reactivateConfirmation', { name: deactivateTarget?.name })}
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
@@ -793,7 +783,7 @@ export default function PlansPage() {
               variant="ghost"
               onClick={() => setDeactivateTarget(null)}
               disabled={isActionLoading}
-              className="text-zinc-500 hover:text-zinc-900"
+              className="text-slate-500 hover:text-slate-900"
             >
               {t('common.cancel')}
             </Button>
@@ -804,11 +794,11 @@ export default function PlansPage() {
                 'gap-2',
                 deactivateTarget?.is_active
                   ? 'bg-red-600 hover:bg-red-700'
-                  : 'bg-amber-600 hover:bg-amber-700'
+                  : 'bg-violet-600 hover:bg-violet-700'
               )}
             >
               {isActionLoading && <Loader2 className="h-4 w-4 animate-spin" />}
-              {deactivateTarget?.is_active ? t('common.delete') : 'Reactivate'}
+              {deactivateTarget?.is_active ? t('admin.plans.deactivate') : t('admin.plans.reactivate')}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -828,6 +818,7 @@ interface PlanCardProps {
 }
 
 function PlanCard({ plan, onEdit, onToggleActive }: PlanCardProps) {
+  const { t } = useTranslation();
   const enabledModules = Object.entries(plan.included_modules || {}).filter(
     ([, enabled]) => enabled
   );
@@ -837,8 +828,8 @@ function PlanCard({ plan, onEdit, onToggleActive }: PlanCardProps) {
       className={cn(
         'group relative overflow-hidden rounded-xl border p-5 transition-all duration-200',
         plan.is_active
-          ? 'border-zinc-200 bg-white shadow-sm hover:border-zinc-300 hover:shadow-md'
-          : 'border-zinc-200 bg-zinc-50 opacity-60 hover:opacity-80'
+          ? 'border-slate-200 bg-white shadow-sm hover:border-slate-300 hover:shadow-md'
+          : 'border-slate-200 bg-slate-50 opacity-60 hover:opacity-80'
       )}
     >
       {/* Status badge */}
@@ -848,45 +839,45 @@ function PlanCard({ plan, onEdit, onToggleActive }: PlanCardProps) {
             'border text-xs',
             plan.is_active
               ? 'border-emerald-500/30 bg-emerald-50 text-emerald-700'
-              : 'border-zinc-300 bg-zinc-100 text-zinc-500'
+              : 'border-slate-300 bg-slate-100 text-slate-500'
           )}
         >
-          {plan.is_active ? 'Active' : 'Inactive'}
+          {plan.is_active ? t('admin.plans.active') : t('admin.plans.inactive')}
         </Badge>
-        <code className="text-xs text-zinc-500">{plan.code}</code>
+        <code className="text-xs text-slate-500">{plan.code}</code>
       </div>
 
       {/* Plan name */}
-      <h3 className="text-lg font-bold text-zinc-900">{plan.name}</h3>
+      <h3 className="text-lg font-bold text-slate-900">{plan.name}</h3>
 
       {/* Price */}
       <div className="mt-2 flex items-baseline gap-1">
-        <span className="text-3xl font-bold text-amber-600">
+        <span className="text-3xl font-bold text-violet-600">
           {formatPrice(plan.price_cents, plan.currency)}
         </span>
-        <span className="text-sm text-zinc-500">
-          /{plan.billing_period === 'monthly' ? 'mo' : 'year'}
+        <span className="text-sm text-slate-500">
+          /{plan.billing_period === 'monthly' ? t('admin.plans.mo') : t('admin.plans.year')}
         </span>
       </div>
 
       {/* Description */}
       {plan.description && (
-        <p className="mt-3 text-sm leading-relaxed text-zinc-500">
+        <p className="mt-3 text-sm leading-relaxed text-slate-500">
           {plan.description}
         </p>
       )}
 
       {/* Employee limit */}
-      <div className="mt-4 flex items-center gap-2 text-sm text-zinc-500">
+      <div className="mt-4 flex items-center gap-2 text-sm text-slate-500">
         {plan.employee_limit === null ? (
           <>
-            <Infinity className="h-4 w-4 text-zinc-400" />
-            <span>Unlimited employees</span>
+            <Infinity className="h-4 w-4 text-slate-400" />
+            <span>{t('admin.plans.unlimitedEmployees')}</span>
           </>
         ) : (
           <>
-            <Users className="h-4 w-4 text-zinc-400" />
-            <span>Up to {plan.employee_limit} employees</span>
+            <Users className="h-4 w-4 text-slate-400" />
+            <span>{t('admin.plans.upToEmployees', { count: plan.employee_limit })}</span>
           </>
         )}
       </div>
@@ -899,9 +890,9 @@ function PlanCard({ plan, onEdit, onToggleActive }: PlanCardProps) {
             return (
               <span
                 key={key}
-                className="rounded-md border border-zinc-200 bg-zinc-50 px-2 py-0.5 text-xs text-zinc-700"
+                className="rounded-md border border-slate-200 bg-slate-50 px-2 py-0.5 text-xs text-slate-700"
               >
-                {mod?.label || key}
+                {mod ? t(mod.labelKey) : key}
               </span>
             );
           })}
@@ -909,15 +900,15 @@ function PlanCard({ plan, onEdit, onToggleActive }: PlanCardProps) {
       )}
 
       {/* Actions */}
-      <div className="mt-5 flex items-center gap-2 border-t border-zinc-200 pt-4">
+      <div className="mt-5 flex items-center gap-2 border-t border-slate-200 pt-4">
         <Button
           variant="ghost"
           size="sm"
           onClick={() => onEdit(plan)}
-          className="flex-1 gap-1.5 text-zinc-500 hover:bg-zinc-100 hover:text-zinc-900"
+          className="flex-1 gap-1.5 text-slate-500 hover:bg-slate-100 hover:text-slate-900"
         >
           <Edit className="h-3.5 w-3.5" />
-          Edit
+          {t('common.edit')}
         </Button>
         <Button
           variant="ghost"
@@ -927,11 +918,11 @@ function PlanCard({ plan, onEdit, onToggleActive }: PlanCardProps) {
             'flex-1 gap-1.5',
             plan.is_active
               ? 'text-red-500 hover:bg-red-50 hover:text-red-600'
-              : 'text-amber-600 hover:bg-amber-50 hover:text-amber-700'
+              : 'text-violet-600 hover:bg-violet-50 hover:text-violet-700'
           )}
         >
           <Power className="h-3.5 w-3.5" />
-          {plan.is_active ? 'Deactivate' : 'Activate'}
+          {plan.is_active ? t('admin.plans.deactivate') : t('admin.plans.activate')}
         </Button>
       </div>
     </div>
@@ -967,28 +958,28 @@ function ApiErrorBanner({ message }: { message: string }) {
 function PlansPageSkeleton() {
   return (
     <div className="space-y-6">
-      <div className="h-6 w-32 animate-pulse rounded bg-zinc-100" />
+      <div className="h-6 w-32 animate-pulse rounded bg-slate-100" />
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
         {[...Array(3)].map((_, i) => (
           <div
             key={i}
-            className="animate-pulse rounded-xl border border-zinc-200 bg-white p-5 shadow-sm"
+            className="animate-pulse rounded-xl border border-slate-200 bg-white p-5 shadow-sm"
           >
             <div className="mb-4 flex justify-between">
-              <div className="h-5 w-16 rounded-full bg-zinc-100" />
-              <div className="h-4 w-12 rounded bg-zinc-100" />
+              <div className="h-5 w-16 rounded-full bg-slate-100" />
+              <div className="h-4 w-12 rounded bg-slate-100" />
             </div>
-            <div className="h-6 w-32 rounded bg-zinc-100" />
-            <div className="mt-2 h-9 w-28 rounded bg-zinc-100" />
-            <div className="mt-3 h-4 w-full rounded bg-zinc-100" />
-            <div className="mt-4 h-4 w-40 rounded bg-zinc-100" />
+            <div className="h-6 w-32 rounded bg-slate-100" />
+            <div className="mt-2 h-9 w-28 rounded bg-slate-100" />
+            <div className="mt-3 h-4 w-full rounded bg-slate-100" />
+            <div className="mt-4 h-4 w-40 rounded bg-slate-100" />
             <div className="mt-4 flex gap-1.5">
-              <div className="h-5 w-20 rounded bg-zinc-100" />
-              <div className="h-5 w-16 rounded bg-zinc-100" />
+              <div className="h-5 w-20 rounded bg-slate-100" />
+              <div className="h-5 w-16 rounded bg-slate-100" />
             </div>
-            <div className="mt-5 flex gap-2 border-t border-zinc-200 pt-4">
-              <div className="h-8 flex-1 rounded bg-zinc-100" />
-              <div className="h-8 flex-1 rounded bg-zinc-100" />
+            <div className="mt-5 flex gap-2 border-t border-slate-200 pt-4">
+              <div className="h-8 flex-1 rounded bg-slate-100" />
+              <div className="h-8 flex-1 rounded bg-slate-100" />
             </div>
           </div>
         ))}

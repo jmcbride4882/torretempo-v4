@@ -48,13 +48,13 @@ export function PaginationControls({
       )}
     >
       {/* Showing text */}
-      <p className="text-sm text-zinc-500 order-2 sm:order-1">
+      <p className="text-sm text-slate-500 order-2 sm:order-1 dark:text-slate-400">
         Showing{' '}
-        <span className="font-medium text-zinc-700">{startItem}</span>
+        <span className="font-medium text-slate-700 dark:text-slate-300">{startItem}</span>
         {' - '}
-        <span className="font-medium text-zinc-700">{endItem}</span>
+        <span className="font-medium text-slate-700 dark:text-slate-300">{endItem}</span>
         {' of '}
-        <span className="font-medium text-zinc-700">{total}</span>
+        <span className="font-medium text-slate-700 dark:text-slate-300">{total}</span>
         {' results'}
       </p>
 
@@ -67,9 +67,10 @@ export function PaginationControls({
           onClick={() => onPageChange(Math.max(1, page - 1))}
           disabled={isFirstPage}
           className={cn(
-            'gap-1.5 rounded-lg border border-zinc-200 bg-white',
-            'text-zinc-600 hover:text-zinc-900 hover:bg-zinc-50',
-            'disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-white'
+            'gap-1.5 rounded-lg border border-slate-200 bg-white',
+            'text-slate-600 hover:text-slate-900 hover:bg-slate-50',
+            'disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-white',
+            'dark:border-slate-700 dark:bg-slate-800 dark:text-slate-400 dark:hover:text-slate-200 dark:hover:bg-slate-700 dark:disabled:hover:bg-slate-800'
           )}
         >
           <ChevronLeft className="h-4 w-4" />
@@ -77,13 +78,13 @@ export function PaginationControls({
         </Button>
 
         {/* Page indicator */}
-        <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-zinc-200 bg-white">
-          <span className="text-sm text-zinc-500">Page</span>
+        <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-slate-200 bg-white dark:border-slate-700 dark:bg-slate-800">
+          <span className="text-sm text-slate-500 dark:text-slate-400">Page</span>
           <span className="min-w-[2ch] text-center text-sm font-semibold text-primary-600">
             {page}
           </span>
-          <span className="text-sm text-zinc-500">of</span>
-          <span className="min-w-[2ch] text-center text-sm font-medium text-zinc-700">
+          <span className="text-sm text-slate-500 dark:text-slate-400">of</span>
+          <span className="min-w-[2ch] text-center text-sm font-medium text-slate-700 dark:text-slate-300">
             {totalPages}
           </span>
         </div>
@@ -95,9 +96,10 @@ export function PaginationControls({
           onClick={() => onPageChange(Math.min(totalPages, page + 1))}
           disabled={isLastPage}
           className={cn(
-            'gap-1.5 rounded-lg border border-zinc-200 bg-white',
-            'text-zinc-600 hover:text-zinc-900 hover:bg-zinc-50',
-            'disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-white'
+            'gap-1.5 rounded-lg border border-slate-200 bg-white',
+            'text-slate-600 hover:text-slate-900 hover:bg-slate-50',
+            'disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-white',
+            'dark:border-slate-700 dark:bg-slate-800 dark:text-slate-400 dark:hover:text-slate-200 dark:hover:bg-slate-700 dark:disabled:hover:bg-slate-800'
           )}
         >
           <span className="hidden sm:inline">Next</span>

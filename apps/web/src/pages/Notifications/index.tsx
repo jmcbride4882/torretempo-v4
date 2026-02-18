@@ -61,7 +61,7 @@ function getNotificationColor(type: string): string {
   if (type.startsWith('shift_')) return 'text-emerald-600 bg-emerald-50';
   if (type === 'compliance_alert') return 'text-amber-600 bg-amber-50';
   if (type === 'approval_needed') return 'text-amber-600 bg-amber-50';
-  return 'text-zinc-500 bg-zinc-100';
+  return 'text-slate-500 bg-slate-100';
 }
 
 function timeAgo(dateStr: string, t: (key: string, opts?: Record<string, unknown>) => string): string {
@@ -84,11 +84,11 @@ function NotificationSkeleton() {
   return (
     <div className="space-y-3 animate-pulse">
       {[1, 2, 3, 4, 5].map((i) => (
-        <div key={i} className="flex gap-3 rounded-xl border border-zinc-200 bg-white p-4">
-          <div className="h-10 w-10 rounded-lg bg-zinc-100 shrink-0" />
+        <div key={i} className="flex gap-3 rounded-xl border border-slate-200 bg-white p-4">
+          <div className="h-10 w-10 rounded-lg bg-slate-100 shrink-0" />
           <div className="flex-1 space-y-2">
-            <div className="h-4 w-3/4 rounded bg-zinc-100" />
-            <div className="h-3 w-1/2 rounded bg-zinc-50" />
+            <div className="h-4 w-3/4 rounded bg-slate-100" />
+            <div className="h-3 w-1/2 rounded bg-slate-50" />
           </div>
         </div>
       ))}
@@ -127,7 +127,7 @@ function NotificationItem({
       className={cn(
         'flex gap-3 rounded-xl p-4 border transition-all cursor-pointer',
         notification.read
-          ? 'border-zinc-200 bg-white hover:bg-zinc-50'
+          ? 'border-slate-200 bg-white hover:bg-slate-50'
           : 'border-primary-200 bg-primary-50 hover:bg-primary-100'
       )}
     >
@@ -136,15 +136,15 @@ function NotificationItem({
       </div>
       <div className="flex-1 min-w-0">
         <div className="flex items-start justify-between gap-2">
-          <p className={cn('text-sm', notification.read ? 'text-zinc-500' : 'font-medium text-zinc-900')}>
+          <p className={cn('text-sm', notification.read ? 'text-slate-500' : 'font-medium text-slate-900')}>
             {notification.title}
           </p>
           {!notification.read && (
             <span className="mt-1.5 h-2 w-2 rounded-full bg-primary-500 shrink-0" />
           )}
         </div>
-        <p className="text-xs text-zinc-400 mt-0.5 line-clamp-2">{notification.message}</p>
-        <p className="text-[11px] text-zinc-400 mt-1">{timeAgo(notification.createdAt, t)}</p>
+        <p className="text-xs text-slate-400 mt-0.5 line-clamp-2">{notification.message}</p>
+        <p className="text-[11px] text-slate-400 mt-1">{timeAgo(notification.createdAt, t)}</p>
       </div>
     </div>
   );
@@ -231,8 +231,8 @@ export default function NotificationsPage() {
             <Bell className="h-5 w-5 text-primary-600" />
           </div>
           <div>
-            <h1 className="text-2xl font-bold text-zinc-900">{t('notifications.title')}</h1>
-            <p className="text-sm text-zinc-500">
+            <h1 className="text-2xl font-bold text-slate-900">{t('notifications.title')}</h1>
+            <p className="text-sm text-slate-500">
               {unreadCount > 0
                 ? t('notifications.unreadCount', { count: unreadCount })
                 : t('notifications.allCaughtUp')}
@@ -258,8 +258,8 @@ export default function NotificationsPage() {
           <div className="flex items-center gap-3">
             <Bell className="h-5 w-5 text-primary-600 shrink-0" />
             <div>
-              <p className="text-sm font-medium text-zinc-900">{t('notifications.enablePush')}</p>
-              <p className="text-xs text-zinc-500">{t('notifications.enablePushDesc')}</p>
+              <p className="text-sm font-medium text-slate-900">{t('notifications.enablePush')}</p>
+              <p className="text-xs text-slate-500">{t('notifications.enablePushDesc')}</p>
             </div>
           </div>
           <Button
@@ -281,7 +281,7 @@ export default function NotificationsPage() {
           </div>
           <button
             onClick={push.unsubscribe}
-            className="text-xs text-zinc-500 hover:text-zinc-700"
+            className="text-xs text-slate-500 hover:text-slate-700"
           >
             {t('notifications.disable')}
           </button>
@@ -301,15 +301,15 @@ export default function NotificationsPage() {
 
       {/* Push not supported */}
       {!push.isSupported && (
-        <div className="rounded-xl border border-zinc-200 bg-zinc-50 p-3 flex items-center gap-3">
-          <Bell className="h-4 w-4 text-zinc-400 shrink-0" />
-          <span className="text-sm text-zinc-500">{t('notifications.pushNotSupported')}</span>
+        <div className="rounded-xl border border-slate-200 bg-slate-50 p-3 flex items-center gap-3">
+          <Bell className="h-4 w-4 text-slate-400 shrink-0" />
+          <span className="text-sm text-slate-500">{t('notifications.pushNotSupported')}</span>
         </div>
       )}
 
       {/* Filter + Actions Bar */}
       <div className="flex items-center justify-between gap-3">
-        <div className="flex gap-1 rounded-lg border border-zinc-200 bg-zinc-50 p-1">
+        <div className="flex gap-1 rounded-lg border border-slate-200 bg-slate-50 p-1">
           {(['all', 'unread'] as const).map((f) => (
             <button
               key={f}
@@ -318,7 +318,7 @@ export default function NotificationsPage() {
                 'px-3 py-1.5 text-sm rounded-md transition-all capitalize',
                 filter === f
                   ? 'bg-white text-primary-600 font-medium shadow-sm'
-                  : 'text-zinc-500 hover:text-zinc-900'
+                  : 'text-slate-500 hover:text-slate-900'
               )}
             >
               {f === 'all' ? t('notifications.all') : `${t('notifications.unread')} (${unreadCount})`}
@@ -338,24 +338,24 @@ export default function NotificationsPage() {
         <NotificationSkeleton />
       ) : notifications.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-16 text-center">
-          <div className="h-16 w-16 rounded-2xl bg-zinc-100 flex items-center justify-center mb-4">
-            <Inbox className="h-8 w-8 text-zinc-400" />
+          <div className="h-16 w-16 rounded-2xl bg-slate-100 flex items-center justify-center mb-4">
+            <Inbox className="h-8 w-8 text-slate-400" />
           </div>
           {filter === 'unread' ? (
             <>
-              <p className="text-lg font-medium text-zinc-700">
+              <p className="text-lg font-medium text-slate-700">
                 {t('notifications.noUnread')}
               </p>
-              <p className="text-sm text-zinc-500 mt-1">
+              <p className="text-sm text-slate-500 mt-1">
                 {t('notifications.allCaughtUpMsg')}
               </p>
             </>
           ) : (
             <>
-              <p className="text-lg font-medium text-zinc-700">
+              <p className="text-lg font-medium text-slate-700">
                 {t('notifications.noNotifications')}
               </p>
-              <p className="text-sm text-zinc-500 mt-1">
+              <p className="text-sm text-slate-500 mt-1">
                 {t('notifications.noNotificationsDesc')}
               </p>
             </>

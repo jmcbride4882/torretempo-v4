@@ -420,12 +420,12 @@ export default function UsersPage() {
         className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between"
       >
         <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-amber-50 shadow-sm">
-            <Users className="h-5 w-5 text-amber-600" />
+          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-violet-50 shadow-sm">
+            <Users className="h-5 w-5 text-violet-600" />
           </div>
           <div>
-            <h1 className="text-xl font-bold text-zinc-900 sm:text-2xl">{t('admin.users.title')}</h1>
-            <p className="text-sm text-zinc-500">
+            <h1 className="text-xl font-bold text-slate-900 sm:text-2xl">{t('admin.users.title')}</h1>
+            <p className="text-sm text-slate-500">
               {t('admin.liveMonitoring')}
             </p>
           </div>
@@ -438,7 +438,7 @@ export default function UsersPage() {
               size="sm"
               onClick={handleExport}
               disabled={isExporting}
-              className="gap-1.5 rounded-lg border border-zinc-200 bg-zinc-50 text-zinc-700 hover:bg-zinc-100"
+              className="gap-1.5 rounded-lg border border-slate-200 bg-slate-50 text-slate-700 hover:bg-slate-100"
             >
               <Download className={cn('h-4 w-4', isExporting && 'animate-bounce')} />
               <span className="hidden sm:inline">{isExporting ? t('admin.exporting') : t('admin.exportCsv')}</span>
@@ -450,7 +450,7 @@ export default function UsersPage() {
               size="sm"
               onClick={handleRefresh}
               disabled={isRefreshing}
-              className="gap-1.5 rounded-lg border border-zinc-200 bg-zinc-50 text-zinc-700 hover:bg-zinc-100"
+              className="gap-1.5 rounded-lg border border-slate-200 bg-slate-50 text-slate-700 hover:bg-slate-100"
             >
               <RefreshCw className={cn('h-4 w-4', isRefreshing && 'animate-spin')} />
               <span className="hidden sm:inline">{t('admin.refresh')}</span>
@@ -465,7 +465,7 @@ export default function UsersPage() {
       >
         {/* Search */}
         <div className="relative flex-1 sm:max-w-xs">
-          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-500" />
+          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-500" />
           <Input
             type="text"
             placeholder={t('common.search') + '...'}
@@ -474,7 +474,7 @@ export default function UsersPage() {
               setSearchQuery(e.target.value);
               setPage(1);
             }}
-            className="rounded-xl border border-zinc-200 bg-white shadow-sm pl-9 text-zinc-900 placeholder:text-zinc-400 focus:border-amber-500"
+            className="rounded-xl border border-slate-200 bg-white shadow-sm pl-9 text-slate-900 placeholder:text-slate-400 focus:border-violet-500"
           />
         </div>
 
@@ -486,15 +486,15 @@ export default function UsersPage() {
             setPage(1);
           }}
         >
-          <SelectTrigger className="w-[140px] rounded-xl border border-zinc-200 bg-white shadow-sm text-zinc-900">
+          <SelectTrigger className="w-[140px] rounded-xl border border-slate-200 bg-white shadow-sm text-slate-900">
             <SelectValue placeholder={t('common.filter')} />
           </SelectTrigger>
-          <SelectContent className="rounded-xl border border-zinc-200 bg-white shadow-sm">
-            <SelectItem value="all" className="text-zinc-700">{t('admin.filters.allRoles')}</SelectItem>
-            <SelectItem value="owner" className="text-zinc-700">{t('admin.filters.owner')}</SelectItem>
-            <SelectItem value="tenantAdmin" className="text-zinc-700">{t('admin.filters.tenantAdmin')}</SelectItem>
-            <SelectItem value="manager" className="text-zinc-700">{t('admin.filters.manager')}</SelectItem>
-            <SelectItem value="employee" className="text-zinc-700">{t('admin.filters.employee')}</SelectItem>
+          <SelectContent className="rounded-xl border border-slate-200 bg-white shadow-sm">
+            <SelectItem value="all" className="text-slate-700">{t('admin.filters.allRoles')}</SelectItem>
+            <SelectItem value="owner" className="text-slate-700">{t('admin.filters.owner')}</SelectItem>
+            <SelectItem value="tenantAdmin" className="text-slate-700">{t('admin.filters.tenantAdmin')}</SelectItem>
+            <SelectItem value="manager" className="text-slate-700">{t('admin.filters.manager')}</SelectItem>
+            <SelectItem value="employee" className="text-slate-700">{t('admin.filters.employee')}</SelectItem>
           </SelectContent>
         </Select>
 
@@ -506,14 +506,14 @@ export default function UsersPage() {
             setPage(1);
           }}
         >
-          <SelectTrigger className="w-[140px] rounded-xl border border-zinc-200 bg-white shadow-sm text-zinc-900">
+          <SelectTrigger className="w-[140px] rounded-xl border border-slate-200 bg-white shadow-sm text-slate-900">
             <SelectValue placeholder={t('common.filter')} />
           </SelectTrigger>
-          <SelectContent className="rounded-xl border border-zinc-200 bg-white shadow-sm">
-            <SelectItem value="all" className="text-zinc-700">{t('admin.filters.allStatus')}</SelectItem>
-            <SelectItem value="active" className="text-zinc-700">{t('admin.active')}</SelectItem>
-            <SelectItem value="banned" className="text-zinc-700">{t('admin.banned')}</SelectItem>
-            <SelectItem value="admin" className="text-zinc-700">{t('admin.admins')}</SelectItem>
+          <SelectContent className="rounded-xl border border-slate-200 bg-white shadow-sm">
+            <SelectItem value="all" className="text-slate-700">{t('admin.filters.allStatus')}</SelectItem>
+            <SelectItem value="active" className="text-slate-700">{t('admin.active')}</SelectItem>
+            <SelectItem value="banned" className="text-slate-700">{t('admin.banned')}</SelectItem>
+            <SelectItem value="admin" className="text-slate-700">{t('admin.admins')}</SelectItem>
           </SelectContent>
         </Select>
 
@@ -545,15 +545,15 @@ export default function UsersPage() {
         {users.length > 0 && (
           <button
             onClick={toggleSelectAll}
-            className="flex items-center gap-2 rounded-lg border border-zinc-200 bg-zinc-50 px-3 py-1.5 text-zinc-700 transition-colors hover:bg-zinc-100"
+            className="flex items-center gap-2 rounded-lg border border-slate-200 bg-slate-50 px-3 py-1.5 text-slate-700 transition-colors hover:bg-slate-100"
           >
             {allSelected ? (
-              <CheckSquare className="h-4 w-4 text-amber-600" />
+              <CheckSquare className="h-4 w-4 text-violet-600" />
             ) : someSelected ? (
               <div className="relative">
-                <Square className="h-4 w-4 text-amber-600" />
+                <Square className="h-4 w-4 text-violet-600" />
                 <div className="absolute inset-0 flex items-center justify-center">
-                  <div className="h-2 w-2 rounded-sm bg-amber-600" />
+                  <div className="h-2 w-2 rounded-sm bg-violet-600" />
                 </div>
               </div>
             ) : (
@@ -564,27 +564,27 @@ export default function UsersPage() {
         )}
         <div className="flex items-center gap-2">
           <div className="h-2 w-2 rounded-full bg-blue-500" />
-          <span className="text-zinc-500">
-            <span className="font-medium text-zinc-700">{total}</span> {t('admin.total')}
+          <span className="text-slate-500">
+            <span className="font-medium text-slate-700">{total}</span> {t('admin.total')}
           </span>
         </div>
         <div className="flex items-center gap-2">
-          <div className="h-2 w-2 rounded-full bg-amber-500" />
-          <span className="text-zinc-500">
-            <span className="font-medium text-zinc-700">{adminCount}</span> {t('admin.admins')}
+          <div className="h-2 w-2 rounded-full bg-violet-500" />
+          <span className="text-slate-500">
+            <span className="font-medium text-slate-700">{adminCount}</span> {t('admin.admins')}
           </span>
         </div>
         <div className="flex items-center gap-2">
           <div className="h-2 w-2 rounded-full bg-emerald-500" />
-          <span className="text-zinc-500">
-            <span className="font-medium text-zinc-700">{verifiedCount}</span> {t('admin.verified')}
+          <span className="text-slate-500">
+            <span className="font-medium text-slate-700">{verifiedCount}</span> {t('admin.verified')}
           </span>
         </div>
         {bannedCount > 0 && (
           <div className="flex items-center gap-2">
             <div className="h-2 w-2 rounded-full bg-red-500" />
-            <span className="text-zinc-500">
-              <span className="font-medium text-zinc-700">{bannedCount}</span> {t('admin.banned')}
+            <span className="text-slate-500">
+              <span className="font-medium text-slate-700">{bannedCount}</span> {t('admin.banned')}
             </span>
           </div>
         )}
@@ -667,14 +667,14 @@ export default function UsersPage() {
           {/* Ban reason input (only for ban action) */}
           {confirmModal?.type === 'ban' && (
             <div className="space-y-2 py-2">
-              <label className="text-sm font-medium text-zinc-700">
+              <label className="text-sm font-medium text-slate-700">
                 {t('admin.users.banReason')} <span className="text-red-400">*</span>
               </label>
               <Input
                 value={banReason}
                 onChange={(e) => setBanReason(e.target.value)}
                 placeholder={t('admin.users.banReason') + '...'}
-                className="rounded-xl border border-zinc-200 bg-white shadow-sm text-zinc-900"
+                className="rounded-xl border border-slate-200 bg-white shadow-sm text-slate-900"
                 autoFocus
               />
             </div>
@@ -713,21 +713,21 @@ export default function UsersPage() {
           <div className="space-y-4 py-4">
             {/* Name field */}
             <div className="space-y-2">
-              <label className="text-sm font-medium text-zinc-700">
+              <label className="text-sm font-medium text-slate-700">
                 {t('admin.users.name')}
               </label>
               <Input
                 value={editForm.name}
                 onChange={(e) => setEditForm({ ...editForm, name: e.target.value })}
                 placeholder={t('admin.users.name')}
-                className="rounded-xl border border-zinc-200 bg-white shadow-sm text-zinc-900"
+                className="rounded-xl border border-slate-200 bg-white shadow-sm text-slate-900"
                 autoFocus
               />
             </div>
 
             {/* Email field */}
             <div className="space-y-2">
-              <label className="text-sm font-medium text-zinc-700">
+              <label className="text-sm font-medium text-slate-700">
                 {t('admin.users.email')}
               </label>
               <Input
@@ -735,13 +735,13 @@ export default function UsersPage() {
                 value={editForm.email}
                 onChange={(e) => setEditForm({ ...editForm, email: e.target.value })}
                 placeholder="user@example.com"
-                className="rounded-xl border border-zinc-200 bg-white shadow-sm text-zinc-900"
+                className="rounded-xl border border-slate-200 bg-white shadow-sm text-slate-900"
               />
             </div>
 
             {/* Role field */}
             <div className="space-y-2">
-              <label className="text-sm font-medium text-zinc-700">
+              <label className="text-sm font-medium text-slate-700">
                 {t('admin.users.platformRole')}
               </label>
               <Select
@@ -750,23 +750,23 @@ export default function UsersPage() {
                   setEditForm({ ...editForm, role: value === 'admin' ? 'admin' : null })
                 }
               >
-                <SelectTrigger className="rounded-xl border border-zinc-200 bg-white shadow-sm text-zinc-900">
+                <SelectTrigger className="rounded-xl border border-slate-200 bg-white shadow-sm text-slate-900">
                   <SelectValue />
                 </SelectTrigger>
-                <SelectContent className="rounded-xl border border-zinc-200 bg-white shadow-sm">
-                  <SelectItem value="user" className="text-zinc-700">{t('admin.users.regularUser')}</SelectItem>
-                  <SelectItem value="admin" className="text-zinc-700">{t('admin.users.platformAdmin')}</SelectItem>
+                <SelectContent className="rounded-xl border border-slate-200 bg-white shadow-sm">
+                  <SelectItem value="user" className="text-slate-700">{t('admin.users.regularUser')}</SelectItem>
+                  <SelectItem value="admin" className="text-slate-700">{t('admin.users.platformAdmin')}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
 
             {/* Email Verified toggle */}
-            <div className="flex items-center justify-between rounded-lg border border-zinc-200 bg-zinc-50 p-3">
+            <div className="flex items-center justify-between rounded-lg border border-slate-200 bg-slate-50 p-3">
               <div className="space-y-0.5">
-                <label className="text-sm font-medium text-zinc-700">
+                <label className="text-sm font-medium text-slate-700">
                   {t('admin.users.emailVerified')}
                 </label>
-                <p className="text-xs text-zinc-500">
+                <p className="text-xs text-slate-500">
                   {t('admin.users.manuallyVerify')}
                 </p>
               </div>
@@ -793,7 +793,7 @@ export default function UsersPage() {
             <Button
               onClick={handleEdit}
               disabled={isEditLoading || !editForm.name.trim() || !editForm.email.trim()}
-              className="bg-amber-600 hover:bg-amber-500"
+              className="bg-violet-600 hover:bg-violet-500"
             >
               {isEditLoading ? t('common.loading') + '...' : t('common.save')}
             </Button>
@@ -804,17 +804,17 @@ export default function UsersPage() {
       {/* Floating Bulk Action Bar */}
       {selectedIds.size > 0 && (
         <div
-          className="fixed inset-x-0 bottom-6 z-50 mx-auto flex w-fit items-center gap-3 rounded-2xl border border-zinc-200 bg-white/95 px-5 py-3 shadow-lg"
+          className="fixed inset-x-0 bottom-6 z-50 mx-auto flex w-fit items-center gap-3 rounded-2xl border border-slate-200 bg-white/95 px-5 py-3 shadow-lg"
         >
-          <span className="text-sm font-medium text-zinc-700">
-            <span className="text-amber-600">{selectedIds.size}</span> {t('admin.selected')}
+          <span className="text-sm font-medium text-slate-700">
+            <span className="text-violet-600">{selectedIds.size}</span> {t('admin.selected')}
           </span>
-          <div className="h-5 w-px bg-zinc-200" />
+          <div className="h-5 w-px bg-slate-200" />
           <Button
             variant="ghost"
             size="sm"
             onClick={() => setBulkBanModal(true)}
-            className="gap-1.5 text-amber-600 hover:bg-amber-50 hover:text-amber-700"
+            className="gap-1.5 text-violet-600 hover:bg-violet-50 hover:text-violet-700"
           >
             <Ban className="h-4 w-4" />
             {t('admin.users.ban')}
@@ -828,12 +828,12 @@ export default function UsersPage() {
             <Trash2 className="h-4 w-4" />
             {t('common.delete')}
           </Button>
-          <div className="h-5 w-px bg-zinc-200" />
+          <div className="h-5 w-px bg-slate-200" />
           <Button
             variant="ghost"
             size="sm"
             onClick={clearSelection}
-            className="gap-1.5 text-zinc-500 hover:bg-zinc-50 hover:text-zinc-700"
+            className="gap-1.5 text-slate-500 hover:bg-slate-50 hover:text-slate-700"
           >
             <X className="h-4 w-4" />
             {t('admin.clearSelection')}
@@ -846,7 +846,7 @@ export default function UsersPage() {
         <DialogContent>
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
-              <AlertTriangle className="h-5 w-5 text-amber-600" />
+              <AlertTriangle className="h-5 w-5 text-violet-600" />
               {t('admin.bulkBan.title', { count: selectedIds.size })}
             </DialogTitle>
             <DialogDescription>
@@ -854,14 +854,14 @@ export default function UsersPage() {
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-2 py-2">
-            <label className="text-sm font-medium text-zinc-700">
+            <label className="text-sm font-medium text-slate-700">
               {t('admin.users.banReason')} <span className="text-red-400">*</span>
             </label>
             <Input
               value={bulkBanReason}
               onChange={(e) => setBulkBanReason(e.target.value)}
               placeholder={t('admin.users.banReason') + '...'}
-              className="rounded-xl border border-zinc-200 bg-white shadow-sm text-zinc-900"
+              className="rounded-xl border border-slate-200 bg-white shadow-sm text-slate-900"
               autoFocus
             />
           </div>
@@ -873,7 +873,7 @@ export default function UsersPage() {
               variant="destructive"
               onClick={handleBulkBan}
               disabled={isBulkLoading || !bulkBanReason.trim()}
-              className="bg-amber-600 hover:bg-amber-500"
+              className="bg-violet-600 hover:bg-violet-500"
             >
               {isBulkLoading ? t('common.loading') + '...' : t('admin.bulkBan.banCount', { count: selectedIds.size })}
             </Button>
@@ -895,14 +895,14 @@ export default function UsersPage() {
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-2 py-2">
-            <label className="text-sm text-zinc-700">
-              {t('admin.bulkDelete.typeDeleteLabel')} <code className="rounded bg-zinc-100 px-1.5 py-0.5 text-red-400">DELETE</code>:
+            <label className="text-sm text-slate-700">
+              {t('admin.bulkDelete.typeDeleteLabel')} <code className="rounded bg-slate-100 px-1.5 py-0.5 text-red-400">DELETE</code>:
             </label>
             <Input
               value={bulkDeleteConfirm}
               onChange={(e) => setBulkDeleteConfirm(e.target.value)}
               placeholder="DELETE"
-              className="rounded-xl border border-zinc-200 bg-white shadow-sm text-zinc-900"
+              className="rounded-xl border border-slate-200 bg-white shadow-sm text-slate-900"
               autoFocus
             />
           </div>
@@ -946,14 +946,14 @@ function UserCard({ user, isSelected, onToggleSelect, onEdit, onBan, onUnban, on
   return (
     <div
       className={cn(
-        'group relative overflow-hidden rounded-2xl border border-zinc-200 bg-white shadow-sm transition-all duration-300',
-        'hover:border-zinc-300 hover:shadow-md',
+        'group relative overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition-all duration-300',
+        'hover:border-slate-300 hover:shadow-md',
         user.banned && 'border-red-200 bg-red-50',
-        isSelected && 'border-amber-400 bg-amber-50 ring-1 ring-amber-300'
+        isSelected && 'border-violet-400 bg-violet-50 ring-1 ring-violet-300'
       )}
     >
       {/* Gradient accent */}
-      <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-amber-400/50 to-transparent opacity-0 transition-opacity group-hover:opacity-100" />
+      <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-violet-400/50 to-transparent opacity-0 transition-opacity group-hover:opacity-100" />
 
       {/* Selection checkbox -- top-left */}
       {!user.banned && (
@@ -962,14 +962,14 @@ function UserCard({ user, isSelected, onToggleSelect, onEdit, onBan, onUnban, on
           className={cn(
             'absolute left-3 top-3 z-10 flex h-6 w-6 items-center justify-center rounded-md border transition-all',
             isSelected
-              ? 'border-amber-500 bg-amber-500 text-white'
-              : 'border-zinc-300 bg-zinc-50 text-transparent opacity-0 group-hover:opacity-100 hover:border-zinc-400'
+              ? 'border-violet-500 bg-violet-500 text-white'
+              : 'border-slate-300 bg-slate-50 text-transparent opacity-0 group-hover:opacity-100 hover:border-slate-400'
           )}
         >
           {isSelected ? (
             <CheckSquare className="h-4 w-4" />
           ) : (
-            <Square className="h-4 w-4 text-zinc-400" />
+            <Square className="h-4 w-4 text-slate-400" />
           )}
         </button>
       )}
@@ -986,41 +986,41 @@ function UserCard({ user, isSelected, onToggleSelect, onEdit, onBan, onUnban, on
                   className="h-11 w-11 rounded-xl object-cover"
                 />
               ) : (
-                <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-amber-600 text-sm font-semibold text-white">
+                <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-violet-600 text-sm font-semibold text-white">
                   {user.name.charAt(0).toUpperCase()}
                 </div>
               )}
               {user.isAdmin && (
-                <div className="absolute -bottom-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-amber-500">
+                <div className="absolute -bottom-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-violet-500">
                   <Shield className="h-3 w-3 text-white" />
                 </div>
               )}
             </div>
             <div className="min-w-0">
-              <h3 className="truncate font-semibold text-zinc-900">{user.name}</h3>
-              <p className="truncate text-sm text-zinc-500">{user.email}</p>
+              <h3 className="truncate font-semibold text-slate-900">{user.name}</h3>
+              <p className="truncate text-sm text-slate-500">{user.email}</p>
             </div>
           </div>
 
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="icon" className="h-8 w-8 text-zinc-500 hover:text-zinc-900">
+              <Button variant="ghost" size="icon" className="h-8 w-8 text-slate-500 hover:text-slate-900">
                 <MoreVertical className="h-4 w-4" />
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="rounded-xl border border-zinc-200 bg-white shadow-sm">
+            <DropdownMenuContent align="end" className="rounded-xl border border-slate-200 bg-white shadow-sm">
               <DropdownMenuItem onClick={onEdit} className="gap-2 text-blue-600">
                 <Edit className="h-4 w-4" />
                 {t('common.edit')}
               </DropdownMenuItem>
-              <DropdownMenuSeparator className="bg-zinc-200" />
+              <DropdownMenuSeparator className="bg-slate-200" />
               {!user.isAdmin && (
                 <>
                   <DropdownMenuItem onClick={onImpersonate} className="gap-2 text-purple-600">
                     <User className="h-4 w-4" />
                     {t('admin.users.impersonate')}
                   </DropdownMenuItem>
-                  <DropdownMenuSeparator className="bg-zinc-200" />
+                  <DropdownMenuSeparator className="bg-slate-200" />
                 </>
               )}
               <DropdownMenuItem onClick={onSendPasswordReset} className="gap-2 text-orange-600">
@@ -1033,9 +1033,9 @@ function UserCard({ user, isSelected, onToggleSelect, onEdit, onBan, onUnban, on
                   {t('admin.users.resendVerification')}
                 </DropdownMenuItem>
               )}
-              <DropdownMenuSeparator className="bg-zinc-200" />
+              <DropdownMenuSeparator className="bg-slate-200" />
               {user.isAdmin ? (
-                <DropdownMenuItem onClick={onRevokeAdmin} className="gap-2 text-amber-600">
+                <DropdownMenuItem onClick={onRevokeAdmin} className="gap-2 text-violet-600">
                   <ShieldOff className="h-4 w-4" />
                   {t('admin.users.revokeAdmin')}
                 </DropdownMenuItem>
@@ -1045,7 +1045,7 @@ function UserCard({ user, isSelected, onToggleSelect, onEdit, onBan, onUnban, on
                   {t('admin.users.grantAdmin')}
                 </DropdownMenuItem>
               )}
-              <DropdownMenuSeparator className="bg-zinc-200" />
+              <DropdownMenuSeparator className="bg-slate-200" />
               {user.banned ? (
                 <DropdownMenuItem onClick={onUnban} className="gap-2 text-emerald-600">
                   <UserPlus className="h-4 w-4" />
@@ -1064,7 +1064,7 @@ function UserCard({ user, isSelected, onToggleSelect, onEdit, onBan, onUnban, on
         {/* Badges */}
         <div className="mb-4 flex flex-wrap items-center gap-2">
           {user.isAdmin && (
-            <Badge className="border border-amber-300 bg-amber-50 text-amber-700">
+            <Badge className="border border-violet-300 bg-violet-50 text-violet-700">
               <Shield className="mr-1 h-3 w-3" />
               {t('admin.users.platformAdmin')}
             </Badge>
@@ -1080,7 +1080,7 @@ function UserCard({ user, isSelected, onToggleSelect, onEdit, onBan, onUnban, on
               {t('admin.verified')}
             </Badge>
           ) : (
-            <Badge className="border border-zinc-300 bg-zinc-50 text-zinc-600">
+            <Badge className="border border-slate-300 bg-slate-50 text-slate-600">
               <Mail className="mr-1 h-3 w-3" />
               {t('admin.users.unverified')}
             </Badge>
@@ -1090,7 +1090,7 @@ function UserCard({ user, isSelected, onToggleSelect, onEdit, onBan, onUnban, on
         {/* Organizations */}
         {user.organizations.length > 0 && (
           <div className="mb-4">
-            <div className="mb-2 flex items-center gap-1.5 text-zinc-500">
+            <div className="mb-2 flex items-center gap-1.5 text-slate-500">
               <Building2 className="h-3.5 w-3.5" />
               <span className="text-[10px] font-medium uppercase tracking-wider">{t('admin.users.organizations')}</span>
             </div>
@@ -1098,13 +1098,13 @@ function UserCard({ user, isSelected, onToggleSelect, onEdit, onBan, onUnban, on
               {user.organizations.slice(0, 3).map((org) => (
                 <span
                   key={org.id}
-                  className="rounded-md bg-zinc-50 px-2 py-1 text-xs text-zinc-700"
+                  className="rounded-md bg-slate-50 px-2 py-1 text-xs text-slate-700"
                 >
                   {org.name}
                 </span>
               ))}
               {user.organizations.length > 3 && (
-                <span className="rounded-md bg-zinc-50 px-2 py-1 text-xs text-zinc-500">
+                <span className="rounded-md bg-slate-50 px-2 py-1 text-xs text-slate-500">
                   +{user.organizations.length - 3} {t('common.more')}
                 </span>
               )}
@@ -1113,7 +1113,7 @@ function UserCard({ user, isSelected, onToggleSelect, onEdit, onBan, onUnban, on
         )}
 
         {/* Footer */}
-        <div className="flex items-center justify-between border-t border-zinc-200 pt-4 text-xs text-zinc-500">
+        <div className="flex items-center justify-between border-t border-slate-200 pt-4 text-xs text-slate-500">
           <span>{t('admin.users.joined')} {new Date(user.createdAt).toLocaleDateString()}</span>
           <span className="capitalize">{user.role}</span>
         </div>
@@ -1125,29 +1125,29 @@ function UserCard({ user, isSelected, onToggleSelect, onEdit, onBan, onUnban, on
 // Skeleton
 function UserCardSkeleton() {
   return (
-    <div className="animate-pulse rounded-2xl border border-zinc-200 bg-white shadow-sm p-5">
+    <div className="animate-pulse rounded-2xl border border-slate-200 bg-white shadow-sm p-5">
       <div className="mb-4 flex items-start justify-between">
         <div className="flex items-center gap-3">
-          <div className="h-11 w-11 rounded-xl bg-zinc-100" />
+          <div className="h-11 w-11 rounded-xl bg-slate-100" />
           <div className="space-y-1.5">
-            <div className="h-5 w-28 rounded bg-zinc-100" />
-            <div className="h-4 w-36 rounded bg-zinc-100" />
+            <div className="h-5 w-28 rounded bg-slate-100" />
+            <div className="h-4 w-36 rounded bg-slate-100" />
           </div>
         </div>
-        <div className="h-8 w-8 rounded bg-zinc-100" />
+        <div className="h-8 w-8 rounded bg-slate-100" />
       </div>
       <div className="mb-4 flex gap-2">
-        <div className="h-6 w-20 rounded-full bg-zinc-100" />
+        <div className="h-6 w-20 rounded-full bg-slate-100" />
       </div>
       <div className="mb-4">
-        <div className="mb-2 h-3 w-20 rounded bg-zinc-100" />
+        <div className="mb-2 h-3 w-20 rounded bg-slate-100" />
         <div className="flex gap-1.5">
-          <div className="h-6 w-20 rounded bg-zinc-100" />
-          <div className="h-6 w-16 rounded bg-zinc-100" />
+          <div className="h-6 w-20 rounded bg-slate-100" />
+          <div className="h-6 w-16 rounded bg-slate-100" />
         </div>
       </div>
-      <div className="border-t border-zinc-200 pt-4">
-        <div className="h-3 w-24 rounded bg-zinc-100" />
+      <div className="border-t border-slate-200 pt-4">
+        <div className="h-3 w-24 rounded bg-slate-100" />
       </div>
     </div>
   );
@@ -1166,19 +1166,19 @@ function EmptyState({
   if (hasFilters) {
     return (
       <div
-        className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-zinc-200 bg-zinc-50 px-6 py-16 text-center"
+        className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-slate-200 bg-slate-50 px-6 py-16 text-center"
       >
-        <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-xl bg-zinc-100">
-          <Search className="h-7 w-7 text-zinc-500" />
+        <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-xl bg-slate-100">
+          <Search className="h-7 w-7 text-slate-500" />
         </div>
-        <h3 className="mb-1 text-lg font-semibold text-zinc-900">{t('admin.noMatchingResults')}</h3>
-        <p className="mb-4 max-w-sm text-sm text-zinc-500">
+        <h3 className="mb-1 text-lg font-semibold text-slate-900">{t('admin.noMatchingResults')}</h3>
+        <p className="mb-4 max-w-sm text-sm text-slate-500">
           {t('admin.adjustFilters')}
         </p>
         <Button
           variant="ghost"
           onClick={onClearFilters}
-          className="gap-2 rounded-lg border border-zinc-200 text-zinc-700 hover:bg-zinc-50"
+          className="gap-2 rounded-lg border border-slate-200 text-slate-700 hover:bg-slate-50"
         >
           {t('admin.clearFilters')}
         </Button>
@@ -1188,15 +1188,15 @@ function EmptyState({
 
   return (
     <div
-      className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-zinc-200 bg-zinc-50 px-6 py-16 text-center"
+      className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-slate-200 bg-slate-50 px-6 py-16 text-center"
     >
       <div
-        className="mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-amber-50"
+        className="mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-violet-50"
       >
-        <Users className="h-8 w-8 text-amber-600" />
+        <Users className="h-8 w-8 text-violet-600" />
       </div>
-      <h3 className="mb-1 text-lg font-semibold text-zinc-900">{t('admin.users.noUsersYet')}</h3>
-      <p className="max-w-sm text-sm text-zinc-500">
+      <h3 className="mb-1 text-lg font-semibold text-slate-900">{t('admin.users.noUsersYet')}</h3>
+      <p className="max-w-sm text-sm text-slate-500">
         {t('admin.users.usersAppearHere')}
       </p>
     </div>

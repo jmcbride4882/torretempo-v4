@@ -62,7 +62,7 @@ export function BottomTabs() {
   return (
     <>
       <nav className="fixed bottom-0 left-0 right-0 z-50 lg:hidden">
-        <div className="bg-white border-t border-zinc-200 px-1 pb-safe">
+        <div className="bg-white border-t border-slate-200 px-1 pb-safe">
           <div className="flex items-stretch h-16">
             {tabs.map((tab) => (
               <NavLink
@@ -71,7 +71,7 @@ export function BottomTabs() {
                 className={({ isActive }) =>
                   cn(
                     'group relative flex flex-1 flex-col items-center justify-center gap-1 transition-colors min-h-touch-lg',
-                    isActive ? 'text-primary-600' : 'text-zinc-400'
+                    isActive ? 'text-primary-600' : 'text-slate-400'
                   )
                 }
               >
@@ -80,19 +80,19 @@ export function BottomTabs() {
                     {tab.primary ? (
                       <div
                         className={cn(
-                          'flex h-11 w-11 items-center justify-center rounded-2xl transition-colors',
+                          'flex h-11 w-11 items-center justify-center rounded-2xl transition-all',
                           isActive
-                            ? 'bg-primary-500 shadow-md'
-                            : 'bg-zinc-100'
+                            ? 'bg-primary-600 shadow-glow'
+                            : 'bg-slate-100'
                         )}
                       >
-                        <tab.icon className={cn('h-5 w-5', isActive ? 'text-white' : 'text-zinc-500')} />
+                        <tab.icon className={cn('h-5 w-5', isActive ? 'text-white' : 'text-slate-500')} />
                       </div>
                     ) : (
                       <tab.icon
                         className={cn(
                           'h-[22px] w-[22px] transition-colors',
-                          isActive ? 'text-primary-600' : 'text-zinc-400'
+                          isActive ? 'text-primary-600' : 'text-slate-400'
                         )}
                       />
                     )}
@@ -101,7 +101,7 @@ export function BottomTabs() {
                       <span
                         className={cn(
                           'text-[10px] font-medium transition-colors',
-                          isActive ? 'text-primary-600' : 'text-zinc-400'
+                          isActive ? 'text-primary-600' : 'text-slate-400'
                         )}
                       >
                         {t(tab.labelKey)}
@@ -115,12 +115,12 @@ export function BottomTabs() {
             {/* More tab */}
             <button
               onClick={moreSheet.open}
-              className="group relative flex flex-1 flex-col items-center justify-center gap-1 transition-colors min-h-touch-lg text-zinc-400"
+              className="group relative flex flex-1 flex-col items-center justify-center gap-1 transition-colors min-h-touch-lg text-slate-400"
             >
               <MoreHorizontal className="h-[22px] w-[22px]" />
               <span className="text-[10px] font-medium">{t('nav.more')}</span>
               {pendingSwapsCount > 0 && (
-                <span className="absolute top-2 right-1/4 flex h-4 min-w-[16px] items-center justify-center rounded-full bg-primary-500 px-1 text-[8px] font-bold text-white">
+                <span className="absolute top-2 right-1/4 flex h-4 min-w-[16px] items-center justify-center rounded-full bg-accent-500 px-1 text-[8px] font-bold text-white">
                   {pendingSwapsCount > 9 ? '9+' : pendingSwapsCount}
                 </span>
               )}
@@ -142,10 +142,10 @@ export function BottomTabs() {
               key={item.path}
               to={`/t/${slug}/${item.path}`}
               onClick={moreSheet.close}
-              className="flex flex-col items-center gap-2 rounded-xl p-3 text-zinc-600 hover:bg-zinc-50 transition-colors"
+              className="flex flex-col items-center gap-2 rounded-xl p-3 text-slate-600 hover:bg-slate-50 transition-colors"
             >
-              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-zinc-100">
-                <item.icon className="h-5 w-5 text-zinc-600" />
+              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-slate-100">
+                <item.icon className="h-5 w-5 text-slate-600" />
               </div>
               <span className="text-xs font-medium text-center">{t(item.labelKey)}</span>
             </NavLink>

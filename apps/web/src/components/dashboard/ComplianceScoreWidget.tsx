@@ -26,18 +26,18 @@ export function ComplianceScoreWidget({ score, violations = 0, className }: Comp
           <ShieldCheck className={cn('h-5 w-5', c.text)} />
         </div>
         <div>
-          <h3 className="text-sm font-medium text-zinc-700">{t('dashboard.complianceScore')}</h3>
-          <p className="text-xs text-zinc-500">{t('dashboard.spanishLaborLaw')}</p>
+          <h3 className="text-sm font-medium text-slate-700">{t('dashboard.complianceScore')}</h3>
+          <p className="text-xs text-slate-500">{t('dashboard.spanishLaborLaw')}</p>
         </div>
       </div>
 
       <div className="flex items-end gap-2 mb-3">
         <span className={cn('text-4xl font-bold', c.text)}>{score}</span>
-        <span className="text-sm text-zinc-500 mb-1">/ 100</span>
+        <span className="text-sm text-slate-500 mb-1">/ 100</span>
       </div>
 
       {/* Progress ring visual */}
-      <div className="h-2 rounded-full bg-zinc-100 overflow-hidden">
+      <div className="h-2 rounded-full bg-slate-100 overflow-hidden">
         <div
           className={cn('h-full rounded-full transition-all duration-500', c.ring.replace('ring-', 'bg-'))}
           style={{ width: `${score}%` }}

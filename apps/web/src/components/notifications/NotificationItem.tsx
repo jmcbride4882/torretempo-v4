@@ -68,9 +68,9 @@ function getNotificationMeta(type: NotificationType) {
     default:
       return {
         icon: ArrowLeftRight,
-        color: 'text-zinc-500',
-        bgColor: 'bg-zinc-100',
-        borderColor: 'border-zinc-200',
+        color: 'text-slate-500',
+        bgColor: 'bg-slate-100',
+        borderColor: 'border-slate-200',
       };
   }
 }
@@ -131,7 +131,7 @@ export function NotificationItem({
       onClick={onClick}
       className={cn(
         'group relative w-full flex items-start gap-3 p-3 rounded-lg text-left transition-all duration-200',
-        'hover:bg-zinc-50 active:scale-[0.98]',
+        'hover:bg-slate-50 active:scale-[0.98]',
         !notification.read && 'bg-primary-50/50'
       )}
     >
@@ -163,15 +163,15 @@ export function NotificationItem({
         <p
           className={cn(
             'text-sm leading-tight line-clamp-1',
-            notification.read ? 'text-zinc-500 font-normal' : 'text-zinc-900 font-medium'
+            notification.read ? 'text-slate-500 font-normal' : 'text-slate-900 font-medium'
           )}
         >
           {notification.title}
         </p>
-        <p className="text-xs text-zinc-500 line-clamp-2 mt-0.5 leading-relaxed">
+        <p className="text-xs text-slate-500 line-clamp-2 mt-0.5 leading-relaxed">
           {notification.message}
         </p>
-        <p className="text-[10px] text-zinc-400 mt-1.5 uppercase tracking-wider font-medium">
+        <p className="text-[10px] text-slate-400 mt-1.5 uppercase tracking-wider font-medium">
           {relativeTime}
         </p>
       </div>

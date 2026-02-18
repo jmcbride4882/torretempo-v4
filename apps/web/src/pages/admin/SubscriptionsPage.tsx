@@ -62,10 +62,10 @@ function formatCurrency(amount: number): string {
 
 // Tier colors
 const tierColors: Record<string, { bg: string; text: string; border: string }> = {
-  free: { bg: 'bg-zinc-100', text: 'text-zinc-700', border: 'border-zinc-300' },
+  free: { bg: 'bg-slate-100', text: 'text-slate-700', border: 'border-slate-300' },
   starter: { bg: 'bg-blue-50', text: 'text-blue-700', border: 'border-blue-200' },
   pro: { bg: 'bg-emerald-50', text: 'text-emerald-700', border: 'border-emerald-200' },
-  enterprise: { bg: 'bg-amber-50', text: 'text-amber-700', border: 'border-amber-200' },
+  enterprise: { bg: 'bg-violet-50', text: 'text-violet-700', border: 'border-violet-200' },
 };
 
 export default function SubscriptionsPage() {
@@ -86,7 +86,7 @@ export default function SubscriptionsPage() {
       setMetrics(data);
     } catch (error) {
       console.error('Error fetching subscription metrics:', error);
-      toast.error('Failed to load subscription metrics');
+      toast.error(t('admin.subscriptions.failedToLoad'));
     } finally {
       setIsLoading(false);
       setIsRefreshing(false);
@@ -118,9 +118,9 @@ export default function SubscriptionsPage() {
             <CreditCard className="h-5 w-5 text-emerald-600" />
           </div>
           <div>
-            <h1 className="text-xl font-bold text-zinc-900 sm:text-2xl">{t('admin.subscriptions.title')}</h1>
-            <p className="text-sm text-zinc-500">
-              Live monitoring &bull; Updates every 10 seconds
+            <h1 className="text-xl font-bold text-slate-900 sm:text-2xl">{t('admin.subscriptions.title')}</h1>
+            <p className="text-sm text-slate-500">
+              {t('admin.subscriptions.subtitle')}
             </p>
           </div>
         </div>
@@ -131,7 +131,7 @@ export default function SubscriptionsPage() {
             size="sm"
             onClick={handleRefresh}
             disabled={isRefreshing}
-            className="gap-1.5 rounded-lg border border-zinc-200 bg-zinc-50 text-zinc-700 hover:bg-zinc-100"
+            className="gap-1.5 rounded-lg border border-slate-200 bg-slate-50 text-slate-700 hover:bg-slate-100"
           >
             <RefreshCw className={cn('h-4 w-4', isRefreshing && 'animate-spin')} />
             <span className="hidden sm:inline">{t('admin.refresh')}</span>
@@ -169,7 +169,7 @@ export default function SubscriptionsPage() {
           label={t('admin.subscriptions.paidCustomers')}
           value={metrics?.totalPaid?.toString() || '0'}
           subtitle={`${metrics?.totalActive || 0} ${t('admin.subscriptions.totalActive')}`}
-          color="amber"
+          color="violet"
         />
 
         {/* Churn Rate */}
@@ -186,9 +186,9 @@ export default function SubscriptionsPage() {
 
       {/* Tier breakdown */}
       <div
-        className="rounded-xl border border-zinc-200 bg-white shadow-sm p-6"
+        className="rounded-xl border border-slate-200 bg-white shadow-sm p-6"
       >
-        <h2 className="mb-4 text-lg font-semibold text-zinc-900">{t('admin.subscriptions.subscriptionTiers')}</h2>
+        <h2 className="mb-4 text-lg font-semibold text-slate-900">{t('admin.subscriptions.subscriptionTiers')}</h2>
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {Object.entries(metrics?.tierBreakdown || {}).map(([tier, count]) => {
             const colors = tierColors[tier] ?? tierColors.free;
@@ -200,24 +200,24 @@ export default function SubscriptionsPage() {
                 key={tier}
                 className={cn(
                   'relative overflow-hidden rounded-xl border p-4',
-                  colors?.border ?? 'border-zinc-300',
-                  colors?.bg ?? 'bg-zinc-100'
+                  colors?.border ?? 'border-slate-300',
+                  colors?.bg ?? 'bg-slate-100'
                 )}
               >
                 <div className="mb-2 flex items-center justify-between">
-                  <span className={cn('text-sm font-medium capitalize', colors?.text ?? 'text-zinc-700')}>{tier}</span>
-                  <Badge className={cn('border', colors?.bg ?? 'bg-zinc-100', colors?.text ?? 'text-zinc-700', colors?.border ?? 'border-zinc-300')}>
+                  <span className={cn('text-sm font-medium capitalize', colors?.text ?? 'text-slate-700')}>{tier}</span>
+                  <Badge className={cn('border', colors?.bg ?? 'bg-slate-100', colors?.text ?? 'text-slate-700', colors?.border ?? 'border-slate-300')}>
                     {percentage}%
                   </Badge>
                 </div>
-                <p className="text-3xl font-bold text-zinc-900">{count}</p>
-                <p className="mt-1 text-sm text-zinc-500">{t('admin.subscriptions.organizations')}</p>
+                <p className="text-3xl font-bold text-slate-900">{count}</p>
+                <p className="mt-1 text-sm text-slate-500">{t('admin.subscriptions.organizations')}</p>
 
                 {/* Progress bar */}
-                <div className="mt-3 h-1.5 overflow-hidden rounded-full bg-zinc-100">
+                <div className="mt-3 h-1.5 overflow-hidden rounded-full bg-slate-100">
                   <div
                     style={{ width: `${percentage}%` }}
-                    className={cn('h-full rounded-full', (colors?.bg ?? 'bg-zinc-100').replace('50', '400').replace('100', '400'))}
+                    className={cn('h-full rounded-full', (colors?.bg ?? 'bg-slate-100').replace('50', '400').replace('100', '400'))}
                   />
                 </div>
               </div>
@@ -230,47 +230,47 @@ export default function SubscriptionsPage() {
       <div
         className="grid gap-4 sm:grid-cols-3"
       >
-        <div className="rounded-xl border border-zinc-200 bg-white shadow-sm p-5">
-          <div className="mb-2 flex items-center gap-2 text-zinc-500">
+        <div className="rounded-xl border border-slate-200 bg-white shadow-sm p-5">
+          <div className="mb-2 flex items-center gap-2 text-slate-500">
             <Building2 className="h-4 w-4" />
             <span className="text-xs font-medium uppercase tracking-wider">{t('admin.subscriptions.totalOrganizations')}</span>
           </div>
-          <p className="text-3xl font-bold text-zinc-900">{metrics?.totalActive || 0}</p>
-          <p className="mt-1 text-sm text-zinc-500">
-            {metrics?.totalFree || 0} free, {metrics?.totalPaid || 0} paid
+          <p className="text-3xl font-bold text-slate-900">{metrics?.totalActive || 0}</p>
+          <p className="mt-1 text-sm text-slate-500">
+            {t('admin.subscriptions.freeAndPaidSummary', { free: metrics?.totalFree || 0, paid: metrics?.totalPaid || 0 })}
           </p>
         </div>
 
-        <div className="rounded-xl border border-zinc-200 bg-white shadow-sm p-5">
-          <div className="mb-2 flex items-center gap-2 text-zinc-500">
+        <div className="rounded-xl border border-slate-200 bg-white shadow-sm p-5">
+          <div className="mb-2 flex items-center gap-2 text-slate-500">
             <DollarSign className="h-4 w-4" />
             <span className="text-xs font-medium uppercase tracking-wider">{t('admin.subscriptions.avgRevenuePerOrg')}</span>
           </div>
-          <p className="text-3xl font-bold text-zinc-900">
+          <p className="text-3xl font-bold text-slate-900">
             {formatCurrency(metrics?.totalPaid ? (metrics.mrr / metrics.totalPaid) : 0)}
           </p>
-          <p className="mt-1 text-sm text-zinc-500">{t('admin.subscriptions.perMonth')}</p>
+          <p className="mt-1 text-sm text-slate-500">{t('admin.subscriptions.perMonth')}</p>
         </div>
 
-        <div className="rounded-xl border border-zinc-200 bg-white shadow-sm p-5">
-          <div className="mb-2 flex items-center gap-2 text-zinc-500">
+        <div className="rounded-xl border border-slate-200 bg-white shadow-sm p-5">
+          <div className="mb-2 flex items-center gap-2 text-slate-500">
             <TrendingUp className="h-4 w-4" />
             <span className="text-xs font-medium uppercase tracking-wider">{t('admin.subscriptions.conversionRate')}</span>
           </div>
-          <p className="text-3xl font-bold text-zinc-900">
+          <p className="text-3xl font-bold text-slate-900">
             {metrics?.totalActive
               ? (((metrics.totalPaid || 0) / metrics.totalActive) * 100).toFixed(1)
               : '0'}%
           </p>
-          <p className="mt-1 text-sm text-zinc-500">{t('admin.subscriptions.freeToPaid')}</p>
+          <p className="mt-1 text-sm text-slate-500">{t('admin.subscriptions.freeToPaid')}</p>
         </div>
       </div>
 
       {/* Recent changes */}
       <div
-        className="rounded-xl border border-zinc-200 bg-white shadow-sm p-6"
+        className="rounded-xl border border-slate-200 bg-white shadow-sm p-6"
       >
-        <h2 className="mb-4 text-lg font-semibold text-zinc-900">{t('admin.subscriptions.recentChanges')}</h2>
+        <h2 className="mb-4 text-lg font-semibold text-slate-900">{t('admin.subscriptions.recentChanges')}</h2>
         {metrics?.recentChanges && metrics.recentChanges.length > 0 ? (
           <div className="space-y-3">
             {metrics.recentChanges.map((change) => {
@@ -281,7 +281,7 @@ export default function SubscriptionsPage() {
               return (
                 <div
                   key={change.id}
-                  className="flex items-center justify-between rounded-lg border border-zinc-200 bg-zinc-50 p-4"
+                  className="flex items-center justify-between rounded-lg border border-slate-200 bg-slate-50 p-4"
                 >
                   <div className="flex items-center gap-3">
                     <div
@@ -297,13 +297,13 @@ export default function SubscriptionsPage() {
                       )}
                     </div>
                     <div>
-                      <p className="font-medium text-zinc-900">{change.organizationName}</p>
-                      <p className="text-sm text-zinc-500">
+                      <p className="font-medium text-slate-900">{change.organizationName}</p>
+                      <p className="text-sm text-slate-500">
                         {change.fromTier} &rarr; {change.toTier}
                       </p>
                     </div>
                   </div>
-                  <span className="text-sm text-zinc-500">
+                  <span className="text-sm text-slate-500">
                     {new Date(change.changedAt).toLocaleDateString()}
                   </span>
                 </div>
@@ -311,9 +311,9 @@ export default function SubscriptionsPage() {
             })}
           </div>
         ) : (
-          <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-zinc-200 bg-zinc-50 py-12 text-center">
-            <CreditCard className="mb-3 h-8 w-8 text-zinc-400" />
-            <p className="text-sm text-zinc-500">{t('admin.subscriptions.noRecentChanges')}</p>
+          <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-slate-200 bg-slate-50 py-12 text-center">
+            <CreditCard className="mb-3 h-8 w-8 text-slate-400" />
+            <p className="text-sm text-slate-500">{t('admin.subscriptions.noRecentChanges')}</p>
           </div>
         )}
       </div>
@@ -332,7 +332,7 @@ interface MetricCardProps {
   trend?: number;
   trendLabel?: string;
   subtitle?: string;
-  color: 'emerald' | 'blue' | 'amber' | 'red';
+  color: 'emerald' | 'blue' | 'violet' | 'red';
   inverted?: boolean;
 }
 
@@ -349,7 +349,7 @@ function MetricCard({
   const colorClasses = {
     emerald: 'bg-emerald-50 text-emerald-600',
     blue: 'bg-blue-50 text-blue-600',
-    amber: 'bg-amber-50 text-amber-600',
+    violet: 'bg-violet-50 text-violet-600',
     red: 'bg-red-50 text-red-600',
   };
 
@@ -357,7 +357,7 @@ function MetricCard({
 
   return (
     <div
-      className="rounded-xl border border-zinc-200 bg-white shadow-sm p-5"
+      className="rounded-xl border border-slate-200 bg-white shadow-sm p-5"
     >
       <div className="mb-3 flex items-center justify-between">
         <div
@@ -386,10 +386,10 @@ function MetricCard({
           </div>
         )}
       </div>
-      <p className="text-3xl font-bold text-zinc-900">{value}</p>
-      <p className="mt-1 text-sm text-zinc-500">{label}</p>
+      <p className="text-3xl font-bold text-slate-900">{value}</p>
+      <p className="mt-1 text-sm text-slate-500">{label}</p>
       {(trendLabel || subtitle) && (
-        <p className="mt-2 text-xs text-zinc-500">{trendLabel || subtitle}</p>
+        <p className="mt-2 text-xs text-slate-500">{trendLabel || subtitle}</p>
       )}
     </div>
   );
@@ -409,29 +409,29 @@ function formatCents(cents: number): string {
 }
 
 // Validation helpers
-function validateCustomerId(value: string): string | null {
-  if (!value.trim()) return 'Customer ID is required';
-  if (!value.startsWith('cus_')) return 'Must start with "cus_"';
+function validateCustomerId(value: string, t: (key: string) => string): string | null {
+  if (!value.trim()) return t('admin.subscriptions.validation.customerIdRequired');
+  if (!value.startsWith('cus_')) return t('admin.subscriptions.validation.customerIdPrefix');
   return null;
 }
 
-function validatePaymentIntentId(value: string): string | null {
-  if (!value.trim()) return 'Payment Intent ID is required';
-  if (!value.startsWith('pi_')) return 'Must start with "pi_"';
+function validatePaymentIntentId(value: string, t: (key: string) => string): string | null {
+  if (!value.trim()) return t('admin.subscriptions.validation.paymentIntentIdRequired');
+  if (!value.startsWith('pi_')) return t('admin.subscriptions.validation.paymentIntentIdPrefix');
   return null;
 }
 
-function validateAmount(value: string, required = true): string | null {
-  if (!value.trim()) return required ? 'Amount is required' : null;
+function validateAmount(value: string, t: (key: string) => string, required = true): string | null {
+  if (!value.trim()) return required ? t('admin.subscriptions.validation.amountRequired') : null;
   const num = Number(value);
-  if (isNaN(num) || num <= 0) return 'Must be a positive number';
-  if (!Number.isInteger(num)) return 'Amount must be in whole cents';
+  if (isNaN(num) || num <= 0) return t('admin.subscriptions.validation.mustBePositive');
+  if (!Number.isInteger(num)) return t('admin.subscriptions.validation.wholeCents');
   return null;
 }
 
-function validateDescription(value: string): string | null {
-  if (!value.trim()) return 'Description is required';
-  if (value.trim().length < 10) return 'Must be at least 10 characters';
+function validateDescription(value: string, t: (key: string) => string): string | null {
+  if (!value.trim()) return t('admin.subscriptions.validation.descriptionRequired');
+  if (value.trim().length < 10) return t('admin.subscriptions.validation.minTenChars');
   return null;
 }
 
@@ -448,10 +448,10 @@ function BillingOperations({ onSuccess }: BillingOperationsProps) {
   return (
     <>
       <div
-        className="rounded-xl border border-zinc-200 bg-white shadow-sm p-6"
+        className="rounded-xl border border-slate-200 bg-white shadow-sm p-6"
       >
-        <h2 className="mb-4 text-lg font-semibold text-zinc-900">{t('admin.subscriptions.billingOperations')}</h2>
-        <p className="mb-5 text-sm text-zinc-500">
+        <h2 className="mb-4 text-lg font-semibold text-slate-900">{t('admin.subscriptions.billingOperations')}</h2>
+        <p className="mb-5 text-sm text-slate-500">
           {t('admin.subscriptions.billingDescription')}
         </p>
         <div className="grid gap-4 sm:grid-cols-3">
@@ -464,22 +464,22 @@ function BillingOperations({ onSuccess }: BillingOperationsProps) {
               <DollarSign className="h-6 w-6 text-blue-600" />
             </div>
             <div>
-              <p className="font-semibold text-zinc-900">{t('admin.subscriptions.createInvoice')}</p>
-              <p className="mt-1 text-xs text-zinc-500">{t('admin.subscriptions.generateManualInvoice')}</p>
+              <p className="font-semibold text-slate-900">{t('admin.subscriptions.createInvoice')}</p>
+              <p className="mt-1 text-xs text-slate-500">{t('admin.subscriptions.generateManualInvoice')}</p>
             </div>
           </button>
 
           {/* Process Refund */}
           <button
             onClick={() => setRefundOpen(true)}
-            className="group relative flex flex-col items-center gap-3 overflow-hidden rounded-xl border border-amber-200 bg-amber-50 p-6 text-center transition-all duration-200 hover:border-amber-300 hover:bg-amber-100"
+            className="group relative flex flex-col items-center gap-3 overflow-hidden rounded-xl border border-violet-200 bg-violet-50 p-6 text-center transition-all duration-200 hover:border-violet-300 hover:bg-violet-100"
           >
-            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-amber-100 shadow-sm transition-transform duration-200 group-hover:scale-110">
-              <RefreshCw className="h-6 w-6 text-amber-600" />
+            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-violet-100 shadow-sm transition-transform duration-200 group-hover:scale-110">
+              <RefreshCw className="h-6 w-6 text-violet-600" />
             </div>
             <div>
-              <p className="font-semibold text-zinc-900">{t('admin.subscriptions.processRefund')}</p>
-              <p className="mt-1 text-xs text-zinc-500">{t('admin.subscriptions.refundPayment')}</p>
+              <p className="font-semibold text-slate-900">{t('admin.subscriptions.processRefund')}</p>
+              <p className="mt-1 text-xs text-slate-500">{t('admin.subscriptions.refundPayment')}</p>
             </div>
           </button>
 
@@ -492,8 +492,8 @@ function BillingOperations({ onSuccess }: BillingOperationsProps) {
               <Plus className="h-6 w-6 text-emerald-600" />
             </div>
             <div>
-              <p className="font-semibold text-zinc-900">{t('admin.subscriptions.applyCredit')}</p>
-              <p className="mt-1 text-xs text-zinc-500">{t('admin.subscriptions.addAccountCredit')}</p>
+              <p className="font-semibold text-slate-900">{t('admin.subscriptions.applyCredit')}</p>
+              <p className="mt-1 text-xs text-slate-500">{t('admin.subscriptions.addAccountCredit')}</p>
             </div>
           </button>
         </div>
@@ -553,9 +553,9 @@ function CreateInvoiceModal({ open, onOpenChange, onSuccess }: BillingModalProps
 
   const validate = (): boolean => {
     const errors: Record<string, string | null> = {
-      customerId: validateCustomerId(customerId),
-      amount: validateAmount(amount),
-      description: validateDescription(description),
+      customerId: validateCustomerId(customerId, t),
+      amount: validateAmount(amount, t),
+      description: validateDescription(description, t),
     };
     setFieldErrors(errors);
     return !Object.values(errors).some(Boolean);
@@ -572,7 +572,7 @@ function CreateInvoiceModal({ open, onOpenChange, onSuccess }: BillingModalProps
         amount: Number(amount),
         description: description.trim(),
       });
-      toast.success('Invoice created', {
+      toast.success(t('admin.subscriptions.invoiceCreated'), {
         description: `${result.message} — ${formatCents(Number(amount))}`,
       });
       handleOpenChange(false);
@@ -581,7 +581,7 @@ function CreateInvoiceModal({ open, onOpenChange, onSuccess }: BillingModalProps
       if (err instanceof AdminApiError) {
         setError(err.message);
       } else {
-        setError('An unexpected error occurred');
+        setError(t('admin.subscriptions.unexpectedError'));
       }
     } finally {
       setIsSubmitting(false);
@@ -609,7 +609,7 @@ function CreateInvoiceModal({ open, onOpenChange, onSuccess }: BillingModalProps
             <Label htmlFor="invoice-customer-id">{t('admin.subscriptions.customerId')}</Label>
             <Input
               id="invoice-customer-id"
-              placeholder="cus_xxxxxxxxxx"
+              placeholder={t('admin.subscriptions.customerIdPlaceholder')}
               value={customerId}
               onChange={(e) => {
                 setCustomerId(e.target.value);
@@ -626,11 +626,11 @@ function CreateInvoiceModal({ open, onOpenChange, onSuccess }: BillingModalProps
           <div className="space-y-2">
             <Label htmlFor="invoice-amount">{t('admin.subscriptions.amountCents')}</Label>
             <div className="relative">
-              <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-sm text-zinc-500">&euro;</span>
+              <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-sm text-slate-500">&euro;</span>
               <Input
                 id="invoice-amount"
                 type="number"
-                placeholder="5000"
+                placeholder={t('admin.subscriptions.amountPlaceholder')}
                 min="1"
                 step="1"
                 value={amount}
@@ -642,7 +642,7 @@ function CreateInvoiceModal({ open, onOpenChange, onSuccess }: BillingModalProps
               />
             </div>
             {amount && !fieldErrors.amount && (
-              <p className="text-xs text-zinc-500">
+              <p className="text-xs text-slate-500">
                 = {formatCents(Number(amount) || 0)}
               </p>
             )}
@@ -656,7 +656,7 @@ function CreateInvoiceModal({ open, onOpenChange, onSuccess }: BillingModalProps
             <Label htmlFor="invoice-description">{t('admin.subscriptions.description')}</Label>
             <textarea
               id="invoice-description"
-              placeholder="e.g., Monthly consulting fee for February 2026"
+              placeholder={t('admin.subscriptions.invoiceDescriptionPlaceholder')}
               value={description}
               onChange={(e) => {
                 setDescription(e.target.value);
@@ -664,7 +664,7 @@ function CreateInvoiceModal({ open, onOpenChange, onSuccess }: BillingModalProps
               }}
               rows={3}
               className={cn(
-                'flex w-full rounded-lg border border-zinc-200 bg-white px-3 py-2 text-sm text-zinc-900 placeholder:text-zinc-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-600 focus-visible:ring-offset-2 focus-visible:ring-offset-white disabled:cursor-not-allowed disabled:opacity-50 transition-all duration-200 resize-none',
+                'flex w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 placeholder:text-slate-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-600 focus-visible:ring-offset-2 focus-visible:ring-offset-white disabled:cursor-not-allowed disabled:opacity-50 transition-all duration-200 resize-none',
                 fieldErrors.description && 'border-red-500/50 focus-visible:ring-red-500'
               )}
             />
@@ -682,7 +682,7 @@ function CreateInvoiceModal({ open, onOpenChange, onSuccess }: BillingModalProps
             variant="ghost"
             onClick={() => handleOpenChange(false)}
             disabled={isSubmitting}
-            className="text-zinc-500 hover:text-zinc-900"
+            className="text-slate-500 hover:text-slate-900"
           >
             {t('common.cancel')}
           </Button>
@@ -728,9 +728,9 @@ function ProcessRefundModal({ open, onOpenChange, onSuccess }: BillingModalProps
 
   const validate = (): boolean => {
     const errors: Record<string, string | null> = {
-      paymentIntentId: validatePaymentIntentId(paymentIntentId),
-      amount: validateAmount(amount, false),
-      reason: !reason ? 'Reason is required' : null,
+      paymentIntentId: validatePaymentIntentId(paymentIntentId, t),
+      amount: validateAmount(amount, t, false),
+      reason: !reason ? t('admin.subscriptions.validation.reasonRequired') : null,
     };
     setFieldErrors(errors);
     return !Object.values(errors).some(Boolean);
@@ -748,8 +748,8 @@ function ProcessRefundModal({ open, onOpenChange, onSuccess }: BillingModalProps
         ...(amount.trim() ? { amount: Number(amount) } : {}),
         reason,
       });
-      toast.success('Refund processed', {
-        description: `${result.message}${amount.trim() ? ` — ${formatCents(Number(amount))}` : ' — Full refund'}`,
+      toast.success(t('admin.subscriptions.refundProcessed'), {
+        description: `${result.message}${amount.trim() ? ` — ${formatCents(Number(amount))}` : ` — ${t('admin.subscriptions.fullRefund')}`}`,
       });
       handleOpenChange(false);
       onSuccess();
@@ -757,7 +757,7 @@ function ProcessRefundModal({ open, onOpenChange, onSuccess }: BillingModalProps
       if (err instanceof AdminApiError) {
         setError(err.message);
       } else {
-        setError('An unexpected error occurred');
+        setError(t('admin.subscriptions.unexpectedError'));
       }
     } finally {
       setIsSubmitting(false);
@@ -769,8 +769,8 @@ function ProcessRefundModal({ open, onOpenChange, onSuccess }: BillingModalProps
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-amber-50">
-              <RefreshCw className="h-4 w-4 text-amber-600" />
+            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-violet-50">
+              <RefreshCw className="h-4 w-4 text-violet-600" />
             </div>
             {t('admin.subscriptions.processRefund')}
           </DialogTitle>
@@ -785,7 +785,7 @@ function ProcessRefundModal({ open, onOpenChange, onSuccess }: BillingModalProps
             <Label htmlFor="refund-payment-intent-id">{t('admin.subscriptions.paymentIntentId')}</Label>
             <Input
               id="refund-payment-intent-id"
-              placeholder="pi_xxxxxxxxxx"
+              placeholder={t('admin.subscriptions.paymentIntentIdPlaceholder')}
               value={paymentIntentId}
               onChange={(e) => {
                 setPaymentIntentId(e.target.value);
@@ -802,14 +802,14 @@ function ProcessRefundModal({ open, onOpenChange, onSuccess }: BillingModalProps
           <div className="space-y-2">
             <Label htmlFor="refund-amount">
               {t('admin.subscriptions.amountCents')}
-              <span className="ml-1 text-xs font-normal text-zinc-500">— {t('admin.subscriptions.fullRefund')}</span>
+              <span className="ml-1 text-xs font-normal text-slate-500">— {t('admin.subscriptions.fullRefund')}</span>
             </Label>
             <div className="relative">
-              <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-sm text-zinc-500">&euro;</span>
+              <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-sm text-slate-500">&euro;</span>
               <Input
                 id="refund-amount"
                 type="number"
-                placeholder="Full refund"
+                placeholder={t('admin.subscriptions.fullRefund')}
                 min="1"
                 step="1"
                 value={amount}
@@ -821,7 +821,7 @@ function ProcessRefundModal({ open, onOpenChange, onSuccess }: BillingModalProps
               />
             </div>
             {amount && !fieldErrors.amount && (
-              <p className="text-xs text-zinc-500">
+              <p className="text-xs text-slate-500">
                 = {formatCents(Number(amount) || 0)}
               </p>
             )}
@@ -841,7 +841,7 @@ function ProcessRefundModal({ open, onOpenChange, onSuccess }: BillingModalProps
               }}
             >
               <SelectTrigger className={cn(fieldErrors.reason && 'border-red-500/50')}>
-                <SelectValue placeholder="Select a reason..." />
+                <SelectValue placeholder={t('admin.subscriptions.selectReasonPlaceholder')} />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="duplicate">{t('admin.subscriptions.duplicate')}</SelectItem>
@@ -863,14 +863,14 @@ function ProcessRefundModal({ open, onOpenChange, onSuccess }: BillingModalProps
             variant="ghost"
             onClick={() => handleOpenChange(false)}
             disabled={isSubmitting}
-            className="text-zinc-500 hover:text-zinc-900"
+            className="text-slate-500 hover:text-slate-900"
           >
             {t('common.cancel')}
           </Button>
           <Button
             onClick={handleSubmit}
             disabled={isSubmitting}
-            className="gap-2 bg-amber-600 hover:bg-amber-700"
+            className="gap-2 bg-violet-600 hover:bg-violet-700"
           >
             {isSubmitting && <Loader2 className="h-4 w-4 animate-spin" />}
             {t('admin.subscriptions.processRefund')}
@@ -909,9 +909,9 @@ function ApplyCreditModal({ open, onOpenChange, onSuccess }: BillingModalProps) 
 
   const validate = (): boolean => {
     const errors: Record<string, string | null> = {
-      customerId: validateCustomerId(customerId),
-      amount: validateAmount(amount),
-      description: validateDescription(description),
+      customerId: validateCustomerId(customerId, t),
+      amount: validateAmount(amount, t),
+      description: validateDescription(description, t),
     };
     setFieldErrors(errors);
     return !Object.values(errors).some(Boolean);
@@ -928,7 +928,7 @@ function ApplyCreditModal({ open, onOpenChange, onSuccess }: BillingModalProps) 
         amount: Number(amount),
         description: description.trim(),
       });
-      toast.success('Credit applied', {
+      toast.success(t('admin.subscriptions.creditApplied'), {
         description: `${result.message} — ${formatCents(Number(amount))}`,
       });
       handleOpenChange(false);
@@ -937,7 +937,7 @@ function ApplyCreditModal({ open, onOpenChange, onSuccess }: BillingModalProps) 
       if (err instanceof AdminApiError) {
         setError(err.message);
       } else {
-        setError('An unexpected error occurred');
+        setError(t('admin.subscriptions.unexpectedError'));
       }
     } finally {
       setIsSubmitting(false);
@@ -965,7 +965,7 @@ function ApplyCreditModal({ open, onOpenChange, onSuccess }: BillingModalProps) 
             <Label htmlFor="credit-customer-id">{t('admin.subscriptions.customerId')}</Label>
             <Input
               id="credit-customer-id"
-              placeholder="cus_xxxxxxxxxx"
+              placeholder={t('admin.subscriptions.customerIdPlaceholder')}
               value={customerId}
               onChange={(e) => {
                 setCustomerId(e.target.value);
@@ -982,11 +982,11 @@ function ApplyCreditModal({ open, onOpenChange, onSuccess }: BillingModalProps) 
           <div className="space-y-2">
             <Label htmlFor="credit-amount">{t('admin.subscriptions.amountCents')}</Label>
             <div className="relative">
-              <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-sm text-zinc-500">&euro;</span>
+              <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-sm text-slate-500">&euro;</span>
               <Input
                 id="credit-amount"
                 type="number"
-                placeholder="5000"
+                placeholder={t('admin.subscriptions.amountPlaceholder')}
                 min="1"
                 step="1"
                 value={amount}
@@ -998,7 +998,7 @@ function ApplyCreditModal({ open, onOpenChange, onSuccess }: BillingModalProps) 
               />
             </div>
             {amount && !fieldErrors.amount && (
-              <p className="text-xs text-zinc-500">
+              <p className="text-xs text-slate-500">
                 = {formatCents(Number(amount) || 0)}
               </p>
             )}
@@ -1012,7 +1012,7 @@ function ApplyCreditModal({ open, onOpenChange, onSuccess }: BillingModalProps) 
             <Label htmlFor="credit-description">{t('admin.subscriptions.description')}</Label>
             <textarea
               id="credit-description"
-              placeholder="e.g., Service credit for downtime on Jan 15, 2026"
+              placeholder={t('admin.subscriptions.creditDescriptionPlaceholder')}
               value={description}
               onChange={(e) => {
                 setDescription(e.target.value);
@@ -1020,7 +1020,7 @@ function ApplyCreditModal({ open, onOpenChange, onSuccess }: BillingModalProps) 
               }}
               rows={3}
               className={cn(
-                'flex w-full rounded-lg border border-zinc-200 bg-white px-3 py-2 text-sm text-zinc-900 placeholder:text-zinc-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-600 focus-visible:ring-offset-2 focus-visible:ring-offset-white disabled:cursor-not-allowed disabled:opacity-50 transition-all duration-200 resize-none',
+                'flex w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 placeholder:text-slate-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-600 focus-visible:ring-offset-2 focus-visible:ring-offset-white disabled:cursor-not-allowed disabled:opacity-50 transition-all duration-200 resize-none',
                 fieldErrors.description && 'border-red-500/50 focus-visible:ring-red-500'
               )}
             />
@@ -1038,7 +1038,7 @@ function ApplyCreditModal({ open, onOpenChange, onSuccess }: BillingModalProps) 
             variant="ghost"
             onClick={() => handleOpenChange(false)}
             disabled={isSubmitting}
-            className="text-zinc-500 hover:text-zinc-900"
+            className="text-slate-500 hover:text-slate-900"
           >
             {t('common.cancel')}
           </Button>
@@ -1089,38 +1089,38 @@ function SubscriptionsPageSkeleton() {
       {/* Header skeleton */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className="h-10 w-10 animate-pulse rounded-xl bg-zinc-100" />
+          <div className="h-10 w-10 animate-pulse rounded-xl bg-slate-100" />
           <div className="space-y-1.5">
-            <div className="h-6 w-32 animate-pulse rounded bg-zinc-100" />
-            <div className="h-4 w-48 animate-pulse rounded bg-zinc-100" />
+            <div className="h-6 w-32 animate-pulse rounded bg-slate-100" />
+            <div className="h-4 w-48 animate-pulse rounded bg-slate-100" />
           </div>
         </div>
-        <div className="h-9 w-24 animate-pulse rounded-lg bg-zinc-100" />
+        <div className="h-9 w-24 animate-pulse rounded-lg bg-slate-100" />
       </div>
 
       {/* Metrics skeleton */}
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {[...Array(4)].map((_, i) => (
-          <div key={i} className="animate-pulse rounded-xl border border-zinc-200 bg-zinc-50 p-5">
+          <div key={i} className="animate-pulse rounded-xl border border-slate-200 bg-slate-50 p-5">
             <div className="mb-3 flex items-center justify-between">
-              <div className="h-10 w-10 rounded-xl bg-zinc-100" />
-              <div className="h-6 w-16 rounded-full bg-zinc-100" />
+              <div className="h-10 w-10 rounded-xl bg-slate-100" />
+              <div className="h-6 w-16 rounded-full bg-slate-100" />
             </div>
-            <div className="h-8 w-24 rounded bg-zinc-100" />
-            <div className="mt-2 h-4 w-32 rounded bg-zinc-100" />
+            <div className="h-8 w-24 rounded bg-slate-100" />
+            <div className="mt-2 h-4 w-32 rounded bg-slate-100" />
           </div>
         ))}
       </div>
 
       {/* Tier breakdown skeleton */}
-      <div className="animate-pulse rounded-xl border border-zinc-200 bg-zinc-50 p-6">
-        <div className="mb-4 h-6 w-40 rounded bg-zinc-100" />
+      <div className="animate-pulse rounded-xl border border-slate-200 bg-slate-50 p-6">
+        <div className="mb-4 h-6 w-40 rounded bg-slate-100" />
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {[...Array(4)].map((_, i) => (
-            <div key={i} className="rounded-xl border border-zinc-200 bg-zinc-50 p-4">
-              <div className="mb-2 h-4 w-16 rounded bg-zinc-100" />
-              <div className="h-8 w-12 rounded bg-zinc-100" />
-              <div className="mt-3 h-1.5 rounded-full bg-zinc-100" />
+            <div key={i} className="rounded-xl border border-slate-200 bg-slate-50 p-4">
+              <div className="mb-2 h-4 w-16 rounded bg-slate-100" />
+              <div className="h-8 w-12 rounded bg-slate-100" />
+              <div className="mt-3 h-1.5 rounded-full bg-slate-100" />
             </div>
           ))}
         </div>

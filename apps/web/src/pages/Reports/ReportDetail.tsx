@@ -119,7 +119,7 @@ export default function ReportDetailPage() {
             variant="ghost"
             size="sm"
             onClick={handleBack}
-            className="gap-1.5 rounded-lg border border-zinc-200 bg-white text-zinc-700 hover:bg-zinc-50"
+            className="gap-1.5 rounded-lg border border-slate-200 bg-white text-slate-700 hover:bg-slate-50"
           >
             <ArrowLeft className="h-4 w-4" />
             <span className="hidden sm:inline">{t('common.back')}</span>
@@ -129,10 +129,10 @@ export default function ReportDetailPage() {
             <FileText className="h-5 w-5 text-blue-600" />
           </div>
           <div>
-            <h1 className="text-xl font-bold text-zinc-900 sm:text-2xl">
+            <h1 className="text-xl font-bold text-slate-900 sm:text-2xl">
               {monthName} {report.year}
             </h1>
-            <p className="text-sm text-zinc-500">
+            <p className="text-sm text-slate-500">
               {report.userName || t('reports.monthlyReport')}
             </p>
           </div>
@@ -158,7 +158,7 @@ export default function ReportDetailPage() {
       </div>
 
       {/* Tabs */}
-      <div className="rounded-xl border border-zinc-200 bg-white p-1.5">
+      <div className="rounded-xl border border-slate-200 bg-white p-1.5">
         <div className="flex gap-1 overflow-x-auto scrollbar-hide">
           {tabItems.map((tab) => {
             const Icon = tab.icon;
@@ -179,8 +179,8 @@ export default function ReportDetailPage() {
                   isActive
                     ? 'bg-blue-50 text-blue-700 ring-1 ring-blue-200'
                     : isDisabled
-                    ? 'cursor-not-allowed text-zinc-300'
-                    : 'text-zinc-500 hover:bg-zinc-50 hover:text-zinc-900'
+                    ? 'cursor-not-allowed text-slate-300'
+                    : 'text-slate-500 hover:bg-slate-50 hover:text-slate-900'
                 )}
               >
                 <Icon className="h-4 w-4" />
@@ -223,25 +223,25 @@ function SummaryTab({ report }: { report: MonthlyReport }) {
       {/* Key metrics */}
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {/* Total Hours */}
-        <div className="rounded-xl border border-zinc-200 bg-white p-4">
-          <div className="mb-2 flex items-center gap-2 text-zinc-500">
+        <div className="rounded-xl border border-slate-200 bg-white p-4">
+          <div className="mb-2 flex items-center gap-2 text-slate-500">
             <Clock className="h-4 w-4" />
             <span className="text-xs font-medium uppercase tracking-wider">{t('reports.totalHours')}</span>
           </div>
-          <p className="text-3xl font-bold text-zinc-900">{formatHours(report.totalHours)}</p>
-          <p className="mt-1 text-xs text-zinc-500">
+          <p className="text-3xl font-bold text-slate-900">{formatHours(report.totalHours)}</p>
+          <p className="mt-1 text-xs text-slate-500">
             {t('reports.averagePerDay', { hours: (report.totalHours / report.totalDays).toFixed(1) })}
           </p>
         </div>
 
         {/* Days Worked */}
-        <div className="rounded-xl border border-zinc-200 bg-white p-4">
-          <div className="mb-2 flex items-center gap-2 text-zinc-500">
+        <div className="rounded-xl border border-slate-200 bg-white p-4">
+          <div className="mb-2 flex items-center gap-2 text-slate-500">
             <Calendar className="h-4 w-4" />
             <span className="text-xs font-medium uppercase tracking-wider">{t('reports.daysWorked')}</span>
           </div>
-          <p className="text-3xl font-bold text-zinc-900">{report.totalDays}</p>
-          <p className="mt-1 text-xs text-zinc-500">
+          <p className="text-3xl font-bold text-slate-900">{report.totalDays}</p>
+          <p className="mt-1 text-xs text-slate-500">
             {t('reports.inMonth', { month: monthName, year: report.year })}
           </p>
         </div>
@@ -249,18 +249,18 @@ function SummaryTab({ report }: { report: MonthlyReport }) {
         {/* Overtime */}
         <div
           className={cn(
-            'rounded-xl border border-zinc-200 bg-white p-4',
+            'rounded-xl border border-slate-200 bg-white p-4',
             hasOvertime && 'border-amber-200 bg-amber-50'
           )}
         >
-          <div className="mb-2 flex items-center gap-2 text-zinc-500">
+          <div className="mb-2 flex items-center gap-2 text-slate-500">
             <TrendingUp className={cn('h-4 w-4', hasOvertime && 'text-amber-600')} />
             <span className="text-xs font-medium uppercase tracking-wider">{t('reports.overtimeLabel')}</span>
           </div>
-          <p className={cn('text-3xl font-bold', hasOvertime ? 'text-amber-600' : 'text-zinc-900')}>
+          <p className={cn('text-3xl font-bold', hasOvertime ? 'text-amber-600' : 'text-slate-900')}>
             {formatHours(report.overtimeHours)}
           </p>
-          <p className="mt-1 text-xs text-zinc-500">
+          <p className="mt-1 text-xs text-slate-500">
             {hasOvertime
               ? t('reports.ofTotal', { percent: ((report.overtimeHours / report.totalHours) * 100).toFixed(0) })
               : t('reports.noOvertimeRecorded')}
@@ -268,14 +268,14 @@ function SummaryTab({ report }: { report: MonthlyReport }) {
         </div>
 
         {/* Status */}
-        <div className="rounded-xl border border-zinc-200 bg-white p-4">
-          <div className="mb-2 flex items-center gap-2 text-zinc-500">
+        <div className="rounded-xl border border-slate-200 bg-white p-4">
+          <div className="mb-2 flex items-center gap-2 text-slate-500">
             <FileText className="h-4 w-4" />
             <span className="text-xs font-medium uppercase tracking-wider">{t('reports.statusLabel')}</span>
           </div>
           <p className="text-lg font-semibold capitalize text-emerald-600">{report.status}</p>
           {report.generatedAt && (
-            <p className="mt-1 text-xs text-zinc-500">
+            <p className="mt-1 text-xs text-slate-500">
               {t('reports.generated', { date: new Date(report.generatedAt).toLocaleDateString('es-ES') })}
             </p>
           )}
@@ -283,38 +283,38 @@ function SummaryTab({ report }: { report: MonthlyReport }) {
       </div>
 
       {/* Period info */}
-      <div className="rounded-xl border border-zinc-200 bg-white p-4">
-        <h4 className="mb-3 text-sm font-medium text-zinc-700">{t('reports.reportPeriod')}</h4>
+      <div className="rounded-xl border border-slate-200 bg-white p-4">
+        <h4 className="mb-3 text-sm font-medium text-slate-700">{t('reports.reportPeriod')}</h4>
         <div className="grid gap-4 sm:grid-cols-2">
-          <div className="flex items-center gap-3 rounded-lg border border-zinc-100 bg-zinc-50 p-3">
-            <Calendar className="h-5 w-5 text-zinc-400" />
+          <div className="flex items-center gap-3 rounded-lg border border-slate-100 bg-slate-50 p-3">
+            <Calendar className="h-5 w-5 text-slate-400" />
             <div>
-              <p className="text-sm font-medium text-zinc-900">{monthName} 1, {report.year}</p>
-              <p className="text-xs text-zinc-500">{t('reports.startPeriod')}</p>
+              <p className="text-sm font-medium text-slate-900">{monthName} 1, {report.year}</p>
+              <p className="text-xs text-slate-500">{t('reports.startPeriod')}</p>
             </div>
           </div>
-          <div className="flex items-center gap-3 rounded-lg border border-zinc-100 bg-zinc-50 p-3">
-            <Calendar className="h-5 w-5 text-zinc-400" />
+          <div className="flex items-center gap-3 rounded-lg border border-slate-100 bg-slate-50 p-3">
+            <Calendar className="h-5 w-5 text-slate-400" />
             <div>
-              <p className="text-sm font-medium text-zinc-900">
+              <p className="text-sm font-medium text-slate-900">
                 {monthName} {new Date(report.year, report.month, 0).getDate()}, {report.year}
               </p>
-              <p className="text-xs text-zinc-500">{t('reports.endPeriod')}</p>
+              <p className="text-xs text-slate-500">{t('reports.endPeriod')}</p>
             </div>
           </div>
         </div>
       </div>
 
       {/* Weekly breakdown */}
-      <div className="rounded-xl border border-zinc-200 bg-white p-4">
-        <h4 className="mb-3 text-sm font-medium text-zinc-700">{t('reports.weeklyAverage')}</h4>
+      <div className="rounded-xl border border-slate-200 bg-white p-4">
+        <h4 className="mb-3 text-sm font-medium text-slate-700">{t('reports.weeklyAverage')}</h4>
         <div className="flex items-end gap-2">
-          <p className="text-4xl font-bold text-zinc-900">
+          <p className="text-4xl font-bold text-slate-900">
             {weeklyAvg.toFixed(1)}h
           </p>
-          <p className="mb-1 text-sm text-zinc-500">{t('reports.perWeek')}</p>
+          <p className="mb-1 text-sm text-slate-500">{t('reports.perWeek')}</p>
         </div>
-        <div className="mt-3 h-2 overflow-hidden rounded-full bg-zinc-100">
+        <div className="mt-3 h-2 overflow-hidden rounded-full bg-slate-100">
           <div
             style={{ width: `${weeklyBarWidth}%` }}
             className={cn(
@@ -323,7 +323,7 @@ function SummaryTab({ report }: { report: MonthlyReport }) {
             )}
           />
         </div>
-        <p className="mt-2 text-xs text-zinc-500">
+        <p className="mt-2 text-xs text-slate-500">
           {weeklyAvg > 40
             ? t('reports.exceeds40h')
             : t('reports.within40h')}
@@ -338,25 +338,25 @@ function LoadingSkeleton() {
     <div className="space-y-6">
       {/* Header skeleton */}
       <div className="flex items-center gap-3">
-        <div className="h-8 w-8 animate-pulse rounded-lg bg-zinc-100" />
-        <div className="h-10 w-10 animate-pulse rounded-xl bg-zinc-100" />
+        <div className="h-8 w-8 animate-pulse rounded-lg bg-slate-100" />
+        <div className="h-10 w-10 animate-pulse rounded-xl bg-slate-100" />
         <div className="space-y-1.5">
-          <div className="h-6 w-32 animate-pulse rounded bg-zinc-100" />
-          <div className="h-4 w-24 animate-pulse rounded bg-zinc-100" />
+          <div className="h-6 w-32 animate-pulse rounded bg-slate-100" />
+          <div className="h-4 w-24 animate-pulse rounded bg-slate-100" />
         </div>
       </div>
 
       {/* Tabs skeleton */}
-      <div className="flex gap-1 rounded-xl border border-zinc-200 bg-white p-1.5">
+      <div className="flex gap-1 rounded-xl border border-slate-200 bg-white p-1.5">
         {[...Array(4)].map((_, i) => (
-          <div key={i} className="h-10 flex-1 animate-pulse rounded-lg bg-zinc-100" />
+          <div key={i} className="h-10 flex-1 animate-pulse rounded-lg bg-slate-100" />
         ))}
       </div>
 
       {/* Content skeleton */}
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {[...Array(4)].map((_, i) => (
-          <div key={i} className="h-32 animate-pulse rounded-xl border border-zinc-200 bg-zinc-50" />
+          <div key={i} className="h-32 animate-pulse rounded-xl border border-slate-200 bg-slate-50" />
         ))}
       </div>
     </div>

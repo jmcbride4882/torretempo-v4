@@ -67,7 +67,7 @@ export default function BillingPage() {
 
   const handleCreateInvoice = async () => {
     if (!invoiceForm.customer_id || !invoiceForm.amount || !invoiceForm.description) {
-      toast.error('All fields are required');
+      toast.error(t('admin.billing.allFieldsRequired'));
       return;
     }
 
@@ -78,7 +78,7 @@ export default function BillingPage() {
         amount: parseFloat(invoiceForm.amount),
         description: invoiceForm.description,
       });
-      toast.success('Invoice created successfully');
+      toast.success(t('admin.billing.invoiceCreated'));
       setRecentActions(prev => [{
         id: crypto.randomUUID(),
         type: 'invoice',
@@ -90,7 +90,7 @@ export default function BillingPage() {
       setInvoiceForm({ customer_id: '', amount: '', description: '' });
       setActiveModal(null);
     } catch (error) {
-      toast.error('Failed to create invoice');
+      toast.error(t('admin.billing.failedToCreateInvoice'));
       setRecentActions(prev => [{
         id: crypto.randomUUID(),
         type: 'invoice',
@@ -106,7 +106,7 @@ export default function BillingPage() {
 
   const handleProcessRefund = async () => {
     if (!refundForm.payment_intent_id || !refundForm.reason) {
-      toast.error('Payment Intent ID and reason are required');
+      toast.error(t('admin.billing.paymentIntentAndReasonRequired'));
       return;
     }
 
@@ -117,19 +117,19 @@ export default function BillingPage() {
         amount: refundForm.amount ? parseFloat(refundForm.amount) : undefined,
         reason: refundForm.reason,
       });
-      toast.success('Refund processed successfully');
+      toast.success(t('admin.billing.refundProcessed'));
       setRecentActions(prev => [{
         id: crypto.randomUUID(),
         type: 'refund',
-        amount: refundForm.amount || 'full',
-        description: refundForm.reason || 'No reason provided',
+        amount: refundForm.amount || t('admin.billing.fullRefundLabel'),
+        description: refundForm.reason || t('admin.billing.noReasonProvided'),
         timestamp: new Date(),
         status: 'success',
       }, ...prev]);
       setRefundForm({ payment_intent_id: '', amount: '', reason: '' });
       setActiveModal(null);
     } catch (error) {
-      toast.error('Failed to process refund');
+      toast.error(t('admin.billing.failedToProcessRefund'));
     } finally {
       setIsSubmitting(false);
     }
@@ -137,7 +137,7 @@ export default function BillingPage() {
 
   const handleApplyCredit = async () => {
     if (!creditForm.customer_id || !creditForm.amount || !creditForm.description) {
-      toast.error('All fields are required');
+      toast.error(t('admin.billing.allFieldsRequired'));
       return;
     }
 
@@ -148,7 +148,7 @@ export default function BillingPage() {
         amount: parseFloat(creditForm.amount),
         description: creditForm.description,
       });
-      toast.success('Credit applied successfully');
+      toast.success(t('admin.billing.creditApplied'));
       setRecentActions(prev => [{
         id: crypto.randomUUID(),
         type: 'credit',
@@ -160,7 +160,7 @@ export default function BillingPage() {
       setCreditForm({ customer_id: '', amount: '', description: '' });
       setActiveModal(null);
     } catch (error) {
-      toast.error('Failed to apply credit');
+      toast.error(t('admin.billing.failedToApplyCredit'));
     } finally {
       setIsSubmitting(false);
     }
@@ -168,24 +168,24 @@ export default function BillingPage() {
 
   const actionCards = [
     {
-      title: 'Create Invoice',
-      description: 'Generate a manual invoice for a customer',
+      title: t('admin.billing.createInvoice'),
+      description: t('admin.billing.createInvoiceDescription'),
       icon: Receipt,
       bgColor: 'bg-blue-50',
       textColor: 'text-blue-600',
       onClick: () => setActiveModal('invoice'),
     },
     {
-      title: 'Process Refund',
-      description: 'Issue a partial or full refund',
+      title: t('admin.billing.processRefund'),
+      description: t('admin.billing.processRefundDescription'),
       icon: ArrowDownLeft,
-      bgColor: 'bg-amber-50',
-      textColor: 'text-amber-600',
+      bgColor: 'bg-violet-50',
+      textColor: 'text-violet-600',
       onClick: () => setActiveModal('refund'),
     },
     {
-      title: 'Apply Credit',
-      description: 'Add credit to a customer account',
+      title: t('admin.billing.applyCredit'),
+      description: t('admin.billing.applyCreditDescription'),
       icon: DollarSign,
       bgColor: 'bg-emerald-50',
       textColor: 'text-emerald-600',
@@ -197,12 +197,12 @@ export default function BillingPage() {
     <div className="space-y-6">
       {/* Page header */}
       <div className="flex items-center gap-3">
-        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-amber-50 shadow-sm">
-          <CreditCard className="h-5 w-5 text-amber-600" />
+        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-violet-50 shadow-sm">
+          <CreditCard className="h-5 w-5 text-violet-600" />
         </div>
         <div>
-          <h1 className="text-xl font-bold text-zinc-900 sm:text-2xl">{t('admin.billing.title')}</h1>
-          <p className="text-sm text-zinc-500">Manual billing actions for platform admins</p>
+          <h1 className="text-xl font-bold text-slate-900 sm:text-2xl">{t('admin.billing.title')}</h1>
+          <p className="text-sm text-slate-500">{t('admin.billing.subtitle')}</p>
         </div>
       </div>
 
@@ -212,52 +212,52 @@ export default function BillingPage() {
           <button
             key={card.title}
             onClick={card.onClick}
-            className="flex flex-col items-start gap-3 rounded-xl border border-zinc-200 bg-white p-6 text-left shadow-sm transition-colors hover:border-zinc-300 hover:bg-zinc-50"
+            className="flex flex-col items-start gap-3 rounded-xl border border-slate-200 bg-white p-6 text-left shadow-sm transition-colors hover:border-slate-300 hover:bg-slate-50"
           >
             <div className={cn('flex h-10 w-10 items-center justify-center rounded-lg', card.bgColor)}>
               <card.icon className={cn('h-5 w-5', card.textColor)} />
             </div>
             <div>
-              <h3 className="font-semibold text-zinc-900">{card.title}</h3>
-              <p className="text-sm text-zinc-500">{card.description}</p>
+              <h3 className="font-semibold text-slate-900">{card.title}</h3>
+              <p className="text-sm text-slate-500">{card.description}</p>
             </div>
           </button>
         ))}
       </div>
 
       {/* Recent Actions */}
-      <div className="rounded-xl border border-zinc-200 bg-white p-6 shadow-sm">
-        <h2 className="mb-4 text-lg font-semibold text-zinc-900">Recent Actions</h2>
+      <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
+        <h2 className="mb-4 text-lg font-semibold text-slate-900">{t('admin.billing.recentActions')}</h2>
         {recentActions.length === 0 ? (
-          <p className="text-sm text-zinc-500">No billing actions performed this session</p>
+          <p className="text-sm text-slate-500">{t('admin.billing.noActionsThisSession')}</p>
         ) : (
           <div className="space-y-3">
             {recentActions.map((action) => (
               <div
                 key={action.id}
-                className="flex items-center justify-between rounded-lg border border-zinc-200 bg-zinc-50 px-4 py-3"
+                className="flex items-center justify-between rounded-lg border border-slate-200 bg-slate-50 px-4 py-3"
               >
                 <div className="flex items-center gap-3">
                   <Badge
                     variant="outline"
                     className={cn(
                       action.type === 'invoice' && 'border-blue-200 text-blue-600',
-                      action.type === 'refund' && 'border-amber-200 text-amber-600',
+                      action.type === 'refund' && 'border-violet-200 text-violet-600',
                       action.type === 'credit' && 'border-emerald-200 text-emerald-600'
                     )}
                   >
-                    {action.type}
+                    {t(`admin.billing.actionType_${action.type}`)}
                   </Badge>
-                  <span className="text-sm text-zinc-700">{action.description}</span>
+                  <span className="text-sm text-slate-700">{action.description}</span>
                 </div>
                 <div className="flex items-center gap-3">
-                  <span className="text-sm font-medium text-zinc-900">
+                  <span className="text-sm font-medium text-slate-900">
                     {action.type === 'refund' ? '-' : ''}{t('admin.billing.revenue', { defaultValue: '' })}{action.amount}
                   </span>
                   <Badge variant={action.status === 'success' ? 'default' : 'destructive'}>
-                    {action.status}
+                    {t(`admin.billing.actionStatus_${action.status}`)}
                   </Badge>
-                  <span className="text-xs text-zinc-500">
+                  <span className="text-xs text-slate-500">
                     {action.timestamp.toLocaleTimeString()}
                   </span>
                 </div>
@@ -271,32 +271,32 @@ export default function BillingPage() {
       <Dialog open={activeModal === 'invoice'} onOpenChange={() => setActiveModal(null)}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Create Invoice</DialogTitle>
-            <DialogDescription>Generate a manual invoice for a Stripe customer</DialogDescription>
+            <DialogTitle>{t('admin.billing.createInvoice')}</DialogTitle>
+            <DialogDescription>{t('admin.billing.createInvoiceModalDescription')}</DialogDescription>
           </DialogHeader>
           <div className="space-y-4 py-4">
             <div>
-              <label className="mb-1 block text-sm font-medium text-zinc-700">Stripe Customer ID</label>
+              <label className="mb-1 block text-sm font-medium text-slate-700">{t('admin.billing.stripeCustomerId')}</label>
               <Input
-                placeholder="cus_..."
+                placeholder={t('admin.billing.stripeCustomerIdPlaceholder')}
                 value={invoiceForm.customer_id}
                 onChange={(e) => setInvoiceForm(prev => ({ ...prev, customer_id: e.target.value }))}
               />
             </div>
             <div>
-              <label className="mb-1 block text-sm font-medium text-zinc-700">Amount (EUR)</label>
+              <label className="mb-1 block text-sm font-medium text-slate-700">{t('admin.billing.amountEur')}</label>
               <Input
                 type="number"
                 step="0.01"
-                placeholder="0.00"
+                placeholder={t('admin.billing.amountPlaceholder')}
                 value={invoiceForm.amount}
                 onChange={(e) => setInvoiceForm(prev => ({ ...prev, amount: e.target.value }))}
               />
             </div>
             <div>
-              <label className="mb-1 block text-sm font-medium text-zinc-700">Description</label>
+              <label className="mb-1 block text-sm font-medium text-slate-700">{t('admin.billing.description')}</label>
               <Input
-                placeholder="Invoice description..."
+                placeholder={t('admin.billing.invoiceDescriptionPlaceholder')}
                 value={invoiceForm.description}
                 onChange={(e) => setInvoiceForm(prev => ({ ...prev, description: e.target.value }))}
               />
@@ -306,7 +306,7 @@ export default function BillingPage() {
             <Button variant="outline" onClick={() => setActiveModal(null)}>{t('common.cancel')}</Button>
             <Button onClick={handleCreateInvoice} disabled={isSubmitting}>
               {isSubmitting ? <RefreshCw className="mr-2 h-4 w-4 animate-spin" /> : <Plus className="mr-2 h-4 w-4" />}
-              Create Invoice
+              {t('admin.billing.createInvoice')}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -316,30 +316,30 @@ export default function BillingPage() {
       <Dialog open={activeModal === 'refund'} onOpenChange={() => setActiveModal(null)}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Process Refund</DialogTitle>
-            <DialogDescription>Issue a partial or full refund for a payment</DialogDescription>
+            <DialogTitle>{t('admin.billing.processRefund')}</DialogTitle>
+            <DialogDescription>{t('admin.billing.processRefundModalDescription')}</DialogDescription>
           </DialogHeader>
           <div className="space-y-4 py-4">
             <div>
-              <label className="mb-1 block text-sm font-medium text-zinc-700">Payment Intent ID</label>
+              <label className="mb-1 block text-sm font-medium text-slate-700">{t('admin.billing.paymentIntentId')}</label>
               <Input
-                placeholder="pi_..."
+                placeholder={t('admin.billing.paymentIntentIdPlaceholder')}
                 value={refundForm.payment_intent_id}
                 onChange={(e) => setRefundForm(prev => ({ ...prev, payment_intent_id: e.target.value }))}
               />
             </div>
             <div>
-              <label className="mb-1 block text-sm font-medium text-zinc-700">Amount (EUR, leave empty for full refund)</label>
+              <label className="mb-1 block text-sm font-medium text-slate-700">{t('admin.billing.amountEurOptional')}</label>
               <Input
                 type="number"
                 step="0.01"
-                placeholder="Full refund"
+                placeholder={t('admin.billing.fullRefund')}
                 value={refundForm.amount}
                 onChange={(e) => setRefundForm(prev => ({ ...prev, amount: e.target.value }))}
               />
             </div>
             <div>
-              <label className="mb-1 block text-sm font-medium text-zinc-700">Reason</label>
+              <label className="mb-1 block text-sm font-medium text-slate-700">{t('admin.billing.reason')}</label>
               <Select
                 value={refundForm.reason}
                 onValueChange={(value: 'duplicate' | 'fraudulent' | 'requested_by_customer') =>
@@ -347,12 +347,12 @@ export default function BillingPage() {
                 }
               >
                 <SelectTrigger>
-                  <SelectValue placeholder="Select a reason..." />
+                  <SelectValue placeholder={t('admin.billing.selectReasonPlaceholder')} />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="requested_by_customer">Requested by customer</SelectItem>
-                  <SelectItem value="duplicate">Duplicate charge</SelectItem>
-                  <SelectItem value="fraudulent">Fraudulent</SelectItem>
+                  <SelectItem value="requested_by_customer">{t('admin.billing.requestedByCustomer')}</SelectItem>
+                  <SelectItem value="duplicate">{t('admin.billing.duplicateCharge')}</SelectItem>
+                  <SelectItem value="fraudulent">{t('admin.billing.fraudulent')}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -361,7 +361,7 @@ export default function BillingPage() {
             <Button variant="outline" onClick={() => setActiveModal(null)}>{t('common.cancel')}</Button>
             <Button variant="destructive" onClick={handleProcessRefund} disabled={isSubmitting}>
               {isSubmitting ? <RefreshCw className="mr-2 h-4 w-4 animate-spin" /> : <ArrowDownLeft className="mr-2 h-4 w-4" />}
-              Process Refund
+              {t('admin.billing.processRefund')}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -371,32 +371,32 @@ export default function BillingPage() {
       <Dialog open={activeModal === 'credit'} onOpenChange={() => setActiveModal(null)}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Apply Credit</DialogTitle>
-            <DialogDescription>Add credit balance to a customer account</DialogDescription>
+            <DialogTitle>{t('admin.billing.applyCredit')}</DialogTitle>
+            <DialogDescription>{t('admin.billing.applyCreditModalDescription')}</DialogDescription>
           </DialogHeader>
           <div className="space-y-4 py-4">
             <div>
-              <label className="mb-1 block text-sm font-medium text-zinc-700">Stripe Customer ID</label>
+              <label className="mb-1 block text-sm font-medium text-slate-700">{t('admin.billing.stripeCustomerId')}</label>
               <Input
-                placeholder="cus_..."
+                placeholder={t('admin.billing.stripeCustomerIdPlaceholder')}
                 value={creditForm.customer_id}
                 onChange={(e) => setCreditForm(prev => ({ ...prev, customer_id: e.target.value }))}
               />
             </div>
             <div>
-              <label className="mb-1 block text-sm font-medium text-zinc-700">Amount (EUR)</label>
+              <label className="mb-1 block text-sm font-medium text-slate-700">{t('admin.billing.amountEur')}</label>
               <Input
                 type="number"
                 step="0.01"
-                placeholder="0.00"
+                placeholder={t('admin.billing.amountPlaceholder')}
                 value={creditForm.amount}
                 onChange={(e) => setCreditForm(prev => ({ ...prev, amount: e.target.value }))}
               />
             </div>
             <div>
-              <label className="mb-1 block text-sm font-medium text-zinc-700">Description</label>
+              <label className="mb-1 block text-sm font-medium text-slate-700">{t('admin.billing.description')}</label>
               <Input
-                placeholder="Credit description..."
+                placeholder={t('admin.billing.creditDescriptionPlaceholder')}
                 value={creditForm.description}
                 onChange={(e) => setCreditForm(prev => ({ ...prev, description: e.target.value }))}
               />
@@ -406,7 +406,7 @@ export default function BillingPage() {
             <Button variant="outline" onClick={() => setActiveModal(null)}>{t('common.cancel')}</Button>
             <Button onClick={handleApplyCredit} disabled={isSubmitting}>
               {isSubmitting ? <RefreshCw className="mr-2 h-4 w-4 animate-spin" /> : <DollarSign className="mr-2 h-4 w-4" />}
-              Apply Credit
+              {t('admin.billing.applyCredit')}
             </Button>
           </DialogFooter>
         </DialogContent>

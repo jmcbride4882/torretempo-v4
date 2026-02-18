@@ -31,10 +31,10 @@ export function OfflineIndicator({ className }: OfflineIndicatorProps) {
           'shadow-md transition-all duration-200',
           'border',
           !isOnline
-            ? 'bg-red-50 border-red-200 text-red-700'
+            ? 'bg-red-50 border-red-200 text-red-700 dark:bg-red-900/30 dark:border-red-800 dark:text-red-400'
             : isProcessing
-            ? 'bg-amber-50 border-amber-200 text-amber-700'
-            : 'bg-emerald-50 border-emerald-200 text-emerald-700'
+            ? 'bg-amber-50 border-amber-200 text-amber-700 dark:bg-amber-900/30 dark:border-amber-800 dark:text-amber-400'
+            : 'bg-emerald-50 border-emerald-200 text-emerald-700 dark:bg-emerald-900/30 dark:border-emerald-800 dark:text-emerald-400'
         )}
       >
         {!isOnline ? (
@@ -67,12 +67,13 @@ export function OfflineIndicator({ className }: OfflineIndicatorProps) {
           className={cn(
             'absolute top-full right-0 mt-2 min-w-[200px]',
             'bg-white rounded-xl',
-            'border border-zinc-200 shadow-lg p-3'
+            'border border-slate-200 shadow-lg p-3',
+            'dark:bg-slate-800 dark:border-slate-700'
           )}
         >
           <div className="space-y-2">
             <div className="flex items-center justify-between text-xs">
-              <span className="text-zinc-500">{t('offline.status')}</span>
+              <span className="text-slate-500 dark:text-slate-400">{t('offline.status')}</span>
               <span className={cn(
                 'font-medium',
                 isOnline ? 'text-emerald-600' : 'text-red-600'
@@ -81,18 +82,18 @@ export function OfflineIndicator({ className }: OfflineIndicatorProps) {
               </span>
             </div>
 
-            <div className="h-px bg-zinc-200" />
+            <div className="h-px bg-slate-200 dark:bg-slate-700" />
 
             <div className="flex items-center justify-between text-xs">
-              <span className="text-zinc-500">{t('common.pending')}</span>
-              <span className="text-zinc-900 font-medium">
+              <span className="text-slate-500 dark:text-slate-400">{t('common.pending')}</span>
+              <span className="text-slate-900 font-medium dark:text-slate-100">
                 {queueStats.pending}
               </span>
             </div>
 
             {queueStats.processing > 0 && (
               <div className="flex items-center justify-between text-xs">
-                <span className="text-zinc-500">{t('offline.processing')}</span>
+                <span className="text-slate-500 dark:text-slate-400">{t('offline.processing')}</span>
                 <span className="text-amber-600 font-medium flex items-center gap-1">
                   <Loader2 className="h-3 w-3 animate-spin" />
                   {queueStats.processing}
@@ -102,7 +103,7 @@ export function OfflineIndicator({ className }: OfflineIndicatorProps) {
 
             {queueStats.failed > 0 && (
               <div className="flex items-center justify-between text-xs">
-                <span className="text-zinc-500">{t('offline.failed', { count: queueStats.failed })}</span>
+                <span className="text-slate-500 dark:text-slate-400">{t('offline.failed', { count: queueStats.failed })}</span>
                 <span className="text-red-600 font-medium flex items-center gap-1">
                   <AlertCircle className="h-3 w-3" />
                   {queueStats.failed}
@@ -118,8 +119,8 @@ export function OfflineIndicator({ className }: OfflineIndicatorProps) {
             )}
 
             {!isOnline && queueStats.pending > 0 && (
-              <div className="mt-2 p-2 rounded-lg bg-amber-50 border border-amber-200">
-                <p className="text-[10px] text-amber-700 text-center">
+              <div className="mt-2 p-2 rounded-lg bg-amber-50 border border-amber-200 dark:bg-amber-900/30 dark:border-amber-800">
+                <p className="text-[10px] text-amber-700 text-center dark:text-amber-400">
                   {t('offline.willSync')}
                 </p>
               </div>

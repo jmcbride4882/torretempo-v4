@@ -243,10 +243,10 @@ export default function RosterPage() {
             <Users className="h-5 w-5 text-primary-600" />
           </div>
           <div>
-            <h1 className="text-xl font-bold text-zinc-900 sm:text-2xl">
+            <h1 className="text-xl font-bold text-slate-900 sm:text-2xl">
               {t('roster.title')}
             </h1>
-            <p className="text-sm text-zinc-500">
+            <p className="text-sm text-slate-500">
               {t('roster.subtitle')}
             </p>
           </div>
@@ -259,7 +259,7 @@ export default function RosterPage() {
             size="sm"
             onClick={handleRefresh}
             disabled={isRefreshing}
-            className="gap-1.5 rounded-lg border border-zinc-200 bg-white text-zinc-600 hover:bg-zinc-50"
+            className="gap-1.5 rounded-lg border border-slate-200 bg-white text-slate-600 hover:bg-slate-50"
           >
             <RefreshCw className={`h-4 w-4 ${isRefreshing ? 'animate-spin' : ''}`} />
             <span className="hidden sm:inline">{t('roster.refresh')}</span>
@@ -277,7 +277,7 @@ export default function RosterPage() {
       </div>
 
       {/* Controls bar */}
-      <div className="rounded-xl border border-zinc-200 bg-white p-4">
+      <div className="rounded-xl border border-slate-200 bg-white p-4">
         <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
           {/* Week selector */}
           <WeekSelector
@@ -296,7 +296,7 @@ export default function RosterPage() {
               className={`gap-1.5 rounded-lg border lg:hidden ${
                 showFilters || selectedLocationId
                   ? 'border-primary-300 bg-primary-50 text-primary-600'
-                  : 'border-zinc-200 bg-white text-zinc-600'
+                  : 'border-slate-200 bg-white text-slate-600'
               }`}
             >
               <Filter className="h-4 w-4" />
@@ -322,7 +322,7 @@ export default function RosterPage() {
                   variant="ghost"
                   size="sm"
                   onClick={() => setSelectedLocationId(null)}
-                  className="gap-1 rounded-lg text-zinc-500 hover:text-zinc-900"
+                  className="gap-1 rounded-lg text-slate-500 hover:text-slate-900"
                 >
                   <X className="h-3.5 w-3.5" />
                   {t('common.clear')}
@@ -334,9 +334,9 @@ export default function RosterPage() {
 
         {/* Mobile filters panel */}
         {showFilters && (
-          <div className="mt-4 border-t border-zinc-200 pt-4 lg:hidden">
+          <div className="mt-4 border-t border-slate-200 pt-4 lg:hidden">
             <div className="flex flex-wrap items-center gap-2">
-              <span className="text-xs font-medium text-zinc-500">{t('roster.filterBy')}:</span>
+              <span className="text-xs font-medium text-slate-500">{t('roster.filterBy')}:</span>
               <LocationFilter
                 locations={locations}
                 selectedLocationId={selectedLocationId}
@@ -349,7 +349,7 @@ export default function RosterPage() {
                   variant="ghost"
                   size="sm"
                   onClick={() => setSelectedLocationId(null)}
-                  className="gap-1 rounded-lg text-zinc-500 hover:text-zinc-900"
+                  className="gap-1 rounded-lg text-slate-500 hover:text-slate-900"
                 >
                   <X className="h-3.5 w-3.5" />
                   {t('roster.clearAll')}
@@ -364,8 +364,8 @@ export default function RosterPage() {
       <div className="flex items-center gap-6 text-sm">
         <div className="flex items-center gap-2">
           <div className="h-2 w-2 rounded-full bg-emerald-500" />
-          <span className="text-zinc-500">
-            <span className="font-medium text-zinc-900">
+          <span className="text-slate-500">
+            <span className="font-medium text-slate-900">
               {shifts.filter((s) => s.status === 'acknowledged').length}
             </span>{' '}
             {t('roster.confirmed')}
@@ -373,8 +373,8 @@ export default function RosterPage() {
         </div>
         <div className="flex items-center gap-2">
           <div className="h-2 w-2 rounded-full bg-sky-500" />
-          <span className="text-zinc-500">
-            <span className="font-medium text-zinc-900">
+          <span className="text-slate-500">
+            <span className="font-medium text-slate-900">
               {shifts.filter((s) => s.status === 'published').length}
             </span>{' '}
             {t('roster.published')}
@@ -382,17 +382,17 @@ export default function RosterPage() {
         </div>
         <div className="flex items-center gap-2">
           <div className="h-2 w-2 rounded-full bg-amber-500" />
-          <span className="text-zinc-500">
-            <span className="font-medium text-zinc-900">
+          <span className="text-slate-500">
+            <span className="font-medium text-slate-900">
               {shifts.filter((s) => s.status === 'draft').length}
             </span>{' '}
             {t('roster.drafts')}
           </span>
         </div>
         <div className="flex items-center gap-2">
-          <div className="h-2 w-2 rounded-full bg-zinc-400" />
-          <span className="text-zinc-500">
-            <span className="font-medium text-zinc-900">
+          <div className="h-2 w-2 rounded-full bg-slate-400" />
+          <span className="text-slate-500">
+            <span className="font-medium text-slate-900">
               {shifts.filter((s) => !s.user_id).length}
             </span>{' '}
             {t('roster.open')}

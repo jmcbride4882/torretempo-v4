@@ -128,3 +128,24 @@ export async function cancelSubscription(
   });
   return handleResponse<CancelSubscriptionResponse>(response);
 }
+
+export async function createCheckoutSession(
+  slug: string,
+  planCode: string
+): Promise<{ url: string }> {
+  const response = await fetch(`${API_BASE}/api/v1/org/${slug}/billing/checkout`, {
+    method: 'POST',
+    credentials: 'include',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ planCode }),
+  });
+  return handleResponse<{ url: string }>(response);
+}
+
+export async function provisionTrial(slug: string): Promise<{ message: string }> {
+  const response = await fetch(`${API_BASE}/api/v1/org/${slug}/billing/provision-trial`, {
+    method: 'POST',
+    credentials: 'include',
+  });
+  return handleResponse<{ message: string }>(response);
+}

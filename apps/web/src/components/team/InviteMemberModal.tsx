@@ -100,7 +100,7 @@ export function InviteMemberModal({ open, onOpenChange, onSuccess, organizationI
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent className="border-zinc-200 bg-white sm:max-w-md">
+      <DialogContent className="border-slate-200 bg-white sm:max-w-md">
         {/* Decorative elements */}
         <div className="pointer-events-none absolute -top-32 left-1/2 h-64 w-64 -translate-x-1/2 rounded-full bg-blue-100 blur-[100px]" />
 
@@ -143,10 +143,10 @@ export function InviteMemberModal({ open, onOpenChange, onSuccess, organizationI
             </AnimatePresence>
           </motion.div>
 
-          <DialogTitle className="text-center text-xl text-zinc-900">
+          <DialogTitle className="text-center text-xl text-slate-900">
             {state === 'success' ? t('team.invitationSentTitle') : t('team.inviteTeamMember')}
           </DialogTitle>
-          <DialogDescription className="text-center text-zinc-500">
+          <DialogDescription className="text-center text-slate-500">
             {state === 'success'
               ? t('team.invitationSentDesc')
               : t('team.inviteTeamMemberDesc')
@@ -183,11 +183,11 @@ export function InviteMemberModal({ open, onOpenChange, onSuccess, organizationI
               className="relative space-y-6 py-4"
             >
               <div className="space-y-2">
-                <Label htmlFor="email" className="text-zinc-700">
+                <Label htmlFor="email" className="text-slate-700">
                   {t('team.emailAddress')}
                 </Label>
                 <div className="relative">
-                  <Mail className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-400" />
+                  <Mail className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
                   <Input
                     id="email"
                     type="email"
@@ -221,24 +221,24 @@ export function InviteMemberModal({ open, onOpenChange, onSuccess, organizationI
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="role" className="text-zinc-700">
+                <Label htmlFor="role" className="text-slate-700">
                   {t('common.role')}
                 </Label>
                 <div className="relative">
-                  <Shield className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-400" />
+                  <Shield className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
                   <select
                     id="role"
                     value={role}
                     onChange={(e) => setRole(e.target.value as MemberRole)}
                     disabled={state === 'loading'}
-                    className="w-full rounded-xl border border-zinc-200 bg-white px-10 py-2.5 text-zinc-900 transition-colors focus:border-primary-400 focus:outline-none focus:ring-2 focus:ring-primary-200 disabled:opacity-50"
+                    className="w-full rounded-xl border border-slate-200 bg-white px-10 py-2.5 text-slate-900 transition-colors focus:border-primary-400 focus:outline-none focus:ring-2 focus:ring-primary-200 disabled:opacity-50"
                   >
                     <option value="member">{t('team.roleMember')}</option>
                     <option value="admin">{t('team.roleAdmin')}</option>
                     <option value="owner">{t('team.roleOwner')}</option>
                   </select>
                 </div>
-                <p className="text-xs text-zinc-400">
+                <p className="text-xs text-slate-400">
                   {t('team.roleDescription')}
                 </p>
               </div>
@@ -249,7 +249,7 @@ export function InviteMemberModal({ open, onOpenChange, onSuccess, organizationI
                   variant="outline"
                   onClick={handleClose}
                   disabled={state === 'loading'}
-                  className="flex-1 border-zinc-200 bg-zinc-50 hover:bg-zinc-100"
+                  className="flex-1 border-slate-200 bg-slate-50 hover:bg-slate-100"
                 >
                   {t('common.cancel')}
                 </Button>

@@ -38,7 +38,7 @@ export function LocationFilter({
             'h-9 gap-2 rounded-lg border px-3 text-sm font-medium transition-all',
             selectedLocationId
               ? 'border-primary-500/30 bg-primary-50 text-primary-600 hover:bg-primary-100'
-              : 'border-zinc-200 bg-white text-zinc-700 hover:bg-zinc-50 hover:text-zinc-900'
+              : 'border-slate-200 bg-white text-slate-700 hover:bg-slate-50 hover:text-slate-900'
           )}
         >
           <MapPin className="h-4 w-4" />
@@ -51,7 +51,7 @@ export function LocationFilter({
       
       <DropdownMenuContent
         align="start"
-        className="w-56 overflow-hidden rounded-xl border border-zinc-200 bg-white p-1"
+        className="w-56 overflow-hidden rounded-xl border border-slate-200 bg-white p-1"
       >
         <AnimatePresence mode="popLayout">
           {/* All locations option */}
@@ -66,7 +66,7 @@ export function LocationFilter({
                 'flex cursor-pointer items-center gap-2 rounded-lg px-3 py-2 text-sm transition-colors',
                 !selectedLocationId
                   ? 'bg-primary-50 text-primary-600'
-                  : 'text-zinc-700 hover:bg-zinc-50 hover:text-zinc-900'
+                  : 'text-slate-700 hover:bg-slate-50 hover:text-slate-900'
               )}
             >
               <Building2 className="h-4 w-4" />
@@ -84,7 +84,7 @@ export function LocationFilter({
           </motion.div>
           
           {locations.length > 0 && (
-            <DropdownMenuSeparator className="my-1 bg-zinc-100" />
+            <DropdownMenuSeparator className="my-1 bg-slate-100" />
           )}
           
           {/* Location list */}
@@ -101,14 +101,14 @@ export function LocationFilter({
                   'flex cursor-pointer items-center gap-2 rounded-lg px-3 py-2 text-sm transition-colors',
                   selectedLocationId === location.id
                     ? 'bg-primary-50 text-primary-600'
-                    : 'text-zinc-700 hover:bg-zinc-50 hover:text-zinc-900'
+                    : 'text-slate-700 hover:bg-slate-50 hover:text-slate-900'
                 )}
               >
-                <MapPin className="h-4 w-4 text-zinc-400" />
+                <MapPin className="h-4 w-4 text-slate-400" />
                 <div className="flex-1 overflow-hidden">
                   <p className="truncate font-medium">{location.name}</p>
                   {location.address && (
-                    <p className="truncate text-xs text-zinc-400">{location.address}</p>
+                    <p className="truncate text-xs text-slate-400">{location.address}</p>
                   )}
                 </div>
                 {selectedLocationId === location.id && (
@@ -131,9 +131,9 @@ export function LocationFilter({
               animate={{ opacity: 1 }}
               className="px-3 py-4 text-center"
             >
-              <MapPin className="mx-auto h-8 w-8 text-zinc-400" />
-              <p className="mt-2 text-sm text-zinc-500">{t('roster.noLocationsFound')}</p>
-              <p className="text-xs text-zinc-400">{t('roster.addLocationsInSettings')}</p>
+              <MapPin className="mx-auto h-8 w-8 text-slate-400" />
+              <p className="mt-2 text-sm text-slate-500">{t('roster.noLocationsFound')}</p>
+              <p className="text-xs text-slate-400">{t('roster.addLocationsInSettings')}</p>
             </motion.div>
           )}
         </AnimatePresence>

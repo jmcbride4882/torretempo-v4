@@ -32,7 +32,7 @@ function useRoleConfig() {
       label: t('roles.member'),
       icon: User,
       variant: 'ghost' as const,
-      color: 'text-zinc-500',
+      color: 'text-slate-500',
     },
   };
 }
@@ -45,7 +45,7 @@ export function OrganizationCard({ organization, onSelect, isLoading }: Organiza
 
   return (
     <div className="group">
-      <Card className="relative overflow-hidden border-zinc-200 bg-white transition-all duration-300 hover:border-primary-300 hover:shadow-md">
+      <Card className="relative overflow-hidden border-slate-200 bg-white transition-all duration-300 hover:border-primary-300 hover:shadow-md">
         <div className="relative p-5">
           <div className="flex items-start justify-between gap-4">
             {/* Left section: Logo and info */}
@@ -66,17 +66,17 @@ export function OrganizationCard({ organization, onSelect, isLoading }: Organiza
                 {/* Role indicator dot */}
                 <div className={`absolute -bottom-1 -right-1 h-4 w-4 rounded-full border-2 border-white ${
                   organization.role === 'owner' ? 'bg-amber-500' :
-                  organization.role === 'admin' ? 'bg-primary-500' : 'bg-zinc-400'
+                  organization.role === 'admin' ? 'bg-primary-500' : 'bg-slate-400'
                 }`} />
               </div>
 
               {/* Organization details */}
               <div className="min-w-0 flex-1">
-                <h3 className="line-clamp-2 text-lg font-semibold text-zinc-900 transition-colors group-hover:text-primary-600 break-words">
+                <h3 className="line-clamp-2 text-lg font-semibold text-slate-900 transition-colors group-hover:text-primary-600 break-words">
                   {organization.name}
                 </h3>
-                <p className="mt-0.5 text-sm text-zinc-400">
-                  <code className="rounded bg-zinc-100 px-1.5 py-0.5 font-mono text-xs text-zinc-500">
+                <p className="mt-0.5 text-sm text-slate-400">
+                  <code className="rounded bg-slate-100 px-1.5 py-0.5 font-mono text-xs text-slate-500">
                     /t/{organization.slug}
                   </code>
                 </p>
@@ -89,7 +89,7 @@ export function OrganizationCard({ organization, onSelect, isLoading }: Organiza
                   </Badge>
 
                   {organization.memberCount !== undefined && (
-                    <span className="flex items-center gap-1 text-xs text-zinc-500">
+                    <span className="flex items-center gap-1 text-xs text-slate-500">
                       <Users className="h-3 w-3" />
                       {organization.memberCount} {organization.memberCount === 1 ? t('team.member') : t('team.members')}
                     </span>

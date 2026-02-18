@@ -80,15 +80,15 @@ function ShiftDetail({
 
   if (isOpen) {
     return (
-      <div className="flex-1 rounded-xl border border-dashed border-zinc-300 bg-zinc-50 p-3">
-        <p className="mb-1.5 text-[10px] font-medium uppercase tracking-wider text-zinc-400">
+      <div className="flex-1 rounded-xl border border-dashed border-slate-300 bg-slate-50 p-3">
+        <p className="mb-1.5 text-[10px] font-medium uppercase tracking-wider text-slate-400">
           {label}
         </p>
-        <div className="flex items-center gap-2 text-zinc-500">
+        <div className="flex items-center gap-2 text-slate-500">
           <Hand className="h-4 w-4" />
           <span className="text-sm italic">{t('swaps.labels.openRequest')}</span>
         </div>
-        <p className="mt-1 text-[10px] text-zinc-400">
+        <p className="mt-1 text-[10px] text-slate-400">
           {t('swaps.labels.anyoneCanClaim')}
         </p>
       </div>
@@ -98,20 +98,20 @@ function ShiftDetail({
   if (!shift) return null;
 
   return (
-    <div className="flex-1 rounded-xl border border-zinc-200 bg-zinc-50 p-3">
-      <p className="mb-1.5 text-[10px] font-medium uppercase tracking-wider text-zinc-400">
+    <div className="flex-1 rounded-xl border border-slate-200 bg-slate-50 p-3">
+      <p className="mb-1.5 text-[10px] font-medium uppercase tracking-wider text-slate-400">
         {label}
       </p>
 
       {/* Date */}
-      <div className="flex items-center gap-1.5 text-zinc-900">
-        <Calendar className="h-3.5 w-3.5 text-zinc-500" />
+      <div className="flex items-center gap-1.5 text-slate-900">
+        <Calendar className="h-3.5 w-3.5 text-slate-500" />
         <span className="text-sm font-medium">{formatDate(shift.start_time)}</span>
       </div>
 
       {/* Time */}
-      <div className="mt-1.5 flex items-center gap-1.5 text-zinc-600">
-        <Clock className="h-3.5 w-3.5 text-zinc-400" />
+      <div className="mt-1.5 flex items-center gap-1.5 text-slate-600">
+        <Clock className="h-3.5 w-3.5 text-slate-400" />
         <span className="text-xs tabular-nums">
           {formatTime(shift.start_time)} - {formatTime(shift.end_time)}
         </span>
@@ -119,8 +119,8 @@ function ShiftDetail({
 
       {/* Location */}
       {shift.location && (
-        <div className="mt-1.5 flex items-center gap-1.5 text-zinc-500">
-          <MapPin className="h-3.5 w-3.5 text-zinc-400" />
+        <div className="mt-1.5 flex items-center gap-1.5 text-slate-500">
+          <MapPin className="h-3.5 w-3.5 text-slate-400" />
           <span className="truncate text-xs">{shift.location.name}</span>
         </div>
       )}
@@ -191,8 +191,8 @@ export function SwapCard({
       exit={{ opacity: 0, y: -20 }}
       whileHover={{ y: -2 }}
       className={cn(
-        'group relative overflow-hidden rounded-2xl border border-zinc-200 bg-white shadow-sm transition-all duration-300',
-        'hover:border-zinc-300 hover:shadow-md',
+        'group relative overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition-all duration-300',
+        'hover:border-slate-300 hover:shadow-md',
         className
       )}
     >
@@ -203,7 +203,7 @@ export function SwapCard({
         {/* Header: Status + Time */}
         <div className="mb-4 flex items-start justify-between gap-3">
           <SwapStatusBadge status={swap.status} size="md" />
-          <span className="shrink-0 text-xs text-zinc-400">
+          <span className="shrink-0 text-xs text-slate-400">
             {formatRelativeTime(swap.created_at, t)}
           </span>
         </div>
@@ -216,15 +216,15 @@ export function SwapCard({
               {swap.requester?.name?.charAt(0).toUpperCase() || 'R'}
             </div>
             <div className="min-w-0">
-              <p className="truncate text-sm font-medium text-zinc-900">
+              <p className="truncate text-sm font-medium text-slate-900">
                 {swap.requester?.name || t('swaps.labels.unknown')}
               </p>
-              <p className="text-[10px] text-zinc-400">{t('swaps.labels.requester')}</p>
+              <p className="text-[10px] text-slate-400">{t('swaps.labels.requester')}</p>
             </div>
           </div>
 
           {/* Arrow */}
-          <ArrowLeftRight className="mx-1 h-4 w-4 shrink-0 text-zinc-400" />
+          <ArrowLeftRight className="mx-1 h-4 w-4 shrink-0 text-slate-400" />
 
           {/* Recipient */}
           <div className="flex items-center gap-2">
@@ -234,20 +234,20 @@ export function SwapCard({
                   {swap.recipient.name.charAt(0).toUpperCase()}
                 </div>
                 <div className="min-w-0">
-                  <p className="truncate text-sm font-medium text-zinc-900">
+                  <p className="truncate text-sm font-medium text-slate-900">
                     {swap.recipient.name}
                   </p>
-                  <p className="text-[10px] text-zinc-400">{t('swaps.labels.recipient')}</p>
+                  <p className="text-[10px] text-slate-400">{t('swaps.labels.recipient')}</p>
                 </div>
               </>
             ) : (
               <div className="flex items-center gap-2">
-                <div className="flex h-8 w-8 items-center justify-center rounded-full border border-dashed border-zinc-300 bg-zinc-50">
-                  <User className="h-4 w-4 text-zinc-400" />
+                <div className="flex h-8 w-8 items-center justify-center rounded-full border border-dashed border-slate-300 bg-slate-50">
+                  <User className="h-4 w-4 text-slate-400" />
                 </div>
                 <div>
-                  <p className="text-sm italic text-zinc-500">{t('swaps.labels.open')}</p>
-                  <p className="text-[10px] text-zinc-400">{t('swaps.labels.anyone')}</p>
+                  <p className="text-sm italic text-slate-500">{t('swaps.labels.open')}</p>
+                  <p className="text-[10px] text-slate-400">{t('swaps.labels.anyone')}</p>
                 </div>
               </div>
             )}
@@ -266,14 +266,14 @@ export function SwapCard({
 
         {/* Reason/Notes */}
         {swap.reason && (
-          <div className="mb-4 rounded-lg border border-zinc-200 bg-zinc-50 p-3">
-            <div className="mb-1 flex items-center gap-1.5 text-zinc-500">
+          <div className="mb-4 rounded-lg border border-slate-200 bg-slate-50 p-3">
+            <div className="mb-1 flex items-center gap-1.5 text-slate-500">
               <MessageSquare className="h-3 w-3" />
               <span className="text-[10px] font-medium uppercase tracking-wider">
                 {t('swaps.labels.reason')}
               </span>
             </div>
-            <p className="text-sm text-zinc-700">{swap.reason}</p>
+            <p className="text-sm text-slate-700">{swap.reason}</p>
           </div>
         )}
 
@@ -292,7 +292,7 @@ export function SwapCard({
 
         {/* Actions */}
         {(canAcceptReject || canApproveReject || canClaim || canCancel) && (
-          <div className="flex flex-wrap items-center gap-2 border-t border-zinc-100 pt-4">
+          <div className="flex flex-wrap items-center gap-2 border-t border-slate-100 pt-4">
             {/* Peer actions: Accept/Reject */}
             {canAcceptReject && (
               <>
@@ -391,7 +391,7 @@ export function SwapCard({
                 variant="ghost"
                 onClick={() => handleAction('cancel', () => onCancel!(swap.id))}
                 disabled={!!loadingAction}
-                className="ml-auto gap-1.5 rounded-lg text-zinc-500 hover:bg-zinc-100 hover:text-zinc-900"
+                className="ml-auto gap-1.5 rounded-lg text-slate-500 hover:bg-slate-100 hover:text-slate-900"
               >
                 {loadingAction === 'cancel' ? (
                   <Loader2 className="h-3.5 w-3.5 animate-spin" />
@@ -411,50 +411,50 @@ export function SwapCard({
 // Skeleton loader for swap cards
 export function SwapCardSkeleton() {
   return (
-    <div className="animate-pulse rounded-2xl border border-zinc-200 bg-white p-4 sm:p-5">
+    <div className="animate-pulse rounded-2xl border border-slate-200 bg-white p-4 sm:p-5">
       {/* Header */}
       <div className="mb-4 flex items-start justify-between">
-        <div className="h-6 w-28 rounded-full bg-zinc-200" />
-        <div className="h-4 w-16 rounded bg-zinc-200" />
+        <div className="h-6 w-28 rounded-full bg-slate-200" />
+        <div className="h-4 w-16 rounded bg-slate-200" />
       </div>
 
       {/* Users */}
       <div className="mb-4 flex items-center gap-3">
         <div className="flex items-center gap-2">
-          <div className="h-8 w-8 rounded-full bg-zinc-200" />
+          <div className="h-8 w-8 rounded-full bg-slate-200" />
           <div className="space-y-1">
-            <div className="h-4 w-20 rounded bg-zinc-200" />
-            <div className="h-3 w-14 rounded bg-zinc-200" />
+            <div className="h-4 w-20 rounded bg-slate-200" />
+            <div className="h-3 w-14 rounded bg-slate-200" />
           </div>
         </div>
-        <div className="h-4 w-4 rounded bg-zinc-200" />
+        <div className="h-4 w-4 rounded bg-slate-200" />
         <div className="flex items-center gap-2">
-          <div className="h-8 w-8 rounded-full bg-zinc-200" />
+          <div className="h-8 w-8 rounded-full bg-slate-200" />
           <div className="space-y-1">
-            <div className="h-4 w-20 rounded bg-zinc-200" />
-            <div className="h-3 w-14 rounded bg-zinc-200" />
+            <div className="h-4 w-20 rounded bg-slate-200" />
+            <div className="h-3 w-14 rounded bg-slate-200" />
           </div>
         </div>
       </div>
 
       {/* Shifts */}
       <div className="mb-4 flex flex-col gap-3 sm:flex-row">
-        <div className="flex-1 space-y-2 rounded-xl border border-zinc-200 bg-zinc-50 p-3">
-          <div className="h-3 w-16 rounded bg-zinc-200" />
-          <div className="h-4 w-24 rounded bg-zinc-200" />
-          <div className="h-3 w-20 rounded bg-zinc-200" />
+        <div className="flex-1 space-y-2 rounded-xl border border-slate-200 bg-slate-50 p-3">
+          <div className="h-3 w-16 rounded bg-slate-200" />
+          <div className="h-4 w-24 rounded bg-slate-200" />
+          <div className="h-3 w-20 rounded bg-slate-200" />
         </div>
-        <div className="flex-1 space-y-2 rounded-xl border border-zinc-200 bg-zinc-50 p-3">
-          <div className="h-3 w-16 rounded bg-zinc-200" />
-          <div className="h-4 w-24 rounded bg-zinc-200" />
-          <div className="h-3 w-20 rounded bg-zinc-200" />
+        <div className="flex-1 space-y-2 rounded-xl border border-slate-200 bg-slate-50 p-3">
+          <div className="h-3 w-16 rounded bg-slate-200" />
+          <div className="h-4 w-24 rounded bg-slate-200" />
+          <div className="h-3 w-20 rounded bg-slate-200" />
         </div>
       </div>
 
       {/* Actions */}
-      <div className="flex gap-2 border-t border-zinc-100 pt-4">
-        <div className="h-8 w-20 rounded-lg bg-zinc-200" />
-        <div className="h-8 w-20 rounded-lg bg-zinc-200" />
+      <div className="flex gap-2 border-t border-slate-100 pt-4">
+        <div className="h-8 w-20 rounded-lg bg-slate-200" />
+        <div className="h-8 w-20 rounded-lg bg-slate-200" />
       </div>
     </div>
   );

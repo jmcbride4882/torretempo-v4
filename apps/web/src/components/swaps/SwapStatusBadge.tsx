@@ -67,9 +67,9 @@ const statusConfig: Record<SwapStatus, {
   cancelled: {
     icon: Ban,
     labelKey: 'swaps.statuses.cancelled',
-    bg: 'bg-zinc-100',
-    text: 'text-zinc-500',
-    border: 'border-zinc-200',
+    bg: 'bg-slate-100',
+    text: 'text-slate-500',
+    border: 'border-slate-200',
     glow: '',
   },
   completed: {
@@ -83,9 +83,9 @@ const statusConfig: Record<SwapStatus, {
   expired: {
     icon: Timer,
     labelKey: 'swaps.statuses.expired',
-    bg: 'bg-zinc-50',
-    text: 'text-zinc-400',
-    border: 'border-zinc-200',
+    bg: 'bg-slate-50',
+    text: 'text-slate-400',
+    border: 'border-slate-200',
     glow: '',
   },
 };

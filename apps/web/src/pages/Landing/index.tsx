@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { motion } from 'framer-motion';
 import {
   Clock,
   Shield,
@@ -35,6 +36,20 @@ import { LanguageSwitcher } from '@/components/common/LanguageSwitcher';
 import { cn } from '@/lib/utils';
 
 // ============================================================================
+// ANIMATION VARIANTS
+// ============================================================================
+
+const fadeInUp = {
+  hidden: { opacity: 0, y: 24 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: 'easeOut' } },
+};
+
+const staggerContainer = {
+  hidden: {},
+  visible: { transition: { staggerChildren: 0.1 } },
+};
+
+// ============================================================================
 // TYPES
 // ============================================================================
 
@@ -47,68 +62,149 @@ interface PersonaFlow {
   steps: Array<{ icon: LucideIcon; title: string; detail: string }>;
 }
 
+interface PricingPlan {
+  name: string;
+  code: string;
+  price: string;
+  period: string;
+  description: string;
+  employees: string;
+  features: string[];
+  cta: string;
+  highlighted: boolean;
+}
+
 // ============================================================================
 // DATA
 // ============================================================================
 
-const PERSONA_FLOWS: PersonaFlow[] = [
-  {
-    id: 'maria',
-    persona: 'Maria',
-    role: 'Empleada / Camarera',
-    icon: Smartphone,
-    tagline: 'Ficha en 2 segundos desde su movil y consulta su horario en el autobus.',
-    steps: [
-      { icon: MapPin, title: 'Geofence activo', detail: 'Llega al restaurante y el sistema detecta su ubicacion automaticamente' },
-      { icon: Zap, title: 'Tap FICHAR', detail: 'Un solo toque en el boton verde. 2 segundos. Hecho.' },
-      { icon: Timer, title: 'Pausa registrada', detail: 'A medio turno pulsa PAUSA y el temporizador de descanso arranca' },
-      { icon: Clock, title: 'Salida limpia', detail: 'Fin de turno: tap SALIDA y ve su resumen de horas del dia' },
-      { icon: ArrowLeftRight, title: 'Intercambio digital', detail: 'Solicita cambio de turno desde la app, sin mensajes de WhatsApp' },
-    ],
-  },
-  {
-    id: 'carlos',
-    persona: 'Carlos',
-    role: 'Manager / Jefe de turno',
-    icon: Users,
-    tagline: 'Aprueba intercambios, controla asistencia en vivo y monta el cuadrante en minutos.',
-    steps: [
-      { icon: Users, title: 'Asistencia en vivo', detail: 'Dashboard con puntos verdes (fichados) y grises (pendientes) en tiempo real' },
-      { icon: Check, title: 'Aprobacion rapida', detail: 'Desliza para aprobar correcciones e intercambios sin papeleos' },
-      { icon: Calendar, title: 'Cuadrante visual', detail: 'Arrastra y suelta turnos. El sistema bloquea asignaciones que incumplen la ley' },
-      { icon: AlertTriangle, title: 'Alertas preventivas', detail: 'Aviso automatico de horas extras y descansos no cumplidos' },
-      { icon: FileText, title: 'Nomina en 1 clic', detail: 'Genera el informe de horas listo para la gestoria en formato compatible' },
-    ],
-  },
-  {
-    id: 'laura',
-    persona: 'Laura',
-    role: 'HR / Administradora',
-    icon: BarChart3,
-    tagline: 'Genera informes de nomina en segundos y verifica el cumplimiento de toda la plantilla.',
-    steps: [
-      { icon: TrendingUp, title: 'Vista multi-sede', detail: 'Dashboard consolidado: 5 ubicaciones en una sola pantalla' },
-      { icon: AlertTriangle, title: 'Panel de cumplimiento', detail: 'Incumplimientos en rojo, advertencias en amarillo, todo en verde al instante' },
-      { icon: FileText, title: 'Export a gestoria', detail: 'CSV compatible con A3, Sage y Nominaplus generado en 10 segundos' },
-      { icon: ShieldCheck, title: 'Auditoria SHA-256', detail: 'Cada informe mensual incluye cadena de verificacion criptografica' },
-      { icon: Users, title: 'Onboarding digital', detail: 'Nuevos empleados configurados y fichando en menos de 5 minutos' },
-    ],
-  },
-  {
-    id: 'carmen',
-    persona: 'Carmen',
-    role: 'Inspectora ITSS',
-    icon: ShieldCheck,
-    tagline: 'Acceso instantaneo con token temporal. Datos inmutables y verificables.',
-    steps: [
-      { icon: Key, title: 'Token temporal', detail: 'Recibe un enlace de solo lectura sin necesidad de crear cuenta' },
-      { icon: FileText, title: 'Filtros avanzados', detail: 'Filtra por empleado, rango de fechas o ubicacion especifica' },
-      { icon: Shield, title: 'Verificacion SHA-256', detail: 'Cada registro muestra su hash criptografico enlazado al anterior' },
-      { icon: FileText, title: 'PDF de cumplimiento', detail: 'Descarga informe verificable con toda la cadena de auditoria' },
-      { icon: Clock, title: '7 anos de historial', detail: 'Registros inmutables disponibles al instante segun normativa' },
-    ],
-  },
-];
+function usePersonaFlows(): PersonaFlow[] {
+  const { t } = useTranslation();
+  return [
+    {
+      id: 'maria',
+      persona: t('landing.personas.maria.name'),
+      role: t('landing.personas.maria.role'),
+      icon: Smartphone,
+      tagline: t('landing.personas.maria.tagline'),
+      steps: [
+        { icon: MapPin, title: t('landing.personas.maria.steps.0.title'), detail: t('landing.personas.maria.steps.0.detail') },
+        { icon: Zap, title: t('landing.personas.maria.steps.1.title'), detail: t('landing.personas.maria.steps.1.detail') },
+        { icon: Timer, title: t('landing.personas.maria.steps.2.title'), detail: t('landing.personas.maria.steps.2.detail') },
+        { icon: Clock, title: t('landing.personas.maria.steps.3.title'), detail: t('landing.personas.maria.steps.3.detail') },
+        { icon: ArrowLeftRight, title: t('landing.personas.maria.steps.4.title'), detail: t('landing.personas.maria.steps.4.detail') },
+      ],
+    },
+    {
+      id: 'carlos',
+      persona: t('landing.personas.carlos.name'),
+      role: t('landing.personas.carlos.role'),
+      icon: Users,
+      tagline: t('landing.personas.carlos.tagline'),
+      steps: [
+        { icon: Users, title: t('landing.personas.carlos.steps.0.title'), detail: t('landing.personas.carlos.steps.0.detail') },
+        { icon: Check, title: t('landing.personas.carlos.steps.1.title'), detail: t('landing.personas.carlos.steps.1.detail') },
+        { icon: Calendar, title: t('landing.personas.carlos.steps.2.title'), detail: t('landing.personas.carlos.steps.2.detail') },
+        { icon: AlertTriangle, title: t('landing.personas.carlos.steps.3.title'), detail: t('landing.personas.carlos.steps.3.detail') },
+        { icon: FileText, title: t('landing.personas.carlos.steps.4.title'), detail: t('landing.personas.carlos.steps.4.detail') },
+      ],
+    },
+    {
+      id: 'laura',
+      persona: t('landing.personas.laura.name'),
+      role: t('landing.personas.laura.role'),
+      icon: BarChart3,
+      tagline: t('landing.personas.laura.tagline'),
+      steps: [
+        { icon: TrendingUp, title: t('landing.personas.laura.steps.0.title'), detail: t('landing.personas.laura.steps.0.detail') },
+        { icon: AlertTriangle, title: t('landing.personas.laura.steps.1.title'), detail: t('landing.personas.laura.steps.1.detail') },
+        { icon: FileText, title: t('landing.personas.laura.steps.2.title'), detail: t('landing.personas.laura.steps.2.detail') },
+        { icon: ShieldCheck, title: t('landing.personas.laura.steps.3.title'), detail: t('landing.personas.laura.steps.3.detail') },
+        { icon: Users, title: t('landing.personas.laura.steps.4.title'), detail: t('landing.personas.laura.steps.4.detail') },
+      ],
+    },
+    {
+      id: 'carmen',
+      persona: t('landing.personas.carmen.name'),
+      role: t('landing.personas.carmen.role'),
+      icon: ShieldCheck,
+      tagline: t('landing.personas.carmen.tagline'),
+      steps: [
+        { icon: Key, title: t('landing.personas.carmen.steps.0.title'), detail: t('landing.personas.carmen.steps.0.detail') },
+        { icon: FileText, title: t('landing.personas.carmen.steps.1.title'), detail: t('landing.personas.carmen.steps.1.detail') },
+        { icon: Shield, title: t('landing.personas.carmen.steps.2.title'), detail: t('landing.personas.carmen.steps.2.detail') },
+        { icon: FileText, title: t('landing.personas.carmen.steps.3.title'), detail: t('landing.personas.carmen.steps.3.detail') },
+        { icon: Clock, title: t('landing.personas.carmen.steps.4.title'), detail: t('landing.personas.carmen.steps.4.detail') },
+      ],
+    },
+  ];
+}
+
+function usePricingPlans(): PricingPlan[] {
+  const { t } = useTranslation();
+
+  const i18nPlans = t('landing.pricing.plans', { returnObjects: true });
+  if (Array.isArray(i18nPlans) && i18nPlans.length === 3) {
+    return i18nPlans as PricingPlan[];
+  }
+
+  return [
+    {
+      name: 'Starter',
+      code: 'starter',
+      price: '29',
+      period: '/mes',
+      description: t('landing.pricing.starterDesc', { defaultValue: 'Para equipos pequenos que empiezan con el control horario digital.' }),
+      employees: t('landing.pricing.upTo10', { defaultValue: 'Hasta 10 empleados' }),
+      features: [
+        t('landing.pricing.feat.roster', { defaultValue: 'Cuadrantes de turnos' }),
+        t('landing.pricing.feat.timeclock', { defaultValue: 'Fichaje digital' }),
+        t('landing.pricing.feat.compliance', { defaultValue: 'Cumplimiento normativo' }),
+        t('landing.pricing.feat.reports', { defaultValue: 'Informes basicos' }),
+        t('landing.pricing.feat.leave', { defaultValue: 'Gestion de ausencias' }),
+        t('landing.pricing.feat.employees10', { defaultValue: 'Hasta 10 empleados' }),
+      ],
+      cta: t('landing.pricing.trialCta', { defaultValue: 'Empezar prueba gratis' }),
+      highlighted: false,
+    },
+    {
+      name: 'Growth',
+      code: 'growth',
+      price: '69',
+      period: '/mes',
+      description: t('landing.pricing.growthDesc', { defaultValue: 'Para empresas en crecimiento que necesitan mas control.' }),
+      employees: t('landing.pricing.upTo30', { defaultValue: 'Hasta 30 empleados' }),
+      features: [
+        t('landing.pricing.feat.allStarter', { defaultValue: 'Todo en Starter' }),
+        t('landing.pricing.feat.openShifts', { defaultValue: 'Turnos abiertos' }),
+        t('landing.pricing.feat.shiftSwaps', { defaultValue: 'Intercambios de turno' }),
+        t('landing.pricing.feat.geofencing', { defaultValue: 'Geofencing' }),
+        t('landing.pricing.feat.templates', { defaultValue: 'Plantillas de turnos' }),
+        t('landing.pricing.feat.employees30', { defaultValue: 'Hasta 30 empleados' }),
+      ],
+      cta: t('landing.pricing.trialCta', { defaultValue: 'Empezar prueba gratis' }),
+      highlighted: true,
+    },
+    {
+      name: 'Business',
+      code: 'business',
+      price: '149',
+      period: '/mes',
+      description: t('landing.pricing.businessDesc', { defaultValue: 'Para empresas consolidadas con necesidades avanzadas.' }),
+      employees: t('landing.pricing.unlimited', { defaultValue: 'Empleados ilimitados' }),
+      features: [
+        t('landing.pricing.feat.allGrowth', { defaultValue: 'Todo en Growth' }),
+        t('landing.pricing.feat.inspectorApi', { defaultValue: 'API de inspector ITSS' }),
+        t('landing.pricing.feat.advancedReports', { defaultValue: 'Informes avanzados' }),
+        t('landing.pricing.feat.payrollExport', { defaultValue: 'Exportacion de nominas' }),
+        t('landing.pricing.feat.prioritySupport', { defaultValue: 'Soporte prioritario' }),
+        t('landing.pricing.feat.unlimitedEmployees', { defaultValue: 'Empleados ilimitados' }),
+      ],
+      cta: t('landing.pricing.trialCta', { defaultValue: 'Empezar prueba gratis' }),
+      highlighted: false,
+    },
+  ];
+}
 
 // ============================================================================
 // NAVBAR
@@ -123,7 +219,7 @@ function Navbar(): JSX.Element {
     { href: '#como-funciona', label: t('landing.nav.howItWorks') },
     { href: '#funciones', label: t('landing.nav.features') },
     { href: '#precios', label: t('landing.nav.pricing') },
-    { href: '#faq', label: 'FAQ' },
+    { href: '#faq', label: t('landing.nav.faq') },
   ];
 
   useEffect(() => {
@@ -139,22 +235,28 @@ function Navbar(): JSX.Element {
       className={cn(
         'fixed top-0 left-0 right-0 z-50 transition-all duration-300',
         scrolled
-          ? 'bg-white/95 backdrop-blur-sm shadow-sm border-b border-zinc-200'
+          ? 'bg-white/80 backdrop-blur-xl shadow-sm border-b border-slate-200/60'
           : 'bg-transparent'
       )}
     >
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex h-16 items-center justify-between">
           <Link to="/" className="flex items-center gap-2.5">
-            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary-500 shadow-md shadow-primary-500/20">
+            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-gradient-to-br from-primary-600 to-primary-500 shadow-md shadow-primary-500/20">
               <Clock className="h-5 w-5 text-white" />
             </div>
             <div className="flex flex-col">
-              <span className="text-lg font-bold text-zinc-900 leading-none tracking-tight">
+              <span className={cn(
+                'text-lg font-bold leading-none tracking-tight',
+                scrolled ? 'text-slate-900' : 'text-white'
+              )}>
                 Torre Tempo
               </span>
-              <span className="text-[10px] text-zinc-500 leading-none">
-                by LSLT Apps
+              <span className={cn(
+                'text-[10px] leading-none',
+                scrolled ? 'text-slate-500' : 'text-slate-400'
+              )}>
+                {t('landing.brandSubtitle')}
               </span>
             </div>
           </Link>
@@ -164,7 +266,12 @@ function Navbar(): JSX.Element {
               <a
                 key={link.href}
                 href={link.href}
-                className="text-sm text-zinc-600 hover:text-zinc-900 transition-colors duration-200"
+                className={cn(
+                  'text-sm transition-colors duration-200',
+                  scrolled
+                    ? 'text-slate-600 hover:text-slate-900'
+                    : 'text-slate-300 hover:text-white'
+                )}
               >
                 {link.label}
               </a>
@@ -173,18 +280,21 @@ function Navbar(): JSX.Element {
 
           <div className="hidden md:flex items-center gap-3">
             <LanguageSwitcher />
-            <Button variant="ghost" asChild>
+            <Button variant="ghost" asChild className={cn(!scrolled && 'text-slate-300 hover:text-white hover:bg-white/10')}>
               <Link to="/auth/signin">{t('auth.signIn')}</Link>
             </Button>
-            <Button asChild>
+            <Button asChild className="bg-gradient-to-r from-primary-600 to-primary-500 hover:from-primary-700 hover:to-primary-600 shadow-md shadow-primary-500/20">
               <Link to="/auth/signup">{t('landing.cta.startFree')}</Link>
             </Button>
           </div>
 
           <button
             onClick={() => setIsOpen(!isOpen)}
-            className="md:hidden p-2 text-zinc-600 hover:text-zinc-900 transition-colors"
-            aria-label="Menu"
+            className={cn(
+              'md:hidden p-2 transition-colors',
+              scrolled ? 'text-slate-600 hover:text-slate-900' : 'text-slate-300 hover:text-white'
+            )}
+            aria-label={t('landing.nav.menu')}
           >
             {isOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
           </button>
@@ -192,23 +302,23 @@ function Navbar(): JSX.Element {
       </div>
 
       {isOpen && (
-        <div className="md:hidden border-t border-zinc-200 bg-white">
+        <div className="md:hidden border-t border-slate-200/60 bg-white/95 backdrop-blur-xl">
           <div className="px-4 py-4 space-y-1">
             {NAV_LINKS.map((link) => (
               <a
                 key={link.href}
                 href={link.href}
                 onClick={() => setIsOpen(false)}
-                className="block py-2.5 px-3 rounded-lg text-zinc-700 hover:text-zinc-900 hover:bg-zinc-50 transition-colors"
+                className="block py-2.5 px-3 rounded-lg text-slate-700 hover:text-slate-900 hover:bg-slate-50 transition-colors"
               >
                 {link.label}
               </a>
             ))}
-            <div className="pt-4 flex flex-col gap-2 border-t border-zinc-200">
+            <div className="pt-4 flex flex-col gap-2 border-t border-slate-200">
               <Button variant="outline" asChild className="w-full">
                 <Link to="/auth/signin">{t('auth.signIn')}</Link>
               </Button>
-              <Button asChild className="w-full">
+              <Button asChild className="w-full bg-gradient-to-r from-primary-600 to-primary-500">
                 <Link to="/auth/signup">{t('landing.cta.startFree')}</Link>
               </Button>
             </div>
@@ -233,35 +343,56 @@ function HeroSection(): JSX.Element {
   ];
 
   return (
-    <section className="relative min-h-screen flex items-center justify-center pt-16 bg-zinc-50">
+    <section className="relative min-h-screen flex items-center justify-center pt-16 bg-gradient-to-b from-surface-dark to-slate-900 overflow-hidden">
+      {/* Decorative grid and glow */}
+      <div className="absolute inset-0 bg-[linear-gradient(rgba(139,92,246,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(139,92,246,0.03)_1px,transparent_1px)] bg-[size:64px_64px]" />
+      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[600px] h-[600px] rounded-full bg-primary-500/10 blur-[120px]" />
+      <div className="absolute bottom-1/4 right-1/4 w-[300px] h-[300px] rounded-full bg-accent-500/10 blur-[100px]" />
+
       <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-20">
-        <div className="text-center max-w-4xl mx-auto">
+        <motion.div
+          className="text-center max-w-4xl mx-auto"
+          initial="hidden"
+          animate="visible"
+          variants={staggerContainer}
+        >
           {/* Badge */}
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary-50 border border-primary-200 mb-8">
-            <ShieldCheck className="h-4 w-4 text-primary-600" />
-            <span className="text-sm text-primary-700 font-medium">
-              {t('landing.hero.badge')}
-            </span>
-          </div>
+          <motion.div variants={fadeInUp}>
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary-500/10 border border-primary-500/20 backdrop-blur-sm mb-8">
+              <Zap className="h-4 w-4 text-primary-400" />
+              <span className="text-sm text-primary-300 font-medium">
+                14 {t('landing.hero.trialBadge', { defaultValue: 'dias de prueba gratis' })}
+              </span>
+            </div>
+          </motion.div>
 
           {/* Headline */}
-          <h1 className="text-4xl sm:text-5xl lg:text-7xl font-bold text-zinc-900 leading-[1.1] tracking-tight">
-            {t('landing.hero.title1')}{' '}
-            <span className="text-primary-500">
+          <motion.h1
+            variants={fadeInUp}
+            className="text-4xl sm:text-5xl lg:text-7xl font-bold leading-[1.1] tracking-tight"
+          >
+            <span className="text-white">{t('landing.hero.title1')}</span>{' '}
+            <span className="bg-gradient-to-r from-primary-400 via-primary-300 to-accent-400 bg-clip-text text-transparent">
               {t('landing.hero.title2')}
             </span>
-          </h1>
+          </motion.h1>
 
-          <p className="mt-6 text-lg sm:text-xl text-zinc-500 max-w-2xl mx-auto leading-relaxed">
+          <motion.p
+            variants={fadeInUp}
+            className="mt-6 text-lg sm:text-xl text-slate-400 max-w-2xl mx-auto leading-relaxed"
+          >
             {t('landing.hero.subtitle')}
-          </p>
+          </motion.p>
 
           {/* CTA Buttons */}
-          <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
+          <motion.div
+            variants={fadeInUp}
+            className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4"
+          >
             <Button
               asChild
               size="lg"
-              className="w-full sm:w-auto px-8 py-6 text-base rounded-xl shadow-lg shadow-primary-500/20"
+              className="w-full sm:w-auto px-8 py-6 text-base rounded-xl bg-gradient-to-r from-primary-600 to-primary-500 hover:from-primary-700 hover:to-primary-600 shadow-lg shadow-primary-500/25"
             >
               <Link to="/auth/signup">
                 {t('landing.cta.startFree')}
@@ -272,42 +403,47 @@ function HeroSection(): JSX.Element {
               variant="outline"
               size="lg"
               asChild
-              className="w-full sm:w-auto px-8 py-6 text-base rounded-xl"
+              className="w-full sm:w-auto px-8 py-6 text-base rounded-xl border-slate-700 bg-white/5 text-slate-300 hover:bg-white/10 hover:text-white backdrop-blur-sm"
             >
               <a href="#como-funciona">
                 <Play className="mr-2 h-4 w-4" />
                 {t('landing.cta.seeDemo')}
               </a>
             </Button>
-          </div>
+          </motion.div>
 
           {/* Speed Metric Cards */}
-          <div className="mt-16 grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-3xl mx-auto">
+          <motion.div
+            variants={fadeInUp}
+            className="mt-16 grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-3xl mx-auto"
+          >
             {SPEED_METRICS.map((metric) => (
               <div
                 key={metric.label}
-                className="rounded-2xl border border-zinc-200 bg-white p-5 text-center shadow-sm"
+                className="rounded-2xl border border-white/10 bg-white/5 backdrop-blur-md p-5 text-center"
               >
                 <div className="flex items-center justify-center gap-2 mb-3">
-                  <metric.icon className="h-4 w-4 text-primary-500" />
-                  <span className="text-xs font-medium text-zinc-500 uppercase tracking-wider">
+                  <metric.icon className="h-4 w-4 text-primary-400" />
+                  <span className="text-xs font-medium text-slate-400 uppercase tracking-wider">
                     {metric.label}
                   </span>
                 </div>
                 <div className="flex items-center justify-center gap-3">
-                  <span className="text-sm text-zinc-400 line-through">{metric.before}</span>
-                  <ArrowRight className="h-3.5 w-3.5 text-zinc-300" />
-                  <span className="text-2xl font-bold text-primary-500">{metric.after}</span>
+                  <span className="text-sm text-slate-500 line-through">{metric.before}</span>
+                  <ArrowRight className="h-3.5 w-3.5 text-slate-600" />
+                  <span className="text-2xl font-bold bg-gradient-to-r from-primary-400 to-accent-400 bg-clip-text text-transparent">
+                    {metric.after}
+                  </span>
                 </div>
               </div>
             ))}
-          </div>
+          </motion.div>
 
           {/* Trust signals */}
-          <p className="mt-10 text-sm text-zinc-400">
+          <motion.p variants={fadeInUp} className="mt-10 text-sm text-slate-500">
             {t('landing.hero.trustSignals')}
-          </p>
-        </div>
+          </motion.p>
+        </motion.div>
       </div>
     </section>
   );
@@ -319,8 +455,9 @@ function HeroSection(): JSX.Element {
 
 function PersonaFlowsSection(): JSX.Element {
   const { t } = useTranslation();
+  const personaFlows = usePersonaFlows();
   const [activeIndex, setActiveIndex] = useState(0);
-  const activeFlow = PERSONA_FLOWS[activeIndex]!;
+  const activeFlow = personaFlows[activeIndex]!;
 
   const personaColors: Record<string, { ring: string; bg: string; text: string; icon: string }> = {
     maria: { ring: 'ring-emerald-500', bg: 'bg-emerald-50', text: 'text-emerald-600', icon: 'bg-emerald-50 border-emerald-200' },
@@ -335,22 +472,34 @@ function PersonaFlowsSection(): JSX.Element {
     <section id="como-funciona" className="relative py-24 sm:py-32 bg-white">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         {/* Section header */}
-        <div className="text-center mb-16">
-          <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary-50 text-primary-600 text-sm font-medium mb-4">
+        <motion.div
+          className="text-center mb-16"
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: '-80px' }}
+          variants={staggerContainer}
+        >
+          <motion.span
+            variants={fadeInUp}
+            className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary-50 text-primary-600 text-sm font-medium mb-4"
+          >
             <Zap className="h-3.5 w-3.5" />
             {t('landing.nav.howItWorks')}
-          </span>
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-zinc-900 mb-4 tracking-tight">
+          </motion.span>
+          <motion.h2
+            variants={fadeInUp}
+            className="text-3xl sm:text-4xl lg:text-5xl font-bold text-slate-900 mb-4 tracking-tight"
+          >
             {t('landing.personas.title')}
-          </h2>
-          <p className="text-lg text-zinc-500 max-w-2xl mx-auto">
+          </motion.h2>
+          <motion.p variants={fadeInUp} className="text-lg text-slate-500 max-w-2xl mx-auto">
             {t('landing.personas.subtitle')}
-          </p>
-        </div>
+          </motion.p>
+        </motion.div>
 
         {/* Persona Tabs */}
         <div className="flex flex-wrap justify-center gap-2 sm:gap-3 mb-12">
-          {PERSONA_FLOWS.map((flow, index) => {
+          {personaFlows.map((flow, index) => {
             const isActive = index === activeIndex;
             const tabColors = personaColors[flow.id]!;
             return (
@@ -360,33 +509,39 @@ function PersonaFlowsSection(): JSX.Element {
                 className={cn(
                   'flex items-center gap-2 px-4 sm:px-5 py-2.5 rounded-xl text-sm font-medium transition-all duration-200',
                   isActive
-                    ? cn('ring-2 bg-white shadow-sm text-zinc-900', tabColors.ring, tabColors.bg)
-                    : 'text-zinc-500 hover:text-zinc-900 hover:bg-zinc-50'
+                    ? cn('ring-2 bg-white shadow-sm text-slate-900', tabColors.ring, tabColors.bg)
+                    : 'text-slate-500 hover:text-slate-900 hover:bg-slate-50'
                 )}
               >
-                <flow.icon className={cn('h-4 w-4', isActive ? tabColors.text : 'text-zinc-400')} />
+                <flow.icon className={cn('h-4 w-4', isActive ? tabColors.text : 'text-slate-400')} />
                 <span>{flow.persona}</span>
-                <span className="hidden sm:inline text-xs text-zinc-400">{flow.role}</span>
+                <span className="hidden sm:inline text-xs text-slate-400">{flow.role}</span>
               </button>
             );
           })}
         </div>
 
         {/* Active Flow Content */}
-        <div className="rounded-2xl border border-zinc-200 bg-white p-6 sm:p-8 lg:p-10 shadow-sm">
+        <motion.div
+          key={activeFlow.id}
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.3 }}
+          className="rounded-2xl border border-slate-200 bg-white p-6 sm:p-8 lg:p-10 shadow-sm"
+        >
           {/* Flow header */}
-          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 mb-8 pb-6 border-b border-zinc-100">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 mb-8 pb-6 border-b border-slate-100">
             <div className={cn('flex h-14 w-14 items-center justify-center rounded-2xl border', colors.icon)}>
               <activeFlow.icon className={cn('h-7 w-7', colors.text)} />
             </div>
             <div>
               <div className="flex items-center gap-3">
-                <h3 className="text-xl font-bold text-zinc-900">{activeFlow.persona}</h3>
-                <span className="text-xs px-2 py-0.5 rounded-full bg-zinc-100 text-zinc-500">
+                <h3 className="text-xl font-bold text-slate-900">{activeFlow.persona}</h3>
+                <span className="text-xs px-2 py-0.5 rounded-full bg-slate-100 text-slate-500">
                   {activeFlow.role}
                 </span>
               </div>
-              <p className="text-zinc-500 mt-1">{activeFlow.tagline}</p>
+              <p className="text-slate-500 mt-1">{activeFlow.tagline}</p>
             </div>
           </div>
 
@@ -398,27 +553,27 @@ function PersonaFlowsSection(): JSX.Element {
                   <div className={cn(
                     'flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border transition-colors duration-200',
                     colors.icon,
-                    'group-hover:bg-zinc-50'
+                    'group-hover:bg-slate-50'
                   )}>
                     <step.icon className={cn('h-4 w-4', colors.text)} />
                   </div>
                   {stepIndex < activeFlow.steps.length - 1 && (
-                    <div className="w-px h-4 sm:h-5 bg-zinc-100 mt-1" />
+                    <div className="w-px h-4 sm:h-5 bg-slate-100 mt-1" />
                   )}
                 </div>
                 <div className="pb-2">
-                  <p className="text-sm font-semibold text-zinc-900">
+                  <p className="text-sm font-semibold text-slate-900">
                     <span className={cn('mr-2 text-xs font-mono', colors.text)}>
                       {String(stepIndex + 1).padStart(2, '0')}
                     </span>
                     {step.title}
                   </p>
-                  <p className="text-sm text-zinc-500 mt-0.5 leading-relaxed">{step.detail}</p>
+                  <p className="text-sm text-slate-500 mt-0.5 leading-relaxed">{step.detail}</p>
                 </div>
               </div>
             ))}
           </div>
-        </div>
+        </motion.div>
       </div>
     </section>
   );
@@ -432,54 +587,73 @@ function FeaturesSection(): JSX.Element {
   const { t } = useTranslation();
 
   const FEATURES = [
-    { icon: Fingerprint, title: '5 Metodos de Fichaje', description: 'Tap movil, NFC badge, codigo QR, PIN numerico y geofencing automatico.', span: 'large' as const, tags: ['Tap movil', 'NFC', 'QR Code', 'PIN', 'Geofencing'] },
-    { icon: WifiOff, title: 'Offline-First PWA', description: 'Funciona sin internet. Fichajes en IndexedDB con sincronizacion automatica al reconectar.', span: 'large' as const, tags: ['IndexedDB', 'Auto-sync', 'PWA nativa'] },
-    { icon: Calendar, title: 'Cuadrante Visual', description: 'Drag-and-drop con validacion de normativa laboral en tiempo real.', span: 'small' as const, tags: ['Drag & drop', 'Validacion ITSS'] },
-    { icon: Shield, title: 'Auditoria SHA-256', description: 'Cada registro genera un hash criptografico enlazado al anterior. Cadena inmutable.', span: 'small' as const, tags: ['Inmutable', 'Hash chain'] },
-    { icon: FileText, title: 'Export a Gestoria', description: 'CSV/XML compatible con A3, Sage y Nominaplus.', span: 'small' as const, tags: ['CSV/XML', 'A3/Sage'] },
-    { icon: QrCode, title: 'API Inspector ITSS', description: 'Token temporal de solo lectura para inspecciones. Sin cuentas, sin complicaciones.', span: 'small' as const, tags: ['Token temporal', 'Solo lectura'] },
+    { icon: Fingerprint, title: t('landing.features.items.clockMethods.title'), description: t('landing.features.items.clockMethods.description'), span: 'large' as const, tags: [t('landing.features.items.clockMethods.tags.tap'), 'NFC', 'QR Code', 'PIN', 'Geofencing'] },
+    { icon: WifiOff, title: t('landing.features.items.offlinePwa.title'), description: t('landing.features.items.offlinePwa.description'), span: 'large' as const, tags: ['IndexedDB', t('landing.features.items.offlinePwa.tags.autoSync'), t('landing.features.items.offlinePwa.tags.nativePwa')] },
+    { icon: Calendar, title: t('landing.features.items.visualRoster.title'), description: t('landing.features.items.visualRoster.description'), span: 'small' as const, tags: ['Drag & drop', t('landing.features.items.visualRoster.tags.itssValidation')] },
+    { icon: Shield, title: t('landing.features.items.audit.title'), description: t('landing.features.items.audit.description'), span: 'small' as const, tags: [t('landing.features.items.audit.tags.immutable'), t('landing.features.items.audit.tags.hashChain')] },
+    { icon: FileText, title: t('landing.features.items.export.title'), description: t('landing.features.items.export.description'), span: 'small' as const, tags: ['CSV/XML', 'A3/Sage'] },
+    { icon: QrCode, title: t('landing.features.items.inspector.title'), description: t('landing.features.items.inspector.description'), span: 'small' as const, tags: [t('landing.features.items.inspector.tags.temporaryToken'), t('landing.features.items.inspector.tags.readOnly')] },
   ];
 
   return (
-    <section id="funciones" className="relative py-24 sm:py-32 bg-zinc-50">
+    <section id="funciones" className="relative py-24 sm:py-32 bg-slate-50">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-16">
-          <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary-50 text-primary-600 text-sm font-medium mb-4">
+        <motion.div
+          className="text-center mb-16"
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: '-80px' }}
+          variants={staggerContainer}
+        >
+          <motion.span
+            variants={fadeInUp}
+            className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary-50 text-primary-600 text-sm font-medium mb-4"
+          >
             <Zap className="h-3.5 w-3.5" />
             {t('landing.nav.features')}
-          </span>
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-zinc-900 mb-4 tracking-tight">
+          </motion.span>
+          <motion.h2
+            variants={fadeInUp}
+            className="text-3xl sm:text-4xl lg:text-5xl font-bold text-slate-900 mb-4 tracking-tight"
+          >
             {t('landing.features.title')}
-          </h2>
-          <p className="text-lg text-zinc-500 max-w-2xl mx-auto">
+          </motion.h2>
+          <motion.p variants={fadeInUp} className="text-lg text-slate-500 max-w-2xl mx-auto">
             {t('landing.features.subtitle')}
-          </p>
-        </div>
+          </motion.p>
+        </motion.div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-5">
+        <motion.div
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-5"
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: '-40px' }}
+          variants={staggerContainer}
+        >
           {FEATURES.map((feature) => (
-            <div
+            <motion.div
               key={feature.title}
+              variants={fadeInUp}
               className={cn(
-                'rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm hover:shadow-md transition-shadow',
+                'group rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition-all duration-300 hover:shadow-card-hover hover:border-primary-200/60',
                 feature.span === 'large' ? 'lg:col-span-2' : 'lg:col-span-1'
               )}
             >
-              <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-primary-50 border border-primary-200 mb-4">
+              <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-primary-50 border border-primary-200 mb-4 group-hover:shadow-glow transition-shadow duration-300">
                 <feature.icon className="h-5 w-5 text-primary-600" />
               </div>
-              <h3 className="text-lg font-semibold text-zinc-900 mb-2">{feature.title}</h3>
-              <p className="text-sm text-zinc-500 leading-relaxed mb-4">{feature.description}</p>
+              <h3 className="text-lg font-semibold text-slate-900 mb-2">{feature.title}</h3>
+              <p className="text-sm text-slate-500 leading-relaxed mb-4">{feature.description}</p>
               <div className="flex flex-wrap gap-1.5">
                 {feature.tags.map((tag) => (
-                  <span key={tag} className="text-xs px-2 py-0.5 rounded-md bg-zinc-100 text-zinc-500 border border-zinc-200">
+                  <span key={tag} className="text-xs px-2 py-0.5 rounded-md bg-slate-100 text-slate-500 border border-slate-200">
                     {tag}
                   </span>
                 ))}
               </div>
-            </div>
+            </motion.div>
           ))}
-        </div>
+        </motion.div>
       </div>
     </section>
   );
@@ -491,125 +665,110 @@ function FeaturesSection(): JSX.Element {
 
 function PricingSection(): JSX.Element {
   const { t } = useTranslation();
-  const [isAnnual, setIsAnnual] = useState(false);
-
-  const pricingData = t('landing.pricing.tiers', { returnObjects: true }) as Array<{
-    name: string; price: string; annualPrice: string; unit: string; description: string; features: string[]; cta: string; ctaLink: string;
-  }>;
-
-  const tiers = Array.isArray(pricingData) ? pricingData : [
-    { name: 'Basico', price: '2,50', annualPrice: '2,00', unit: '/usuario/mes', description: 'Fichaje y cumplimiento para equipos pequenos.', features: ['Control de presencia completo', 'Cumplimiento automatico ITSS', 'App movil PWA offline', 'Soporte por email', 'Hasta 15 empleados'], cta: 'Empezar Gratis', ctaLink: '/auth/signup' },
-    { name: 'Profesional', price: '4,50', annualPrice: '3,60', unit: '/usuario/mes', description: 'Planificacion, nominas y multi-sede.', features: ['Todo en Basico', 'Planificador visual de turnos', 'Exportacion a gestoria', 'API Inspector ITSS', 'Soporte prioritario', 'Empleados ilimitados'], cta: 'Probar 14 dias gratis', ctaLink: '/auth/signup' },
-    { name: 'Enterprise', price: 'A medida', annualPrice: 'A medida', unit: '', description: 'SLA dedicado para grandes organizaciones.', features: ['Todo en Profesional', 'SSO y provisioning', 'SLA 99.9% garantizado', 'Manager de cuenta dedicado', 'Formacion personalizada', 'Integraciones a medida'], cta: 'Contactar Ventas', ctaLink: 'mailto:ventas@lsltgroup.es' },
-  ];
+  const plans = usePricingPlans();
 
   return (
     <section id="precios" className="relative py-24 sm:py-32 bg-white">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-12">
-          <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary-50 text-primary-600 text-sm font-medium mb-4">
-            {t('landing.pricing.badge')}
-          </span>
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-zinc-900 mb-4 tracking-tight">
-            {t('landing.pricing.title')}
-          </h2>
-          <p className="text-lg text-zinc-500 max-w-2xl mx-auto">
-            {t('landing.pricing.subtitle')}
-          </p>
-        </div>
-
-        {/* Toggle */}
-        <div className="flex items-center justify-center gap-3 mb-12">
-          <span className={cn('text-sm transition-colors', !isAnnual ? 'text-zinc-900 font-medium' : 'text-zinc-400')}>
-            {t('landing.pricing.monthly')}
-          </span>
-          <button
-            onClick={() => setIsAnnual(!isAnnual)}
-            className={cn(
-              'relative w-12 h-7 rounded-full transition-colors duration-200',
-              isAnnual ? 'bg-primary-500' : 'bg-zinc-200'
-            )}
-          >
-            <div
-              className={cn('absolute top-1 w-5 h-5 rounded-full bg-white shadow-md transition-transform', isAnnual ? 'translate-x-[22px]' : 'translate-x-[3px]')}
-            />
-          </button>
-          <span className={cn('text-sm transition-colors', isAnnual ? 'text-zinc-900 font-medium' : 'text-zinc-400')}>
-            {t('landing.pricing.annual')}
-          </span>
-          {isAnnual && (
-            <span className="text-xs px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 font-medium">
-              -20%
+        <motion.div
+          className="text-center mb-16"
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: '-80px' }}
+          variants={staggerContainer}
+        >
+          <motion.div variants={fadeInUp}>
+            <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary-50 text-primary-600 text-sm font-medium mb-4">
+              {t('landing.pricing.badge')}
             </span>
-          )}
-        </div>
+          </motion.div>
+          <motion.h2
+            variants={fadeInUp}
+            className="text-3xl sm:text-4xl lg:text-5xl font-bold text-slate-900 mb-4 tracking-tight"
+          >
+            {t('landing.pricing.title')}
+          </motion.h2>
+          <motion.p variants={fadeInUp} className="text-lg text-slate-500 max-w-2xl mx-auto">
+            {t('landing.pricing.subtitle')}
+          </motion.p>
+          <motion.div variants={fadeInUp} className="mt-4">
+            <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-accent-50 border border-accent-200 text-accent-700 text-sm font-medium">
+              <Zap className="h-3.5 w-3.5" />
+              14 {t('landing.pricing.trialDays', { defaultValue: 'dias de prueba gratis en todos los planes' })}
+            </span>
+          </motion.div>
+        </motion.div>
 
         {/* Cards */}
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5 lg:gap-6 max-w-5xl mx-auto">
-          {tiers.map((tier, index) => {
-            const displayPrice = isAnnual ? tier.annualPrice : tier.price;
-            const isCustom = tier.price === 'A medida';
-            const highlighted = index === 1;
-
-            return (
-              <div
-                key={tier.name}
-                className={cn(
-                  'relative rounded-2xl p-6 lg:p-7 transition-all duration-300',
-                  highlighted
-                    ? 'bg-primary-50 border-2 border-primary-500 shadow-xl shadow-primary-500/10'
-                    : 'border border-zinc-200 bg-white shadow-sm hover:shadow-md'
-                )}
-              >
-                {highlighted && (
-                  <div className="absolute -top-3.5 left-1/2 -translate-x-1/2">
-                    <span className="px-4 py-1 rounded-full bg-primary-500 text-white text-xs font-semibold shadow-md">
-                      {t('billing.recommended')}
-                    </span>
-                  </div>
-                )}
-
-                <div className="mb-6">
-                  <h3 className="text-lg font-semibold text-zinc-900 mb-3">{tier.name}</h3>
-                  <div className="flex items-baseline gap-1">
-                    {isCustom ? (
-                      <span className="text-2xl font-bold text-zinc-900">{displayPrice}</span>
-                    ) : (
-                      <>
-                        <span className="text-4xl font-bold text-zinc-900">&euro;{displayPrice}</span>
-                        <span className="text-zinc-500 text-sm">{tier.unit}</span>
-                      </>
-                    )}
-                  </div>
-                  <p className="text-sm text-zinc-500 mt-2">{tier.description}</p>
+        <motion.div
+          className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5 lg:gap-6 max-w-5xl mx-auto"
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: '-40px' }}
+          variants={staggerContainer}
+        >
+          {plans.map((plan) => (
+            <motion.div
+              key={plan.code}
+              variants={fadeInUp}
+              className={cn(
+                'relative rounded-2xl p-6 lg:p-7 transition-all duration-300',
+                plan.highlighted
+                  ? 'bg-gradient-to-b from-primary-50 to-white border-2 border-primary-500 shadow-xl shadow-primary-500/10 scale-[1.02] lg:scale-105'
+                  : 'border border-slate-200 bg-white shadow-sm hover:shadow-card-hover'
+              )}
+            >
+              {plan.highlighted && (
+                <div className="absolute -top-3.5 left-1/2 -translate-x-1/2">
+                  <span className="px-4 py-1 rounded-full bg-gradient-to-r from-primary-600 to-primary-500 text-white text-xs font-semibold shadow-md">
+                    {t('billing.recommended')}
+                  </span>
                 </div>
+              )}
 
-                <ul className="space-y-3 mb-8">
-                  {tier.features.map((feature) => (
-                    <li key={feature} className="flex items-start gap-2.5">
-                      <Check className="h-4 w-4 text-primary-500 shrink-0 mt-0.5" />
-                      <span className="text-sm text-zinc-600">{feature}</span>
-                    </li>
-                  ))}
-                </ul>
+              <div className="mb-6">
+                <h3 className="text-lg font-semibold text-slate-900 mb-1">{plan.name}</h3>
+                <p className="text-sm text-slate-500 mb-4">{plan.description}</p>
+                <div className="flex items-baseline gap-1">
+                  <span className="text-4xl font-bold text-slate-900">&euro;{plan.price}</span>
+                  <span className="text-slate-500 text-sm">{plan.period}</span>
+                </div>
+                <p className="text-xs text-primary-600 font-medium mt-2">{plan.employees}</p>
+              </div>
 
+              <ul className="space-y-3 mb-8">
+                {plan.features.map((feature) => (
+                  <li key={feature} className="flex items-start gap-2.5">
+                    <Check className={cn(
+                      'h-4 w-4 shrink-0 mt-0.5',
+                      plan.highlighted ? 'text-primary-500' : 'text-slate-400'
+                    )} />
+                    <span className="text-sm text-slate-600">{feature}</span>
+                  </li>
+                ))}
+              </ul>
+
+              {plan.highlighted ? (
                 <Button
                   asChild
-                  className={cn('w-full', highlighted ? '' : 'bg-zinc-100 hover:bg-zinc-200 text-zinc-900')}
-                  variant={highlighted ? 'default' : 'secondary'}
+                  className="w-full bg-gradient-to-r from-primary-600 to-primary-500 hover:from-primary-700 hover:to-primary-600 shadow-md shadow-primary-500/20"
                 >
-                  {tier.ctaLink.startsWith('mailto:') ? (
-                    <a href={tier.ctaLink}>{tier.cta}</a>
-                  ) : (
-                    <Link to={tier.ctaLink}>{tier.cta}</Link>
-                  )}
+                  <Link to="/auth/signup">{plan.cta}</Link>
                 </Button>
-              </div>
-            );
-          })}
-        </div>
+              ) : (
+                <Button
+                  asChild
+                  variant="secondary"
+                  className="w-full bg-slate-100 hover:bg-slate-200 text-slate-900"
+                >
+                  <Link to="/auth/signup">{plan.cta}</Link>
+                </Button>
+              )}
+            </motion.div>
+          ))}
+        </motion.div>
 
-        <p className="mt-10 text-center text-sm text-zinc-400 flex items-center justify-center gap-2">
+        <p className="mt-10 text-center text-sm text-slate-400 flex items-center justify-center gap-2">
           <Shield className="h-4 w-4 text-primary-500" />
           {t('landing.pricing.trialNote')}
         </p>
@@ -626,49 +785,76 @@ function FAQSection(): JSX.Element {
   const { t } = useTranslation();
   const [openIndex, setOpenIndex] = useState<number | null>(null);
 
-  const faqData = t('landing.faq.items', { returnObjects: true }) as Array<{ question: string; answer: string }>;
+  const faqData = t('landing.faqItems', { returnObjects: true }) as Array<{ q: string; a: string }>;
   const items = Array.isArray(faqData) ? faqData : [];
 
   return (
-    <section id="faq" className="relative py-24 sm:py-32 bg-zinc-50">
+    <section id="faq" className="relative py-24 sm:py-32 bg-slate-50">
       <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-12">
-          <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary-50 text-primary-600 text-sm font-medium mb-4">
-            FAQ
-          </span>
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-zinc-900 mb-4 tracking-tight">
+        <motion.div
+          className="text-center mb-12"
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: '-80px' }}
+          variants={staggerContainer}
+        >
+          <motion.span
+            variants={fadeInUp}
+            className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary-50 text-primary-600 text-sm font-medium mb-4"
+          >
+            {t('landing.nav.faq')}
+          </motion.span>
+          <motion.h2
+            variants={fadeInUp}
+            className="text-3xl sm:text-4xl lg:text-5xl font-bold text-slate-900 mb-4 tracking-tight"
+          >
             {t('landing.faq.title')}
-          </h2>
-        </div>
+          </motion.h2>
+        </motion.div>
 
-        <div className="space-y-3">
+        <motion.div
+          className="space-y-3"
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: '-40px' }}
+          variants={staggerContainer}
+        >
           {items.map((item, index) => (
-            <div key={item.question} className="rounded-2xl border border-zinc-200 bg-white overflow-hidden shadow-sm">
+            <motion.div
+              key={item.q}
+              variants={fadeInUp}
+              className="rounded-2xl border border-slate-200 bg-white overflow-hidden shadow-sm"
+            >
               <button
                 onClick={() => setOpenIndex(openIndex === index ? null : index)}
                 className="w-full flex items-center justify-between p-5 sm:p-6 text-left group"
               >
-                <span className="font-medium text-zinc-900 pr-4 group-hover:text-primary-600 transition-colors">
-                  {item.question}
+                <span className="font-medium text-slate-900 pr-4 group-hover:text-primary-600 transition-colors">
+                  {item.q}
                 </span>
                 <ChevronDown
                   className={cn(
-                    'h-5 w-5 text-zinc-400 shrink-0 transition-transform duration-300',
+                    'h-5 w-5 text-slate-400 shrink-0 transition-transform duration-300',
                     openIndex === index && 'rotate-180 text-primary-500'
                   )}
                 />
               </button>
               {openIndex === index && (
-                <div className="px-5 sm:px-6 pb-5 sm:pb-6 text-sm text-zinc-500 leading-relaxed">
-                  {item.answer}
-                </div>
+                <motion.div
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: 'auto' }}
+                  transition={{ duration: 0.2 }}
+                  className="px-5 sm:px-6 pb-5 sm:pb-6 text-sm text-slate-500 leading-relaxed"
+                >
+                  {item.a}
+                </motion.div>
               )}
-            </div>
+            </motion.div>
           ))}
-        </div>
+        </motion.div>
 
         <div className="mt-10 text-center">
-          <p className="text-zinc-400 mb-4 text-sm">{t('landing.faq.moreQuestions')}</p>
+          <p className="text-slate-400 mb-4 text-sm">{t('landing.faq.moreQuestions')}</p>
           <Button variant="outline" asChild>
             <a href="mailto:soporte@lsltgroup.es">{t('landing.faq.contactSupport')}</a>
           </Button>
@@ -686,28 +872,45 @@ function CTASection(): JSX.Element {
   const { t } = useTranslation();
 
   return (
-    <section className="relative py-24 sm:py-32 bg-white">
-      <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8 text-center">
-        <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-zinc-900 mb-6 tracking-tight">
-          {t('landing.cta.readyTitle')}
-        </h2>
-        <p className="text-lg text-zinc-500 mb-10 max-w-xl mx-auto">
-          {t('landing.cta.readySubtitle')}
-        </p>
-        <Button
-          asChild
-          size="lg"
-          className="w-full sm:w-auto px-10 py-6 text-base rounded-xl shadow-lg shadow-primary-500/20"
+    <section className="relative py-24 sm:py-32 bg-gradient-to-b from-surface-dark to-slate-900 overflow-hidden">
+      {/* Decorative glow */}
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] rounded-full bg-primary-500/10 blur-[120px]" />
+
+      <motion.div
+        className="relative z-10 mx-auto max-w-3xl px-4 sm:px-6 lg:px-8 text-center"
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, margin: '-80px' }}
+        variants={staggerContainer}
+      >
+        <motion.h2
+          variants={fadeInUp}
+          className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-6 tracking-tight"
         >
-          <Link to="/auth/signup">
-            {t('landing.cta.startNow')}
-            <ArrowRight className="ml-2 h-5 w-5" />
-          </Link>
-        </Button>
-        <p className="mt-6 text-sm text-zinc-400">
+          {t('landing.cta.readyTitle')}
+        </motion.h2>
+        <motion.p
+          variants={fadeInUp}
+          className="text-lg text-slate-400 mb-10 max-w-xl mx-auto"
+        >
+          {t('landing.cta.readySubtitle')}
+        </motion.p>
+        <motion.div variants={fadeInUp}>
+          <Button
+            asChild
+            size="lg"
+            className="w-full sm:w-auto px-10 py-6 text-base rounded-xl bg-gradient-to-r from-primary-600 to-primary-500 hover:from-primary-700 hover:to-primary-600 shadow-lg shadow-primary-500/25"
+          >
+            <Link to="/auth/signup">
+              {t('landing.cta.startNow')}
+              <ArrowRight className="ml-2 h-5 w-5" />
+            </Link>
+          </Button>
+        </motion.div>
+        <motion.p variants={fadeInUp} className="mt-6 text-sm text-slate-500">
           {t('landing.hero.trustSignals')}
-        </p>
-      </div>
+        </motion.p>
+      </motion.div>
     </section>
   );
 }
@@ -726,7 +929,7 @@ function Footer(): JSX.Element {
         { label: t('landing.nav.features'), href: '#funciones' },
         { label: t('landing.nav.pricing'), href: '#precios' },
         { label: t('landing.nav.howItWorks'), href: '#como-funciona' },
-        { label: 'FAQ', href: '#faq' },
+        { label: t('landing.nav.faq'), href: '#faq' },
       ],
     },
     {
@@ -742,34 +945,34 @@ function Footer(): JSX.Element {
       links: [
         { label: t('landing.footer.privacy'), href: '#' },
         { label: t('landing.footer.terms'), href: '#' },
-        { label: 'RGPD', href: '#' },
+        { label: t('landing.footer.gdpr'), href: '#' },
       ],
     },
   ];
 
   return (
-    <footer className="border-t border-zinc-200 bg-zinc-50">
+    <footer className="border-t border-slate-800 bg-slate-900">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-16">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8 lg:gap-12">
           {/* Brand column */}
           <div className="col-span-2 md:col-span-1">
             <Link to="/" className="flex items-center gap-2.5 mb-4">
-              <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary-500">
+              <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-gradient-to-br from-primary-600 to-primary-500">
                 <Clock className="h-5 w-5 text-white" />
               </div>
               <div className="flex flex-col">
-                <span className="text-lg font-bold text-zinc-900 leading-none tracking-tight">
+                <span className="text-lg font-bold text-white leading-none tracking-tight">
                   Torre Tempo
                 </span>
-                <span className="text-[10px] text-zinc-500 leading-none">
-                  by LSLT Apps
+                <span className="text-[10px] text-slate-500 leading-none">
+                  {t('landing.brandSubtitle')}
                 </span>
               </div>
             </Link>
-            <p className="text-sm text-zinc-500 mb-4 leading-relaxed">
+            <p className="text-sm text-slate-400 mb-4 leading-relaxed">
               {t('landing.footer.tagline')}
             </p>
-            <div className="flex items-center gap-1.5 text-xs text-zinc-400">
+            <div className="flex items-center gap-1.5 text-xs text-slate-500">
               <Globe className="h-3.5 w-3.5" />
               <span>{t('landing.footer.madeIn')}</span>
             </div>
@@ -778,16 +981,16 @@ function Footer(): JSX.Element {
           {/* Link columns */}
           {footerColumns.map((column) => (
             <div key={column.title}>
-              <h4 className="font-semibold text-zinc-900 text-sm mb-4">{column.title}</h4>
+              <h4 className="font-semibold text-slate-200 text-sm mb-4">{column.title}</h4>
               <ul className="space-y-2.5">
                 {column.links.map((link) => (
                   <li key={link.label}>
                     {link.href.startsWith('mailto:') || link.href.startsWith('#') ? (
-                      <a href={link.href} className="text-sm text-zinc-500 hover:text-zinc-700 transition-colors duration-200">
+                      <a href={link.href} className="text-sm text-slate-400 hover:text-slate-200 transition-colors duration-200">
                         {link.label}
                       </a>
                     ) : (
-                      <Link to={link.href} className="text-sm text-zinc-500 hover:text-zinc-700 transition-colors duration-200">
+                      <Link to={link.href} className="text-sm text-slate-400 hover:text-slate-200 transition-colors duration-200">
                         {link.label}
                       </Link>
                     )}
@@ -799,16 +1002,16 @@ function Footer(): JSX.Element {
         </div>
 
         {/* Bottom bar */}
-        <div className="mt-12 pt-8 border-t border-zinc-200 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <p className="text-xs text-zinc-400">
-            &copy; {new Date().getFullYear()} LSLT Apps — Una division de Lakeside La Torre (Murcia) Group SL
+        <div className="mt-12 pt-8 border-t border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-4">
+          <p className="text-xs text-slate-500">
+            &copy; {new Date().getFullYear()} {t('landing.footer.copyright')}
           </p>
           <div className="flex items-center gap-4">
             <LanguageSwitcher />
-            <Link to="/auth/signin" className="text-xs text-zinc-500 hover:text-zinc-700 transition-colors">
+            <Link to="/auth/signin" className="text-xs text-slate-400 hover:text-slate-200 transition-colors">
               {t('auth.signIn')}
             </Link>
-            <Link to="/auth/signup" className="text-xs text-zinc-500 hover:text-zinc-700 transition-colors">
+            <Link to="/auth/signup" className="text-xs text-slate-400 hover:text-slate-200 transition-colors">
               {t('auth.signUp')}
             </Link>
           </div>
@@ -824,7 +1027,7 @@ function Footer(): JSX.Element {
 
 export default function Landing(): JSX.Element {
   return (
-    <div className="min-h-screen bg-zinc-50 text-zinc-900">
+    <div className="min-h-screen bg-white text-slate-900">
       <Navbar />
       <main>
         <HeroSection />

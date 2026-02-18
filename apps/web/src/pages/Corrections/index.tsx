@@ -28,7 +28,7 @@ const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:3000';
 
 async function fetchCorrections(slug: string) {
   const res = await fetch(`${API_BASE}/api/v1/org/${slug}/corrections`, { credentials: 'include' });
-  if (!res.ok) throw new Error('Failed to fetch corrections');
+  if (!res.ok) throw new Error('corrections.fetchError');
   return res.json();
 }
 
@@ -39,7 +39,7 @@ async function createCorrection(slug: string, data: any) {
     credentials: 'include',
     body: JSON.stringify(data),
   });
-  if (!res.ok) throw new Error('Failed to create correction');
+  if (!res.ok) throw new Error('corrections.createError');
   return res.json();
 }
 
@@ -48,7 +48,7 @@ async function approveCorrection(slug: string, id: string) {
     method: 'PATCH',
     credentials: 'include',
   });
-  if (!res.ok) throw new Error('Failed to approve');
+  if (!res.ok) throw new Error('corrections.approveError');
   return res.json();
 }
 
@@ -59,7 +59,7 @@ async function rejectCorrection(slug: string, id: string, reason: string) {
     credentials: 'include',
     body: JSON.stringify({ rejectionReason: reason }),
   });
-  if (!res.ok) throw new Error('Failed to reject');
+  if (!res.ok) throw new Error('corrections.rejectError');
   return res.json();
 }
 
@@ -132,7 +132,7 @@ export default function CorrectionsPage() {
       </div>
 
       {/* Tabs */}
-      <div className="flex gap-1 mb-6 bg-zinc-100 rounded-lg p-1 w-fit">
+      <div className="flex gap-1 mb-6 bg-slate-100 rounded-lg p-1 w-fit">
         {tabs.map((item) => (
           <button
             key={item.key}
@@ -140,8 +140,8 @@ export default function CorrectionsPage() {
             className={cn(
               'px-4 py-2 text-sm font-medium rounded-md transition-colors',
               tab === item.key
-                ? 'bg-white text-zinc-900 shadow-sm'
-                : 'text-zinc-500 hover:text-zinc-700'
+                ? 'bg-white text-slate-900 shadow-sm'
+                : 'text-slate-500 hover:text-slate-700'
             )}
           >
             {item.label}
@@ -157,9 +157,9 @@ export default function CorrectionsPage() {
       ) : correctionsList.length === 0 ? (
         <div className="empty-state">
           <div className="empty-state-icon">
-            <ClipboardCheck className="h-8 w-8 text-zinc-400" />
+            <ClipboardCheck className="h-8 w-8 text-slate-400" />
           </div>
-          <p className="text-zinc-500">{t('corrections.noCorrections')}</p>
+          <p className="text-slate-500">{t('corrections.noCorrections')}</p>
         </div>
       ) : (
         <div className="space-y-3">
@@ -171,18 +171,18 @@ export default function CorrectionsPage() {
                     <Badge variant={statusVariant[req.status] || 'secondary'}>
                       {t(`common.${req.status}` as any) || req.status}
                     </Badge>
-                    <span className="text-xs text-zinc-400">
+                    <span className="text-xs text-slate-400">
                       {new Date(req.createdAt || req.requestedAt).toLocaleDateString('es-ES')}
                     </span>
                   </div>
 
                   {/* Original vs Requested */}
                   <div className="flex items-center gap-3 text-sm">
-                    <div className="flex items-center gap-1.5 text-zinc-500">
+                    <div className="flex items-center gap-1.5 text-slate-500">
                       <Clock className="h-3.5 w-3.5" />
                       <span>{req.originalClockIn ? new Date(req.originalClockIn).toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' }) : '-'}</span>
                     </div>
-                    <ArrowRight className="h-3.5 w-3.5 text-zinc-300" />
+                    <ArrowRight className="h-3.5 w-3.5 text-slate-300" />
                     <div className="flex items-center gap-1.5 text-primary-600 font-medium">
                       <Clock className="h-3.5 w-3.5" />
                       <span>{req.requestedClockIn ? new Date(req.requestedClockIn).toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' }) : '-'}</span>
@@ -190,7 +190,7 @@ export default function CorrectionsPage() {
                   </div>
 
                   {req.reason && (
-                    <p className="text-sm text-zinc-500">{req.reason}</p>
+                    <p className="text-sm text-slate-500">{req.reason}</p>
                   )}
                 </div>
 
@@ -207,7 +207,7 @@ export default function CorrectionsPage() {
                     <Button
                       size="sm"
                       variant="outline"
-                      onClick={() => rejectMutation.mutate({ id: req.id, reason: 'Rejected' })}
+                      onClick={() => rejectMutation.mutate({ id: req.id, reason: t('common.rejected') })}
                       className="text-red-600 border-red-200 hover:bg-red-50"
                     >
                       <X className="h-4 w-4" />
@@ -228,7 +228,7 @@ export default function CorrectionsPage() {
           </DialogHeader>
           <div className="space-y-4 py-4">
             <div>
-              <label className="text-sm font-medium text-zinc-700 mb-1.5 block">{t('corrections.correctionType')}</label>
+              <label className="text-sm font-medium text-slate-700 mb-1.5 block">{t('corrections.correctionType')}</label>
               <Select value={correctionType} onValueChange={setCorrectionType}>
                 <SelectTrigger><SelectValue /></SelectTrigger>
                 <SelectContent>
@@ -240,11 +240,11 @@ export default function CorrectionsPage() {
               </Select>
             </div>
             <div>
-              <label className="text-sm font-medium text-zinc-700 mb-1.5 block">{t('corrections.requested')}</label>
+              <label className="text-sm font-medium text-slate-700 mb-1.5 block">{t('corrections.requested')}</label>
               <Input type="datetime-local" value={requestedTime} onChange={(e) => setRequestedTime(e.target.value)} />
             </div>
             <div>
-              <label className="text-sm font-medium text-zinc-700 mb-1.5 block">
+              <label className="text-sm font-medium text-slate-700 mb-1.5 block">
                 {t('corrections.reason')} <span className="text-red-500">*</span>
               </label>
               <Input

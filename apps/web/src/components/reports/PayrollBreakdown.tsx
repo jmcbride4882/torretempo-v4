@@ -59,10 +59,10 @@ function TableRow({
 }) {
   const { t } = useTranslation();
   const rowStyles = {
-    default: 'text-zinc-700',
+    default: 'text-slate-700',
     highlight: 'text-amber-700 bg-amber-50',
     deduction: 'text-red-700',
-    total: 'text-zinc-900 font-semibold text-lg border-t border-zinc-200 pt-3 mt-1',
+    total: 'text-slate-900 font-semibold text-lg border-t border-slate-200 pt-3 mt-1',
   };
 
   return (
@@ -83,7 +83,7 @@ function TableRow({
               variant === 'highlight' && 'bg-amber-500/20',
               variant === 'deduction' && 'bg-red-500/20',
               variant === 'total' && 'bg-primary-500/20',
-              variant === 'default' && 'bg-zinc-50'
+              variant === 'default' && 'bg-slate-50'
             )}
           >
             <Icon
@@ -92,7 +92,7 @@ function TableRow({
                 variant === 'highlight' && 'text-amber-400',
                 variant === 'deduction' && 'text-red-400',
                 variant === 'total' && 'text-primary-400',
-                variant === 'default' && 'text-zinc-500'
+                variant === 'default' && 'text-slate-500'
               )}
             />
           </div>
@@ -100,7 +100,7 @@ function TableRow({
         <div>
           <p className="text-sm">{label}</p>
           {rate && (
-            <p className="text-xs text-zinc-500">
+            <p className="text-xs text-slate-500">
               @ {formatCurrency(rate)}/{t('reports.perHour')}
             </p>
           )}
@@ -108,7 +108,7 @@ function TableRow({
       </div>
       <div className="flex items-center gap-4 text-right">
         {hours !== undefined && (
-          <span className="min-w-[60px] font-mono text-sm text-zinc-500">
+          <span className="min-w-[60px] font-mono text-sm text-slate-500">
             {formatHours(hours)}
           </span>
         )}
@@ -130,9 +130,9 @@ function TableRow({
 // Section header
 function SectionHeader({ title, icon: Icon }: { title: string; icon: typeof Calculator }) {
   return (
-    <div className="mb-3 flex items-center gap-2 border-b border-zinc-100 pb-2">
-      <Icon className="h-4 w-4 text-zinc-500" />
-      <h4 className="text-xs font-medium uppercase tracking-wider text-zinc-500">{title}</h4>
+    <div className="mb-3 flex items-center gap-2 border-b border-slate-100 pb-2">
+      <Icon className="h-4 w-4 text-slate-500" />
+      <h4 className="text-xs font-medium uppercase tracking-wider text-slate-500">{title}</h4>
     </div>
   );
 }
@@ -148,7 +148,7 @@ export function PayrollBreakdown({ report, className }: PayrollBreakdownProps) {
       className={cn('space-y-6', className)}
     >
       {/* Employee info header */}
-      <div className="rounded-xl border border-zinc-200 bg-white p-4 shadow-sm">
+      <div className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
         <div className="flex items-center gap-3">
           <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-primary-600/20 to-violet-600/20">
             <span className="text-lg font-bold text-primary-400">
@@ -156,15 +156,15 @@ export function PayrollBreakdown({ report, className }: PayrollBreakdownProps) {
             </span>
           </div>
           <div>
-            <h3 className="font-semibold text-zinc-900">{employee.name}</h3>
-            <p className="text-sm text-zinc-500">{employee.email}</p>
-            <p className="text-xs text-zinc-500 capitalize">{employee.role}</p>
+            <h3 className="font-semibold text-slate-900">{employee.name}</h3>
+            <p className="text-sm text-slate-500">{employee.email}</p>
+            <p className="text-xs text-slate-500 capitalize">{employee.role}</p>
           </div>
         </div>
       </div>
 
       {/* Earnings section */}
-      <div className="rounded-xl border border-zinc-200 bg-white p-4 shadow-sm">
+      <div className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
         <SectionHeader title={t('reports.earnings')} icon={DollarSign} />
 
         <div className="space-y-1">
@@ -191,13 +191,13 @@ export function PayrollBreakdown({ report, className }: PayrollBreakdownProps) {
             label={t('reports.grossPay')}
             amount={compensation.totalGrossPay}
             icon={Wallet}
-            className="mt-2 border-t border-zinc-100 pt-3"
+            className="mt-2 border-t border-slate-100 pt-3"
           />
         </div>
       </div>
 
       {/* Deductions section */}
-      <div className="rounded-xl border border-zinc-200 bg-white p-4 shadow-sm">
+      <div className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
         <SectionHeader title={t('reports.deductions')} icon={Minus} />
 
         <div className="space-y-1">
@@ -229,7 +229,7 @@ export function PayrollBreakdown({ report, className }: PayrollBreakdownProps) {
             amount={deductions.totalDeductions}
             icon={Minus}
             variant="deduction"
-            className="mt-2 border-t border-zinc-100 pt-3 font-medium"
+            className="mt-2 border-t border-slate-100 pt-3 font-medium"
           />
         </div>
       </div>
@@ -247,13 +247,13 @@ export function PayrollBreakdown({ report, className }: PayrollBreakdownProps) {
               <Calculator className="h-6 w-6 text-emerald-400" />
             </div>
             <div>
-              <p className="text-sm font-medium text-zinc-700">{t('reports.netPay')}</p>
-              <p className="text-xs text-zinc-500">{t('reports.takeHomeAmount')}</p>
+              <p className="text-sm font-medium text-slate-700">{t('reports.netPay')}</p>
+              <p className="text-xs text-slate-500">{t('reports.takeHomeAmount')}</p>
             </div>
           </div>
           <div className="text-right">
             <p className="text-2xl font-bold text-emerald-600">{formatCurrency(netPay)}</p>
-            <p className="text-xs text-zinc-500">
+            <p className="text-xs text-slate-500">
               {t('reports.ofGross', { percent: ((netPay / compensation.totalGrossPay) * 100).toFixed(1) })}
             </p>
           </div>
@@ -262,20 +262,20 @@ export function PayrollBreakdown({ report, className }: PayrollBreakdownProps) {
 
       {/* Summary cards */}
       <div className="grid grid-cols-3 gap-3">
-        <div className="rounded-xl border border-zinc-100 bg-zinc-50 p-3 text-center">
-          <p className="text-xs text-zinc-500">{t('reports.totalHoursSummary')}</p>
-          <p className="text-lg font-bold text-zinc-900">
+        <div className="rounded-xl border border-slate-100 bg-slate-50 p-3 text-center">
+          <p className="text-xs text-slate-500">{t('reports.totalHoursSummary')}</p>
+          <p className="text-lg font-bold text-slate-900">
             {formatHours(compensation.baseHours + compensation.overtimeHours)}
           </p>
         </div>
-        <div className="rounded-xl border border-zinc-100 bg-zinc-50 p-3 text-center">
-          <p className="text-xs text-zinc-500">{t('reports.overtimeSummary')}</p>
+        <div className="rounded-xl border border-slate-100 bg-slate-50 p-3 text-center">
+          <p className="text-xs text-slate-500">{t('reports.overtimeSummary')}</p>
           <p className="text-lg font-bold text-amber-600">
             {formatHours(compensation.overtimeHours)}
           </p>
         </div>
-        <div className="rounded-xl border border-zinc-100 bg-zinc-50 p-3 text-center">
-          <p className="text-xs text-zinc-500">{t('reports.deductionRate')}</p>
+        <div className="rounded-xl border border-slate-100 bg-slate-50 p-3 text-center">
+          <p className="text-xs text-slate-500">{t('reports.deductionRate')}</p>
           <p className="text-lg font-bold text-red-600">
             {((deductions.totalDeductions / compensation.totalGrossPay) * 100).toFixed(1)}%
           </p>

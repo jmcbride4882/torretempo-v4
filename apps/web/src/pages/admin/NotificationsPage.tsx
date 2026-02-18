@@ -47,7 +47,7 @@ import type { BroadcastMessage } from '@/lib/api/admin';
 
 const severityColors = {
   info: 'bg-blue-50 text-blue-700 border-blue-200',
-  warning: 'bg-amber-50 text-amber-700 border-amber-200',
+  warning: 'bg-violet-50 text-violet-700 border-violet-200',
   urgent: 'bg-red-50 text-red-700 border-red-200',
 };
 
@@ -97,7 +97,7 @@ export default function NotificationsPage() {
         setBroadcasts(response.broadcasts || []);
       } catch (error) {
         console.error('Error fetching broadcasts:', error);
-        toast.error('Failed to load broadcasts');
+        toast.error(t('admin.notifications.failedToLoad'));
       } finally {
         setIsLoading(false);
         setIsRefreshing(false);
@@ -113,11 +113,11 @@ export default function NotificationsPage() {
   // Handlers
   const handleCreate = async () => {
     if (!form.title.trim()) {
-      toast.error('Title is required');
+      toast.error(t('admin.notifications.titleRequired'));
       return;
     }
     if (!form.message.trim()) {
-      toast.error('Message is required');
+      toast.error(t('admin.notifications.messageRequired'));
       return;
     }
 
@@ -136,7 +136,7 @@ export default function NotificationsPage() {
         target_ids: target_ids.length > 0 ? target_ids : undefined,
         expires_at: form.expires_at || undefined,
       });
-      toast.success('Broadcast sent successfully');
+      toast.success(t('admin.notifications.broadcastSent'));
       setCreateModal(false);
       setForm({
         title: '',
@@ -149,7 +149,7 @@ export default function NotificationsPage() {
       loadBroadcasts();
     } catch (error) {
       console.error('Error creating broadcast:', error);
-      toast.error('Failed to send broadcast');
+      toast.error(t('admin.notifications.failedToSend'));
     } finally {
       setIsActionLoading(false);
     }
@@ -161,29 +161,29 @@ export default function NotificationsPage() {
     setIsActionLoading(true);
     try {
       await deleteBroadcast(deleteModal.id);
-      toast.success('Broadcast deleted');
+      toast.success(t('admin.notifications.broadcastDeleted'));
       setDeleteModal(null);
       loadBroadcasts();
     } catch (error) {
       console.error('Error deleting broadcast:', error);
-      toast.error('Failed to delete broadcast');
+      toast.error(t('admin.notifications.failedToDelete'));
     } finally {
       setIsActionLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen bg-zinc-50 p-4 md:p-8">
+    <div className="min-h-screen bg-slate-50 p-4 md:p-8">
       {/* Header */}
       <div className="max-w-7xl mx-auto mb-8">
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-3">
-            <div className="p-2 rounded-xl bg-amber-50 border border-amber-200">
-              <Bell className="w-6 h-6 text-amber-600" />
+            <div className="p-2 rounded-xl bg-violet-50 border border-violet-200">
+              <Bell className="w-6 h-6 text-violet-600" />
             </div>
             <div>
-              <h1 className="text-2xl font-bold text-zinc-900">{t('admin.notifications.title')}</h1>
-              <p className="text-sm text-zinc-500 mt-1">
+              <h1 className="text-2xl font-bold text-slate-900">{t('admin.notifications.title')}</h1>
+              <p className="text-sm text-slate-500 mt-1">
                 {t('admin.notifications.createBroadcast')}
               </p>
             </div>
@@ -194,7 +194,7 @@ export default function NotificationsPage() {
               size="sm"
               onClick={() => loadBroadcasts()}
               disabled={isRefreshing}
-              className="border-zinc-200 hover:bg-zinc-100"
+              className="border-slate-200 hover:bg-slate-100"
             >
               <RefreshCw
                 className={cn('w-4 h-4 mr-2', isRefreshing && 'animate-spin')}
@@ -204,7 +204,7 @@ export default function NotificationsPage() {
             <Button
               size="sm"
               onClick={() => setCreateModal(true)}
-              className="bg-amber-600 hover:bg-amber-700"
+              className="bg-violet-600 hover:bg-violet-700"
             >
               <Plus className="w-4 h-4 mr-2" />
               {t('common.create')}
@@ -217,17 +217,17 @@ export default function NotificationsPage() {
       <div className="max-w-7xl mx-auto">
         {isLoading ? (
           <div className="text-center py-12">
-            <RefreshCw className="w-8 h-8 text-zinc-400 mx-auto mb-3 animate-spin" />
-            <p className="text-zinc-500">{t('common.loading')}</p>
+            <RefreshCw className="w-8 h-8 text-slate-400 mx-auto mb-3 animate-spin" />
+            <p className="text-slate-500">{t('common.loading')}</p>
           </div>
         ) : broadcasts.length === 0 ? (
           <div className="text-center py-12">
-            <Bell className="w-12 h-12 text-zinc-300 mx-auto mb-3" />
-            <p className="text-zinc-500">{t('admin.notifications.noBroadcasts')}</p>
+            <Bell className="w-12 h-12 text-slate-300 mx-auto mb-3" />
+            <p className="text-slate-500">{t('admin.notifications.noBroadcasts')}</p>
             <Button
               size="sm"
               onClick={() => setCreateModal(true)}
-              className="mt-4 bg-amber-600 hover:bg-amber-700"
+              className="mt-4 bg-violet-600 hover:bg-violet-700"
             >
               <Plus className="w-4 h-4 mr-2" />
               {t('admin.notifications.createBroadcast')}
@@ -244,35 +244,35 @@ export default function NotificationsPage() {
                 <div
                   key={broadcast.id}
                   className={cn(
-                    'rounded-xl border border-zinc-200 bg-white shadow-sm p-6',
+                    'rounded-xl border border-slate-200 bg-white shadow-sm p-6',
                     isExpired && 'opacity-60'
                   )}
                 >
                   <div className="flex items-start justify-between">
                     <div className="flex-1">
                       <div className="flex items-center gap-3 mb-2">
-                        <h3 className="text-lg font-semibold text-zinc-900">
+                        <h3 className="text-lg font-semibold text-slate-900">
                           {broadcast.title}
                         </h3>
                         <Badge className={severityColors[broadcast.severity]}>
                           <SeverityIcon className="w-3 h-3 mr-1" />
-                          {broadcast.severity}
+                          {t(`admin.notifications.severity${broadcast.severity.charAt(0).toUpperCase()}${broadcast.severity.slice(1)}`)}
                         </Badge>
                         {isExpired && (
-                          <Badge className="bg-zinc-100 text-zinc-500 border-zinc-200">
-                            Expired
+                          <Badge className="bg-slate-100 text-slate-500 border-slate-200">
+                            {t('admin.notifications.expired')}
                           </Badge>
                         )}
                       </div>
-                      <p className="text-sm text-zinc-700 mb-4">
+                      <p className="text-sm text-slate-700 mb-4">
                         {broadcast.message}
                       </p>
-                      <div className="flex items-center gap-4 text-xs text-zinc-500">
+                      <div className="flex items-center gap-4 text-xs text-slate-500">
                         <div className="flex items-center gap-1">
                           <TargetIcon className="w-3 h-3" />
                           <span>
                             {broadcast.target_type === 'all'
-                              ? 'All users'
+                              ? t('admin.notifications.allUsers')
                               : `${broadcast.target_type} (${broadcast.target_ids?.length || 0})`}
                           </span>
                         </div>
@@ -284,8 +284,7 @@ export default function NotificationsPage() {
                         </div>
                         {broadcast.expires_at && (
                           <span>
-                            Expires:{' '}
-                            {new Date(broadcast.expires_at).toLocaleDateString()}
+                            {t('admin.notifications.expiresOn', { date: new Date(broadcast.expires_at).toLocaleDateString() })}
                           </span>
                         )}
                       </div>
@@ -309,47 +308,47 @@ export default function NotificationsPage() {
       {/* Create Modal */}
       {createModal && (
         <Dialog open={createModal} onOpenChange={setCreateModal}>
-          <DialogContent className="bg-white border-zinc-200 max-w-2xl">
+          <DialogContent className="bg-white border-slate-200 max-w-2xl">
             <DialogHeader>
-              <DialogTitle className="text-zinc-900">
+              <DialogTitle className="text-slate-900">
                 {t('admin.notifications.createBroadcast')}
               </DialogTitle>
-              <DialogDescription className="text-zinc-500">
-                Send a notification to users or organizations
+              <DialogDescription className="text-slate-500">
+                {t('admin.notifications.sendDescription')}
               </DialogDescription>
             </DialogHeader>
             <div className="space-y-4 py-4">
               <div>
-                <label className="text-sm font-medium text-zinc-700 mb-2 block">
-                  Title *
+                <label className="text-sm font-medium text-slate-700 mb-2 block">
+                  {t('admin.notifications.titleLabel')} *
                 </label>
                 <Input
-                  placeholder="Important update"
+                  placeholder={t('admin.notifications.titlePlaceholder')}
                   value={form.title}
                   onChange={(e) =>
                     setForm({ ...form, title: e.target.value })
                   }
-                  className="bg-zinc-50 border-zinc-200 text-zinc-900"
+                  className="bg-slate-50 border-slate-200 text-slate-900"
                 />
               </div>
               <div>
-                <label className="text-sm font-medium text-zinc-700 mb-2 block">
-                  Message *
+                <label className="text-sm font-medium text-slate-700 mb-2 block">
+                  {t('admin.notifications.messageLabel')} *
                 </label>
                 <textarea
-                  placeholder="Broadcast message content..."
+                  placeholder={t('admin.notifications.messagePlaceholder')}
                   value={form.message}
                   onChange={(e) =>
                     setForm({ ...form, message: e.target.value })
                   }
                   rows={4}
-                  className="w-full px-3 py-2 bg-zinc-50 border border-zinc-200 rounded-md text-zinc-900 placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-amber-500"
+                  className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-md text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-violet-500"
                 />
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="text-sm font-medium text-zinc-700 mb-2 block">
-                    Severity
+                  <label className="text-sm font-medium text-slate-700 mb-2 block">
+                    {t('admin.notifications.severity')}
                   </label>
                   <Select
                     value={form.severity}
@@ -357,19 +356,19 @@ export default function NotificationsPage() {
                       setForm({ ...form, severity: value })
                     }
                   >
-                    <SelectTrigger className="bg-zinc-50 border-zinc-200 text-zinc-900">
+                    <SelectTrigger className="bg-slate-50 border-slate-200 text-slate-900">
                       <SelectValue />
                     </SelectTrigger>
-                    <SelectContent className="bg-white border-zinc-200">
-                      <SelectItem value="info">Info</SelectItem>
-                      <SelectItem value="warning">Warning</SelectItem>
-                      <SelectItem value="urgent">Urgent</SelectItem>
+                    <SelectContent className="bg-white border-slate-200">
+                      <SelectItem value="info">{t('admin.notifications.severityInfo')}</SelectItem>
+                      <SelectItem value="warning">{t('admin.notifications.severityWarning')}</SelectItem>
+                      <SelectItem value="urgent">{t('admin.notifications.severityUrgent')}</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
                 <div>
-                  <label className="text-sm font-medium text-zinc-700 mb-2 block">
-                    Target
+                  <label className="text-sm font-medium text-slate-700 mb-2 block">
+                    {t('admin.notifications.target')}
                   </label>
                   <Select
                     value={form.target_type}
@@ -377,40 +376,40 @@ export default function NotificationsPage() {
                       setForm({ ...form, target_type: value })
                     }
                   >
-                    <SelectTrigger className="bg-zinc-50 border-zinc-200 text-zinc-900">
+                    <SelectTrigger className="bg-slate-50 border-slate-200 text-slate-900">
                       <SelectValue />
                     </SelectTrigger>
-                    <SelectContent className="bg-white border-zinc-200">
-                      <SelectItem value="all">All Users</SelectItem>
+                    <SelectContent className="bg-white border-slate-200">
+                      <SelectItem value="all">{t('admin.notifications.allUsers')}</SelectItem>
                       <SelectItem value="organization">
-                        Specific Organizations
+                        {t('admin.notifications.specificOrgs')}
                       </SelectItem>
-                      <SelectItem value="user">Specific Users</SelectItem>
+                      <SelectItem value="user">{t('admin.notifications.specificUsers')}</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
               </div>
               {form.target_type !== 'all' && (
                 <div>
-                  <label className="text-sm font-medium text-zinc-700 mb-2 block">
-                    Target IDs (comma-separated)
+                  <label className="text-sm font-medium text-slate-700 mb-2 block">
+                    {t('admin.notifications.targetIdsLabel')}
                   </label>
                   <Input
-                    placeholder="id1, id2, id3"
+                    placeholder={t('admin.notifications.targetIdsPlaceholder')}
                     value={form.target_ids}
                     onChange={(e) =>
                       setForm({ ...form, target_ids: e.target.value })
                     }
-                    className="bg-zinc-50 border-zinc-200 text-zinc-900"
+                    className="bg-slate-50 border-slate-200 text-slate-900"
                   />
-                  <p className="text-xs text-zinc-500 mt-1">
-                    Enter user or organization IDs separated by commas
+                  <p className="text-xs text-slate-500 mt-1">
+                    {t('admin.notifications.targetIdsHint')}
                   </p>
                 </div>
               )}
               <div>
-                <label className="text-sm font-medium text-zinc-700 mb-2 block">
-                  Expiration Date (optional)
+                <label className="text-sm font-medium text-slate-700 mb-2 block">
+                  {t('admin.notifications.expirationLabel')}
                 </label>
                 <Input
                   type="datetime-local"
@@ -418,10 +417,10 @@ export default function NotificationsPage() {
                   onChange={(e) =>
                     setForm({ ...form, expires_at: e.target.value })
                   }
-                  className="bg-zinc-50 border-zinc-200 text-zinc-900"
+                  className="bg-slate-50 border-slate-200 text-slate-900"
                 />
-                <p className="text-xs text-zinc-500 mt-1">
-                  Leave empty for no expiration
+                <p className="text-xs text-slate-500 mt-1">
+                  {t('admin.notifications.expirationHint')}
                 </p>
               </div>
             </div>
@@ -430,16 +429,16 @@ export default function NotificationsPage() {
                 variant="outline"
                 onClick={() => setCreateModal(false)}
                 disabled={isActionLoading}
-                className="border-zinc-200 hover:bg-zinc-100"
+                className="border-slate-200 hover:bg-slate-100"
               >
                 {t('common.cancel')}
               </Button>
               <Button
                 onClick={handleCreate}
                 disabled={isActionLoading || !form.title.trim() || !form.message.trim()}
-                className="bg-amber-600 hover:bg-amber-700"
+                className="bg-violet-600 hover:bg-violet-700"
               >
-                {isActionLoading ? 'Sending...' : t('common.save')}
+                {isActionLoading ? t('admin.notifications.sending') : t('common.save')}
               </Button>
             </DialogFooter>
           </DialogContent>
@@ -449,15 +448,14 @@ export default function NotificationsPage() {
       {/* Delete Confirmation Modal */}
       {deleteModal && (
         <Dialog open={!!deleteModal} onOpenChange={() => setDeleteModal(null)}>
-          <DialogContent className="bg-white border-zinc-200">
+          <DialogContent className="bg-white border-slate-200">
             <DialogHeader>
-              <DialogTitle className="text-zinc-900 flex items-center gap-2">
+              <DialogTitle className="text-slate-900 flex items-center gap-2">
                 <Trash2 className="w-5 h-5 text-red-600" />
-                Delete Broadcast
+                {t('admin.notifications.deleteBroadcast')}
               </DialogTitle>
-              <DialogDescription className="text-zinc-500">
-                Are you sure you want to delete "{deleteModal.title}"? This
-                action cannot be undone.
+              <DialogDescription className="text-slate-500">
+                {t('admin.notifications.deleteConfirmation', { title: deleteModal.title })}
               </DialogDescription>
             </DialogHeader>
             <DialogFooter>
@@ -465,7 +463,7 @@ export default function NotificationsPage() {
                 variant="outline"
                 onClick={() => setDeleteModal(null)}
                 disabled={isActionLoading}
-                className="border-zinc-200 hover:bg-zinc-100"
+                className="border-slate-200 hover:bg-slate-100"
               >
                 {t('common.cancel')}
               </Button>
@@ -474,7 +472,7 @@ export default function NotificationsPage() {
                 disabled={isActionLoading}
                 className="bg-red-600 hover:bg-red-700"
               >
-                {isActionLoading ? 'Deleting...' : 'Delete Broadcast'}
+                {isActionLoading ? t('admin.notifications.deleting') : t('admin.notifications.deleteBroadcast')}
               </Button>
             </DialogFooter>
           </DialogContent>

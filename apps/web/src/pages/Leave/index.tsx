@@ -28,7 +28,7 @@ const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:3000';
 
 async function fetchLeave(slug: string) {
   const res = await fetch(`${API_BASE}/api/v1/org/${slug}/leave-requests`, { credentials: 'include' });
-  if (!res.ok) throw new Error('Failed to fetch leave requests');
+  if (!res.ok) throw new Error('leave.fetchError');
   return res.json();
 }
 
@@ -39,7 +39,7 @@ async function createLeave(slug: string, data: any) {
     credentials: 'include',
     body: JSON.stringify(data),
   });
-  if (!res.ok) throw new Error('Failed to create leave request');
+  if (!res.ok) throw new Error('leave.createError');
   return res.json();
 }
 
@@ -48,7 +48,7 @@ async function approveLeave(slug: string, id: string) {
     method: 'PATCH',
     credentials: 'include',
   });
-  if (!res.ok) throw new Error('Failed to approve');
+  if (!res.ok) throw new Error('leave.approveError');
   return res.json();
 }
 
@@ -59,7 +59,7 @@ async function rejectLeave(slug: string, id: string, reason: string) {
     credentials: 'include',
     body: JSON.stringify({ rejectionReason: reason }),
   });
-  if (!res.ok) throw new Error('Failed to reject');
+  if (!res.ok) throw new Error('leave.rejectError');
   return res.json();
 }
 
@@ -138,20 +138,20 @@ export default function LeavePage() {
       <Card className="p-4 mb-6">
         <div className="flex items-center justify-between">
           <div>
-            <p className="text-sm text-zinc-500">{t('team.vacationDays')}</p>
-            <p className="text-2xl font-bold text-zinc-900">18 <span className="text-sm font-normal text-zinc-400">/ 22 {t('common.days')}</span></p>
+            <p className="text-sm text-slate-500">{t('team.vacationDays')}</p>
+            <p className="text-2xl font-bold text-slate-900">18 <span className="text-sm font-normal text-slate-400">/ 22 {t('common.days')}</span></p>
           </div>
           <div className="w-32">
-            <div className="h-2 rounded-full bg-zinc-100 overflow-hidden">
+            <div className="h-2 rounded-full bg-slate-100 overflow-hidden">
               <div className="h-full rounded-full bg-primary-500" style={{ width: '82%' }} />
             </div>
-            <p className="text-xs text-zinc-400 mt-1 text-right">18 {t('team.available').toLowerCase()}</p>
+            <p className="text-xs text-slate-400 mt-1 text-right">18 {t('team.available').toLowerCase()}</p>
           </div>
         </div>
       </Card>
 
       {/* Tabs */}
-      <div className="flex gap-1 mb-6 bg-zinc-100 rounded-lg p-1 w-fit">
+      <div className="flex gap-1 mb-6 bg-slate-100 rounded-lg p-1 w-fit">
         {tabs.map((item) => (
           <button
             key={item.key}
@@ -159,8 +159,8 @@ export default function LeavePage() {
             className={cn(
               'px-4 py-2 text-sm font-medium rounded-md transition-colors',
               tab === item.key
-                ? 'bg-white text-zinc-900 shadow-sm'
-                : 'text-zinc-500 hover:text-zinc-700'
+                ? 'bg-white text-slate-900 shadow-sm'
+                : 'text-slate-500 hover:text-slate-700'
             )}
           >
             {item.label}
@@ -176,9 +176,9 @@ export default function LeavePage() {
       ) : requests.length === 0 ? (
         <div className="empty-state">
           <div className="empty-state-icon">
-            <CalendarOff className="h-8 w-8 text-zinc-400" />
+            <CalendarOff className="h-8 w-8 text-slate-400" />
           </div>
-          <p className="text-zinc-500">{t('leave.noLeave')}</p>
+          <p className="text-slate-500">{t('leave.noLeave')}</p>
         </div>
       ) : (
         <div className="space-y-3">
@@ -194,10 +194,10 @@ export default function LeavePage() {
                       {t(`leave.types.${req.leaveType}` as any) || req.leaveType}
                     </Badge>
                   </div>
-                  <p className="text-sm text-zinc-900 font-medium">
+                  <p className="text-sm text-slate-900 font-medium">
                     {new Date(req.startDate).toLocaleDateString('es-ES')} - {new Date(req.endDate).toLocaleDateString('es-ES')}
                   </p>
-                  {req.reason && <p className="text-sm text-zinc-500 mt-1">{req.reason}</p>}
+                  {req.reason && <p className="text-sm text-slate-500 mt-1">{req.reason}</p>}
                 </div>
                 {tab === 'team' && req.status === 'pending' && (
                   <div className="flex gap-2">
@@ -212,7 +212,7 @@ export default function LeavePage() {
                     <Button
                       size="sm"
                       variant="outline"
-                      onClick={() => rejectMutation.mutate({ id: req.id, reason: 'Rejected' })}
+                      onClick={() => rejectMutation.mutate({ id: req.id, reason: t('common.rejected') })}
                       className="text-red-600 border-red-200 hover:bg-red-50"
                     >
                       <X className="h-4 w-4" />
@@ -233,7 +233,7 @@ export default function LeavePage() {
           </DialogHeader>
           <div className="space-y-4 py-4">
             <div>
-              <label className="text-sm font-medium text-zinc-700 mb-1.5 block">{t('leave.leaveType')}</label>
+              <label className="text-sm font-medium text-slate-700 mb-1.5 block">{t('leave.leaveType')}</label>
               <Select value={leaveType} onValueChange={setLeaveType}>
                 <SelectTrigger><SelectValue /></SelectTrigger>
                 <SelectContent>
@@ -246,16 +246,16 @@ export default function LeavePage() {
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="text-sm font-medium text-zinc-700 mb-1.5 block">{t('common.startDate')}</label>
+                <label className="text-sm font-medium text-slate-700 mb-1.5 block">{t('common.startDate')}</label>
                 <Input type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)} />
               </div>
               <div>
-                <label className="text-sm font-medium text-zinc-700 mb-1.5 block">{t('common.endDate')}</label>
+                <label className="text-sm font-medium text-slate-700 mb-1.5 block">{t('common.endDate')}</label>
                 <Input type="date" value={endDate} onChange={(e) => setEndDate(e.target.value)} />
               </div>
             </div>
             <div>
-              <label className="text-sm font-medium text-zinc-700 mb-1.5 block">{t('leave.reason')}</label>
+              <label className="text-sm font-medium text-slate-700 mb-1.5 block">{t('leave.reason')}</label>
               <Input value={reason} onChange={(e) => setReason(e.target.value)} placeholder={t('common.optional')} />
             </div>
           </div>
