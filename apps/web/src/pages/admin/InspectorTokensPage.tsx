@@ -146,12 +146,6 @@ export default function InspectorTokensPage() {
       return;
     }
 
-    const orgSlug = getOrgSlug(selectedOrgId);
-    if (!orgSlug) {
-      toast.error('Could not find organization slug');
-      return;
-    }
-
     setIsGenerating(true);
     try {
       const result = await generateInspectorToken(orgSlug, {
