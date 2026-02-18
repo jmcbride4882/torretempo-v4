@@ -237,7 +237,7 @@
     "emailPlaceholder": "tu@ejemplo.com",
     "fullName": "Nombre completo",
     "getStarted": "Empieza ahora",
-    "minChars": "Minimo {{count}} caracteres",
+    "minChars": "Minimo 8 caracteres",
     "namePlaceholder": "Juan Garcia",
     "subtitle": "Tu equipo te espera",
     "signInContinue": "Inicia sesion para continuar",

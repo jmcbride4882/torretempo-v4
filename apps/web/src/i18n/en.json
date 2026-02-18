@@ -237,7 +237,7 @@
     "emailPlaceholder": "you@example.com",
     "fullName": "Full name",
     "getStarted": "Get started",
-    "minChars": "Minimum {{count}} characters",
+    "minChars": "Minimum 8 characters",
     "namePlaceholder": "John Smith",
     "subtitle": "Your team is waiting",
     "signInContinue": "Sign in to continue",
