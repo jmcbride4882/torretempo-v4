@@ -182,12 +182,12 @@ export function BreakTimer({
   }
 
   return (
-    <div className="bg-white border border-slate-200 rounded-xl shadow-sm p-4 space-y-4">
+    <div className="bg-white border border-kresna-border rounded-xl shadow-sm p-4 space-y-4">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <Coffee className="h-4 w-4 text-slate-500" />
-          <span className="text-sm font-medium text-slate-700">{t('clock.break')}</span>
+          <Coffee className="h-4 w-4 text-kresna-gray" />
+          <span className="text-sm font-medium text-kresna-gray-dark">{t('clock.break')}</span>
         </div>
         {totalBreakMinutes > 0 && (
           <Badge variant="ghost" className="text-xs">
@@ -276,8 +276,8 @@ export function BreakTimer({
                   "flex-1 py-2 px-3 rounded-lg text-sm font-medium transition-all",
                   "border",
                   breakType === 'unpaid'
-                    ? "bg-slate-100 border-slate-300 text-slate-900"
-                    : "bg-transparent border-slate-200 text-slate-500 hover:text-slate-700"
+                    ? "bg-kresna-light border-kresna-border text-charcoal"
+                    : "bg-transparent border-kresna-border text-kresna-gray hover:text-kresna-gray-dark"
                 )}
               >
                 {t('clock.unpaid')}
@@ -289,7 +289,7 @@ export function BreakTimer({
                   "border",
                   breakType === 'paid'
                     ? "bg-emerald-500/20 border-emerald-500/50 text-emerald-400"
-                    : "bg-transparent border-slate-200 text-slate-500 hover:text-slate-700"
+                    : "bg-transparent border-kresna-border text-kresna-gray hover:text-kresna-gray-dark"
                 )}
               >
                 {t('clock.paid')}
@@ -303,7 +303,7 @@ export function BreakTimer({
               variant="outline"
               className={cn(
                 "w-full h-12 text-base font-medium rounded-xl",
-                "border-slate-200 hover:bg-slate-50"
+                "border-kresna-border hover:bg-kresna-light"
               )}
             >
               {isStarting ? (

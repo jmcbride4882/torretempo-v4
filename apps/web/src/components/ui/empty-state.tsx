@@ -17,13 +17,13 @@ const EmptyState = React.forwardRef<HTMLDivElement, EmptyStateProps>(
       {...props}
     >
       {Icon && (
-        <div className="h-16 w-16 rounded-2xl bg-violet-50 dark:bg-violet-500/10 flex items-center justify-center mb-4">
-          <Icon className="h-8 w-8 text-violet-500 dark:text-violet-400" />
+        <div className="h-16 w-16 rounded-3xl bg-primary-50 flex items-center justify-center mb-4">
+          <Icon className="h-8 w-8 text-primary-500" />
         </div>
       )}
-      <h3 className="text-lg font-semibold text-slate-900 dark:text-white mb-1">{title}</h3>
+      <h3 className="text-lg font-semibold text-charcoal mb-1">{title}</h3>
       {description && (
-        <p className="text-sm text-slate-500 dark:text-slate-400 max-w-sm mb-6">{description}</p>
+        <p className="text-sm text-kresna-gray-dark max-w-sm mb-6">{description}</p>
       )}
       {action}
     </div>

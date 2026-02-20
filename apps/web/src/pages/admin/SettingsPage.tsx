@@ -84,7 +84,7 @@ const TABS: TabDefinition[] = [
     id: 'stripe',
     labelKey: 'admin.settings.tabStripe',
     icon: CreditCard,
-    color: 'text-violet-600',
+    color: 'text-primary-600',
   },
   {
     id: 'gocardless',
@@ -96,7 +96,7 @@ const TABS: TabDefinition[] = [
     id: 'email',
     labelKey: 'admin.settings.tabEmail',
     icon: Mail,
-    color: 'text-violet-600',
+    color: 'text-primary-600',
   },
   {
     id: 'general',
@@ -120,7 +120,7 @@ const TABS: TabDefinition[] = [
     id: 'auth',
     labelKey: 'admin.settings.tabAuth',
     icon: Shield,
-    color: 'text-blue-600',
+    color: 'text-primary-600',
   },
   {
     id: 'admin',
@@ -327,10 +327,10 @@ function SecretField({ field, value, editedValue, onEdit }: SecretFieldProps) {
   return (
     <div className="space-y-2">
       <div className="flex items-center justify-between">
-        <label className="text-sm font-medium text-slate-700">
+        <label className="text-sm font-medium text-kresna-gray-dark">
           {t(field.labelKey)}
           {isEdited && (
-            <Badge className="ml-2 border border-violet-300 bg-violet-50 text-violet-700 text-[10px]">
+            <Badge className="ml-2 border border-primary-300 bg-primary-50 text-primary-700 text-[10px]">
               {t('admin.settings.modified')}
             </Badge>
           )}
@@ -339,7 +339,7 @@ function SecretField({ field, value, editedValue, onEdit }: SecretFieldProps) {
           <button
             type="button"
             onClick={() => setVisible(!visible)}
-            className="flex items-center gap-1 rounded-md px-2 py-1 text-xs text-slate-400 transition-colors hover:bg-slate-50 hover:text-slate-700"
+            className="flex items-center gap-1 rounded-md px-2 py-1 text-xs text-kresna-gray transition-colors hover:bg-kresna-light hover:text-kresna-gray-dark"
           >
             {visible ? (
               <>
@@ -356,20 +356,20 @@ function SecretField({ field, value, editedValue, onEdit }: SecretFieldProps) {
         )}
       </div>
       <div className="relative">
-        <Key className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+        <Key className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-kresna-gray" />
         <Input
           type={field.sensitive && !visible ? 'password' : 'text'}
           placeholder={isMasked ? value : field.placeholder}
           value={isEdited ? editedValue : (isMasked ? '' : value)}
           onChange={(e) => onEdit(field.key, e.target.value)}
           className={cn(
-            'pl-10 rounded-xl border border-slate-200 bg-white text-slate-900 font-mono text-sm placeholder:text-slate-400',
-            isEdited && 'border-violet-300 bg-violet-50'
+            'pl-10 rounded-xl border border-kresna-border bg-white text-charcoal font-mono text-sm placeholder:text-kresna-gray',
+            isEdited && 'border-primary-300 bg-primary-50'
           )}
         />
       </div>
       {field.descriptionKey && (
-        <p className="text-xs text-slate-400">{t(field.descriptionKey)}</p>
+        <p className="text-xs text-kresna-gray">{t(field.descriptionKey)}</p>
       )}
     </div>
   );
@@ -653,12 +653,12 @@ export default function SettingsPage() {
       {/* Page header */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-violet-50 shadow-sm">
-            <Settings className="h-5 w-5 text-violet-600" />
+          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary-50 shadow-sm">
+            <Settings className="h-5 w-5 text-primary-600" />
           </div>
           <div>
-            <h1 className="text-xl font-bold text-slate-900 sm:text-2xl">{t('admin.settings.title')}</h1>
-            <p className="text-sm text-slate-500">
+            <h1 className="text-xl font-bold text-charcoal sm:text-2xl">{t('admin.settings.title')}</h1>
+            <p className="text-sm text-kresna-gray">
               {t('admin.settings.subtitle')}
             </p>
           </div>
@@ -692,8 +692,8 @@ export default function SettingsPage() {
               className={cn(
                 'gap-1.5 rounded-lg transition-all',
                 hasChanges
-                  ? 'bg-violet-600 text-white hover:bg-violet-500 shadow-sm'
-                  : 'border border-slate-200 bg-slate-50 text-slate-400'
+                  ? 'bg-primary-600 text-white hover:bg-primary-500 shadow-sm'
+                  : 'border border-kresna-border bg-kresna-light text-kresna-gray'
               )}
             >
               {isSaving ? (
@@ -712,9 +712,9 @@ export default function SettingsPage() {
       {/* Warning banner */}
       {requiresRestart && (
         <div className="overflow-hidden">
-          <div className="flex items-center gap-3 rounded-xl border border-violet-200 bg-violet-50 px-4 py-3">
-            <AlertTriangle className="h-5 w-5 shrink-0 text-violet-600" />
-            <p className="text-sm text-violet-800">
+          <div className="flex items-center gap-3 rounded-xl border border-primary-200 bg-primary-50 px-4 py-3">
+            <AlertTriangle className="h-5 w-5 shrink-0 text-primary-600" />
+            <p className="text-sm text-primary-800">
               {t('admin.settings.restartRequired')}
             </p>
             <Button
@@ -722,7 +722,7 @@ export default function SettingsPage() {
               size="sm"
               onClick={() => setRestartDialog(true)}
               disabled={isRestarting}
-              className="ml-auto shrink-0 text-violet-600 hover:bg-violet-100 hover:text-violet-700"
+              className="ml-auto shrink-0 text-primary-600 hover:bg-primary-100 hover:text-primary-700"
             >
               {isRestarting ? t('admin.settings.restarting') : t('admin.settings.restartNow')}
             </Button>
@@ -733,9 +733,9 @@ export default function SettingsPage() {
       {/* Pending changes banner */}
       {hasChanges && !requiresRestart && (
         <div className="overflow-hidden">
-          <div className="flex items-center gap-3 rounded-xl border border-blue-200 bg-blue-50 px-4 py-3">
-            <ShieldAlert className="h-5 w-5 shrink-0 text-blue-600" />
-            <p className="text-sm text-blue-800">
+          <div className="flex items-center gap-3 rounded-xl border border-primary-200 bg-primary-50 px-4 py-3">
+            <ShieldAlert className="h-5 w-5 shrink-0 text-primary-600" />
+            <p className="text-sm text-primary-800">
               {t('admin.settings.unsavedChanges')}
             </p>
           </div>
@@ -744,19 +744,19 @@ export default function SettingsPage() {
 
       {/* Loading state */}
       {isLoading ? (
-        <div className="flex flex-col items-center justify-center rounded-2xl border border-slate-200 bg-slate-50 px-6 py-16 text-center">
-          <RefreshCw className="mb-3 h-8 w-8 animate-spin text-slate-400" />
-          <p className="text-slate-500">{t('common.loading')}</p>
+        <div className="flex flex-col items-center justify-center rounded-2xl border border-kresna-border bg-kresna-light px-6 py-16 text-center">
+          <RefreshCw className="mb-3 h-8 w-8 animate-spin text-kresna-gray" />
+          <p className="text-kresna-gray">{t('common.loading')}</p>
         </div>
       ) : fetchError ? (
         <div className="flex flex-col items-center justify-center rounded-2xl border border-red-200 bg-red-50 px-6 py-16 text-center">
           <AlertTriangle className="mb-3 h-8 w-8 text-red-600" />
-          <p className="mb-4 text-slate-500">{fetchError}</p>
+          <p className="mb-4 text-kresna-gray">{fetchError}</p>
           <Button
             variant="ghost"
             size="sm"
             onClick={loadSettings}
-            className="gap-2 border border-slate-200 text-slate-700 hover:bg-slate-50"
+            className="gap-2 border border-kresna-border text-kresna-gray-dark hover:bg-kresna-light"
           >
             <RefreshCw className="h-4 w-4" />
             {t('admin.settings.retry')}
@@ -776,19 +776,19 @@ export default function SettingsPage() {
                   className={cn(
                     'group relative flex shrink-0 items-center gap-2 rounded-xl px-4 py-2.5 text-sm font-medium transition-all duration-200',
                     isActive
-                      ? 'border border-slate-200 bg-white text-slate-900 shadow-sm'
-                      : 'border border-transparent text-slate-500 hover:bg-slate-50 hover:text-slate-900'
+                      ? 'border border-kresna-border bg-white text-charcoal shadow-sm'
+                      : 'border border-transparent text-kresna-gray hover:bg-kresna-light hover:text-charcoal'
                   )}
                 >
-                  <tab.icon className={cn('h-4 w-4', isActive ? tab.color : 'text-slate-400 group-hover:text-slate-700')} />
+                  <tab.icon className={cn('h-4 w-4', isActive ? tab.color : 'text-kresna-gray group-hover:text-kresna-gray-dark')} />
                   {t(tab.labelKey)}
                   {changeCount > 0 && (
-                    <span className="flex h-5 min-w-5 items-center justify-center rounded-full bg-violet-50 px-1.5 text-[10px] font-semibold text-violet-700">
+                    <span className="flex h-5 min-w-5 items-center justify-center rounded-full bg-primary-50 px-1.5 text-[10px] font-semibold text-primary-700">
                       {changeCount}
                     </span>
                   )}
                   {isActive && (
-                    <div className="absolute inset-x-0 -bottom-0.5 h-0.5 rounded-full bg-violet-500" />
+                    <div className="absolute inset-x-0 -bottom-0.5 h-0.5 rounded-full bg-primary-500" />
                   )}
                 </button>
               );
@@ -804,8 +804,8 @@ export default function SettingsPage() {
                   title={t('admin.settings.stripeConfig')}
                   description={t('admin.settings.stripeConfigDesc')}
                   icon={CreditCard}
-                  iconColor="text-violet-600"
-                  iconBg="bg-violet-50"
+                  iconColor="text-primary-600"
+                  iconBg="bg-primary-50"
                 >
                   <div className="space-y-5">
                     {STRIPE_FIELDS.map((field) => (
@@ -837,7 +837,7 @@ export default function SettingsPage() {
                         'border text-xs',
                         currentEnvironment === 'live'
                           ? 'border-emerald-300 bg-emerald-50 text-emerald-700'
-                          : 'border-violet-300 bg-violet-50 text-violet-700'
+                          : 'border-primary-300 bg-primary-50 text-primary-700'
                       )}
                     >
                       {currentEnvironment === 'live' ? (
@@ -863,10 +863,10 @@ export default function SettingsPage() {
                     {/* Environment selector */}
                     <div className="space-y-2">
                       <div className="flex items-center justify-between">
-                        <label className="text-sm font-medium text-slate-700">
+                        <label className="text-sm font-medium text-kresna-gray-dark">
                           {t('admin.settings.environment')}
                           {editedGoCardless.environment !== undefined && (
-                            <Badge className="ml-2 border border-violet-300 bg-violet-50 text-violet-700 text-[10px]">
+                            <Badge className="ml-2 border border-primary-300 bg-primary-50 text-primary-700 text-[10px]">
                               {t('admin.settings.modified')}
                             </Badge>
                           )}
@@ -876,19 +876,19 @@ export default function SettingsPage() {
                         value={currentEnvironment}
                         onValueChange={handleEnvironmentChange}
                       >
-                        <SelectTrigger className="rounded-xl border border-slate-200 bg-white text-slate-900">
+                        <SelectTrigger className="rounded-xl border border-kresna-border bg-white text-charcoal">
                           <SelectValue />
                         </SelectTrigger>
-                        <SelectContent className="rounded-xl border border-slate-200 bg-white">
-                          <SelectItem value="sandbox" className="text-slate-700">
+                        <SelectContent className="rounded-xl border border-kresna-border bg-white">
+                          <SelectItem value="sandbox" className="text-kresna-gray-dark">
                             {t('admin.settings.sandboxTesting')}
                           </SelectItem>
-                          <SelectItem value="live" className="text-slate-700">
+                          <SelectItem value="live" className="text-kresna-gray-dark">
                             {t('admin.settings.liveProduction')}
                           </SelectItem>
                         </SelectContent>
                       </Select>
-                      <p className="text-xs text-slate-400">
+                      <p className="text-xs text-kresna-gray">
                         {t('admin.settings.environmentHint')}
                       </p>
                     </div>
@@ -904,8 +904,8 @@ export default function SettingsPage() {
                   title={t('admin.settings.emailTemplates')}
                   description={t('admin.settings.emailConfigDesc')}
                   icon={Mail}
-                  iconColor="text-violet-600"
-                  iconBg="bg-violet-50"
+                  iconColor="text-primary-600"
+                  iconBg="bg-primary-50"
                 >
                   <div className="space-y-5">
                     {EMAIL_FIELDS.map((field) => (
@@ -934,10 +934,10 @@ export default function SettingsPage() {
                  >
                    <div className="space-y-2">
                      <div className="flex items-center justify-between">
-                       <label className="text-sm font-medium text-slate-700">
+                       <label className="text-sm font-medium text-kresna-gray-dark">
                          {t('admin.settings.defaultCurrency')}
                          {editedPayment.currency !== undefined && (
-                           <Badge className="ml-2 border border-violet-300 bg-violet-50 text-violet-700 text-[10px]">
+                           <Badge className="ml-2 border border-primary-300 bg-primary-50 text-primary-700 text-[10px]">
                              {t('admin.settings.modified')}
                            </Badge>
                          )}
@@ -947,22 +947,22 @@ export default function SettingsPage() {
                        value={currentCurrency}
                        onValueChange={handleCurrencyChange}
                      >
-                       <SelectTrigger className="rounded-xl border border-slate-200 bg-white text-slate-900">
+                       <SelectTrigger className="rounded-xl border border-kresna-border bg-white text-charcoal">
                          <SelectValue />
                        </SelectTrigger>
-                       <SelectContent className="rounded-xl border border-slate-200 bg-white">
+                       <SelectContent className="rounded-xl border border-kresna-border bg-white">
                          {CURRENCY_OPTIONS.map((opt) => (
                            <SelectItem
                              key={opt.value}
                              value={opt.value}
-                             className="text-slate-700"
+                             className="text-kresna-gray-dark"
                            >
                              {t(opt.labelKey)}
                            </SelectItem>
                          ))}
                        </SelectContent>
                      </Select>
-                     <p className="text-xs text-slate-400">
+                     <p className="text-xs text-kresna-gray">
                        {t('admin.settings.defaultCurrencyHint')}
                      </p>
                    </div>
@@ -1033,10 +1033,10 @@ export default function SettingsPage() {
                    title={t('admin.settings.authConfig')}
                    description={t('admin.settings.authConfigDesc')}
                    icon={Shield}
-                   iconColor="text-blue-600"
-                   iconBg="bg-blue-50"
+                   iconColor="text-primary-600"
+                   iconBg="bg-primary-50"
                    badge={
-                     <Badge className="border border-blue-300 bg-blue-50 text-blue-700 text-xs">
+                     <Badge className="border border-primary-300 bg-primary-50 text-primary-700 text-xs">
                        <ShieldAlert className="mr-1 h-3 w-3" />
                        {t('admin.settings.sessionCritical')}
                      </Badge>
@@ -1114,11 +1114,11 @@ export default function SettingsPage() {
       <Dialog open={restartDialog} onOpenChange={setRestartDialog}>
         <DialogContent className="sm:max-w-[440px]">
           <DialogHeader>
-            <DialogTitle className="flex items-center gap-2 text-slate-900">
+            <DialogTitle className="flex items-center gap-2 text-charcoal">
               <RefreshCw className="h-5 w-5 text-red-600" />
               {t('admin.settings.restartServer')}
             </DialogTitle>
-            <DialogDescription className="text-slate-500">
+            <DialogDescription className="text-kresna-gray">
               {t('admin.settings.restartConfirmation')}
             </DialogDescription>
           </DialogHeader>
@@ -1176,7 +1176,7 @@ function SectionCard({
   children,
 }: SectionCardProps) {
   return (
-    <div className="group relative overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+    <div className="group relative overflow-hidden rounded-2xl border border-kresna-border bg-white shadow-sm">
       <div className="p-6">
         {/* Card header */}
         <div className="mb-6 flex items-start justify-between">
@@ -1190,8 +1190,8 @@ function SectionCard({
               <Icon className={cn('h-5 w-5', iconColor)} />
             </div>
             <div>
-              <h2 className="text-lg font-semibold text-slate-900">{title}</h2>
-              <p className="text-sm text-slate-500">{description}</p>
+              <h2 className="text-lg font-semibold text-charcoal">{title}</h2>
+              <p className="text-sm text-kresna-gray">{description}</p>
             </div>
           </div>
           {badge}

@@ -67,13 +67,13 @@ export function OfflineIndicator({ className }: OfflineIndicatorProps) {
           className={cn(
             'absolute top-full right-0 mt-2 min-w-[200px]',
             'bg-white rounded-xl',
-            'border border-slate-200 shadow-lg p-3',
-            'dark:bg-slate-800 dark:border-slate-700'
+            'border border-kresna-border shadow-lg p-3',
+            'dark:bg-charcoal dark:border-kresna-border'
           )}
         >
           <div className="space-y-2">
             <div className="flex items-center justify-between text-xs">
-              <span className="text-slate-500 dark:text-slate-400">{t('offline.status')}</span>
+              <span className="text-kresna-gray dark:text-kresna-gray">{t('offline.status')}</span>
               <span className={cn(
                 'font-medium',
                 isOnline ? 'text-emerald-600' : 'text-red-600'
@@ -82,18 +82,18 @@ export function OfflineIndicator({ className }: OfflineIndicatorProps) {
               </span>
             </div>
 
-            <div className="h-px bg-slate-200 dark:bg-slate-700" />
+            <div className="h-px bg-kresna-border dark:bg-kresna-gray-dark" />
 
             <div className="flex items-center justify-between text-xs">
-              <span className="text-slate-500 dark:text-slate-400">{t('common.pending')}</span>
-              <span className="text-slate-900 font-medium dark:text-slate-100">
+              <span className="text-kresna-gray dark:text-kresna-gray">{t('common.pending')}</span>
+              <span className="text-charcoal font-medium dark:text-kresna-light">
                 {queueStats.pending}
               </span>
             </div>
 
             {queueStats.processing > 0 && (
               <div className="flex items-center justify-between text-xs">
-                <span className="text-slate-500 dark:text-slate-400">{t('offline.processing')}</span>
+                <span className="text-kresna-gray dark:text-kresna-gray">{t('offline.processing')}</span>
                 <span className="text-amber-600 font-medium flex items-center gap-1">
                   <Loader2 className="h-3 w-3 animate-spin" />
                   {queueStats.processing}
@@ -103,7 +103,7 @@ export function OfflineIndicator({ className }: OfflineIndicatorProps) {
 
             {queueStats.failed > 0 && (
               <div className="flex items-center justify-between text-xs">
-                <span className="text-slate-500 dark:text-slate-400">{t('offline.failed', { count: queueStats.failed })}</span>
+                <span className="text-kresna-gray dark:text-kresna-gray">{t('offline.failed', { count: queueStats.failed })}</span>
                 <span className="text-red-600 font-medium flex items-center gap-1">
                   <AlertCircle className="h-3 w-3" />
                   {queueStats.failed}

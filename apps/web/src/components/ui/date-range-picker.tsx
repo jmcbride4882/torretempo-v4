@@ -1,7 +1,7 @@
 /**
  * DateRangePicker
  * Reusable date range selection with start/end date inputs
- * Design C color system (slate colors, violet primary)
+ * Kresna design system color tokens
  */
 
 import * as React from 'react';
@@ -103,7 +103,7 @@ export function DateRangePicker({
             'h-10 gap-2 rounded-lg border px-3 text-sm font-normal transition-all duration-200',
             hasRange
               ? 'border-primary-300 bg-primary-50 text-primary-700 hover:bg-primary-100 dark:border-primary-700 dark:bg-primary-900/30 dark:text-primary-400 dark:hover:bg-primary-900/50'
-              : 'border-slate-200 bg-white text-slate-600 hover:bg-slate-50 hover:text-slate-900 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-400 dark:hover:bg-slate-700 dark:hover:text-slate-200',
+              : 'border-kresna-border bg-white text-kresna-gray-dark hover:bg-kresna-light hover:text-charcoal dark:border-kresna-border dark:bg-charcoal dark:text-kresna-gray dark:hover:bg-kresna-gray-dark dark:hover:text-kresna-border',
             className,
           )}
         >
@@ -134,11 +134,11 @@ export function DateRangePicker({
       <PopoverContent
         align="start"
         sideOffset={8}
-        className="w-[320px] border-slate-200 bg-white p-0 dark:border-slate-700 dark:bg-slate-800"
+        className="w-[320px] border-kresna-border bg-white p-0 dark:border-kresna-border dark:bg-charcoal"
       >
         {/* Presets */}
-        <div className="border-b border-slate-100 px-3 py-2.5 dark:border-slate-700">
-          <p className="mb-2 text-[11px] font-medium uppercase tracking-wider text-slate-400 dark:text-slate-500">
+        <div className="border-b border-kresna-border px-3 py-2.5 dark:border-kresna-border">
+          <p className="mb-2 text-[11px] font-medium uppercase tracking-wider text-kresna-gray dark:text-kresna-gray">
             Quick select
           </p>
           <div className="flex flex-wrap gap-1.5">
@@ -149,10 +149,10 @@ export function DateRangePicker({
                 onClick={() => applyPreset(preset.days)}
                 className={cn(
                   'rounded-md px-2.5 py-1 text-xs font-medium transition-all duration-150',
-                  'border border-slate-200 bg-slate-50 text-slate-600',
+                  'border border-kresna-border bg-kresna-light text-kresna-gray-dark',
                   'hover:border-primary-300 hover:bg-primary-50 hover:text-primary-700',
                   'active:scale-[0.97]',
-                  'dark:border-slate-700 dark:bg-slate-700 dark:text-slate-300',
+                  'dark:border-kresna-border dark:bg-kresna-gray-dark dark:text-kresna-gray',
                   'dark:hover:border-primary-600 dark:hover:bg-primary-900/30 dark:hover:text-primary-400',
                 )}
               >
@@ -164,12 +164,12 @@ export function DateRangePicker({
 
         {/* Custom range inputs */}
         <div className="p-3">
-          <p className="mb-2.5 text-[11px] font-medium uppercase tracking-wider text-slate-400 dark:text-slate-500">
+          <p className="mb-2.5 text-[11px] font-medium uppercase tracking-wider text-kresna-gray dark:text-kresna-gray">
             Custom range
           </p>
           <div className="flex items-center gap-2">
             <div className="flex-1">
-              <label className="mb-1 block text-[10px] font-medium text-slate-500 dark:text-slate-400">From</label>
+              <label className="mb-1 block text-[10px] font-medium text-kresna-gray dark:text-kresna-gray">From</label>
               <input
                 ref={startRef}
                 type="date"
@@ -177,27 +177,27 @@ export function DateRangePicker({
                 max={endDate || undefined}
                 onChange={(e) => onStartDateChange(e.target.value)}
                 className={cn(
-                  'flex h-9 w-full rounded-lg border border-slate-200 bg-white px-2.5 text-xs text-slate-900',
+                  'flex h-9 w-full rounded-lg border border-kresna-border bg-white px-2.5 text-xs text-charcoal',
                   'transition-all duration-200',
                   'focus:border-primary-400 focus:outline-none focus:ring-1 focus:ring-primary-200',
-                  'dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100',
+                  'dark:border-kresna-border dark:bg-charcoal dark:text-kresna-light',
                   'dark:focus:border-primary-500 dark:focus:ring-primary-800',
                 )}
               />
             </div>
-            <ChevronRight className="mt-4 h-3.5 w-3.5 shrink-0 text-slate-400 dark:text-slate-500" />
+            <ChevronRight className="mt-4 h-3.5 w-3.5 shrink-0 text-kresna-gray dark:text-kresna-gray" />
             <div className="flex-1">
-              <label className="mb-1 block text-[10px] font-medium text-slate-500 dark:text-slate-400">To</label>
+              <label className="mb-1 block text-[10px] font-medium text-kresna-gray dark:text-kresna-gray">To</label>
               <input
                 type="date"
                 value={endDate}
                 min={startDate || undefined}
                 onChange={(e) => onEndDateChange(e.target.value)}
                 className={cn(
-                  'flex h-9 w-full rounded-lg border border-slate-200 bg-white px-2.5 text-xs text-slate-900',
+                  'flex h-9 w-full rounded-lg border border-kresna-border bg-white px-2.5 text-xs text-charcoal',
                   'transition-all duration-200',
                   'focus:border-primary-400 focus:outline-none focus:ring-1 focus:ring-primary-200',
-                  'dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100',
+                  'dark:border-kresna-border dark:bg-charcoal dark:text-kresna-light',
                   'dark:focus:border-primary-500 dark:focus:ring-primary-800',
                 )}
               />
@@ -207,11 +207,11 @@ export function DateRangePicker({
 
         {/* Footer */}
         {hasRange && (
-          <div className="border-t border-slate-100 px-3 py-2 flex justify-between items-center dark:border-slate-700">
+          <div className="border-t border-kresna-border px-3 py-2 flex justify-between items-center dark:border-kresna-border">
             <button
               type="button"
               onClick={handleClear}
-              className="text-xs text-slate-500 hover:text-slate-700 transition-colors dark:text-slate-400 dark:hover:text-slate-300"
+              className="text-xs text-kresna-gray hover:text-kresna-gray-dark transition-colors dark:text-kresna-gray dark:hover:text-kresna-gray"
             >
               Clear dates
             </button>

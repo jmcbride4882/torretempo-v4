@@ -87,7 +87,7 @@ export default function TeamPage() {
       </div>
 
       {/* Tabs */}
-      <div className="flex gap-1 mb-6 bg-slate-100 rounded-lg p-1 w-fit">
+      <div className="flex gap-1 mb-6 bg-kresna-light rounded-lg p-1 w-fit">
         {tabs.map((item) => (
           <button
             key={item.key}
@@ -95,8 +95,8 @@ export default function TeamPage() {
             className={cn(
               'px-4 py-2 text-sm font-medium rounded-md transition-colors',
               tab === item.key
-                ? 'bg-white text-slate-900 shadow-sm'
-                : 'text-slate-500 hover:text-slate-700'
+                ? 'bg-white text-charcoal shadow-sm'
+                : 'text-kresna-gray hover:text-kresna-gray-dark'
             )}
           >
             {item.label}
@@ -106,7 +106,7 @@ export default function TeamPage() {
 
       {/* Search */}
       <div className="relative mb-6 max-w-sm">
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-kresna-gray" />
         <Input
           placeholder={t('common.search')}
           value={search}
@@ -127,9 +127,9 @@ export default function TeamPage() {
           ) : members.length === 0 ? (
             <div className="empty-state">
               <div className="empty-state-icon">
-                <Users className="h-8 w-8 text-slate-400" />
+                <Users className="h-8 w-8 text-kresna-gray" />
               </div>
-              <p className="text-slate-500">{t('team.noMembers')}</p>
+              <p className="text-kresna-gray">{t('team.noMembers')}</p>
             </div>
           ) : (
             members.map((member: any) => (
@@ -142,8 +142,8 @@ export default function TeamPage() {
                   {(member.user?.name || member.name || '?').charAt(0).toUpperCase()}
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="font-medium text-slate-900 truncate">{member.user?.name || member.name}</p>
-                  <p className="text-sm text-slate-500 truncate">{member.user?.email || member.email}</p>
+                  <p className="font-medium text-charcoal truncate">{member.user?.name || member.name}</p>
+                  <p className="text-sm text-kresna-gray truncate">{member.user?.email || member.email}</p>
                 </div>
                 <Badge variant={roleVariant[member.role] || 'secondary'}>
                   {t(`team.roles.${member.role}` as any) || member.role}
@@ -166,9 +166,9 @@ export default function TeamPage() {
           ) : employees.length === 0 ? (
             <div className="empty-state">
               <div className="empty-state-icon">
-                <Shield className="h-8 w-8 text-slate-400" />
+                <Shield className="h-8 w-8 text-kresna-gray" />
               </div>
-              <p className="text-slate-500">{t('team.noProfiles')}</p>
+              <p className="text-kresna-gray">{t('team.noProfiles')}</p>
             </div>
           ) : (
             <div className="overflow-x-auto">
@@ -189,7 +189,7 @@ export default function TeamPage() {
                       className="cursor-pointer"
                       onClick={() => navigate(`/t/${slug}/team/${emp.userId || emp.id}`)}
                     >
-                      <td className="font-medium text-slate-900">{emp.name || emp.userId}</td>
+                      <td className="font-medium text-charcoal">{emp.name || emp.userId}</td>
                       <td>{'****' + (emp.dni || '').slice(-5)}</td>
                       <td>{emp.jobTitle || '-'}</td>
                       <td>
@@ -215,9 +215,9 @@ export default function TeamPage() {
           </DialogHeader>
           <div className="space-y-4 py-4">
             <div>
-              <label className="text-sm font-medium text-slate-700 mb-1.5 block">{t('team.inviteEmail')}</label>
+              <label className="text-sm font-medium text-kresna-gray-dark mb-1.5 block">{t('team.inviteEmail')}</label>
               <div className="relative">
-                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-kresna-gray" />
                 <Input
                   type="email"
                   placeholder={t('team.emailPlaceholder')}

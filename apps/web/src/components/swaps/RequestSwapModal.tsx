@@ -72,11 +72,11 @@ function ShiftPreview({ shift, label }: { shift: Shift | null; label: string }) 
 
   if (!shift) {
     return (
-      <div className="rounded-xl border border-dashed border-slate-200 bg-slate-50 p-4">
-        <p className="mb-2 text-[10px] font-medium uppercase tracking-wider text-slate-400">
+      <div className="rounded-xl border border-dashed border-kresna-border bg-kresna-light p-4">
+        <p className="mb-2 text-[10px] font-medium uppercase tracking-wider text-kresna-gray">
           {label}
         </p>
-        <p className="text-sm text-slate-400 italic">{t('swaps.labels.noShiftSelected')}</p>
+        <p className="text-sm text-kresna-gray italic">{t('swaps.labels.noShiftSelected')}</p>
       </div>
     );
   }
@@ -85,28 +85,28 @@ function ShiftPreview({ shift, label }: { shift: Shift | null; label: string }) 
     <motion.div
       initial={{ opacity: 0, scale: 0.95 }}
       animate={{ opacity: 1, scale: 1 }}
-      className="rounded-xl border border-slate-200 bg-slate-50 p-4"
+      className="rounded-xl border border-kresna-border bg-kresna-light p-4"
     >
-      <p className="mb-2 text-[10px] font-medium uppercase tracking-wider text-slate-400">
+      <p className="mb-2 text-[10px] font-medium uppercase tracking-wider text-kresna-gray">
         {label}
       </p>
       
       <div className="space-y-2">
-        <div className="flex items-center gap-2 text-slate-900">
+        <div className="flex items-center gap-2 text-charcoal">
           <Calendar className="h-4 w-4 text-primary-500" />
           <span className="font-medium">{formatDate(shift.start_time)}</span>
         </div>
         
-        <div className="flex items-center gap-2 text-slate-700">
-          <Clock className="h-4 w-4 text-slate-400" />
+        <div className="flex items-center gap-2 text-kresna-gray-dark">
+          <Clock className="h-4 w-4 text-kresna-gray" />
           <span className="text-sm tabular-nums">
             {formatTime(shift.start_time)} - {formatTime(shift.end_time)}
           </span>
         </div>
         
         {shift.location && (
-          <div className="flex items-center gap-2 text-slate-500">
-            <MapPin className="h-4 w-4 text-slate-400" />
+          <div className="flex items-center gap-2 text-kresna-gray">
+            <MapPin className="h-4 w-4 text-kresna-gray" />
             <span className="text-sm">{shift.location.name}</span>
           </div>
         )}
@@ -208,15 +208,15 @@ export function RequestSwapModal({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-lg border border-slate-200 bg-white rounded-xl shadow-sm sm:max-w-xl">
+      <DialogContent className="max-w-lg border border-kresna-border bg-white rounded-xl shadow-sm sm:max-w-xl">
         <DialogHeader>
-          <DialogTitle className="flex items-center gap-3 text-xl text-slate-900">
+          <DialogTitle className="flex items-center gap-3 text-xl text-charcoal">
             <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary-50">
               <ArrowLeftRight className="h-5 w-5 text-primary-500" />
             </div>
             {t('swaps.requestShiftSwap')}
           </DialogTitle>
-          <DialogDescription className="text-slate-500">
+          <DialogDescription className="text-kresna-gray">
             {t('swaps.requestShiftSwapDesc')}
           </DialogDescription>
         </DialogHeader>
@@ -235,16 +235,16 @@ export function RequestSwapModal({
             >
               <CheckCircle2 className="h-8 w-8 text-emerald-400" />
             </motion.div>
-            <h3 className="mb-2 text-lg font-semibold text-slate-900">{t('swaps.success.title')}</h3>
-            <p className="text-sm text-slate-500">{t('swaps.success.message')}</p>
+            <h3 className="mb-2 text-lg font-semibold text-charcoal">{t('swaps.success.title')}</h3>
+            <p className="text-sm text-kresna-gray">{t('swaps.success.message')}</p>
           </motion.div>
         ) : (
           <form onSubmit={handleSubmit}>
             <div className="space-y-5 py-4">
               {/* My Shift to Offer */}
               <div className="space-y-2">
-                <Label htmlFor="offered-shift" className="flex items-center gap-2 text-sm text-slate-700">
-                  <Calendar className="h-3.5 w-3.5 text-slate-400" />
+                <Label htmlFor="offered-shift" className="flex items-center gap-2 text-sm text-kresna-gray-dark">
+                  <Calendar className="h-3.5 w-3.5 text-kresna-gray" />
                   {t('swaps.labels.shiftOffering')} <span className="text-red-400">*</span>
                 </Label>
                 <Select
@@ -254,25 +254,25 @@ export function RequestSwapModal({
                 >
                   <SelectTrigger
                     id="offered-shift"
-                    className="border-slate-200 bg-white text-slate-900 focus:border-primary-500"
+                    className="border-kresna-border bg-white text-charcoal focus:border-primary-500"
                   >
                     <SelectValue placeholder={isLoadingShifts ? t('swaps.labels.loadingShifts') : t('swaps.labels.selectShiftToOffer')} />
                   </SelectTrigger>
-                  <SelectContent className="border-slate-200 bg-white">
+                  <SelectContent className="border-kresna-border bg-white">
                     {upcomingMyShifts.length === 0 ? (
-                      <div className="p-4 text-center text-sm text-slate-400">
+                      <div className="p-4 text-center text-sm text-kresna-gray">
                         {t('swaps.labels.noUpcomingShifts')}
                       </div>
                     ) : (
                       upcomingMyShifts.map((shift) => (
-                        <SelectItem key={shift.id} value={shift.id} className="text-slate-900">
+                        <SelectItem key={shift.id} value={shift.id} className="text-charcoal">
                           <div className="flex items-center gap-2">
                             <span className="font-medium">{formatDate(shift.start_time)}</span>
-                            <span className="text-slate-500">
+                            <span className="text-kresna-gray">
                               {formatTime(shift.start_time)} - {formatTime(shift.end_time)}
                             </span>
                             {shift.location && (
-                              <span className="text-slate-400">@ {shift.location.name}</span>
+                              <span className="text-kresna-gray">@ {shift.location.name}</span>
                             )}
                           </div>
                         </SelectItem>
@@ -284,9 +284,9 @@ export function RequestSwapModal({
 
               {/* Desired Shift (Optional) */}
               <div className="space-y-2">
-                <Label htmlFor="desired-shift" className="flex items-center gap-2 text-sm text-slate-700">
-                  <Sparkles className="h-3.5 w-3.5 text-slate-400" />
-                  {t('swaps.labels.desiredShift')} <span className="text-slate-400">({t('common.optional')})</span>
+                <Label htmlFor="desired-shift" className="flex items-center gap-2 text-sm text-kresna-gray-dark">
+                  <Sparkles className="h-3.5 w-3.5 text-kresna-gray" />
+                  {t('swaps.labels.desiredShift')} <span className="text-kresna-gray">({t('common.optional')})</span>
                 </Label>
                 <Select
                   value={formData.desired_shift_id}
@@ -294,23 +294,23 @@ export function RequestSwapModal({
                 >
                   <SelectTrigger
                     id="desired-shift"
-                    className="border-slate-200 bg-white text-slate-900 focus:border-primary-500"
+                    className="border-kresna-border bg-white text-charcoal focus:border-primary-500"
                   >
                     <SelectValue placeholder={t('swaps.labels.leaveOpenOrSelect')} />
                   </SelectTrigger>
-                  <SelectContent className="border-slate-200 bg-white">
-                    <SelectItem value="none" className="text-slate-500 italic">
+                  <SelectContent className="border-kresna-border bg-white">
+                    <SelectItem value="none" className="text-kresna-gray italic">
                       {t('swaps.labels.openRequestAnyone')}
                     </SelectItem>
                     {upcomingAvailableShifts.map((shift) => (
-                      <SelectItem key={shift.id} value={shift.id} className="text-slate-900">
+                      <SelectItem key={shift.id} value={shift.id} className="text-charcoal">
                         <div className="flex items-center gap-2">
                           <span className="font-medium">{formatDate(shift.start_time)}</span>
-                          <span className="text-slate-500">
+                          <span className="text-kresna-gray">
                             {formatTime(shift.start_time)} - {formatTime(shift.end_time)}
                           </span>
                           {shift.user && (
-                            <span className="text-slate-400">({shift.user.name})</span>
+                            <span className="text-kresna-gray">({shift.user.name})</span>
                           )}
                         </div>
                       </SelectItem>
@@ -322,9 +322,9 @@ export function RequestSwapModal({
               {/* Specific Recipient (Optional) */}
               {teamMembers.length > 0 && (
                 <div className="space-y-2">
-                  <Label htmlFor="recipient" className="flex items-center gap-2 text-sm text-slate-700">
-                    <User className="h-3.5 w-3.5 text-slate-400" />
-                    {t('swaps.labels.requestFromPerson')} <span className="text-slate-400">({t('common.optional')})</span>
+                  <Label htmlFor="recipient" className="flex items-center gap-2 text-sm text-kresna-gray-dark">
+                    <User className="h-3.5 w-3.5 text-kresna-gray" />
+                    {t('swaps.labels.requestFromPerson')} <span className="text-kresna-gray">({t('common.optional')})</span>
                   </Label>
                   <Select
                     value={formData.recipient_id}
@@ -332,16 +332,16 @@ export function RequestSwapModal({
                   >
                     <SelectTrigger
                       id="recipient"
-                      className="border-slate-200 bg-white text-slate-900 focus:border-primary-500"
+                      className="border-kresna-border bg-white text-charcoal focus:border-primary-500"
                     >
                       <SelectValue placeholder={t('swaps.labels.anyoneOnTeam')} />
                     </SelectTrigger>
-                    <SelectContent className="border-slate-200 bg-white">
-                      <SelectItem value="none" className="text-slate-500 italic">
+                    <SelectContent className="border-kresna-border bg-white">
+                      <SelectItem value="none" className="text-kresna-gray italic">
                         {t('swaps.labels.anyoneOnTeam')}
                       </SelectItem>
                       {teamMembers.map((member) => (
-                        <SelectItem key={member.id} value={member.id} className="text-slate-900">
+                        <SelectItem key={member.id} value={member.id} className="text-charcoal">
                           <div className="flex items-center gap-2">
                             <div className="flex h-5 w-5 items-center justify-center rounded-full bg-primary-100 text-[10px] text-primary-600">
                               {member.name.charAt(0).toUpperCase()}
@@ -357,20 +357,20 @@ export function RequestSwapModal({
 
               {/* Reason */}
               <div className="space-y-2">
-                <Label htmlFor="reason" className="flex items-center gap-2 text-sm text-slate-700">
-                  <MessageSquare className="h-3.5 w-3.5 text-slate-400" />
-                  {t('swaps.labels.reason')} <span className="text-slate-400">({t('common.optional')})</span>
+                <Label htmlFor="reason" className="flex items-center gap-2 text-sm text-kresna-gray-dark">
+                  <MessageSquare className="h-3.5 w-3.5 text-kresna-gray" />
+                  {t('swaps.labels.reason')} <span className="text-kresna-gray">({t('common.optional')})</span>
                 </Label>
                 <textarea
                   id="reason"
                   value={formData.reason}
                   onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setFormData({ ...formData, reason: e.target.value })}
-                  className="w-full min-h-[80px] rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 placeholder:text-slate-400 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500 resize-none"
+                  className="w-full min-h-[80px] rounded-lg border border-kresna-border bg-white px-3 py-2 text-sm text-charcoal placeholder:text-kresna-gray focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500 resize-none"
                   placeholder={t('swaps.labels.reasonPlaceholder')}
                   maxLength={500}
                 />
                 {formData.reason && (
-                  <p className="text-right text-[10px] text-slate-400">
+                  <p className="text-right text-[10px] text-kresna-gray">
                     {formData.reason.length}/500
                   </p>
                 )}
@@ -387,17 +387,17 @@ export function RequestSwapModal({
                   <div className="flex flex-col gap-3 sm:flex-row sm:items-stretch">
                     <ShiftPreview shift={selectedOfferedShift} label={t('swaps.labels.offering')} />
                     <div className="flex items-center justify-center">
-                      <ArrowLeftRight className="h-5 w-5 text-slate-400" />
+                      <ArrowLeftRight className="h-5 w-5 text-kresna-gray" />
                     </div>
                     {selectedDesiredShift ? (
                       <ShiftPreview shift={selectedDesiredShift} label={t('swaps.labels.requesting')} />
                     ) : (
-                      <div className="flex-1 rounded-xl border border-dashed border-violet-500/30 bg-violet-500/5 p-4">
-                        <p className="mb-2 text-[10px] font-medium uppercase tracking-wider text-slate-400">
+                      <div className="flex-1 rounded-xl border border-dashed border-primary-500/30 bg-primary-500/5 p-4">
+                        <p className="mb-2 text-[10px] font-medium uppercase tracking-wider text-kresna-gray">
                           {t('swaps.labels.requesting')}
                         </p>
-                        <p className="text-sm text-violet-600 italic">{t('swaps.labels.openRequest')}</p>
-                        <p className="mt-1 text-[10px] text-slate-400">
+                        <p className="text-sm text-primary-600 italic">{t('swaps.labels.openRequest')}</p>
+                        <p className="mt-1 text-[10px] text-kresna-gray">
                           {t('swaps.labels.anyoneCanOffer')}
                         </p>
                       </div>
@@ -425,7 +425,7 @@ export function RequestSwapModal({
                 variant="ghost"
                 onClick={() => onOpenChange(false)}
                 disabled={isSubmitting}
-                className="rounded-lg border border-slate-200 bg-slate-50 text-slate-700 hover:bg-slate-100"
+                className="rounded-lg border border-kresna-border bg-kresna-light text-kresna-gray-dark hover:bg-kresna-light"
               >
                 {t('common.cancel')}
               </Button>

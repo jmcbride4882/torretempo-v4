@@ -38,8 +38,8 @@ import type { ErrorLog } from '@/lib/api/admin';
 // Level badge colors
 const levelColors = {
   error: 'bg-red-50 text-red-700 border-red-200',
-  warning: 'bg-violet-50 text-violet-700 border-violet-200',
-  info: 'bg-blue-50 text-blue-700 border-blue-200',
+  warning: 'bg-primary-50 text-primary-700 border-primary-200',
+  info: 'bg-primary-50 text-primary-700 border-primary-200',
 };
 
 // Level icons
@@ -166,8 +166,8 @@ export default function ErrorLogsPage() {
             <AlertTriangle className="h-5 w-5 text-red-600" />
           </div>
           <div>
-            <h1 className="text-xl font-bold text-slate-900 sm:text-2xl">{t('admin.errors.title')}</h1>
-            <p className="text-sm text-slate-500">
+            <h1 className="text-xl font-bold text-charcoal sm:text-2xl">{t('admin.errors.title')}</h1>
+            <p className="text-sm text-kresna-gray">
               {t('admin.liveMonitoring')}
             </p>
           </div>
@@ -180,7 +180,7 @@ export default function ErrorLogsPage() {
               size="sm"
               onClick={handleExport}
               disabled={isExporting}
-              className="gap-1.5 rounded-lg border border-slate-200 bg-slate-50 text-slate-700 hover:bg-slate-100"
+              className="gap-1.5 rounded-lg border border-kresna-border bg-kresna-light text-kresna-gray-dark hover:bg-kresna-light"
             >
               <Download className={cn('h-4 w-4', isExporting && 'animate-bounce')} />
               <span className="hidden sm:inline">{isExporting ? t('admin.exporting') : t('admin.exportCsv')}</span>
@@ -193,7 +193,7 @@ export default function ErrorLogsPage() {
               size="sm"
               onClick={handleRefresh}
               disabled={isRefreshing}
-              className="gap-1.5 rounded-lg border border-slate-200 bg-slate-50 text-slate-700 hover:bg-slate-100"
+              className="gap-1.5 rounded-lg border border-kresna-border bg-kresna-light text-kresna-gray-dark hover:bg-kresna-light"
             >
               <RefreshCw className={cn('h-4 w-4', isRefreshing && 'animate-spin')} />
               <span className="hidden sm:inline">{t('admin.refresh')}</span>
@@ -208,32 +208,32 @@ export default function ErrorLogsPage() {
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
           {/* Search */}
           <div className="relative flex-1 sm:max-w-xs">
-            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-500" />
+            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-kresna-gray" />
             <Input
               type="text"
               placeholder={t('common.search')}
               value={searchQuery}
               onChange={(e) => { setSearchQuery(e.target.value); setPage(1); }}
-              className="rounded-xl border border-slate-200 bg-white pl-9 text-slate-900 placeholder:text-slate-400 focus:border-violet-500"
+              className="rounded-xl border border-kresna-border bg-white pl-9 text-charcoal placeholder:text-kresna-gray focus:border-primary-500"
             />
           </div>
 
           {/* Level filter */}
           <Select value={levelFilter} onValueChange={(v) => { setLevelFilter(v); setPage(1); }}>
-            <SelectTrigger className="w-[140px] rounded-xl border border-slate-200 bg-white text-slate-900">
+            <SelectTrigger className="w-[140px] rounded-xl border border-kresna-border bg-white text-charcoal">
               <SelectValue placeholder={t('admin.errors.severity')} />
             </SelectTrigger>
-            <SelectContent className="rounded-xl border border-slate-200 bg-white">
-              <SelectItem value="all" className="text-slate-700">
+            <SelectContent className="rounded-xl border border-kresna-border bg-white">
+              <SelectItem value="all" className="text-kresna-gray-dark">
                 {t('admin.filters.allLevels')}
               </SelectItem>
-              <SelectItem value="error" className="text-slate-700">
+              <SelectItem value="error" className="text-kresna-gray-dark">
                 {t('admin.filters.error')}
               </SelectItem>
-              <SelectItem value="warning" className="text-slate-700">
+              <SelectItem value="warning" className="text-kresna-gray-dark">
                 {t('admin.filters.warning')}
               </SelectItem>
-              <SelectItem value="info" className="text-slate-700">
+              <SelectItem value="info" className="text-kresna-gray-dark">
                 {t('admin.filters.info')}
               </SelectItem>
             </SelectContent>
@@ -241,15 +241,15 @@ export default function ErrorLogsPage() {
 
           {/* Source filter */}
           <Select value={sourceFilter} onValueChange={(v) => { setSourceFilter(v); setPage(1); }}>
-            <SelectTrigger className="w-[140px] rounded-xl border border-slate-200 bg-white text-slate-900">
+            <SelectTrigger className="w-[140px] rounded-xl border border-kresna-border bg-white text-charcoal">
               <SelectValue placeholder="Source" />
             </SelectTrigger>
-            <SelectContent className="rounded-xl border border-slate-200 bg-white">
-              <SelectItem value="all" className="text-slate-700">
+            <SelectContent className="rounded-xl border border-kresna-border bg-white">
+              <SelectItem value="all" className="text-kresna-gray-dark">
                 {t('admin.filters.allSources')}
               </SelectItem>
               {sources.map((source) => (
-                <SelectItem key={source} value={source} className="text-slate-700">
+                <SelectItem key={source} value={source} className="text-kresna-gray-dark">
                   {source}
                 </SelectItem>
               ))}
@@ -271,7 +271,7 @@ export default function ErrorLogsPage() {
               variant="ghost"
               size="sm"
               onClick={clearFilters}
-              className="gap-1 shrink-0 text-slate-500 hover:text-slate-900"
+              className="gap-1 shrink-0 text-kresna-gray hover:text-charcoal"
             >
               <X className="h-3.5 w-3.5" />
               {t('admin.clearAll')}
@@ -284,32 +284,32 @@ export default function ErrorLogsPage() {
       <div className="flex flex-wrap items-center gap-4 text-sm sm:gap-6">
         <div className="flex items-center gap-2">
           <div className="h-2 w-2 rounded-full bg-red-500" />
-          <span className="text-slate-500">
-            <span className="font-medium text-slate-700">{errorCount}</span> {t('admin.errors.errorsLabel')}
+          <span className="text-kresna-gray">
+            <span className="font-medium text-kresna-gray-dark">{errorCount}</span> {t('admin.errors.errorsLabel')}
           </span>
         </div>
         <div className="flex items-center gap-2">
-          <div className="h-2 w-2 rounded-full bg-violet-500" />
-          <span className="text-slate-500">
-            <span className="font-medium text-slate-700">{warningCount}</span> {t('admin.errors.warningsLabel')}
+          <div className="h-2 w-2 rounded-full bg-primary-500" />
+          <span className="text-kresna-gray">
+            <span className="font-medium text-kresna-gray-dark">{warningCount}</span> {t('admin.errors.warningsLabel')}
           </span>
         </div>
         <div className="flex items-center gap-2">
-          <div className="h-2 w-2 rounded-full bg-slate-400" />
-          <span className="text-slate-500">
-            <span className="font-medium text-slate-700">{errors.length}</span> {t('common.total')}
+          <div className="h-2 w-2 rounded-full bg-kresna-gray" />
+          <span className="text-kresna-gray">
+            <span className="font-medium text-kresna-gray-dark">{errors.length}</span> {t('common.total')}
           </span>
         </div>
       </div>
 
       {/* Error list */}
-      <div className="rounded-xl border border-slate-200 bg-white shadow-sm p-6">
-        <h2 className="mb-4 text-lg font-semibold text-slate-900">{t('admin.errors.title')}</h2>
+      <div className="rounded-xl border border-kresna-border bg-white shadow-sm p-6">
+        <h2 className="mb-4 text-lg font-semibold text-charcoal">{t('admin.errors.title')}</h2>
 
         {errors.length === 0 ? (
-          <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-slate-200 bg-slate-50 py-12 text-center">
-            <Filter className="mb-3 h-8 w-8 text-slate-400" />
-            <p className="text-sm text-slate-500">{t('admin.errors.noErrors')}</p>
+          <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-kresna-border bg-kresna-light py-12 text-center">
+            <Filter className="mb-3 h-8 w-8 text-kresna-gray" />
+            <p className="text-sm text-kresna-gray">{t('admin.errors.noErrors')}</p>
           </div>
         ) : (
           <div className="space-y-3">
@@ -318,7 +318,7 @@ export default function ErrorLogsPage() {
               return (
                 <div
                   key={error.id}
-                  className="rounded-xl border border-slate-200 bg-slate-50 p-4"
+                  className="rounded-xl border border-kresna-border bg-kresna-light p-4"
                 >
                   <div className="mb-3 flex items-start justify-between gap-4">
                     <div className="flex items-center gap-3">
@@ -326,15 +326,15 @@ export default function ErrorLogsPage() {
                         className={cn(
                           'flex h-9 w-9 items-center justify-center rounded-lg',
                           error.level === 'error' && 'bg-red-100',
-                          error.level === 'warning' && 'bg-violet-100',
-                          error.level === 'info' && 'bg-blue-100'
+                          error.level === 'warning' && 'bg-primary-100',
+                          error.level === 'info' && 'bg-primary-100'
                         )}
                       >
                         <Icon className="h-4 w-4" />
                       </div>
                       <div className="flex-1">
-                        <p className="font-medium text-slate-900">{t('admin.errors.message')}: {error.message}</p>
-                        <div className="mt-1 flex items-center gap-2 text-xs text-slate-500">
+                        <p className="font-medium text-charcoal">{t('admin.errors.message')}: {error.message}</p>
+                        <div className="mt-1 flex items-center gap-2 text-xs text-kresna-gray">
                           <Code className="h-3 w-3" />
                           <span>{error.source}</span>
                           <span>•</span>
@@ -349,8 +349,8 @@ export default function ErrorLogsPage() {
                   </div>
 
                   {error.stack && (
-                    <div className="rounded-lg bg-slate-100 p-3">
-                      <pre className="overflow-x-auto text-xs text-slate-500">
+                    <div className="rounded-lg bg-kresna-light p-3">
+                      <pre className="overflow-x-auto text-xs text-kresna-gray">
                         <code>{error.stack.split('\n').slice(0, 2).join('\n')}</code>
                       </pre>
                     </div>

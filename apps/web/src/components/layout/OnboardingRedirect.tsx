@@ -92,14 +92,14 @@ export function OnboardingRedirect() {
   // Show loading state
   if (redirectState === 'loading' || authLoading || orgLoading) {
     return (
-      <div className="flex h-screen items-center justify-center bg-slate-50">
+      <div className="flex h-screen items-center justify-center bg-kresna-light">
         <motion.div
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
           className="flex flex-col items-center gap-4"
         >
-          <div className="h-10 w-10 animate-spin rounded-full border-2 border-slate-200 border-t-primary-600" />
-          <span className="text-sm text-slate-500">Setting up your workspace...</span>
+          <div className="h-10 w-10 animate-spin rounded-full border-2 border-kresna-border border-t-primary-600" />
+          <span className="text-sm text-kresna-gray">Setting up your workspace...</span>
         </motion.div>
       </div>
     );

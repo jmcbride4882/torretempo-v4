@@ -60,28 +60,28 @@ export default function EmployeeProfile() {
           <CardContent>
             <dl className="space-y-3">
               <div className="flex justify-between">
-                <dt className="text-sm text-slate-500">{t('team.dni')}</dt>
-                <dd className="text-sm font-medium text-slate-900">{emp.dni || '-'}</dd>
+                <dt className="text-sm text-kresna-gray">{t('team.dni')}</dt>
+                <dd className="text-sm font-medium text-charcoal">{emp.dni || '-'}</dd>
               </div>
               <div className="flex justify-between">
-                <dt className="text-sm text-slate-500">{t('team.ssn')}</dt>
-                <dd className="text-sm font-medium text-slate-900">{emp.ssn ? '****' + emp.ssn.slice(-4) : '-'}</dd>
+                <dt className="text-sm text-kresna-gray">{t('team.ssn')}</dt>
+                <dd className="text-sm font-medium text-charcoal">{emp.ssn ? '****' + emp.ssn.slice(-4) : '-'}</dd>
               </div>
               <div className="flex justify-between">
-                <dt className="text-sm text-slate-500">{t('common.phone')}</dt>
-                <dd className="text-sm font-medium text-slate-900">{emp.phone || '-'}</dd>
+                <dt className="text-sm text-kresna-gray">{t('common.phone')}</dt>
+                <dd className="text-sm font-medium text-charcoal">{emp.phone || '-'}</dd>
               </div>
               <div className="flex justify-between">
-                <dt className="text-sm text-slate-500">{t('common.address')}</dt>
-                <dd className="text-sm font-medium text-slate-900 text-right max-w-[200px]">{emp.address || '-'}</dd>
+                <dt className="text-sm text-kresna-gray">{t('common.address')}</dt>
+                <dd className="text-sm font-medium text-charcoal text-right max-w-[200px]">{emp.address || '-'}</dd>
               </div>
               <div className="flex justify-between">
-                <dt className="text-sm text-slate-500">{t('team.emergencyContact')}</dt>
-                <dd className="text-sm font-medium text-slate-900">{emp.emergencyContact || '-'}</dd>
+                <dt className="text-sm text-kresna-gray">{t('team.emergencyContact')}</dt>
+                <dd className="text-sm font-medium text-charcoal">{emp.emergencyContact || '-'}</dd>
               </div>
               <div className="flex justify-between">
-                <dt className="text-sm text-slate-500">{t('team.emergencyPhone')}</dt>
-                <dd className="text-sm font-medium text-slate-900">{emp.emergencyPhone || '-'}</dd>
+                <dt className="text-sm text-kresna-gray">{t('team.emergencyPhone')}</dt>
+                <dd className="text-sm font-medium text-charcoal">{emp.emergencyPhone || '-'}</dd>
               </div>
             </dl>
           </CardContent>
@@ -98,11 +98,11 @@ export default function EmployeeProfile() {
           <CardContent>
             <dl className="space-y-3">
               <div className="flex justify-between">
-                <dt className="text-sm text-slate-500">{t('team.jobTitle')}</dt>
-                <dd className="text-sm font-medium text-slate-900">{emp.jobTitle || '-'}</dd>
+                <dt className="text-sm text-kresna-gray">{t('team.jobTitle')}</dt>
+                <dd className="text-sm font-medium text-charcoal">{emp.jobTitle || '-'}</dd>
               </div>
               <div className="flex justify-between">
-                <dt className="text-sm text-slate-500">{t('team.contractType')}</dt>
+                <dt className="text-sm text-kresna-gray">{t('team.contractType')}</dt>
                 <dd>
                   <Badge variant="secondary">
                     {t(`team.contractTypes.${emp.contractType}` as any) || emp.contractType || '-'}
@@ -110,18 +110,18 @@ export default function EmployeeProfile() {
                 </dd>
               </div>
               <div className="flex justify-between">
-                <dt className="text-sm text-slate-500">{t('team.contractStart')}</dt>
-                <dd className="text-sm font-medium text-slate-900">
+                <dt className="text-sm text-kresna-gray">{t('team.contractStart')}</dt>
+                <dd className="text-sm font-medium text-charcoal">
                   {emp.hireDate ? new Date(emp.hireDate).toLocaleDateString('es-ES') : '-'}
                 </dd>
               </div>
               <div className="flex justify-between">
-                <dt className="text-sm text-slate-500">{t('team.salary')}</dt>
-                <dd className="text-sm font-medium text-slate-900">{emp.salary ? `${emp.salary}` : '-'}</dd>
+                <dt className="text-sm text-kresna-gray">{t('team.salary')}</dt>
+                <dd className="text-sm font-medium text-charcoal">{emp.salary ? `${emp.salary}` : '-'}</dd>
               </div>
               <div className="flex justify-between">
-                <dt className="text-sm text-slate-500">{t('team.hoursPerWeek')}</dt>
-                <dd className="text-sm font-medium text-slate-900">{emp.hoursPerWeek || 40}h</dd>
+                <dt className="text-sm text-kresna-gray">{t('team.hoursPerWeek')}</dt>
+                <dd className="text-sm font-medium text-charcoal">{emp.hoursPerWeek || 40}h</dd>
               </div>
             </dl>
           </CardContent>
@@ -139,10 +139,10 @@ export default function EmployeeProfile() {
             <div className="space-y-4">
               <div>
                 <div className="flex justify-between text-sm mb-1">
-                  <span className="text-slate-500">{t('team.vacationDays')}</span>
-                  <span className="font-medium text-slate-900">18 / 22</span>
+                  <span className="text-kresna-gray">{t('team.vacationDays')}</span>
+                  <span className="font-medium text-charcoal">18 / 22</span>
                 </div>
-                <div className="h-2 rounded-full bg-slate-100 overflow-hidden">
+                <div className="h-2 rounded-full bg-kresna-light overflow-hidden">
                   <div className="h-full rounded-full bg-primary-500" style={{ width: '18%' }} />
                 </div>
               </div>
@@ -161,7 +161,7 @@ export default function EmployeeProfile() {
           <CardContent>
             <dl className="space-y-3">
               <div className="flex justify-between items-center">
-                <dt className="text-sm text-slate-500">{t('team.gdprConsent')}</dt>
+                <dt className="text-sm text-kresna-gray">{t('team.gdprConsent')}</dt>
                 <dd><Badge variant="success">{t('common.active')}</Badge></dd>
               </div>
             </dl>

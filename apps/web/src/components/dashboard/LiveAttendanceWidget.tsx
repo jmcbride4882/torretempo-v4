@@ -106,8 +106,8 @@ function EmployeeRow({ entry }: EmployeeRowProps) {
     <div
       className={cn(
         "flex items-center gap-3 p-3 rounded-xl",
-        "bg-slate-50 border border-slate-200",
-        "hover:bg-slate-100 transition-colors"
+        "bg-kresna-light border border-kresna-border",
+        "hover:bg-kresna-light transition-colors"
       )}
     >
       {/* Avatar */}
@@ -122,11 +122,11 @@ function EmployeeRow({ entry }: EmployeeRowProps) {
 
       {/* Name and Location */}
       <div className="flex-1 min-w-0">
-        <p className="text-sm font-medium text-slate-900 truncate">
+        <p className="text-sm font-medium text-charcoal truncate">
           {entry.userName}
         </p>
         {entry.location && (
-          <p className="text-xs text-slate-500 truncate">
+          <p className="text-xs text-kresna-gray truncate">
             {entry.location}
           </p>
         )}
@@ -136,9 +136,9 @@ function EmployeeRow({ entry }: EmployeeRowProps) {
       <div className="flex items-center gap-2">
         {/* Break indicator */}
         {entry.isOnBreak && (
-          <div className="flex items-center gap-1 px-2 py-1 rounded-full bg-blue-50 border border-blue-200">
-            <Coffee className="h-3 w-3 text-blue-600" />
-            <span className="text-xs text-blue-600">{t('clock.break')}</span>
+          <div className="flex items-center gap-1 px-2 py-1 rounded-full bg-primary-50 border border-primary-200">
+            <Coffee className="h-3 w-3 text-primary-600" />
+            <span className="text-xs text-primary-600">{t('clock.break')}</span>
           </div>
         )}
 
@@ -182,7 +182,7 @@ export function LiveAttendanceWidget({ className }: LiveAttendanceWidgetProps) {
 
   return (
     <div className={cn(
-      "bg-white border border-slate-200 shadow-sm rounded-2xl p-5",
+      "bg-white border border-kresna-border shadow-sm rounded-2xl p-5",
       className
     )}>
       {/* Header */}
@@ -192,8 +192,8 @@ export function LiveAttendanceWidget({ className }: LiveAttendanceWidgetProps) {
             <Users className="h-5 w-5 text-primary-600" />
           </div>
           <div>
-            <h3 className="text-lg font-semibold text-slate-900">{t('dashboard.liveAttendance')}</h3>
-            <p className="text-xs text-slate-500">{t('dashboard.realtimeStatus')}</p>
+            <h3 className="text-lg font-semibold text-charcoal">{t('dashboard.liveAttendance')}</h3>
+            <p className="text-xs text-kresna-gray">{t('dashboard.realtimeStatus')}</p>
           </div>
         </div>
 
@@ -232,13 +232,13 @@ export function LiveAttendanceWidget({ className }: LiveAttendanceWidgetProps) {
         </div>
 
         {/* On Break */}
-        <div className="flex items-center gap-3 p-3 rounded-xl bg-blue-50 border border-blue-200">
-          <div className="h-8 w-8 rounded-lg bg-blue-100 flex items-center justify-center">
-            <Coffee className="h-4 w-4 text-blue-600" />
+        <div className="flex items-center gap-3 p-3 rounded-xl bg-primary-50 border border-primary-200">
+          <div className="h-8 w-8 rounded-lg bg-primary-100 flex items-center justify-center">
+            <Coffee className="h-4 w-4 text-primary-600" />
           </div>
           <div>
-            <p className="text-2xl font-bold text-blue-600">{onBreakCount}</p>
-            <p className="text-xs text-blue-600/70">{t('dashboard.onBreak')}</p>
+            <p className="text-2xl font-bold text-primary-600">{onBreakCount}</p>
+            <p className="text-xs text-primary-600/70">{t('dashboard.onBreak')}</p>
           </div>
         </div>
       </div>
@@ -251,11 +251,11 @@ export function LiveAttendanceWidget({ className }: LiveAttendanceWidgetProps) {
           ))
         ) : (
           <div className="flex flex-col items-center justify-center py-8 text-center">
-            <div className="h-12 w-12 rounded-full bg-slate-100 flex items-center justify-center mb-3">
-              <Users className="h-6 w-6 text-slate-400" />
+            <div className="h-12 w-12 rounded-full bg-kresna-light flex items-center justify-center mb-3">
+              <Users className="h-6 w-6 text-kresna-gray" />
             </div>
-            <p className="text-sm text-slate-500">{t('dashboard.noEmployeesClockedIn')}</p>
-            <p className="text-xs text-slate-400 mt-1">
+            <p className="text-sm text-kresna-gray">{t('dashboard.noEmployeesClockedIn')}</p>
+            <p className="text-xs text-kresna-gray mt-1">
               {isConnected
                 ? t('dashboard.waitingForEvents')
                 : t('dashboard.connectToSee')
@@ -266,18 +266,18 @@ export function LiveAttendanceWidget({ className }: LiveAttendanceWidgetProps) {
       </div>
 
       {/* Footer - Legend */}
-      <div className="flex items-center justify-center gap-4 mt-4 pt-4 border-t border-slate-200">
+      <div className="flex items-center justify-center gap-4 mt-4 pt-4 border-t border-kresna-border">
         <div className="flex items-center gap-1.5">
           <div className="h-2 w-2 rounded-full bg-emerald-500" />
-          <span className="text-xs text-slate-500">&lt;7.5h</span>
+          <span className="text-xs text-kresna-gray">&lt;7.5h</span>
         </div>
         <div className="flex items-center gap-1.5">
           <div className="h-2 w-2 rounded-full bg-amber-500" />
-          <span className="text-xs text-slate-500">7.5-9h</span>
+          <span className="text-xs text-kresna-gray">7.5-9h</span>
         </div>
         <div className="flex items-center gap-1.5">
           <div className="h-2 w-2 rounded-full bg-red-500" />
-          <span className="text-xs text-slate-500">&gt;9h</span>
+          <span className="text-xs text-kresna-gray">&gt;9h</span>
         </div>
       </div>
     </div>

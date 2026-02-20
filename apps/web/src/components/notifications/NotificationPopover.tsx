@@ -118,12 +118,12 @@ export function NotificationPopover({
     <PopoverContent
       align="end"
       sideOffset={8}
-      className="w-[380px] p-0 overflow-hidden border-slate-200 bg-white shadow-2xl"
+      className="w-[380px] p-0 overflow-hidden border-kresna-border bg-white shadow-2xl"
     >
       {/* Header */}
-      <div className="flex items-center justify-between px-4 py-3 border-b border-slate-200">
+      <div className="flex items-center justify-between px-4 py-3 border-b border-kresna-border">
         <div className="flex items-center gap-2">
-          <h2 className="text-sm font-semibold text-slate-900">{t('notifications.title')}</h2>
+          <h2 className="text-sm font-semibold text-charcoal">{t('notifications.title')}</h2>
           {unreadCount > 0 && (
             <motion.span
               initial={{ scale: 0 }}
@@ -140,7 +140,7 @@ export function NotificationPopover({
             size="sm"
             onClick={handleMarkAllAsRead}
             disabled={isMarkingAll}
-            className="h-7 text-xs text-slate-500 hover:text-slate-900 gap-1.5"
+            className="h-7 text-xs text-kresna-gray hover:text-charcoal gap-1.5"
           >
             {isMarkingAll ? (
               <Loader2 className="h-3.5 w-3.5 animate-spin" />
@@ -165,7 +165,7 @@ export function NotificationPopover({
                 className="flex flex-col items-center justify-center py-12 gap-3"
               >
                 <Loader2 className="h-8 w-8 text-primary-500 animate-spin" />
-                <p className="text-sm text-slate-500">{t('notifications.loadingNotifications')}</p>
+                <p className="text-sm text-kresna-gray">{t('notifications.loadingNotifications')}</p>
               </motion.div>
             ) : error ? (
               <motion.div
@@ -178,7 +178,7 @@ export function NotificationPopover({
                 <div className="w-12 h-12 rounded-full bg-red-50 flex items-center justify-center">
                   <BellOff className="h-6 w-6 text-red-500" />
                 </div>
-                <p className="text-sm text-slate-500">{error}</p>
+                <p className="text-sm text-kresna-gray">{error}</p>
                 <Button
                   variant="ghost"
                   size="sm"
@@ -201,13 +201,13 @@ export function NotificationPopover({
               >
                 <div className="relative">
                   <div className="absolute inset-0 bg-primary-100 blur-xl rounded-full" />
-                  <div className="relative w-14 h-14 rounded-full bg-slate-50 border border-slate-200 flex items-center justify-center">
-                    <BellOff className="h-7 w-7 text-slate-400" />
+                  <div className="relative w-14 h-14 rounded-full bg-kresna-light border border-kresna-border flex items-center justify-center">
+                    <BellOff className="h-7 w-7 text-kresna-gray" />
                   </div>
                 </div>
                 <div className="text-center">
-                  <p className="text-sm font-medium text-slate-700">{t('notifications.allCaughtUp')}</p>
-                  <p className="text-xs text-slate-500 mt-1">
+                  <p className="text-sm font-medium text-kresna-gray-dark">{t('notifications.allCaughtUp')}</p>
+                  <p className="text-xs text-kresna-gray mt-1">
                     {t('notifications.noNotificationsAtMoment')}
                   </p>
                 </div>
@@ -235,12 +235,12 @@ export function NotificationPopover({
       </ScrollArea>
 
       {/* Footer */}
-      <div className="border-t border-slate-200">
+      <div className="border-t border-kresna-border">
         <Button
           variant="ghost"
           onClick={handleViewAll}
           className={cn(
-            'w-full h-11 rounded-none text-sm text-slate-500 hover:text-slate-900',
+            'w-full h-11 rounded-none text-sm text-kresna-gray hover:text-charcoal',
             'flex items-center justify-center gap-2 group'
           )}
         >

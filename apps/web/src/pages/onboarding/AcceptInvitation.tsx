@@ -75,7 +75,7 @@ export default function AcceptInvitation() {
   };
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center bg-slate-50 px-4">
+    <div className="flex min-h-screen flex-col items-center justify-center bg-kresna-light px-4">
       <div className="w-full max-w-sm">
         {/* Logo */}
         <div className="mb-10 flex flex-col items-center gap-3">
@@ -85,7 +85,7 @@ export default function AcceptInvitation() {
         </div>
 
         {/* Card */}
-        <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm space-y-6">
+        <div className="rounded-2xl border border-kresna-border bg-white p-6 shadow-sm space-y-6">
           {/* Icon */}
           <div className="flex justify-center">
             <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-primary-50 border border-primary-200">
@@ -104,24 +104,24 @@ export default function AcceptInvitation() {
           {/* Loading */}
           {state === 'loading' && (
             <div className="text-center">
-              <h2 className="text-lg font-semibold text-slate-900">{t('onboarding.loadingInvitation')}</h2>
-              <p className="text-sm text-slate-500 mt-1">{t('onboarding.verifyingInvitation')}</p>
+              <h2 className="text-lg font-semibold text-charcoal">{t('onboarding.loadingInvitation')}</h2>
+              <p className="text-sm text-kresna-gray mt-1">{t('onboarding.verifyingInvitation')}</p>
             </div>
           )}
 
           {/* Accepting */}
           {state === 'accepting' && (
             <div className="text-center">
-              <h2 className="text-lg font-semibold text-slate-900">{t('onboarding.acceptingInvitation')}</h2>
-              <p className="text-sm text-slate-500 mt-1">{t('onboarding.addingToOrg')}</p>
+              <h2 className="text-lg font-semibold text-charcoal">{t('onboarding.acceptingInvitation')}</h2>
+              <p className="text-sm text-kresna-gray mt-1">{t('onboarding.addingToOrg')}</p>
             </div>
           )}
 
           {/* Success */}
           {state === 'success' && (
             <div className="text-center">
-              <h2 className="text-lg font-semibold text-slate-900">{t('onboarding.welcomeAboard')}</h2>
-              <p className="text-sm text-slate-500 mt-1">
+              <h2 className="text-lg font-semibold text-charcoal">{t('onboarding.welcomeAboard')}</h2>
+              <p className="text-sm text-kresna-gray mt-1">
                 {t('onboarding.joinedRedirect')}
               </p>
               <div className="mt-4 inline-flex">
@@ -137,7 +137,7 @@ export default function AcceptInvitation() {
           {state === 'error' && (
             <div className="space-y-4">
               <div className="text-center">
-                <h2 className="text-lg font-semibold text-slate-900">{t('onboarding.invitationError')}</h2>
+                <h2 className="text-lg font-semibold text-charcoal">{t('onboarding.invitationError')}</h2>
               </div>
               <div className="flex items-center gap-2 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
                 <XCircle className="h-4 w-4 shrink-0" />
@@ -165,8 +165,8 @@ export default function AcceptInvitation() {
           {state === 'not-logged-in' && (
             <div className="space-y-5">
               <div className="text-center">
-                <h2 className="text-lg font-semibold text-slate-900">{t('onboarding.youreInvited')}</h2>
-                <p className="text-sm text-slate-500 mt-1">
+                <h2 className="text-lg font-semibold text-charcoal">{t('onboarding.youreInvited')}</h2>
+                <p className="text-sm text-kresna-gray mt-1">
                   {t('onboarding.signUpToAccept')}
                 </p>
               </div>
@@ -183,10 +183,10 @@ export default function AcceptInvitation() {
 
                 <div className="relative py-1">
                   <div className="absolute inset-0 flex items-center">
-                    <div className="w-full border-t border-slate-200" />
+                    <div className="w-full border-t border-kresna-border" />
                   </div>
                   <div className="relative flex justify-center text-xs">
-                    <span className="bg-white px-3 text-slate-400">{t('auth.hasAccount')}</span>
+                    <span className="bg-white px-3 text-kresna-gray">{t('auth.hasAccount')}</span>
                   </div>
                 </div>
 
@@ -200,15 +200,15 @@ export default function AcceptInvitation() {
                 </Button>
               </div>
 
-              <p className="text-center text-xs text-slate-500">
+              <p className="text-center text-xs text-kresna-gray">
                 {t('onboarding.autoAccept')}
               </p>
             </div>
           )}
         </div>
 
-        <p className="mt-6 text-center text-sm text-slate-500">
-          <Link to="/" className="hover:text-slate-900 transition-colors">
+        <p className="mt-6 text-center text-sm text-kresna-gray">
+          <Link to="/" className="hover:text-charcoal transition-colors">
             {t('common.backToHome')}
           </Link>
         </p>

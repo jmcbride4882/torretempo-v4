@@ -54,40 +54,40 @@ export default function VerifyEmail() {
   };
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center bg-slate-50 px-4">
+    <div className="flex min-h-screen flex-col items-center justify-center bg-white px-4">
       <div className="w-full max-w-sm">
         {/* Logo */}
         <div className="mb-10 flex flex-col items-center gap-3">
-          <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-primary-500 shadow-glow">
+          <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-primary-500">
             <Clock className="h-7 w-7 text-white" />
           </div>
           <div className="text-center">
-            <h1 className="text-xl font-bold text-slate-900">Torre Tempo</h1>
-            <p className="text-sm text-slate-500 mt-1">{t('auth.subtitle')}</p>
+            <h1 className="text-xl font-bold text-charcoal">Torre Tempo</h1>
+            <p className="text-sm text-kresna-gray mt-1">{t('auth.subtitle')}</p>
           </div>
         </div>
 
         {/* Card */}
-        <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-card space-y-6">
+        <div className="rounded-3xl border border-kresna-border bg-white p-6 shadow-card space-y-6">
           <div className="text-center">
             {isVerifying ? (
               <>
-                <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-primary-50 border border-primary-200">
-                  <Mail className="h-6 w-6 text-primary-600" />
+                <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-primary-50 border border-primary-100">
+                  <Mail className="h-6 w-6 text-primary-500" />
                 </div>
-                <h2 className="text-lg font-semibold text-slate-900">{t('auth.verifyingEmail')}</h2>
-                <p className="text-sm text-slate-500 mt-1">{t('common.loading')}...</p>
+                <h2 className="text-lg font-semibold text-charcoal">{t('auth.verifyingEmail')}</h2>
+                <p className="text-sm text-kresna-gray-dark mt-1">{t('common.loading')}...</p>
                 <div className="mt-6 flex justify-center">
-                  <div className="h-8 w-8 animate-spin rounded-full border-2 border-primary-200 border-t-primary-500" />
+                  <div className="h-8 w-8 animate-spin rounded-full border-2 border-kresna-border border-t-primary-500" />
                 </div>
               </>
             ) : success ? (
               <div className="py-2">
-                <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-emerald-50 border border-emerald-200">
-                  <CheckCircle2 className="h-7 w-7 text-emerald-600" />
+                <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-accent-50 border border-accent-200">
+                  <CheckCircle2 className="h-7 w-7 text-accent-600" />
                 </div>
-                <h2 className="text-lg font-semibold text-slate-900">{t('auth.emailVerified')}</h2>
-                <p className="mt-2 text-sm text-slate-500">
+                <h2 className="text-lg font-semibold text-charcoal">{t('auth.emailVerified')}</h2>
+                <p className="mt-2 text-sm text-kresna-gray-dark">
                   {t('auth.emailVerifiedRedirect')}
                 </p>
               </div>
@@ -96,8 +96,8 @@ export default function VerifyEmail() {
                 <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-red-50 border border-red-200">
                   <AlertCircle className="h-7 w-7 text-red-600" />
                 </div>
-                <h2 className="text-lg font-semibold text-slate-900">{t('auth.verificationFailed')}</h2>
-                <p className="mt-2 text-sm text-slate-500">{error}</p>
+                <h2 className="text-lg font-semibold text-charcoal">{t('auth.verificationFailed')}</h2>
+                <p className="mt-2 text-sm text-kresna-gray-dark">{error}</p>
                 <Button
                   onClick={() => navigate('/auth/signin')}
                   className="mt-6"
@@ -113,7 +113,7 @@ export default function VerifyEmail() {
           <div className="mt-6 text-center">
             <button
               onClick={() => navigate('/auth/signin')}
-              className="inline-flex items-center gap-2 text-sm text-slate-500 transition-colors hover:text-slate-900"
+              className="inline-flex items-center gap-2 text-sm text-kresna-gray-dark transition-colors hover:text-charcoal"
             >
               <ArrowLeft className="h-4 w-4" />
               {t('auth.backToSignIn')}

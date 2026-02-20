@@ -49,12 +49,12 @@ export function ValidationIndicator({
         initial={{ opacity: 0, scale: 0.8 }}
         animate={{ opacity: 1, scale: 1 }}
         className={cn(
-          'flex items-center justify-center rounded-full bg-slate-100',
+          'flex items-center justify-center rounded-full bg-kresna-light',
           containerSizeClasses[size],
           className
         )}
       >
-        <Loader2 className={cn('animate-spin text-slate-400', sizeClasses[size])} />
+        <Loader2 className={cn('animate-spin text-kresna-gray', sizeClasses[size])} />
       </motion.div>
     );
   }
@@ -121,7 +121,7 @@ export function ValidationIndicator({
         </TooltipTrigger>
         <TooltipContent side="top" className="max-w-xs">
           <div className="space-y-2">
-            <p className="font-semibold text-slate-900">
+            <p className="font-semibold text-charcoal">
               {hasViolations ? t('compliance.issues') : t('compliance.warnings')}
             </p>
             {issues.map((issue, idx) => (
@@ -132,9 +132,9 @@ export function ValidationIndicator({
                   <AlertTriangle className="h-3 w-3 shrink-0 mt-0.5 text-amber-400" />
                 )}
                 <div>
-                  <p className="text-xs text-slate-600">{issue.message}</p>
+                  <p className="text-xs text-kresna-gray-dark">{issue.message}</p>
                   {issue.ruleReference && (
-                    <p className="text-[10px] text-slate-400 mt-0.5">
+                    <p className="text-[10px] text-kresna-gray mt-0.5">
                       {issue.ruleReference}
                     </p>
                   )}
@@ -168,7 +168,7 @@ export function ValidationBadge({
     return (
       <span className={cn(
         'inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs',
-        'bg-slate-100 text-slate-400',
+        'bg-kresna-light text-kresna-gray',
         className
       )}>
         <Loader2 className="h-3 w-3 animate-spin" />
@@ -241,7 +241,7 @@ export function getDropZoneClasses({
   }
 
   if (isValidating) {
-    return 'ring-2 ring-slate-400 ring-inset bg-slate-100';
+    return 'ring-2 ring-kresna-gray ring-inset bg-kresna-light';
   }
 
   if (!result) {

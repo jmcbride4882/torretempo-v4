@@ -86,13 +86,13 @@ function formatDay(dateStr: string): string {
 function DashboardSkeleton() {
   return (
     <div className="space-y-6 animate-pulse">
-      <div className="h-8 w-48 rounded-lg bg-slate-200" />
+      <div className="h-8 w-48 rounded-lg bg-kresna-border" />
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {[1, 2, 3].map((i) => (
-          <div key={i} className="h-36 rounded-2xl bg-slate-100 border border-slate-200" />
+          <div key={i} className="h-36 rounded-2xl bg-kresna-light border border-kresna-border" />
         ))}
       </div>
-      <div className="h-64 rounded-2xl bg-slate-100 border border-slate-200" />
+      <div className="h-64 rounded-2xl bg-kresna-light border border-kresna-border" />
     </div>
   );
 }
@@ -128,10 +128,10 @@ function StatCard({
   return (
     <div
       className={cn(
-        'rounded-2xl p-5 border shadow-card',
+        'rounded-3xl p-5 border shadow-card',
         c.bg,
         c.border,
-        onClick && 'cursor-pointer hover:shadow-card-hover transition-all'
+        onClick && 'cursor-pointer hover:shadow-kresna transition-all'
       )}
       onClick={onClick}
     >
@@ -139,10 +139,10 @@ function StatCard({
         <div className={cn('h-10 w-10 rounded-xl flex items-center justify-center', c.icon)}>
           <Icon className={cn('h-5 w-5', c.text)} />
         </div>
-        <span className="text-sm text-slate-500">{label}</span>
+        <span className="text-sm text-kresna-gray">{label}</span>
       </div>
       <p className={cn('text-3xl font-bold', c.text)}>{value}</p>
-      {sub && <p className="text-xs text-slate-500 mt-1">{sub}</p>}
+      {sub && <p className="text-xs text-kresna-gray mt-1">{sub}</p>}
       {onClick && (
         <div className={cn('flex items-center gap-1 mt-2 text-xs', c.text)}>
           <span>{t('common.view')}</span>
@@ -199,7 +199,7 @@ function SubscriptionStatusCard({
   return (
     <div
       className={cn(
-        'rounded-2xl p-5 border shadow-card',
+        'rounded-3xl p-5 border shadow-card',
         borderColor,
         gradientBg
       )}
@@ -210,8 +210,8 @@ function SubscriptionStatusCard({
             <CreditCard className="h-5 w-5 text-primary-600" />
           </div>
           <div>
-            <p className="text-sm text-slate-500">{t('dashboard.subscription.title')}</p>
-            <p className="text-lg font-bold text-slate-900">{tierLabel}</p>
+            <p className="text-sm text-kresna-gray">{t('dashboard.subscription.title')}</p>
+            <p className="text-lg font-bold text-charcoal">{tierLabel}</p>
           </div>
         </div>
         {showUpgradeButton && (
@@ -230,7 +230,7 @@ function SubscriptionStatusCard({
         {subscription.isTrialing && (
           <div>
             <div className="flex items-center justify-between mb-1">
-              <span className="text-xs font-medium text-slate-600">
+              <span className="text-xs font-medium text-kresna-gray-dark">
                 {t('dashboard.subscription.trialRemaining')}
               </span>
               <span className={cn(
@@ -240,7 +240,7 @@ function SubscriptionStatusCard({
                 {daysRemaining} {t('dashboard.subscription.days')}
               </span>
             </div>
-            <div className="h-2 rounded-full bg-slate-100 overflow-hidden">
+            <div className="h-2 rounded-full bg-kresna-light overflow-hidden">
               <div
                 className={cn(
                   'h-full rounded-full transition-all duration-500',
@@ -256,14 +256,14 @@ function SubscriptionStatusCard({
         {subscription.employeeLimit !== null && (
           <div>
             <div className="flex items-center justify-between mb-1">
-              <span className="text-xs font-medium text-slate-600">
+              <span className="text-xs font-medium text-kresna-gray-dark">
                 {t('dashboard.subscription.employees')}
               </span>
-              <span className="text-xs font-semibold text-slate-700">
+              <span className="text-xs font-semibold text-kresna-gray-dark">
                 {subscription.employeeCount} / {subscription.employeeLimit}
               </span>
             </div>
-            <div className="h-2 rounded-full bg-slate-100 overflow-hidden">
+            <div className="h-2 rounded-full bg-kresna-light overflow-hidden">
               <div
                 className={cn(
                   'h-full rounded-full transition-all duration-500',
@@ -389,10 +389,10 @@ export default function DashboardPage() {
     <div className="mx-auto max-w-7xl space-y-6">
       {/* Greeting */}
       <div>
-        <h1 className="text-2xl font-bold text-slate-900">
+        <h1 className="text-2xl font-bold text-charcoal">
           {greeting}, {user?.name?.split(' ')[0]}
         </h1>
-        <p className="text-sm text-slate-500">
+        <p className="text-sm text-kresna-gray">
           {new Date().toLocaleDateString('es-ES', {
             weekday: 'long',
             day: 'numeric',
@@ -414,7 +414,7 @@ export default function DashboardPage() {
       {/* Today's Shift Card */}
       {data.todayShifts.length > 0 ? (
         <div
-          className="rounded-2xl p-5 border border-primary-200 bg-primary-50 shadow-card cursor-pointer hover:shadow-card-hover transition-all"
+          className="rounded-3xl p-5 border border-primary-200 bg-primary-50 shadow-card cursor-pointer hover:shadow-kresna transition-all"
           onClick={() => navigate(`/t/${slug}/clock`)}
         >
           <div className="flex items-center justify-between">
@@ -423,42 +423,42 @@ export default function DashboardPage() {
                 <Clock className="h-6 w-6 text-primary-600" />
               </div>
               <div>
-                <p className="text-sm text-slate-500">{t('dashboard.todayShift')}</p>
-                <p className="text-xl font-bold text-slate-900">
+                <p className="text-sm text-kresna-gray">{t('dashboard.todayShift')}</p>
+                <p className="text-xl font-bold text-charcoal">
                   {formatTime(data.todayShifts[0]!.start_time)} — {formatTime(data.todayShifts[0]!.end_time)}
                 </p>
                 {data.todayShifts[0]!.location_name && (
-                  <p className="text-xs text-slate-500">{data.todayShifts[0]!.location_name}</p>
+                  <p className="text-xs text-kresna-gray">{data.todayShifts[0]!.location_name}</p>
                 )}
               </div>
             </div>
-            <ArrowRight className="h-5 w-5 text-slate-400" />
+            <ArrowRight className="h-5 w-5 text-kresna-gray" />
           </div>
         </div>
       ) : (
-        <div className="rounded-2xl p-5 border border-slate-200 bg-white shadow-card">
+        <div className="rounded-3xl p-5 border border-kresna-border bg-white shadow-card">
           <div className="flex items-center gap-4">
             <div className="h-12 w-12 rounded-xl bg-emerald-50 flex items-center justify-center">
               <CheckCircle2 className="h-6 w-6 text-emerald-600" />
             </div>
             <div>
-              <p className="text-sm text-slate-500">{t('dashboard.today')}</p>
-              <p className="text-lg font-semibold text-slate-900">{t('dashboard.noShifts')}</p>
-              <p className="text-xs text-slate-500">{t('dashboard.enjoyDayOff')}</p>
+              <p className="text-sm text-kresna-gray">{t('dashboard.today')}</p>
+              <p className="text-lg font-semibold text-charcoal">{t('dashboard.noShifts')}</p>
+              <p className="text-xs text-kresna-gray">{t('dashboard.enjoyDayOff')}</p>
             </div>
           </div>
         </div>
       )}
 
       {/* Week Hours Progress */}
-      <div className="rounded-2xl border border-slate-200 bg-white shadow-card p-5">
+      <div className="rounded-3xl border border-kresna-border bg-white shadow-card p-5">
         <div className="flex items-center justify-between mb-2">
-          <span className="text-sm font-medium text-slate-700">{t('dashboard.hoursThisWeek')}</span>
-          <span className="text-sm text-slate-500">
+          <span className="text-sm font-medium text-kresna-gray-dark">{t('dashboard.hoursThisWeek')}</span>
+          <span className="text-sm text-kresna-gray">
             {data.weeklyHours.totalHours}h / {data.weeklyHours.scheduledHours}h
           </span>
         </div>
-        <div className="h-2.5 rounded-full bg-slate-100 overflow-hidden">
+        <div className="h-2.5 rounded-full bg-kresna-light overflow-hidden">
           <div
             className={cn(
               'h-full rounded-full transition-all duration-500',
@@ -504,7 +504,7 @@ export default function DashboardPage() {
       {/* Manager Section */}
       {isManager && (
         <div>
-          <h2 className="text-lg font-semibold text-slate-900 mb-4 flex items-center gap-2">
+          <h2 className="text-lg font-semibold text-charcoal mb-4 flex items-center gap-2">
             <Users className="h-5 w-5 text-primary-600" />
             {t('dashboard.teamOverview')}
           </h2>
@@ -516,7 +516,7 @@ export default function DashboardPage() {
       {data.upcomingShifts.length > 0 && (
         <div>
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-semibold text-slate-900 flex items-center gap-2">
+            <h2 className="text-lg font-semibold text-charcoal flex items-center gap-2">
               <Calendar className="h-5 w-5 text-primary-600" />
               {t('dashboard.upcomingShifts')}
             </h2>
@@ -531,21 +531,21 @@ export default function DashboardPage() {
             {data.upcomingShifts.map((shift) => (
               <div
                 key={shift.id}
-                className="rounded-xl p-4 border border-slate-200 bg-white shadow-card flex items-center justify-between hover:shadow-card-hover transition-shadow"
+                className="rounded-xl p-4 border border-kresna-border bg-white shadow-card flex items-center justify-between hover:shadow-kresna transition-shadow"
               >
                 <div className="flex items-center gap-3">
                   <div className="h-10 w-10 rounded-lg bg-accent-50 flex items-center justify-center">
                     <Calendar className="h-4 w-4 text-accent-600" />
                   </div>
                   <div>
-                    <p className="text-sm font-medium text-slate-900">{formatDay(shift.start_time)}</p>
-                    <p className="text-xs text-slate-500">
+                    <p className="text-sm font-medium text-charcoal">{formatDay(shift.start_time)}</p>
+                    <p className="text-xs text-kresna-gray">
                       {formatTime(shift.start_time)} — {formatTime(shift.end_time)}
                     </p>
                   </div>
                 </div>
                 {shift.location_name && (
-                  <span className="text-xs text-slate-500">{shift.location_name}</span>
+                  <span className="text-xs text-kresna-gray">{shift.location_name}</span>
                 )}
               </div>
             ))}

@@ -195,12 +195,12 @@ export default function SessionsPage() {
         className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between"
       >
         <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-violet-50 shadow-sm">
-            <Monitor className="h-5 w-5 text-violet-600" />
+          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary-50 shadow-sm">
+            <Monitor className="h-5 w-5 text-primary-600" />
           </div>
           <div>
-            <h1 className="text-xl font-bold text-slate-900 sm:text-2xl">{t('admin.sessions.title')}</h1>
-            <p className="text-sm text-slate-500">
+            <h1 className="text-xl font-bold text-charcoal sm:text-2xl">{t('admin.sessions.title')}</h1>
+            <p className="text-sm text-kresna-gray">
               {t('admin.liveMonitoring')}
             </p>
           </div>
@@ -213,7 +213,7 @@ export default function SessionsPage() {
               size="sm"
               onClick={handleRefresh}
               disabled={isRefreshing}
-              className="gap-1.5 rounded-lg border border-slate-200 bg-slate-50 text-slate-700 hover:bg-slate-100"
+              className="gap-1.5 rounded-lg border border-kresna-border bg-kresna-light text-kresna-gray-dark hover:bg-kresna-light"
             >
               <RefreshCw className={cn('h-4 w-4', isRefreshing && 'animate-spin')} />
               <span className="hidden sm:inline">{t('admin.refresh')}</span>
@@ -228,7 +228,7 @@ export default function SessionsPage() {
       >
         {/* Search */}
         <div className="relative flex-1 sm:max-w-xs">
-          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-500" />
+          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-kresna-gray" />
           <Input
             type="text"
             placeholder={t('common.search')}
@@ -237,7 +237,7 @@ export default function SessionsPage() {
               setSearchQuery(e.target.value);
               setPage(1);
             }}
-            className="rounded-xl border border-slate-200 bg-white pl-9 text-slate-900 shadow-sm placeholder:text-slate-400 focus:border-violet-500"
+            className="rounded-xl border border-kresna-border bg-white pl-9 text-charcoal shadow-sm placeholder:text-kresna-gray focus:border-primary-500"
           />
         </div>
 
@@ -249,14 +249,14 @@ export default function SessionsPage() {
             setPage(1);
           }}
         >
-          <SelectTrigger className="w-[160px] rounded-xl border border-slate-200 bg-white text-slate-900 shadow-sm">
+          <SelectTrigger className="w-[160px] rounded-xl border border-kresna-border bg-white text-charcoal shadow-sm">
             <SelectValue placeholder="Status" />
           </SelectTrigger>
-          <SelectContent className="rounded-xl border border-slate-200 bg-white shadow-sm">
-            <SelectItem value="all" className="text-slate-700">{t('admin.filters.allSessions')}</SelectItem>
-            <SelectItem value="active" className="text-slate-700">{t('admin.filters.active')}</SelectItem>
-            <SelectItem value="expired" className="text-slate-700">{t('admin.filters.expired')}</SelectItem>
-            <SelectItem value="impersonated" className="text-slate-700">{t('admin.filters.impersonated')}</SelectItem>
+          <SelectContent className="rounded-xl border border-kresna-border bg-white shadow-sm">
+            <SelectItem value="all" className="text-kresna-gray-dark">{t('admin.filters.allSessions')}</SelectItem>
+            <SelectItem value="active" className="text-kresna-gray-dark">{t('admin.filters.active')}</SelectItem>
+            <SelectItem value="expired" className="text-kresna-gray-dark">{t('admin.filters.expired')}</SelectItem>
+            <SelectItem value="impersonated" className="text-kresna-gray-dark">{t('admin.filters.impersonated')}</SelectItem>
           </SelectContent>
         </Select>
       </div>
@@ -266,30 +266,30 @@ export default function SessionsPage() {
         className="flex flex-wrap items-center gap-4 text-sm sm:gap-6"
       >
         <div className="flex items-center gap-2">
-          <div className="h-2 w-2 rounded-full bg-violet-500" />
-          <span className="text-slate-500">
-            <span className="font-medium text-slate-700">{total}</span> {t('admin.total')}
+          <div className="h-2 w-2 rounded-full bg-primary-500" />
+          <span className="text-kresna-gray">
+            <span className="font-medium text-kresna-gray-dark">{total}</span> {t('admin.total')}
           </span>
         </div>
         <div className="flex items-center gap-2">
           <div className="h-2 w-2 rounded-full bg-emerald-500" />
-          <span className="text-slate-500">
-            <span className="font-medium text-slate-700">{activeCount}</span> {t('admin.active')}
+          <span className="text-kresna-gray">
+            <span className="font-medium text-kresna-gray-dark">{activeCount}</span> {t('admin.active')}
           </span>
         </div>
         {expiredCount > 0 && (
           <div className="flex items-center gap-2">
-            <div className="h-2 w-2 rounded-full bg-slate-400" />
-            <span className="text-slate-500">
-              <span className="font-medium text-slate-700">{expiredCount}</span> {t('admin.expired')}
+            <div className="h-2 w-2 rounded-full bg-kresna-gray" />
+            <span className="text-kresna-gray">
+              <span className="font-medium text-kresna-gray-dark">{expiredCount}</span> {t('admin.expired')}
             </span>
           </div>
         )}
         {impersonatedCount > 0 && (
           <div className="flex items-center gap-2">
-            <div className="h-2 w-2 rounded-full bg-violet-500" />
-            <span className="text-slate-500">
-              <span className="font-medium text-slate-700">{impersonatedCount}</span> {t('admin.impersonated')}
+            <div className="h-2 w-2 rounded-full bg-primary-500" />
+            <span className="text-kresna-gray">
+              <span className="font-medium text-kresna-gray-dark">{impersonatedCount}</span> {t('admin.impersonated')}
             </span>
           </div>
         )}
@@ -353,22 +353,22 @@ export default function SessionsPage() {
           </DialogHeader>
 
           {revokeModal && (
-            <div className="rounded-lg border border-slate-200 bg-slate-50 p-3 text-sm">
+            <div className="rounded-lg border border-kresna-border bg-kresna-light p-3 text-sm">
               <div className="flex items-center justify-between">
-                <span className="text-slate-500">{t('admin.sessions.ipAddress')}</span>
-                <span className="font-mono text-slate-700">
+                <span className="text-kresna-gray">{t('admin.sessions.ipAddress')}</span>
+                <span className="font-mono text-kresna-gray-dark">
                   {revokeModal.ipAddress || t('common.unknown')}
                 </span>
               </div>
               <div className="mt-2 flex items-center justify-between">
-                <span className="text-slate-500">{t('admin.sessions.browser')}</span>
-                <span className="text-slate-700">
+                <span className="text-kresna-gray">{t('admin.sessions.browser')}</span>
+                <span className="text-kresna-gray-dark">
                   {parseUserAgent(revokeModal.userAgent)}
                 </span>
               </div>
               <div className="mt-2 flex items-center justify-between">
-                <span className="text-slate-500">{t('admin.sessions.created')}</span>
-                <span className="text-slate-700">
+                <span className="text-kresna-gray">{t('admin.sessions.created')}</span>
+                <span className="text-kresna-gray-dark">
                   {new Date(revokeModal.createdAt).toLocaleString()}
                 </span>
               </div>
@@ -417,10 +417,10 @@ function SessionCard({ session, onRevoke }: SessionCardProps) {
   return (
     <div
       className={cn(
-        'group relative overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm transition-all duration-300',
-        'hover:border-slate-300 hover:shadow-md',
-        expired && 'border-slate-200 bg-slate-50 opacity-70',
-        isImpersonated && 'border-violet-200 bg-violet-50'
+        'group relative overflow-hidden rounded-xl border border-kresna-border bg-white shadow-sm transition-all duration-300',
+        'hover:border-kresna-border hover:shadow-md',
+        expired && 'border-kresna-border bg-kresna-light opacity-70',
+        isImpersonated && 'border-primary-200 bg-primary-50'
       )}
     >
       <div className="relative p-5">
@@ -428,23 +428,23 @@ function SessionCard({ session, onRevoke }: SessionCardProps) {
         <div className="mb-4 flex items-start justify-between gap-3">
           <div className="flex items-center gap-3">
             <div className="relative">
-              <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-violet-100 text-sm font-semibold text-violet-700">
+              <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-primary-100 text-sm font-semibold text-primary-700">
                 {session.userName.charAt(0).toUpperCase()}
               </div>
               {isImpersonated && (
-                <div className="absolute -bottom-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-violet-500">
+                <div className="absolute -bottom-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-primary-500">
                   <UserCog className="h-3 w-3 text-white" />
                 </div>
               )}
             </div>
             <div className="min-w-0">
-              <h3 className="truncate font-semibold text-slate-900">{session.userName}</h3>
-              <p className="truncate text-sm text-slate-500">{session.userEmail}</p>
+              <h3 className="truncate font-semibold text-charcoal">{session.userName}</h3>
+              <p className="truncate text-sm text-kresna-gray">{session.userEmail}</p>
             </div>
           </div>
 
           {expired ? (
-            <Badge className="border border-slate-300 bg-slate-100 text-slate-500">
+            <Badge className="border border-kresna-border bg-kresna-light text-kresna-gray">
               {t('admin.expired')}
             </Badge>
           ) : (
@@ -457,18 +457,18 @@ function SessionCard({ session, onRevoke }: SessionCardProps) {
         {/* Badges row */}
         <div className="mb-4 flex flex-wrap items-center gap-2">
           {session.userRole && (
-            <Badge className="border border-violet-300 bg-violet-50 text-violet-700">
+            <Badge className="border border-primary-300 bg-primary-50 text-primary-700">
               <Shield className="mr-1 h-3 w-3" />
               {session.userRole}
             </Badge>
           )}
           {isImpersonated && (
-            <Badge className="border border-violet-300 bg-violet-50 text-violet-700">
+            <Badge className="border border-primary-300 bg-primary-50 text-primary-700">
               <UserCog className="mr-1 h-3 w-3" />
               {t('admin.impersonated')}
             </Badge>
           )}
-          <Badge className="border border-slate-200 bg-slate-50 text-slate-500">
+          <Badge className="border border-kresna-border bg-kresna-light text-kresna-gray">
             {mobile ? (
               <Smartphone className="mr-1 h-3 w-3" />
             ) : (
@@ -482,34 +482,34 @@ function SessionCard({ session, onRevoke }: SessionCardProps) {
         <div className="mb-4 space-y-2 text-sm">
           {session.ipAddress && (
             <div className="flex items-center justify-between">
-              <span className="flex items-center gap-1.5 text-slate-500">
+              <span className="flex items-center gap-1.5 text-kresna-gray">
                 <Globe className="h-3.5 w-3.5" />
                 {t('admin.sessions.ipAddress')}
               </span>
-              <span className="font-mono text-slate-700">{session.ipAddress}</span>
+              <span className="font-mono text-kresna-gray-dark">{session.ipAddress}</span>
             </div>
           )}
           <div className="flex items-center justify-between">
-            <span className="flex items-center gap-1.5 text-slate-500">
+            <span className="flex items-center gap-1.5 text-kresna-gray">
               <Clock className="h-3.5 w-3.5" />
               {t('admin.sessions.created')}
             </span>
-            <span className="text-slate-700" title={new Date(session.createdAt).toLocaleString()}>
+            <span className="text-kresna-gray-dark" title={new Date(session.createdAt).toLocaleString()}>
               {formatRelativeTime(session.createdAt)}
             </span>
           </div>
           <div className="flex items-center justify-between">
-            <span className="text-slate-500">{t('admin.sessions.lastActive')}</span>
-            <span className="text-slate-700" title={new Date(session.updatedAt).toLocaleString()}>
+            <span className="text-kresna-gray">{t('admin.sessions.lastActive')}</span>
+            <span className="text-kresna-gray-dark" title={new Date(session.updatedAt).toLocaleString()}>
               {formatRelativeTime(session.updatedAt)}
             </span>
           </div>
           <div className="flex items-center justify-between">
-            <span className="text-slate-500">{t('admin.sessions.expires')}</span>
+            <span className="text-kresna-gray">{t('admin.sessions.expires')}</span>
             <span
               className={cn(
                 'font-medium',
-                expired ? 'text-slate-500' : 'text-slate-700'
+                expired ? 'text-kresna-gray' : 'text-kresna-gray-dark'
               )}
             >
               {expired
@@ -524,9 +524,9 @@ function SessionCard({ session, onRevoke }: SessionCardProps) {
 
         {/* Impersonation notice */}
         {isImpersonated && (
-          <div className="mb-4 flex items-center gap-2 rounded-lg border border-violet-200 bg-violet-50 px-3 py-2">
-            <AlertTriangle className="h-4 w-4 shrink-0 text-violet-600" />
-            <span className="text-sm text-violet-700">
+          <div className="mb-4 flex items-center gap-2 rounded-lg border border-primary-200 bg-primary-50 px-3 py-2">
+            <AlertTriangle className="h-4 w-4 shrink-0 text-primary-600" />
+            <span className="text-sm text-primary-700">
               {t('admin.sessions.impersonatedBy', { name: session.impersonatedBy })}
             </span>
           </div>
@@ -534,7 +534,7 @@ function SessionCard({ session, onRevoke }: SessionCardProps) {
 
         {/* Force logout action */}
         {!expired && (
-          <div className="border-t border-slate-200 pt-4">
+          <div className="border-t border-kresna-border pt-4">
             <Button
               variant="ghost"
               size="sm"
@@ -557,28 +557,28 @@ function SessionCard({ session, onRevoke }: SessionCardProps) {
 
 function SessionCardSkeleton() {
   return (
-    <div className="animate-pulse rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
+    <div className="animate-pulse rounded-xl border border-kresna-border bg-white p-5 shadow-sm">
       <div className="mb-4 flex items-start justify-between">
         <div className="flex items-center gap-3">
-          <div className="h-11 w-11 rounded-xl bg-slate-100" />
+          <div className="h-11 w-11 rounded-xl bg-kresna-light" />
           <div className="space-y-1.5">
-            <div className="h-5 w-28 rounded bg-slate-100" />
-            <div className="h-4 w-36 rounded bg-slate-100" />
+            <div className="h-5 w-28 rounded bg-kresna-light" />
+            <div className="h-4 w-36 rounded bg-kresna-light" />
           </div>
         </div>
-        <div className="h-6 w-16 rounded-full bg-slate-100" />
+        <div className="h-6 w-16 rounded-full bg-kresna-light" />
       </div>
       <div className="mb-4 flex gap-2">
-        <div className="h-6 w-20 rounded-full bg-slate-100" />
-        <div className="h-6 w-16 rounded-full bg-slate-100" />
+        <div className="h-6 w-20 rounded-full bg-kresna-light" />
+        <div className="h-6 w-16 rounded-full bg-kresna-light" />
       </div>
       <div className="mb-4 space-y-2">
-        <div className="h-4 w-full rounded bg-slate-100" />
-        <div className="h-4 w-full rounded bg-slate-100" />
-        <div className="h-4 w-3/4 rounded bg-slate-100" />
+        <div className="h-4 w-full rounded bg-kresna-light" />
+        <div className="h-4 w-full rounded bg-kresna-light" />
+        <div className="h-4 w-3/4 rounded bg-kresna-light" />
       </div>
-      <div className="border-t border-slate-200 pt-4">
-        <div className="h-8 w-full rounded bg-slate-100" />
+      <div className="border-t border-kresna-border pt-4">
+        <div className="h-8 w-full rounded bg-kresna-light" />
       </div>
     </div>
   );
@@ -599,19 +599,19 @@ function EmptyState({ hasFilters, onClearFilters }: EmptyStateProps) {
   if (hasFilters) {
     return (
       <div
-        className="flex flex-col items-center justify-center rounded-xl border border-dashed border-slate-200 bg-slate-50 px-6 py-16 text-center"
+        className="flex flex-col items-center justify-center rounded-xl border border-dashed border-kresna-border bg-kresna-light px-6 py-16 text-center"
       >
-        <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-xl bg-slate-100">
-          <Search className="h-7 w-7 text-slate-400" />
+        <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-xl bg-kresna-light">
+          <Search className="h-7 w-7 text-kresna-gray" />
         </div>
-        <h3 className="mb-1 text-lg font-semibold text-slate-900">{t('admin.noMatchingResults')}</h3>
-        <p className="mb-4 max-w-sm text-sm text-slate-500">
+        <h3 className="mb-1 text-lg font-semibold text-charcoal">{t('admin.noMatchingResults')}</h3>
+        <p className="mb-4 max-w-sm text-sm text-kresna-gray">
           {t('admin.adjustFilters')}
         </p>
         <Button
           variant="ghost"
           onClick={onClearFilters}
-          className="gap-2 rounded-lg border border-slate-200 text-slate-700 hover:bg-slate-50"
+          className="gap-2 rounded-lg border border-kresna-border text-kresna-gray-dark hover:bg-kresna-light"
         >
           {t('admin.clearFilters')}
         </Button>
@@ -621,15 +621,15 @@ function EmptyState({ hasFilters, onClearFilters }: EmptyStateProps) {
 
   return (
     <div
-      className="flex flex-col items-center justify-center rounded-xl border border-dashed border-slate-200 bg-slate-50 px-6 py-16 text-center"
+      className="flex flex-col items-center justify-center rounded-xl border border-dashed border-kresna-border bg-kresna-light px-6 py-16 text-center"
     >
       <div
-        className="mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-violet-50"
+        className="mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-primary-50"
       >
-        <Monitor className="h-8 w-8 text-violet-600" />
+        <Monitor className="h-8 w-8 text-primary-600" />
       </div>
-      <h3 className="mb-1 text-lg font-semibold text-slate-900">{t('admin.sessions.noSessionsYet')}</h3>
-      <p className="max-w-sm text-sm text-slate-500">
+      <h3 className="mb-1 text-lg font-semibold text-charcoal">{t('admin.sessions.noSessionsYet')}</h3>
+      <p className="max-w-sm text-sm text-kresna-gray">
         {t('admin.sessions.sessionsAppearHere')}
       </p>
     </div>

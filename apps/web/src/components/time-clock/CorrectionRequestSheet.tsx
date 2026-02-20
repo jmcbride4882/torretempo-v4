@@ -231,9 +231,9 @@ export function CorrectionRequestSheet({
         <div className="text-center">
           <div className="flex items-center justify-center gap-2 mb-2">
             <Edit3 className="h-5 w-5 text-primary-400" />
-            <h2 className="text-xl font-semibold text-slate-900">{t('corrections.requestCorrectionTitle')}</h2>
+            <h2 className="text-xl font-semibold text-charcoal">{t('corrections.requestCorrectionTitle')}</h2>
           </div>
-          <p className="text-sm text-slate-400">
+          <p className="text-sm text-kresna-gray">
             {formatDate(timeEntry.clockIn)}
           </p>
         </div>
@@ -256,8 +256,8 @@ export function CorrectionRequestSheet({
               >
                 <CheckCircle2 className="h-8 w-8 text-emerald-400" />
               </motion.div>
-              <p className="text-lg font-semibold text-slate-900">{t('corrections.requestSubmitted')}</p>
-              <p className="text-sm text-slate-400">
+              <p className="text-lg font-semibold text-charcoal">{t('corrections.requestSubmitted')}</p>
+              <p className="text-sm text-kresna-gray">
                 {t('corrections.managerReview')}
               </p>
             </motion.div>
@@ -268,21 +268,21 @@ export function CorrectionRequestSheet({
         {!success && (
           <>
             {/* Current Times (Read-only) */}
-            <div className="bg-white border border-slate-200 rounded-xl p-4 space-y-3">
-              <Label className="text-slate-400 text-xs uppercase tracking-wide">
+            <div className="bg-white border border-kresna-border rounded-xl p-4 space-y-3">
+              <Label className="text-kresna-gray text-xs uppercase tracking-wide">
                 {t('corrections.originalTimes')}
               </Label>
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <span className="text-xs text-slate-500">{t('corrections.clockIn')}</span>
-                  <p className="text-lg font-mono text-slate-700">
+                  <span className="text-xs text-kresna-gray">{t('corrections.clockIn')}</span>
+                  <p className="text-lg font-mono text-kresna-gray-dark">
                     {formatTime(timeEntry.clockIn)}
                   </p>
                 </div>
                 {timeEntry.clockOut && (
                   <div>
-                    <span className="text-xs text-slate-500">{t('corrections.clockOut')}</span>
-                    <p className="text-lg font-mono text-slate-700">
+                    <span className="text-xs text-kresna-gray">{t('corrections.clockOut')}</span>
+                    <p className="text-lg font-mono text-kresna-gray-dark">
                       {formatTime(timeEntry.clockOut)}
                     </p>
                   </div>
@@ -292,14 +292,14 @@ export function CorrectionRequestSheet({
 
             {/* Requested Times */}
             <div className="space-y-4">
-              <Label className="text-slate-400 text-xs uppercase tracking-wide">
+              <Label className="text-kresna-gray text-xs uppercase tracking-wide">
                 {t('corrections.requestedTimes')}
               </Label>
               
               {/* Clock In */}
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
-                  <Label htmlFor="clock-in" className="text-slate-700">
+                  <Label htmlFor="clock-in" className="text-kresna-gray-dark">
                     {t('corrections.clockIn')}
                   </Label>
                   {clockInDiff && (
@@ -316,7 +316,7 @@ export function CorrectionRequestSheet({
                   type="datetime-local"
                   value={requestedClockIn}
                   onChange={(e) => setRequestedClockIn(e.target.value)}
-                  className="bg-slate-50 border-slate-200 text-slate-900"
+                  className="bg-kresna-light border-kresna-border text-charcoal"
                 />
               </div>
 
@@ -324,7 +324,7 @@ export function CorrectionRequestSheet({
               {timeEntry.clockOut && (
                 <div className="space-y-2">
                   <div className="flex items-center justify-between">
-                    <Label htmlFor="clock-out" className="text-slate-700">
+                    <Label htmlFor="clock-out" className="text-kresna-gray-dark">
                       {t('corrections.clockOut')}
                     </Label>
                     {clockOutDiff && (
@@ -341,7 +341,7 @@ export function CorrectionRequestSheet({
                     type="datetime-local"
                     value={requestedClockOut}
                     onChange={(e) => setRequestedClockOut(e.target.value)}
-                    className="bg-slate-50 border-slate-200 text-slate-900"
+                    className="bg-kresna-light border-kresna-border text-charcoal"
                   />
                 </div>
               )}
@@ -350,12 +350,12 @@ export function CorrectionRequestSheet({
             {/* Reason */}
             <div className="space-y-2">
               <div className="flex items-center justify-between">
-                <Label htmlFor="reason" className="text-slate-700">
+                <Label htmlFor="reason" className="text-kresna-gray-dark">
                   {t('corrections.reason')} <span className="text-red-400">*</span>
                 </Label>
                 <span className={cn(
                   "text-xs",
-                  reason.length > MAX_REASON_LENGTH ? "text-red-400" : "text-slate-500"
+                  reason.length > MAX_REASON_LENGTH ? "text-red-400" : "text-kresna-gray"
                 )}>
                   {reason.length}/{MAX_REASON_LENGTH}
                 </span>
@@ -368,8 +368,8 @@ export function CorrectionRequestSheet({
                 rows={3}
                 className={cn(
                   "w-full px-3 py-2 rounded-xl resize-none",
-                  "bg-slate-50 border border-slate-200",
-                  "text-slate-900 placeholder:text-slate-400",
+                  "bg-kresna-light border border-kresna-border",
+                  "text-charcoal placeholder:text-kresna-gray",
                   "focus:outline-none focus:ring-2 focus:ring-primary-500/50",
                   "text-sm"
                 )}
@@ -410,7 +410,7 @@ export function CorrectionRequestSheet({
                 className={cn(
                   "h-14 text-lg font-semibold rounded-xl",
                   "bg-primary-600 hover:bg-primary-700",
-                  "disabled:bg-slate-200 disabled:text-slate-400"
+                  "disabled:bg-kresna-border disabled:text-kresna-gray"
                 )}
               >
                 {submitting ? (
@@ -427,7 +427,7 @@ export function CorrectionRequestSheet({
                 variant="ghost"
                 onClick={onClose}
                 disabled={submitting}
-                className="h-12 text-slate-500 hover:text-slate-900"
+                className="h-12 text-kresna-gray hover:text-charcoal"
               >
                 {t('common.cancel')}
               </Button>

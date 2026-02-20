@@ -112,8 +112,8 @@ export function LocationManager({ organizationSlug }: LocationManagerProps) {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center py-12">
-        <Loader2 className="h-6 w-6 animate-spin text-slate-400" />
-        <span className="ml-2 text-sm text-slate-400">{t('settings.locations.loadingLocations')}</span>
+        <Loader2 className="h-6 w-6 animate-spin text-kresna-gray" />
+        <span className="ml-2 text-sm text-kresna-gray">{t('settings.locations.loadingLocations')}</span>
       </div>
     );
   }
@@ -123,8 +123,8 @@ export function LocationManager({ organizationSlug }: LocationManagerProps) {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h3 className="text-lg font-semibold text-slate-900">{t('settings.locations.title')}</h3>
-          <p className="text-sm text-slate-500">{t('settings.locations.subtitle')}</p>
+          <h3 className="text-lg font-semibold text-charcoal">{t('settings.locations.title')}</h3>
+          <p className="text-sm text-kresna-gray">{t('settings.locations.subtitle')}</p>
         </div>
         <Button onClick={() => setShowCreateModal(true)} className="gap-2">
           <Plus className="h-4 w-4" />
@@ -134,12 +134,12 @@ export function LocationManager({ organizationSlug }: LocationManagerProps) {
 
       {/* Locations Grid */}
       {locations.length === 0 ? (
-        <div className="rounded-xl border border-slate-200 bg-slate-50 p-12 text-center">
-          <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-slate-100">
-            <MapPin className="h-8 w-8 text-slate-400" />
+        <div className="rounded-xl border border-kresna-border bg-kresna-light p-12 text-center">
+          <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-kresna-light">
+            <MapPin className="h-8 w-8 text-kresna-gray" />
           </div>
-          <h3 className="mb-2 text-lg font-semibold text-slate-900">{t('settings.locations.noLocationsTitle')}</h3>
-          <p className="mb-6 text-sm text-slate-500">
+          <h3 className="mb-2 text-lg font-semibold text-charcoal">{t('settings.locations.noLocationsTitle')}</h3>
+          <p className="mb-6 text-sm text-kresna-gray">
             {t('settings.locations.noLocationsDescription')}
           </p>
           <Button onClick={() => setShowCreateModal(true)} className="gap-2">
@@ -158,17 +158,17 @@ export function LocationManager({ organizationSlug }: LocationManagerProps) {
                 exit={{ opacity: 0, scale: 0.95 }}
                 transition={{ delay: index * 0.05 }}
                 className={cn(
-                  'group relative overflow-hidden rounded-xl border bg-white p-4 transition-all hover:bg-slate-50',
-                  'border-slate-200 hover:border-slate-300'
+                  'group relative overflow-hidden rounded-xl border bg-white p-4 transition-all hover:bg-kresna-light',
+                  'border-kresna-border hover:border-kresna-border'
                 )}
               >
                 <div className="space-y-3">
                   {/* Header */}
                   <div className="flex items-start justify-between">
                     <div className="flex-1">
-                      <h4 className="font-semibold text-slate-900">{location.name}</h4>
+                      <h4 className="font-semibold text-charcoal">{location.name}</h4>
                       {location.address && (
-                        <p className="mt-1 text-xs text-slate-500 line-clamp-2">
+                        <p className="mt-1 text-xs text-kresna-gray line-clamp-2">
                           {location.address}
                         </p>
                       )}
@@ -178,7 +178,7 @@ export function LocationManager({ organizationSlug }: LocationManagerProps) {
                         variant="ghost"
                         size="sm"
                         onClick={() => setEditingLocation(location)}
-                        className="h-8 w-8 p-0 hover:bg-slate-100"
+                        className="h-8 w-8 p-0 hover:bg-kresna-light"
                       >
                         <Edit className="h-3.5 w-3.5" />
                       </Button>
@@ -196,8 +196,8 @@ export function LocationManager({ organizationSlug }: LocationManagerProps) {
                   {/* Details */}
                   <div className="space-y-2">
                     {location.lat && location.lng && (
-                      <div className="flex items-center gap-2 text-xs text-slate-500">
-                        <Map className="h-3.5 w-3.5 text-slate-400" />
+                      <div className="flex items-center gap-2 text-xs text-kresna-gray">
+                        <Map className="h-3.5 w-3.5 text-kresna-gray" />
                         <span>
                           {parseFloat(location.lat).toFixed(6)}, {parseFloat(location.lng).toFixed(6)}
                         </span>
@@ -238,10 +238,10 @@ export function LocationManager({ organizationSlug }: LocationManagerProps) {
 
       {/* Delete Confirmation */}
       <Dialog open={!!deletingLocation} onOpenChange={() => setDeletingLocation(null)}>
-        <DialogContent className="border-slate-200 bg-white">
+        <DialogContent className="border-kresna-border bg-white">
           <DialogHeader>
-            <DialogTitle className="text-slate-900">{t('settings.locations.deleteTitle')}</DialogTitle>
-            <DialogDescription className="text-slate-500">
+            <DialogTitle className="text-charcoal">{t('settings.locations.deleteTitle')}</DialogTitle>
+            <DialogDescription className="text-kresna-gray">
               {t('settings.locations.deleteConfirmMessage', { name: deletingLocation?.name })}
             </DialogDescription>
           </DialogHeader>
@@ -377,14 +377,14 @@ function LocationFormModal({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="flex max-h-[90vh] flex-col gap-0 border-slate-200 bg-white p-0 sm:max-w-[600px]">
+      <DialogContent className="flex max-h-[90vh] flex-col gap-0 border-kresna-border bg-white p-0 sm:max-w-[600px]">
         <form onSubmit={handleSubmit} className="flex flex-col overflow-hidden">
           <div className="p-6 pb-4">
             <DialogHeader>
-              <DialogTitle className="text-slate-900">
+              <DialogTitle className="text-charcoal">
                 {editingLocation ? t('settings.locations.editTitle') : t('settings.locations.createTitle')}
               </DialogTitle>
-              <DialogDescription className="text-slate-500">
+              <DialogDescription className="text-kresna-gray">
                 {editingLocation
                   ? t('settings.locations.editDescription')
                   : t('settings.locations.createDescription')}
@@ -407,7 +407,7 @@ function LocationFormModal({
 
             {/* Location name */}
             <div className="space-y-2">
-              <Label htmlFor="name" className="text-slate-700">
+              <Label htmlFor="name" className="text-kresna-gray-dark">
                 {t('settings.locations.locationName')} *
               </Label>
               <Input
@@ -415,14 +415,14 @@ function LocationFormModal({
                 placeholder={t('settings.locations.locationNamePlaceholder')}
                 value={formData.name}
                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                className="border-slate-200 bg-white text-slate-900 placeholder:text-slate-400"
+                className="border-kresna-border bg-white text-charcoal placeholder:text-kresna-gray"
                 required
               />
             </div>
 
             {/* Address */}
             <div className="space-y-2">
-              <Label htmlFor="address" className="text-slate-700">
+              <Label htmlFor="address" className="text-kresna-gray-dark">
                 {t('settings.locations.addressOptional')}
               </Label>
               <Input
@@ -430,16 +430,16 @@ function LocationFormModal({
                 placeholder={t('settings.locations.addressPlaceholder')}
                 value={formData.address}
                 onChange={(e) => setFormData({ ...formData, address: e.target.value })}
-                className="border-slate-200 bg-white text-slate-900 placeholder:text-slate-400"
+                className="border-kresna-border bg-white text-charcoal placeholder:text-kresna-gray"
               />
             </div>
 
             {/* Map Picker */}
             <div className="space-y-2">
-              <Label className="text-slate-700">
+              <Label className="text-kresna-gray-dark">
                 {t('settings.locations.locationOnMap')}
               </Label>
-              <p className="text-xs text-slate-500">
+              <p className="text-xs text-kresna-gray">
                 {t('settings.locations.mapHint')}
               </p>
               <MapPicker
@@ -459,7 +459,7 @@ function LocationFormModal({
             {/* Coordinates */}
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="lat" className="text-slate-700">
+                <Label htmlFor="lat" className="text-kresna-gray-dark">
                   {t('settings.locations.latitude')}
                 </Label>
                 <Input
@@ -469,12 +469,12 @@ function LocationFormModal({
                   placeholder={t('settings.locations.latitudePlaceholder')}
                   value={formData.lat}
                   onChange={(e) => setFormData({ ...formData, lat: e.target.value })}
-                  className="border-slate-200 bg-white text-slate-900 placeholder:text-slate-400"
+                  className="border-kresna-border bg-white text-charcoal placeholder:text-kresna-gray"
                 />
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="lng" className="text-slate-700">
+                <Label htmlFor="lng" className="text-kresna-gray-dark">
                   {t('settings.locations.longitude')}
                 </Label>
                 <Input
@@ -484,14 +484,14 @@ function LocationFormModal({
                   placeholder={t('settings.locations.longitudePlaceholder')}
                   value={formData.lng}
                   onChange={(e) => setFormData({ ...formData, lng: e.target.value })}
-                  className="border-slate-200 bg-white text-slate-900 placeholder:text-slate-400"
+                  className="border-kresna-border bg-white text-charcoal placeholder:text-kresna-gray"
                 />
               </div>
             </div>
 
             {/* Geofence radius */}
             <div className="space-y-2">
-              <Label htmlFor="geofence_radius" className="text-slate-700">
+              <Label htmlFor="geofence_radius" className="text-kresna-gray-dark">
                 {t('settings.locations.geofenceRadiusLabel')}
               </Label>
               <Input
@@ -501,15 +501,15 @@ function LocationFormModal({
                 placeholder={t('settings.locations.geofenceRadiusPlaceholder')}
                 value={formData.geofence_radius}
                 onChange={(e) => setFormData({ ...formData, geofence_radius: e.target.value })}
-                className="border-slate-200 bg-white text-slate-900 placeholder:text-slate-400"
+                className="border-kresna-border bg-white text-charcoal placeholder:text-kresna-gray"
               />
-              <p className="text-xs text-slate-500">
+              <p className="text-xs text-kresna-gray">
                 {t('settings.locations.geofenceRadiusHint')}
               </p>
             </div>
           </div>
 
-          <div className="border-t border-slate-200 p-6 pt-4">
+          <div className="border-t border-kresna-border p-6 pt-4">
             <DialogFooter>
               <Button type="button" variant="ghost" onClick={() => onOpenChange(false)} disabled={isSubmitting}>
                 {t('common.cancel')}

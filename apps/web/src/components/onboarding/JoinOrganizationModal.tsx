@@ -83,7 +83,7 @@ export function JoinOrganizationModal({ open, onOpenChange, onSuccess }: JoinOrg
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent className="border-slate-200 bg-white sm:max-w-md">
+      <DialogContent className="border-kresna-border bg-white sm:max-w-md">
         {/* Decorative elements */}
         <div className="pointer-events-none absolute -top-32 left-1/2 h-64 w-64 -translate-x-1/2 rounded-full bg-primary-100 blur-[100px]" />
         
@@ -126,10 +126,10 @@ export function JoinOrganizationModal({ open, onOpenChange, onSuccess }: JoinOrg
             </AnimatePresence>
           </motion.div>
           
-          <DialogTitle className="text-center text-xl text-slate-900">
+          <DialogTitle className="text-center text-xl text-charcoal">
             {state === 'success' ? 'Welcome aboard!' : 'Join an Organization'}
           </DialogTitle>
-          <DialogDescription className="text-center text-slate-500">
+          <DialogDescription className="text-center text-kresna-gray">
             {state === 'success' 
               ? 'You have successfully joined the organization.'
               : 'Enter the invitation code you received to join an existing organization.'
@@ -166,11 +166,11 @@ export function JoinOrganizationModal({ open, onOpenChange, onSuccess }: JoinOrg
               className="relative space-y-6 py-4"
             >
               <div className="space-y-2">
-                <Label htmlFor="invitation-code" className="text-slate-700">
+                <Label htmlFor="invitation-code" className="text-kresna-gray-dark">
                   Invitation Code
                 </Label>
                 <div className="relative">
-                  <Mail className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+                  <Mail className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-kresna-gray" />
                   <Input
                     id="invitation-code"
                     type="text"
@@ -202,7 +202,7 @@ export function JoinOrganizationModal({ open, onOpenChange, onSuccess }: JoinOrg
                   )}
                 </AnimatePresence>
                 
-                <p className="text-xs text-slate-400">
+                <p className="text-xs text-kresna-gray">
                   Your organization admin would have sent you an invitation code via email.
                 </p>
               </div>
@@ -213,7 +213,7 @@ export function JoinOrganizationModal({ open, onOpenChange, onSuccess }: JoinOrg
                   variant="outline"
                   onClick={handleClose}
                   disabled={state === 'loading'}
-                  className="flex-1 border-slate-200 bg-slate-50 hover:bg-slate-100"
+                  className="flex-1 border-kresna-border bg-kresna-light hover:bg-kresna-light"
                 >
                   Cancel
                 </Button>

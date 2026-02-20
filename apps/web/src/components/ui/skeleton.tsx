@@ -5,7 +5,7 @@ function Skeleton({ className, ...props }: React.HTMLAttributes<HTMLDivElement>)
   return (
     <div
       className={cn(
-        'bg-gradient-to-r from-slate-200 via-slate-100 to-slate-200 dark:from-slate-700 dark:via-slate-600 dark:to-slate-700 bg-[length:200%_100%] animate-shimmer rounded-lg',
+        'bg-gradient-to-r from-kresna-border via-kresna-light to-kresna-border dark:from-kresna-gray-dark dark:via-kresna-gray-dark dark:to-kresna-gray-dark bg-[length:200%_100%] animate-shimmer rounded-lg',
         className
       )}
       {...props}

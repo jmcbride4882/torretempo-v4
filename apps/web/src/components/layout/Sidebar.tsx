@@ -71,7 +71,7 @@ function NavSection({
 
   return (
     <div className="mb-2">
-      <p className="px-3 mb-1.5 text-[10px] font-semibold uppercase tracking-widest text-slate-500">
+      <p className="px-3 mb-1.5 text-[10px] font-semibold uppercase tracking-widest text-kresna-gray">
         {title}
       </p>
       <div className="space-y-0.5">
@@ -83,8 +83,8 @@ function NavSection({
               cn(
                 'group flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-colors duration-200',
                 isActive
-                  ? 'border-l-2 border-accent-500 bg-white/10 text-white'
-                  : 'text-slate-400 hover:bg-white/5 hover:text-slate-200'
+                  ? 'bg-primary-50 text-primary-600 border-l-2 border-primary-500'
+                  : 'text-kresna-gray-dark hover:bg-kresna-light hover:text-charcoal border-l-2 border-transparent'
               )
             }
           >
@@ -93,12 +93,12 @@ function NavSection({
                 <item.icon
                   className={cn(
                     'h-[18px] w-[18px] transition-colors',
-                    isActive ? 'text-accent-500' : 'text-slate-500 group-hover:text-slate-300'
+                    isActive ? 'text-primary-500' : 'text-kresna-gray group-hover:text-kresna-gray-dark'
                   )}
                 />
                 <span className="flex-1">{t(item.labelKey)}</span>
                 {item.badge && pendingSwapsCount > 0 && (
-                  <span className="flex h-5 min-w-[20px] items-center justify-center rounded-full bg-accent-500 px-1.5 text-[10px] font-bold text-white">
+                  <span className="flex h-5 min-w-[20px] items-center justify-center rounded-full bg-primary-500 px-1.5 text-[10px] font-bold text-white">
                     {pendingSwapsCount > 99 ? '99+' : pendingSwapsCount}
                   </span>
                 )}
@@ -132,17 +132,17 @@ export function Sidebar() {
   }, [slug]);
 
   return (
-    <aside className="hidden lg:flex fixed left-0 top-0 z-40 h-screen w-64 flex-col bg-surface-dark">
+    <aside className="hidden lg:flex fixed left-0 top-0 z-40 h-screen w-64 flex-col bg-white border-r border-kresna-border">
       {/* Branding */}
-      <div className="flex h-16 items-center gap-3 border-b border-white/10 px-4">
-        <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-primary shadow-glow">
+      <div className="flex h-16 items-center gap-3 border-b border-kresna-border px-4">
+        <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary-500">
           <Clock className="h-5 w-5 text-white" />
         </div>
         <div className="flex-1 overflow-hidden">
-          <p className="truncate text-sm font-semibold text-white">
+          <p className="truncate text-sm font-semibold text-charcoal">
             {organization?.name || 'Loading...'}
           </p>
-          <p className="truncate text-[11px] text-slate-500">Torre Tempo</p>
+          <p className="truncate text-[11px] text-kresna-gray">Torre Tempo</p>
         </div>
       </div>
 
@@ -155,21 +155,21 @@ export function Sidebar() {
       </nav>
 
       {/* Footer: language + user */}
-      <div className="border-t border-white/10 p-3 space-y-3">
+      <div className="border-t border-kresna-border p-3 space-y-3">
         <div className="flex justify-center">
           <LanguageSwitcher />
         </div>
-        <div className="flex items-center gap-3 rounded-xl bg-white/5 p-3">
-          <div className="flex h-9 w-9 items-center justify-center rounded-full bg-gradient-primary text-sm font-semibold text-white">
+        <div className="flex items-center gap-3 rounded-xl bg-kresna-light p-3">
+          <div className="flex h-9 w-9 items-center justify-center rounded-full bg-primary-500 text-sm font-semibold text-white">
             {user?.name?.charAt(0).toUpperCase() || 'U'}
           </div>
           <div className="flex-1 overflow-hidden">
-            <p className="truncate text-sm font-medium text-white">{user?.name || 'User'}</p>
-            <p className="truncate text-[11px] text-slate-500">{user?.email}</p>
+            <p className="truncate text-sm font-medium text-charcoal">{user?.name || 'User'}</p>
+            <p className="truncate text-[11px] text-kresna-gray">{user?.email}</p>
           </div>
           <button
             onClick={signOut}
-            className="rounded-lg p-2 text-slate-500 transition-colors hover:bg-white/10 hover:text-slate-300"
+            className="rounded-lg p-2 text-kresna-gray transition-colors hover:bg-kresna-border/50 hover:text-kresna-gray-dark"
             title={t('nav.signOut')}
           >
             <LogOut className="h-4 w-4" />

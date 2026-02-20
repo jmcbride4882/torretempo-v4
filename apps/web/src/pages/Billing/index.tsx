@@ -151,7 +151,7 @@ function getUsagePercentage(used: number, limit: number | null): number {
 function getUsageBarColor(percentage: number): string {
   if (percentage >= 90) return 'bg-red-500';
   if (percentage >= 70) return 'bg-amber-500';
-  return 'bg-violet-500';
+  return 'bg-primary-500';
 }
 
 // ============================================================================
@@ -168,7 +168,7 @@ function TrialBanner({ daysRemaining, onChoosePlan }: TrialBannerProps) {
   const days = daysRemaining ?? 0;
 
   return (
-    <div className="rounded-xl bg-gradient-to-r from-violet-600 to-violet-500 p-6 text-white shadow-lg">
+    <div className="rounded-xl bg-gradient-to-r from-primary-600 to-primary-500 p-6 text-white shadow-lg">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center gap-3">
           <div className="flex h-10 w-10 items-center justify-center rounded-full bg-white/20">
@@ -178,14 +178,14 @@ function TrialBanner({ daysRemaining, onChoosePlan }: TrialBannerProps) {
             <p className="text-lg font-semibold">
               {t('billing.trialBanner', { days })}
             </p>
-            <p className="text-sm text-violet-100">
+            <p className="text-sm text-primary-100">
               {t('billing.trialBannerSubtitle')}
             </p>
           </div>
         </div>
         <Button
           onClick={onChoosePlan}
-          className="bg-white text-violet-700 hover:bg-violet-50 shadow-sm"
+          className="bg-white text-primary-700 hover:bg-primary-50 shadow-sm"
         >
           <Sparkles className="mr-2 h-4 w-4" />
           {t('billing.choosePlan')}
@@ -218,40 +218,40 @@ function PlanCard({ plan, isCurrent, isUpgrade, isLoading, onSelect }: PlanCardP
   return (
     <Card
       className={cn(
-        'relative flex flex-col border-slate-200 bg-white shadow-sm transition-shadow hover:shadow-md',
-        plan.recommended && 'border-violet-300 shadow-violet-100/50 ring-2 ring-violet-500',
-        isCurrent && !plan.recommended && 'border-violet-200 ring-1 ring-violet-300'
+        'relative flex flex-col border-kresna-border bg-white shadow-sm transition-shadow hover:shadow-md',
+        plan.recommended && 'border-primary-300 shadow-primary-100/50 ring-2 ring-primary-500',
+        isCurrent && !plan.recommended && 'border-primary-200 ring-1 ring-primary-300'
       )}
     >
       {plan.recommended && (
         <div className="absolute -top-3 left-1/2 -translate-x-1/2">
-          <Badge className="bg-violet-600 text-white hover:bg-violet-700 shadow-sm">
+          <Badge className="bg-primary-600 text-white hover:bg-primary-700 shadow-sm">
             {t('billing.recommended')}
           </Badge>
         </div>
       )}
 
       <CardContent className="flex flex-1 flex-col p-6 pt-8">
-        <h3 className="text-lg font-semibold text-slate-900">{plan.name}</h3>
+        <h3 className="text-lg font-semibold text-charcoal">{plan.name}</h3>
 
         <div className="mt-4 flex items-baseline gap-1">
-          <span className="text-4xl font-bold text-slate-900">
+          <span className="text-4xl font-bold text-charcoal">
             {formatCurrency(plan.price)}
           </span>
-          <span className="text-sm text-slate-500">{t('billing.perMonth')}</span>
+          <span className="text-sm text-kresna-gray">{t('billing.perMonth')}</span>
         </div>
 
-        <p className="mt-2 text-sm text-slate-500">
+        <p className="mt-2 text-sm text-kresna-gray">
           {plan.employeeLimit
             ? t('billing.employeeLimit', { limit: plan.employeeLimit })
             : t('billing.unlimitedEmployees')}
         </p>
 
-        <div className="my-6 h-px bg-slate-100" />
+        <div className="my-6 h-px bg-kresna-light" />
 
         <ul className="flex-1 space-y-3">
           {plan.features.map((featureKey) => (
-            <li key={featureKey} className="flex items-start gap-2.5 text-sm text-slate-600">
+            <li key={featureKey} className="flex items-start gap-2.5 text-sm text-kresna-gray-dark">
               <Check className="mt-0.5 h-4 w-4 flex-shrink-0 text-emerald-500" />
               <span>{t(featureKey)}</span>
             </li>
@@ -261,7 +261,7 @@ function PlanCard({ plan, isCurrent, isUpgrade, isLoading, onSelect }: PlanCardP
         <Button
           className={cn(
             'mt-6 w-full',
-            plan.recommended && !isCurrent && 'bg-violet-600 hover:bg-violet-700',
+            plan.recommended && !isCurrent && 'bg-primary-600 hover:bg-primary-700',
           )}
           variant={isCurrent ? 'outline' : 'default'}
           disabled={isCurrent || isLoading}
@@ -302,11 +302,11 @@ function InvoiceRow({ invoice }: InvoiceRowProps) {
   }
 
   return (
-    <tr className="border-b border-slate-100 last:border-0">
-      <td className="py-3 pr-4 text-sm text-slate-700">
+    <tr className="border-b border-kresna-border last:border-0">
+      <td className="py-3 pr-4 text-sm text-kresna-gray-dark">
         {formatDate(invoice.date)}
       </td>
-      <td className="py-3 pr-4 text-sm font-medium text-slate-900">
+      <td className="py-3 pr-4 text-sm font-medium text-charcoal">
         {formatCurrency(invoice.amount / 100, invoice.currency)}
       </td>
       <td className="py-3 pr-4">
@@ -317,7 +317,7 @@ function InvoiceRow({ invoice }: InvoiceRowProps) {
           <Button
             variant="ghost"
             size="sm"
-            className="text-slate-500 hover:text-slate-700"
+            className="text-kresna-gray hover:text-kresna-gray-dark"
             asChild
           >
             <a href={invoice.downloadUrl} target="_blank" rel="noopener noreferrer">
@@ -442,14 +442,14 @@ export default function BillingPage() {
     <div className="mx-auto max-w-5xl space-y-8 pb-12">
       {/* Page Header */}
       <div className="flex items-center gap-4">
-        <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-violet-50">
-          <CreditCard className="h-6 w-6 text-violet-600" />
+        <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary-50">
+          <CreditCard className="h-6 w-6 text-primary-600" />
         </div>
         <div>
-          <h1 className="text-2xl font-bold text-slate-900">
+          <h1 className="text-2xl font-bold text-charcoal">
             {t('billing.title')}
           </h1>
-          <p className="text-sm text-slate-500">
+          <p className="text-sm text-kresna-gray">
             {t('billing.subtitle')}
           </p>
         </div>
@@ -464,10 +464,10 @@ export default function BillingPage() {
       )}
 
       {/* Current Plan Card */}
-      <Card className="border-slate-200 bg-white shadow-sm">
+      <Card className="border-kresna-border bg-white shadow-sm">
         <CardHeader className="pb-4">
-          <CardTitle className="flex items-center gap-2 text-base font-semibold text-slate-900">
-            <CreditCard className="h-4 w-4 text-violet-500" />
+          <CardTitle className="flex items-center gap-2 text-base font-semibold text-charcoal">
+            <CreditCard className="h-4 w-4 text-primary-500" />
             {t('billing.currentPlan')}
           </CardTitle>
         </CardHeader>
@@ -475,11 +475,11 @@ export default function BillingPage() {
           {/* Plan name and status */}
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <div>
-              <p className="text-2xl font-bold text-slate-900">
+              <p className="text-2xl font-bold text-charcoal">
                 {plan?.name ?? t('billing.trialActive')}
               </p>
               {plan && (
-                <p className="mt-1 text-slate-500">
+                <p className="mt-1 text-kresna-gray">
                   {formatCurrency(plan.price_cents / 100, plan.currency)}{t('billing.perMonth')}
                 </p>
               )}
@@ -500,17 +500,17 @@ export default function BillingPage() {
           {/* Usage meter */}
           <div>
             <div className="mb-2 flex items-center justify-between text-sm">
-              <span className="flex items-center gap-1.5 text-slate-500">
+              <span className="flex items-center gap-1.5 text-kresna-gray">
                 <Users className="h-3.5 w-3.5" />
                 {t('billing.usage')}
               </span>
-              <span className="font-medium text-slate-900">
+              <span className="font-medium text-charcoal">
                 {employeeLimit
                   ? t('billing.employeesUsed', { used: employeesUsed, limit: employeeLimit })
                   : t('billing.employeesUnlimited', { used: employeesUsed })}
               </span>
             </div>
-            <div className="h-2.5 overflow-hidden rounded-full bg-slate-100">
+            <div className="h-2.5 overflow-hidden rounded-full bg-kresna-light">
               <div
                 className={cn('h-full rounded-full transition-all duration-500', getUsageBarColor(usagePercent))}
                 style={{ width: `${usagePercent}%` }}
@@ -525,9 +525,9 @@ export default function BillingPage() {
 
           {/* Next billing date */}
           {plan?.billing_period && isActive && (
-            <div className="flex items-center justify-between rounded-lg bg-slate-50 px-4 py-3 text-sm">
-              <span className="text-slate-500">{t('billing.nextBilling')}</span>
-              <span className="font-medium text-slate-900">--</span>
+            <div className="flex items-center justify-between rounded-lg bg-kresna-light px-4 py-3 text-sm">
+              <span className="text-kresna-gray">{t('billing.nextBilling')}</span>
+              <span className="font-medium text-charcoal">--</span>
             </div>
           )}
         </CardContent>
@@ -535,10 +535,10 @@ export default function BillingPage() {
 
       {/* Plan Comparison Grid */}
       <div id="plan-comparison">
-        <h2 className="mb-1 text-lg font-semibold text-slate-900">
+        <h2 className="mb-1 text-lg font-semibold text-charcoal">
           {t('billing.choosePlan')}
         </h2>
-        <p className="mb-6 text-sm text-slate-500">
+        <p className="mb-6 text-sm text-kresna-gray">
           {t('billing.selectPlan')}
         </p>
 
@@ -564,9 +564,9 @@ export default function BillingPage() {
       </div>
 
       {/* Payment History */}
-      <Card className="border-slate-200 bg-white shadow-sm">
+      <Card className="border-kresna-border bg-white shadow-sm">
         <CardHeader>
-          <CardTitle className="text-base font-semibold text-slate-900">
+          <CardTitle className="text-base font-semibold text-charcoal">
             {t('billing.billingHistory')}
           </CardTitle>
         </CardHeader>
@@ -574,7 +574,7 @@ export default function BillingPage() {
           {invoices.length > 0 ? (
             <table className="w-full">
               <thead>
-                <tr className="border-b border-slate-200 text-left text-xs font-medium uppercase tracking-wider text-slate-400">
+                <tr className="border-b border-kresna-border text-left text-xs font-medium uppercase tracking-wider text-kresna-gray">
                   <th className="pb-3 pr-4">{t('billing.date')}</th>
                   <th className="pb-3 pr-4">{t('billing.amount')}</th>
                   <th className="pb-3 pr-4">{t('billing.status')}</th>
@@ -589,13 +589,13 @@ export default function BillingPage() {
             </table>
           ) : (
             <div className="flex flex-col items-center justify-center py-10 text-center">
-              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-slate-100">
-                <CreditCard className="h-5 w-5 text-slate-400" />
+              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-kresna-light">
+                <CreditCard className="h-5 w-5 text-kresna-gray" />
               </div>
-              <p className="mt-3 text-sm font-medium text-slate-500">
+              <p className="mt-3 text-sm font-medium text-kresna-gray">
                 {t('billing.noInvoices')}
               </p>
-              <p className="mt-1 text-xs text-slate-400">
+              <p className="mt-1 text-xs text-kresna-gray">
                 {t('billing.noInvoicesDesc')}
               </p>
             </div>
@@ -608,10 +608,10 @@ export default function BillingPage() {
         <Card className="border-red-200 bg-white shadow-sm">
           <CardContent className="flex flex-col gap-4 p-6 sm:flex-row sm:items-center sm:justify-between">
             <div>
-              <p className="font-semibold text-slate-900">
+              <p className="font-semibold text-charcoal">
                 {t('billing.cancelSubscription')}
               </p>
-              <p className="mt-1 text-sm text-slate-500">
+              <p className="mt-1 text-sm text-kresna-gray">
                 {t('billing.cancelDescription')}
               </p>
             </div>
@@ -635,7 +635,7 @@ export default function BillingPage() {
               <AlertTriangle className="h-5 w-5" />
               {t('billing.cancelConfirm')}
             </DialogTitle>
-            <DialogDescription className="text-slate-500">
+            <DialogDescription className="text-kresna-gray">
               {t('billing.cancelWarning')}
             </DialogDescription>
           </DialogHeader>

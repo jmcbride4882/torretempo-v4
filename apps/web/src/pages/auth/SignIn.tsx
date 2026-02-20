@@ -46,79 +46,78 @@ export default function SignIn() {
   return (
     <div className="flex min-h-screen">
       {/* Left brand panel - hidden on mobile */}
-      <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-surface-dark via-slate-900 to-primary-900 p-12 flex-col justify-between relative overflow-hidden">
-        {/* Decorative elements */}
-        <div className="absolute top-0 right-0 w-96 h-96 bg-primary-500/10 rounded-full blur-3xl" />
-        <div className="absolute bottom-0 left-0 w-64 h-64 bg-accent-500/10 rounded-full blur-3xl" />
+      <div className="hidden lg:flex lg:w-1/2 bg-primary-50 p-12 flex-col justify-between relative overflow-hidden">
+        {/* Subtle decorative elements */}
+        <div className="absolute top-0 right-0 w-96 h-96 bg-primary-100 rounded-full blur-[120px] opacity-50" />
 
         <div className="relative z-10">
           <div className="flex items-center gap-3 mb-8">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary-500 shadow-glow">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary-500">
               <Clock className="h-5 w-5 text-white" />
             </div>
-            <span className="text-xl font-bold text-white">Torre Tempo</span>
+            <span className="text-xl font-bold text-charcoal">Torre Tempo</span>
           </div>
-          <h2 className="text-3xl font-bold text-white mb-4">{t('auth.heroTitle')}</h2>
-          <p className="text-slate-400 text-lg">{t('auth.heroSubtitle')}</p>
+          <h2 className="text-3xl font-bold text-charcoal mb-4">{t('auth.heroTitle')}</h2>
+          <p className="text-kresna-gray-dark text-lg">{t('auth.heroSubtitle')}</p>
         </div>
 
         <div className="relative z-10 space-y-4">
-          <div className="flex items-center gap-3 text-slate-300">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-white/10">
-              <Shield className="h-4 w-4 text-primary-400" />
+          <div className="flex items-center gap-3 text-kresna-gray-dark">
+            <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-white border border-kresna-border">
+              <Shield className="h-4 w-4 text-primary-500" />
             </div>
             <span className="text-sm">{t('auth.featureLegalCompliance')}</span>
           </div>
-          <div className="flex items-center gap-3 text-slate-300">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-white/10">
-              <Clock className="h-4 w-4 text-accent-400" />
+          <div className="flex items-center gap-3 text-kresna-gray-dark">
+            <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-white border border-kresna-border">
+              <Clock className="h-4 w-4 text-primary-500" />
             </div>
             <span className="text-sm">{t('auth.featureFastClockIn')}</span>
           </div>
-          <div className="flex items-center gap-3 text-slate-300">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-white/10">
-              <FileText className="h-4 w-4 text-emerald-400" />
+          <div className="flex items-center gap-3 text-kresna-gray-dark">
+            <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-white border border-kresna-border">
+              <FileText className="h-4 w-4 text-accent-500" />
             </div>
             <span className="text-sm">{t('auth.featurePayrollExport')}</span>
           </div>
         </div>
 
-        <p className="relative z-10 text-xs text-slate-500">{t('auth.usedByCompanies')}</p>
+        <p className="relative z-10 text-xs text-kresna-gray">{t('auth.usedByCompanies')}</p>
       </div>
 
       {/* Right form panel */}
-      <div className="flex w-full lg:w-1/2 flex-col items-center justify-center bg-slate-50 px-4">
+      <div className="flex w-full lg:w-1/2 flex-col items-center justify-center bg-white px-4">
         <div className="w-full max-w-sm">
           {/* Logo - visible on mobile only */}
           <div className="mb-10 flex flex-col items-center gap-3 lg:hidden">
-            <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-primary-500 shadow-glow">
+            <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-primary-500">
               <Clock className="h-7 w-7 text-white" />
             </div>
             <div className="text-center">
-              <h1 className="text-xl font-bold text-slate-900">Torre Tempo</h1>
-              <p className="text-sm text-slate-500 mt-1">{t('auth.subtitle')}</p>
+              <h1 className="text-xl font-bold text-charcoal">Torre Tempo</h1>
+              <p className="text-sm text-kresna-gray mt-1">{t('auth.subtitle')}</p>
             </div>
           </div>
 
           {/* Card */}
-          <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-card space-y-6">
+          <div className="rounded-3xl border border-kresna-border bg-white p-6 shadow-card space-y-6">
             <div className="text-center">
-              <h2 className="text-lg font-semibold text-slate-900">{t('auth.welcomeBack')}</h2>
-              <p className="text-sm text-slate-500 mt-1">{t('auth.signInContinue')}</p>
+              <h2 className="text-lg font-semibold text-charcoal">{t('auth.welcomeBack')}</h2>
+              <p className="text-sm text-kresna-gray-dark mt-1">{t('auth.signInContinue')}</p>
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="email" className="text-slate-700">{t('common.email')}</Label>
+                <Label htmlFor="email">{t('common.email')}</Label>
                 <div className="relative">
-                  <Mail className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+                  <Mail className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-kresna-gray" />
                   <Input
                     id="email"
                     type="email"
                     placeholder={t('auth.emailPlaceholder')}
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="pl-10 h-11"
+                    className="pl-10"
                     required
                     autoComplete="email"
                   />
@@ -127,23 +126,23 @@ export default function SignIn() {
 
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
-                  <Label htmlFor="password" className="text-slate-700">{t('auth.password')}</Label>
+                  <Label htmlFor="password">{t('auth.password')}</Label>
                   <Link
                     to="/auth/reset-password"
-                    className="text-xs text-primary-600 hover:text-primary-700 transition-colors"
+                    className="text-xs text-primary-500 hover:text-primary-600 transition-colors"
                   >
                     {t('auth.forgotPassword')}
                   </Link>
                 </div>
                 <div className="relative">
-                  <Lock className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+                  <Lock className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-kresna-gray" />
                   <Input
                     id="password"
                     type="password"
                     placeholder="••••••••"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="pl-10 h-11"
+                    className="pl-10"
                     required
                     autoComplete="current-password"
                   />
@@ -167,9 +166,9 @@ export default function SignIn() {
             </form>
           </div>
 
-          <p className="mt-6 text-center text-sm text-slate-500">
+          <p className="mt-6 text-center text-sm text-kresna-gray-dark">
             {t('auth.noAccount')}{' '}
-            <Link to="/auth/signup" className="font-medium text-primary-600 hover:text-primary-700 transition-colors">
+            <Link to="/auth/signup" className="font-medium text-primary-500 hover:text-primary-600 transition-colors">
               {t('auth.signUp')}
             </Link>
           </p>

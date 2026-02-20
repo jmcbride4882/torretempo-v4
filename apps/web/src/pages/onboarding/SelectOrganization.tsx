@@ -76,7 +76,7 @@ export default function SelectOrganization() {
   };
 
   return (
-    <div className="relative flex min-h-screen flex-col items-center justify-center bg-slate-50 px-4 py-12">
+    <div className="relative flex min-h-screen flex-col items-center justify-center bg-kresna-light px-4 py-12">
       <div className="relative z-10 w-full max-w-xl">
         {/* Header */}
         <div className="mb-10 text-center">
@@ -88,10 +88,10 @@ export default function SelectOrganization() {
 
           <p className="text-sm font-medium text-primary-600 mb-3">{t('auth.welcomeBack')}</p>
 
-          <h1 className="text-2xl font-bold text-slate-900 sm:text-3xl">
+          <h1 className="text-2xl font-bold text-charcoal sm:text-3xl">
             {user?.name ? `${t('onboarding.hey')}, ${user.name.split(' ')[0]}!` : `${t('auth.welcomeBack')}!`}
           </h1>
-          <p className="mt-2 text-slate-500">
+          <p className="mt-2 text-kresna-gray">
             {t('onboarding.selectOrg')}
           </p>
         </div>
@@ -100,7 +100,7 @@ export default function SelectOrganization() {
         {loadingState === 'loading' && (
           <div className="flex flex-col items-center justify-center py-16">
             <div className="h-8 w-8 animate-spin rounded-full border-2 border-primary-200 border-t-primary-500" />
-            <p className="mt-4 text-sm text-slate-500">{t('onboarding.loadingOrgs')}</p>
+            <p className="mt-4 text-sm text-kresna-gray">{t('onboarding.loadingOrgs')}</p>
           </div>
         )}
 
@@ -109,8 +109,8 @@ export default function SelectOrganization() {
             <div className="flex h-14 w-14 items-center justify-center rounded-full bg-red-50 border border-red-200">
               <AlertCircle className="h-7 w-7 text-red-600" />
             </div>
-            <h3 className="mt-4 text-lg font-medium text-slate-900">{t('errors.loadFailed')}</h3>
-            <p className="mt-1 text-sm text-slate-500">{t('errors.tryAgain')}</p>
+            <h3 className="mt-4 text-lg font-medium text-charcoal">{t('errors.loadFailed')}</h3>
+            <p className="mt-1 text-sm text-kresna-gray">{t('errors.tryAgain')}</p>
             <Button
               onClick={fetchOrganizations}
               variant="outline"
@@ -127,10 +127,10 @@ export default function SelectOrganization() {
             {/* Organization list */}
             <div className="space-y-3">
               <div className="flex items-center justify-between px-1">
-                <h2 className="flex items-center gap-2 text-xs font-semibold uppercase tracking-widest text-slate-500">
+                <h2 className="flex items-center gap-2 text-xs font-semibold uppercase tracking-widest text-kresna-gray">
                   <Building2 className="h-3.5 w-3.5" />
                   {t('onboarding.yourOrgs')}
-                  <span className="rounded-full bg-slate-100 px-2 py-0.5 text-[10px] text-slate-500">
+                  <span className="rounded-full bg-kresna-light px-2 py-0.5 text-[10px] text-kresna-gray">
                     {organizations.length}
                   </span>
                 </h2>
@@ -152,10 +152,10 @@ export default function SelectOrganization() {
             {/* Divider */}
             <div className="relative py-2">
               <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-slate-200" />
+                <div className="w-full border-t border-kresna-border" />
               </div>
               <div className="relative flex justify-center">
-                <span className="bg-slate-50 px-4 text-xs text-slate-400">{t('common.or')}</span>
+                <span className="bg-kresna-light px-4 text-xs text-kresna-gray">{t('common.or')}</span>
               </div>
             </div>
 

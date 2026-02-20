@@ -108,7 +108,7 @@ export default function CreateTenant() {
   };
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center bg-slate-50 px-4 py-12">
+    <div className="flex min-h-screen flex-col items-center justify-center bg-kresna-light px-4 py-12">
       {/* Back button */}
       {cameFromSelection && (
         <div className="absolute left-4 top-4 z-10 sm:left-6 sm:top-6">
@@ -130,22 +130,22 @@ export default function CreateTenant() {
             <Clock className="h-7 w-7 text-white" />
           </div>
           <div className="text-center">
-            <h1 className="text-xl font-bold text-slate-900">
+            <h1 className="text-xl font-bold text-charcoal">
               {t('onboarding.welcome')}{user?.name ? `, ${user.name.split(' ')[0]}` : ''}!
             </h1>
-            <p className="text-sm text-slate-500 mt-1">{t('onboarding.setupWorkspace')}</p>
+            <p className="text-sm text-kresna-gray mt-1">{t('onboarding.setupWorkspace')}</p>
           </div>
         </div>
 
         {/* Card */}
-        <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-card space-y-6">
+        <div className="rounded-2xl border border-kresna-border bg-white p-6 shadow-card space-y-6">
           {showSuccess ? (
             <div className="text-center py-8 space-y-4">
               <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-emerald-50 border border-emerald-200">
                 <CheckCircle2 className="h-8 w-8 text-emerald-600" />
               </div>
-              <h2 className="text-xl font-bold text-slate-900">{t('trial.startedTitle')}</h2>
-              <p className="text-sm text-slate-500">{t('trial.startedDescription')}</p>
+              <h2 className="text-xl font-bold text-charcoal">{t('trial.startedTitle')}</h2>
+              <p className="text-sm text-kresna-gray">{t('trial.startedDescription')}</p>
               <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary-50 border border-primary-200">
                 <Sparkles className="h-4 w-4 text-primary-600" />
                 <span className="text-sm text-primary-700 font-medium">14 {t('common.days')} {t('trial.badge')}</span>
@@ -154,18 +154,18 @@ export default function CreateTenant() {
           ) : (
             <>
               <div>
-                <h2 className="text-lg font-semibold text-slate-900 flex items-center gap-2">
+                <h2 className="text-lg font-semibold text-charcoal flex items-center gap-2">
                   <Building2 className="h-5 w-5 text-primary-600" />
                   {t('onboarding.orgDetails')}
                 </h2>
-                <p className="text-sm text-slate-500 mt-1">{t('onboarding.orgDescription')}</p>
+                <p className="text-sm text-kresna-gray mt-1">{t('onboarding.orgDescription')}</p>
               </div>
 
               <form onSubmit={handleSubmit} className="space-y-5">
                 <div className="space-y-2">
-                  <Label htmlFor="name" className="text-slate-700">{t('onboarding.orgName')}</Label>
+                  <Label htmlFor="name" className="text-kresna-gray-dark">{t('onboarding.orgName')}</Label>
                   <div className="relative">
-                    <Building2 className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+                    <Building2 className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-kresna-gray" />
                     <Input
                       id="name"
                       type="text"
@@ -180,9 +180,9 @@ export default function CreateTenant() {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="slug" className="text-slate-700">{t('onboarding.urlSlug')}</Label>
+                  <Label htmlFor="slug" className="text-kresna-gray-dark">{t('onboarding.urlSlug')}</Label>
                   <div className="relative">
-                    <LinkIcon className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+                    <LinkIcon className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-kresna-gray" />
                     <Input
                       id="slug"
                       type="text"
@@ -193,9 +193,9 @@ export default function CreateTenant() {
                       required
                     />
                   </div>
-                  <p className="flex items-center gap-1 text-xs text-slate-500">
+                  <p className="flex items-center gap-1 text-xs text-kresna-gray">
                     <span>URL:</span>
-                    <code className="rounded-md bg-slate-100 px-1.5 py-0.5 font-mono text-primary-600 border border-slate-200">
+                    <code className="rounded-md bg-kresna-light px-1.5 py-0.5 font-mono text-primary-600 border border-kresna-border">
                       tempo.app/t/{slug || 'tu-org'}
                     </code>
                   </p>
