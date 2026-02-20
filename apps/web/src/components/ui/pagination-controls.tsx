@@ -48,13 +48,13 @@ export function PaginationControls({
       )}
     >
       {/* Showing text */}
-      <p className="text-sm text-slate-500 order-2 sm:order-1 dark:text-slate-400">
+      <p className="text-sm text-kresna-gray order-2 sm:order-1 dark:text-kresna-gray">
         Showing{' '}
-        <span className="font-medium text-slate-700 dark:text-slate-300">{startItem}</span>
+        <span className="font-medium text-kresna-gray-dark dark:text-kresna-gray">{startItem}</span>
         {' - '}
-        <span className="font-medium text-slate-700 dark:text-slate-300">{endItem}</span>
+        <span className="font-medium text-kresna-gray-dark dark:text-kresna-gray">{endItem}</span>
         {' of '}
-        <span className="font-medium text-slate-700 dark:text-slate-300">{total}</span>
+        <span className="font-medium text-kresna-gray-dark dark:text-kresna-gray">{total}</span>
         {' results'}
       </p>
 
@@ -67,10 +67,10 @@ export function PaginationControls({
           onClick={() => onPageChange(Math.max(1, page - 1))}
           disabled={isFirstPage}
           className={cn(
-            'gap-1.5 rounded-lg border border-slate-200 bg-white',
-            'text-slate-600 hover:text-slate-900 hover:bg-slate-50',
+            'gap-1.5 rounded-lg border border-kresna-border bg-white',
+            'text-kresna-gray-dark hover:text-charcoal hover:bg-kresna-light',
             'disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-white',
-            'dark:border-slate-700 dark:bg-slate-800 dark:text-slate-400 dark:hover:text-slate-200 dark:hover:bg-slate-700 dark:disabled:hover:bg-slate-800'
+            'dark:border-kresna-border dark:bg-charcoal dark:text-kresna-gray dark:hover:text-kresna-border dark:hover:bg-kresna-gray-dark dark:disabled:hover:bg-charcoal'
           )}
         >
           <ChevronLeft className="h-4 w-4" />
@@ -78,13 +78,13 @@ export function PaginationControls({
         </Button>
 
         {/* Page indicator */}
-        <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-slate-200 bg-white dark:border-slate-700 dark:bg-slate-800">
-          <span className="text-sm text-slate-500 dark:text-slate-400">Page</span>
+        <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-kresna-border bg-white dark:border-kresna-border dark:bg-charcoal">
+          <span className="text-sm text-kresna-gray dark:text-kresna-gray">Page</span>
           <span className="min-w-[2ch] text-center text-sm font-semibold text-primary-600">
             {page}
           </span>
-          <span className="text-sm text-slate-500 dark:text-slate-400">of</span>
-          <span className="min-w-[2ch] text-center text-sm font-medium text-slate-700 dark:text-slate-300">
+          <span className="text-sm text-kresna-gray dark:text-kresna-gray">of</span>
+          <span className="min-w-[2ch] text-center text-sm font-medium text-kresna-gray-dark dark:text-kresna-gray">
             {totalPages}
           </span>
         </div>
@@ -96,10 +96,10 @@ export function PaginationControls({
           onClick={() => onPageChange(Math.min(totalPages, page + 1))}
           disabled={isLastPage}
           className={cn(
-            'gap-1.5 rounded-lg border border-slate-200 bg-white',
-            'text-slate-600 hover:text-slate-900 hover:bg-slate-50',
+            'gap-1.5 rounded-lg border border-kresna-border bg-white',
+            'text-kresna-gray-dark hover:text-charcoal hover:bg-kresna-light',
             'disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-white',
-            'dark:border-slate-700 dark:bg-slate-800 dark:text-slate-400 dark:hover:text-slate-200 dark:hover:bg-slate-700 dark:disabled:hover:bg-slate-800'
+            'dark:border-kresna-border dark:bg-charcoal dark:text-kresna-gray dark:hover:text-kresna-border dark:hover:bg-kresna-gray-dark dark:disabled:hover:bg-charcoal'
           )}
         >
           <span className="hidden sm:inline">Next</span>

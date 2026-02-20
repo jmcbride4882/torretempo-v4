@@ -61,16 +61,16 @@ function getNotificationMeta(type: NotificationType) {
     case 'swap_completed':
       return {
         icon: PartyPopper,
-        color: 'text-violet-400',
-        bgColor: 'bg-violet-500/20',
-        borderColor: 'border-violet-500/30',
+        color: 'text-primary-400',
+        bgColor: 'bg-primary-500/20',
+        borderColor: 'border-primary-500/30',
       };
     default:
       return {
         icon: ArrowLeftRight,
-        color: 'text-slate-500',
-        bgColor: 'bg-slate-100',
-        borderColor: 'border-slate-200',
+        color: 'text-kresna-gray',
+        bgColor: 'bg-kresna-light',
+        borderColor: 'border-kresna-border',
       };
   }
 }
@@ -131,7 +131,7 @@ export function NotificationItem({
       onClick={onClick}
       className={cn(
         'group relative w-full flex items-start gap-3 p-3 rounded-lg text-left transition-all duration-200',
-        'hover:bg-slate-50 active:scale-[0.98]',
+        'hover:bg-kresna-light active:scale-[0.98]',
         !notification.read && 'bg-primary-50/50'
       )}
     >
@@ -163,15 +163,15 @@ export function NotificationItem({
         <p
           className={cn(
             'text-sm leading-tight line-clamp-1',
-            notification.read ? 'text-slate-500 font-normal' : 'text-slate-900 font-medium'
+            notification.read ? 'text-kresna-gray font-normal' : 'text-charcoal font-medium'
           )}
         >
           {notification.title}
         </p>
-        <p className="text-xs text-slate-500 line-clamp-2 mt-0.5 leading-relaxed">
+        <p className="text-xs text-kresna-gray line-clamp-2 mt-0.5 leading-relaxed">
           {notification.message}
         </p>
-        <p className="text-[10px] text-slate-400 mt-1.5 uppercase tracking-wider font-medium">
+        <p className="text-[10px] text-kresna-gray mt-1.5 uppercase tracking-wider font-medium">
           {relativeTime}
         </p>
       </div>

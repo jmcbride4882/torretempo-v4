@@ -171,16 +171,16 @@ export default function BillingPage() {
       title: t('admin.billing.createInvoice'),
       description: t('admin.billing.createInvoiceDescription'),
       icon: Receipt,
-      bgColor: 'bg-blue-50',
-      textColor: 'text-blue-600',
+      bgColor: 'bg-primary-50',
+      textColor: 'text-primary-600',
       onClick: () => setActiveModal('invoice'),
     },
     {
       title: t('admin.billing.processRefund'),
       description: t('admin.billing.processRefundDescription'),
       icon: ArrowDownLeft,
-      bgColor: 'bg-violet-50',
-      textColor: 'text-violet-600',
+      bgColor: 'bg-primary-50',
+      textColor: 'text-primary-600',
       onClick: () => setActiveModal('refund'),
     },
     {
@@ -197,12 +197,12 @@ export default function BillingPage() {
     <div className="space-y-6">
       {/* Page header */}
       <div className="flex items-center gap-3">
-        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-violet-50 shadow-sm">
-          <CreditCard className="h-5 w-5 text-violet-600" />
+        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary-50 shadow-sm">
+          <CreditCard className="h-5 w-5 text-primary-600" />
         </div>
         <div>
-          <h1 className="text-xl font-bold text-slate-900 sm:text-2xl">{t('admin.billing.title')}</h1>
-          <p className="text-sm text-slate-500">{t('admin.billing.subtitle')}</p>
+          <h1 className="text-xl font-bold text-charcoal sm:text-2xl">{t('admin.billing.title')}</h1>
+          <p className="text-sm text-kresna-gray">{t('admin.billing.subtitle')}</p>
         </div>
       </div>
 
@@ -212,52 +212,52 @@ export default function BillingPage() {
           <button
             key={card.title}
             onClick={card.onClick}
-            className="flex flex-col items-start gap-3 rounded-xl border border-slate-200 bg-white p-6 text-left shadow-sm transition-colors hover:border-slate-300 hover:bg-slate-50"
+            className="flex flex-col items-start gap-3 rounded-xl border border-kresna-border bg-white p-6 text-left shadow-sm transition-colors hover:border-kresna-border hover:bg-kresna-light"
           >
             <div className={cn('flex h-10 w-10 items-center justify-center rounded-lg', card.bgColor)}>
               <card.icon className={cn('h-5 w-5', card.textColor)} />
             </div>
             <div>
-              <h3 className="font-semibold text-slate-900">{card.title}</h3>
-              <p className="text-sm text-slate-500">{card.description}</p>
+              <h3 className="font-semibold text-charcoal">{card.title}</h3>
+              <p className="text-sm text-kresna-gray">{card.description}</p>
             </div>
           </button>
         ))}
       </div>
 
       {/* Recent Actions */}
-      <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
-        <h2 className="mb-4 text-lg font-semibold text-slate-900">{t('admin.billing.recentActions')}</h2>
+      <div className="rounded-xl border border-kresna-border bg-white p-6 shadow-sm">
+        <h2 className="mb-4 text-lg font-semibold text-charcoal">{t('admin.billing.recentActions')}</h2>
         {recentActions.length === 0 ? (
-          <p className="text-sm text-slate-500">{t('admin.billing.noActionsThisSession')}</p>
+          <p className="text-sm text-kresna-gray">{t('admin.billing.noActionsThisSession')}</p>
         ) : (
           <div className="space-y-3">
             {recentActions.map((action) => (
               <div
                 key={action.id}
-                className="flex items-center justify-between rounded-lg border border-slate-200 bg-slate-50 px-4 py-3"
+                className="flex items-center justify-between rounded-lg border border-kresna-border bg-kresna-light px-4 py-3"
               >
                 <div className="flex items-center gap-3">
                   <Badge
                     variant="outline"
                     className={cn(
-                      action.type === 'invoice' && 'border-blue-200 text-blue-600',
-                      action.type === 'refund' && 'border-violet-200 text-violet-600',
+                      action.type === 'invoice' && 'border-primary-200 text-primary-600',
+                      action.type === 'refund' && 'border-primary-200 text-primary-600',
                       action.type === 'credit' && 'border-emerald-200 text-emerald-600'
                     )}
                   >
                     {t(`admin.billing.actionType_${action.type}`)}
                   </Badge>
-                  <span className="text-sm text-slate-700">{action.description}</span>
+                  <span className="text-sm text-kresna-gray-dark">{action.description}</span>
                 </div>
                 <div className="flex items-center gap-3">
-                  <span className="text-sm font-medium text-slate-900">
+                  <span className="text-sm font-medium text-charcoal">
                     {action.type === 'refund' ? '-' : ''}{t('admin.billing.revenue', { defaultValue: '' })}{action.amount}
                   </span>
                   <Badge variant={action.status === 'success' ? 'default' : 'destructive'}>
                     {t(`admin.billing.actionStatus_${action.status}`)}
                   </Badge>
-                  <span className="text-xs text-slate-500">
+                  <span className="text-xs text-kresna-gray">
                     {action.timestamp.toLocaleTimeString()}
                   </span>
                 </div>
@@ -276,7 +276,7 @@ export default function BillingPage() {
           </DialogHeader>
           <div className="space-y-4 py-4">
             <div>
-              <label className="mb-1 block text-sm font-medium text-slate-700">{t('admin.billing.stripeCustomerId')}</label>
+              <label className="mb-1 block text-sm font-medium text-kresna-gray-dark">{t('admin.billing.stripeCustomerId')}</label>
               <Input
                 placeholder={t('admin.billing.stripeCustomerIdPlaceholder')}
                 value={invoiceForm.customer_id}
@@ -284,7 +284,7 @@ export default function BillingPage() {
               />
             </div>
             <div>
-              <label className="mb-1 block text-sm font-medium text-slate-700">{t('admin.billing.amountEur')}</label>
+              <label className="mb-1 block text-sm font-medium text-kresna-gray-dark">{t('admin.billing.amountEur')}</label>
               <Input
                 type="number"
                 step="0.01"
@@ -294,7 +294,7 @@ export default function BillingPage() {
               />
             </div>
             <div>
-              <label className="mb-1 block text-sm font-medium text-slate-700">{t('admin.billing.description')}</label>
+              <label className="mb-1 block text-sm font-medium text-kresna-gray-dark">{t('admin.billing.description')}</label>
               <Input
                 placeholder={t('admin.billing.invoiceDescriptionPlaceholder')}
                 value={invoiceForm.description}
@@ -321,7 +321,7 @@ export default function BillingPage() {
           </DialogHeader>
           <div className="space-y-4 py-4">
             <div>
-              <label className="mb-1 block text-sm font-medium text-slate-700">{t('admin.billing.paymentIntentId')}</label>
+              <label className="mb-1 block text-sm font-medium text-kresna-gray-dark">{t('admin.billing.paymentIntentId')}</label>
               <Input
                 placeholder={t('admin.billing.paymentIntentIdPlaceholder')}
                 value={refundForm.payment_intent_id}
@@ -329,7 +329,7 @@ export default function BillingPage() {
               />
             </div>
             <div>
-              <label className="mb-1 block text-sm font-medium text-slate-700">{t('admin.billing.amountEurOptional')}</label>
+              <label className="mb-1 block text-sm font-medium text-kresna-gray-dark">{t('admin.billing.amountEurOptional')}</label>
               <Input
                 type="number"
                 step="0.01"
@@ -339,7 +339,7 @@ export default function BillingPage() {
               />
             </div>
             <div>
-              <label className="mb-1 block text-sm font-medium text-slate-700">{t('admin.billing.reason')}</label>
+              <label className="mb-1 block text-sm font-medium text-kresna-gray-dark">{t('admin.billing.reason')}</label>
               <Select
                 value={refundForm.reason}
                 onValueChange={(value: 'duplicate' | 'fraudulent' | 'requested_by_customer') =>
@@ -376,7 +376,7 @@ export default function BillingPage() {
           </DialogHeader>
           <div className="space-y-4 py-4">
             <div>
-              <label className="mb-1 block text-sm font-medium text-slate-700">{t('admin.billing.stripeCustomerId')}</label>
+              <label className="mb-1 block text-sm font-medium text-kresna-gray-dark">{t('admin.billing.stripeCustomerId')}</label>
               <Input
                 placeholder={t('admin.billing.stripeCustomerIdPlaceholder')}
                 value={creditForm.customer_id}
@@ -384,7 +384,7 @@ export default function BillingPage() {
               />
             </div>
             <div>
-              <label className="mb-1 block text-sm font-medium text-slate-700">{t('admin.billing.amountEur')}</label>
+              <label className="mb-1 block text-sm font-medium text-kresna-gray-dark">{t('admin.billing.amountEur')}</label>
               <Input
                 type="number"
                 step="0.01"
@@ -394,7 +394,7 @@ export default function BillingPage() {
               />
             </div>
             <div>
-              <label className="mb-1 block text-sm font-medium text-slate-700">{t('admin.billing.description')}</label>
+              <label className="mb-1 block text-sm font-medium text-kresna-gray-dark">{t('admin.billing.description')}</label>
               <Input
                 placeholder={t('admin.billing.creditDescriptionPlaceholder')}
                 value={creditForm.description}

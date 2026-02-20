@@ -377,12 +377,12 @@ export default function PlansPage() {
       {/* Page header */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-violet-50 shadow-sm">
-            <CreditCard className="h-5 w-5 text-violet-600" />
+          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary-50 shadow-sm">
+            <CreditCard className="h-5 w-5 text-primary-600" />
           </div>
           <div>
-            <h1 className="text-xl font-bold text-slate-900 sm:text-2xl">{t('admin.plans.title')}</h1>
-            <p className="text-sm text-slate-500">
+            <h1 className="text-xl font-bold text-charcoal sm:text-2xl">{t('admin.plans.title')}</h1>
+            <p className="text-sm text-kresna-gray">
               {t('admin.plans.subtitle')}
             </p>
           </div>
@@ -395,7 +395,7 @@ export default function PlansPage() {
               size="sm"
               onClick={() => loadPlans(true)}
               disabled={isRefreshing}
-              className="gap-1.5 rounded-lg border border-slate-200 bg-slate-50 text-slate-700 hover:bg-slate-100"
+              className="gap-1.5 rounded-lg border border-kresna-border bg-kresna-light text-kresna-gray-dark hover:bg-kresna-light"
             >
               <RefreshCw className={cn('h-4 w-4', isRefreshing && 'animate-spin')} />
               <span className="hidden sm:inline">{t('admin.refresh')}</span>
@@ -405,7 +405,7 @@ export default function PlansPage() {
             <Button
               size="sm"
               onClick={openCreateModal}
-              className="gap-1.5 bg-violet-600 hover:bg-violet-700"
+              className="gap-1.5 bg-primary-600 hover:bg-primary-700"
             >
               <Plus className="h-4 w-4" />
               {t('admin.plans.createPlan')}
@@ -418,14 +418,14 @@ export default function PlansPage() {
       {isLoading ? (
         <PlansPageSkeleton />
       ) : plans.length === 0 ? (
-        <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-slate-200 bg-slate-50 py-16 text-center">
-          <CreditCard className="mb-3 h-10 w-10 text-slate-400" />
-          <p className="text-lg font-medium text-slate-700">{t('admin.plans.title')}</p>
-          <p className="mt-1 text-sm text-slate-500">{t('admin.plans.createFirstPlan')}</p>
+        <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-kresna-border bg-kresna-light py-16 text-center">
+          <CreditCard className="mb-3 h-10 w-10 text-kresna-gray" />
+          <p className="text-lg font-medium text-kresna-gray-dark">{t('admin.plans.title')}</p>
+          <p className="mt-1 text-sm text-kresna-gray">{t('admin.plans.createFirstPlan')}</p>
           <Button
             size="sm"
             onClick={openCreateModal}
-            className="mt-5 gap-1.5 bg-violet-600 hover:bg-violet-700"
+            className="mt-5 gap-1.5 bg-primary-600 hover:bg-primary-700"
           >
             <Plus className="h-4 w-4" />
             {t('admin.plans.createPlan')}
@@ -436,9 +436,9 @@ export default function PlansPage() {
           {/* Active Plans */}
           {activePlans.length > 0 && (
             <div>
-              <h2 className="mb-4 text-lg font-semibold text-slate-900">
+              <h2 className="mb-4 text-lg font-semibold text-charcoal">
                 {t('admin.plans.activePlans')}
-                <span className="ml-2 text-sm font-normal text-slate-500">
+                <span className="ml-2 text-sm font-normal text-kresna-gray">
                   ({activePlans.length})
                 </span>
               </h2>
@@ -458,9 +458,9 @@ export default function PlansPage() {
           {/* Inactive Plans */}
           {inactivePlans.length > 0 && (
             <div>
-              <h2 className="mb-4 text-lg font-semibold text-slate-500">
+              <h2 className="mb-4 text-lg font-semibold text-kresna-gray">
                 {t('admin.plans.inactivePlans')}
-                <span className="ml-2 text-sm font-normal text-slate-400">
+                <span className="ml-2 text-sm font-normal text-kresna-gray">
                   ({inactivePlans.length})
                 </span>
               </h2>
@@ -493,11 +493,11 @@ export default function PlansPage() {
         <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-lg">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
-              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-violet-50">
+              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary-50">
                 {isEditMode ? (
-                  <Edit className="h-4 w-4 text-violet-600" />
+                  <Edit className="h-4 w-4 text-primary-600" />
                 ) : (
-                  <Plus className="h-4 w-4 text-violet-600" />
+                  <Plus className="h-4 w-4 text-primary-600" />
                 )}
               </div>
               {isEditMode ? t('admin.plans.editPlan') : t('admin.plans.createPlan')}
@@ -526,7 +526,7 @@ export default function PlansPage() {
                   fieldErrors.code && 'border-red-500/50 focus-visible:ring-red-500'
                 )}
               />
-              <p className="text-xs text-slate-500">
+              <p className="text-xs text-kresna-gray">
                 {t('admin.plans.planCodeHint')}
               </p>
               {fieldErrors.code && <FieldError message={fieldErrors.code} />}
@@ -556,7 +556,7 @@ export default function PlansPage() {
                 value={form.description}
                 onChange={(e) => updateField('description', e.target.value)}
                 rows={3}
-                className="flex w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 placeholder:text-slate-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-600 focus-visible:ring-offset-2 focus-visible:ring-offset-white disabled:cursor-not-allowed disabled:opacity-50 transition-all duration-200 resize-none"
+                className="flex w-full rounded-lg border border-kresna-border bg-white px-3 py-2 text-sm text-charcoal placeholder:text-kresna-gray focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-600 focus-visible:ring-offset-2 focus-visible:ring-offset-white disabled:cursor-not-allowed disabled:opacity-50 transition-all duration-200 resize-none"
               />
             </div>
 
@@ -577,7 +577,7 @@ export default function PlansPage() {
                   className={cn(fieldErrors.price_cents && 'border-red-500/50 focus-visible:ring-red-500')}
                 />
                 {form.price_cents && !fieldErrors.price_cents && form.currency && (
-                  <p className="text-xs text-violet-600">
+                  <p className="text-xs text-primary-600">
                     = {formatPrice(Number(form.price_cents) || 0, form.currency)}
                   </p>
                 )}
@@ -645,9 +645,9 @@ export default function PlansPage() {
                       setFieldErrors((prev) => ({ ...prev, employee_limit: null }));
                     }
                   }}
-                  className="h-4 w-4 rounded border-slate-300 bg-white"
+                  className="h-4 w-4 rounded border-kresna-border bg-white"
                 />
-                <label htmlFor="unlimited-employees" className="text-sm text-slate-700">
+                <label htmlFor="unlimited-employees" className="text-sm text-kresna-gray-dark">
                   {t('admin.plans.unlimitedEmployees')}
                 </label>
               </div>
@@ -679,8 +679,8 @@ export default function PlansPage() {
                     className={cn(
                       'flex cursor-pointer items-center gap-2.5 rounded-lg border px-3 py-2.5 text-sm transition-all duration-200',
                       form.included_modules[mod.key]
-                        ? 'border-violet-500/40 bg-violet-50 text-violet-700'
-                        : 'border-slate-200 bg-slate-50 text-slate-500 hover:border-slate-300 hover:bg-slate-100'
+                        ? 'border-primary-500/40 bg-primary-50 text-primary-700'
+                        : 'border-kresna-border bg-kresna-light text-kresna-gray hover:border-kresna-border hover:bg-kresna-light'
                     )}
                   >
                     <input
@@ -693,8 +693,8 @@ export default function PlansPage() {
                       className={cn(
                         'flex h-4 w-4 shrink-0 items-center justify-center rounded border transition-all duration-150',
                         form.included_modules[mod.key]
-                          ? 'border-violet-500 bg-violet-500'
-                          : 'border-slate-300 bg-transparent'
+                          ? 'border-primary-500 bg-primary-500'
+                          : 'border-kresna-border bg-transparent'
                       )}
                     >
                       {form.included_modules[mod.key] && (
@@ -709,15 +709,15 @@ export default function PlansPage() {
 
             {/* Active toggle (edit mode) */}
             {isEditMode && (
-              <div className="flex items-center gap-2 rounded-lg border border-slate-200 bg-slate-50 p-3">
+              <div className="flex items-center gap-2 rounded-lg border border-kresna-border bg-kresna-light p-3">
                 <input
                   type="checkbox"
                   id="plan-active"
                   checked={form.is_active}
                   onChange={(e) => updateField('is_active', e.target.checked)}
-                  className="h-4 w-4 rounded border-slate-300 bg-white"
+                  className="h-4 w-4 rounded border-kresna-border bg-white"
                 />
-                <label htmlFor="plan-active" className="text-sm text-slate-700">
+                <label htmlFor="plan-active" className="text-sm text-kresna-gray-dark">
                   {t('admin.plans.planIsActive')}
                 </label>
               </div>
@@ -736,14 +736,14 @@ export default function PlansPage() {
                 resetForm();
               }}
               disabled={isActionLoading}
-              className="text-slate-500 hover:text-slate-900"
+              className="text-kresna-gray hover:text-charcoal"
             >
               {t('common.cancel')}
             </Button>
             <Button
               onClick={isEditMode ? handleUpdate : handleCreate}
               disabled={isActionLoading}
-              className="gap-2 bg-violet-600 hover:bg-violet-700"
+              className="gap-2 bg-primary-600 hover:bg-primary-700"
             >
               {isActionLoading && <Loader2 className="h-4 w-4 animate-spin" />}
               {isEditMode ? t('common.save') : t('common.create')}
@@ -760,13 +760,13 @@ export default function PlansPage() {
               <div
                 className={cn(
                   'flex h-8 w-8 items-center justify-center rounded-lg',
-                  deactivateTarget?.is_active ? 'bg-red-50' : 'bg-violet-50'
+                  deactivateTarget?.is_active ? 'bg-red-50' : 'bg-primary-50'
                 )}
               >
                 <Power
                   className={cn(
                     'h-4 w-4',
-                    deactivateTarget?.is_active ? 'text-red-500' : 'text-violet-600'
+                    deactivateTarget?.is_active ? 'text-red-500' : 'text-primary-600'
                   )}
                 />
               </div>
@@ -783,7 +783,7 @@ export default function PlansPage() {
               variant="ghost"
               onClick={() => setDeactivateTarget(null)}
               disabled={isActionLoading}
-              className="text-slate-500 hover:text-slate-900"
+              className="text-kresna-gray hover:text-charcoal"
             >
               {t('common.cancel')}
             </Button>
@@ -794,7 +794,7 @@ export default function PlansPage() {
                 'gap-2',
                 deactivateTarget?.is_active
                   ? 'bg-red-600 hover:bg-red-700'
-                  : 'bg-violet-600 hover:bg-violet-700'
+                  : 'bg-primary-600 hover:bg-primary-700'
               )}
             >
               {isActionLoading && <Loader2 className="h-4 w-4 animate-spin" />}
@@ -828,8 +828,8 @@ function PlanCard({ plan, onEdit, onToggleActive }: PlanCardProps) {
       className={cn(
         'group relative overflow-hidden rounded-xl border p-5 transition-all duration-200',
         plan.is_active
-          ? 'border-slate-200 bg-white shadow-sm hover:border-slate-300 hover:shadow-md'
-          : 'border-slate-200 bg-slate-50 opacity-60 hover:opacity-80'
+          ? 'border-kresna-border bg-white shadow-sm hover:border-kresna-border hover:shadow-md'
+          : 'border-kresna-border bg-kresna-light opacity-60 hover:opacity-80'
       )}
     >
       {/* Status badge */}
@@ -839,44 +839,44 @@ function PlanCard({ plan, onEdit, onToggleActive }: PlanCardProps) {
             'border text-xs',
             plan.is_active
               ? 'border-emerald-500/30 bg-emerald-50 text-emerald-700'
-              : 'border-slate-300 bg-slate-100 text-slate-500'
+              : 'border-kresna-border bg-kresna-light text-kresna-gray'
           )}
         >
           {plan.is_active ? t('admin.plans.active') : t('admin.plans.inactive')}
         </Badge>
-        <code className="text-xs text-slate-500">{plan.code}</code>
+        <code className="text-xs text-kresna-gray">{plan.code}</code>
       </div>
 
       {/* Plan name */}
-      <h3 className="text-lg font-bold text-slate-900">{plan.name}</h3>
+      <h3 className="text-lg font-bold text-charcoal">{plan.name}</h3>
 
       {/* Price */}
       <div className="mt-2 flex items-baseline gap-1">
-        <span className="text-3xl font-bold text-violet-600">
+        <span className="text-3xl font-bold text-primary-600">
           {formatPrice(plan.price_cents, plan.currency)}
         </span>
-        <span className="text-sm text-slate-500">
+        <span className="text-sm text-kresna-gray">
           /{plan.billing_period === 'monthly' ? t('admin.plans.mo') : t('admin.plans.year')}
         </span>
       </div>
 
       {/* Description */}
       {plan.description && (
-        <p className="mt-3 text-sm leading-relaxed text-slate-500">
+        <p className="mt-3 text-sm leading-relaxed text-kresna-gray">
           {plan.description}
         </p>
       )}
 
       {/* Employee limit */}
-      <div className="mt-4 flex items-center gap-2 text-sm text-slate-500">
+      <div className="mt-4 flex items-center gap-2 text-sm text-kresna-gray">
         {plan.employee_limit === null ? (
           <>
-            <Infinity className="h-4 w-4 text-slate-400" />
+            <Infinity className="h-4 w-4 text-kresna-gray" />
             <span>{t('admin.plans.unlimitedEmployees')}</span>
           </>
         ) : (
           <>
-            <Users className="h-4 w-4 text-slate-400" />
+            <Users className="h-4 w-4 text-kresna-gray" />
             <span>{t('admin.plans.upToEmployees', { count: plan.employee_limit })}</span>
           </>
         )}
@@ -890,7 +890,7 @@ function PlanCard({ plan, onEdit, onToggleActive }: PlanCardProps) {
             return (
               <span
                 key={key}
-                className="rounded-md border border-slate-200 bg-slate-50 px-2 py-0.5 text-xs text-slate-700"
+                className="rounded-md border border-kresna-border bg-kresna-light px-2 py-0.5 text-xs text-kresna-gray-dark"
               >
                 {mod ? t(mod.labelKey) : key}
               </span>
@@ -900,12 +900,12 @@ function PlanCard({ plan, onEdit, onToggleActive }: PlanCardProps) {
       )}
 
       {/* Actions */}
-      <div className="mt-5 flex items-center gap-2 border-t border-slate-200 pt-4">
+      <div className="mt-5 flex items-center gap-2 border-t border-kresna-border pt-4">
         <Button
           variant="ghost"
           size="sm"
           onClick={() => onEdit(plan)}
-          className="flex-1 gap-1.5 text-slate-500 hover:bg-slate-100 hover:text-slate-900"
+          className="flex-1 gap-1.5 text-kresna-gray hover:bg-kresna-light hover:text-charcoal"
         >
           <Edit className="h-3.5 w-3.5" />
           {t('common.edit')}
@@ -918,7 +918,7 @@ function PlanCard({ plan, onEdit, onToggleActive }: PlanCardProps) {
             'flex-1 gap-1.5',
             plan.is_active
               ? 'text-red-500 hover:bg-red-50 hover:text-red-600'
-              : 'text-violet-600 hover:bg-violet-50 hover:text-violet-700'
+              : 'text-primary-600 hover:bg-primary-50 hover:text-primary-700'
           )}
         >
           <Power className="h-3.5 w-3.5" />
@@ -958,28 +958,28 @@ function ApiErrorBanner({ message }: { message: string }) {
 function PlansPageSkeleton() {
   return (
     <div className="space-y-6">
-      <div className="h-6 w-32 animate-pulse rounded bg-slate-100" />
+      <div className="h-6 w-32 animate-pulse rounded bg-kresna-light" />
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
         {[...Array(3)].map((_, i) => (
           <div
             key={i}
-            className="animate-pulse rounded-xl border border-slate-200 bg-white p-5 shadow-sm"
+            className="animate-pulse rounded-xl border border-kresna-border bg-white p-5 shadow-sm"
           >
             <div className="mb-4 flex justify-between">
-              <div className="h-5 w-16 rounded-full bg-slate-100" />
-              <div className="h-4 w-12 rounded bg-slate-100" />
+              <div className="h-5 w-16 rounded-full bg-kresna-light" />
+              <div className="h-4 w-12 rounded bg-kresna-light" />
             </div>
-            <div className="h-6 w-32 rounded bg-slate-100" />
-            <div className="mt-2 h-9 w-28 rounded bg-slate-100" />
-            <div className="mt-3 h-4 w-full rounded bg-slate-100" />
-            <div className="mt-4 h-4 w-40 rounded bg-slate-100" />
+            <div className="h-6 w-32 rounded bg-kresna-light" />
+            <div className="mt-2 h-9 w-28 rounded bg-kresna-light" />
+            <div className="mt-3 h-4 w-full rounded bg-kresna-light" />
+            <div className="mt-4 h-4 w-40 rounded bg-kresna-light" />
             <div className="mt-4 flex gap-1.5">
-              <div className="h-5 w-20 rounded bg-slate-100" />
-              <div className="h-5 w-16 rounded bg-slate-100" />
+              <div className="h-5 w-20 rounded bg-kresna-light" />
+              <div className="h-5 w-16 rounded bg-kresna-light" />
             </div>
-            <div className="mt-5 flex gap-2 border-t border-slate-200 pt-4">
-              <div className="h-8 flex-1 rounded bg-slate-100" />
-              <div className="h-8 flex-1 rounded bg-slate-100" />
+            <div className="mt-5 flex gap-2 border-t border-kresna-border pt-4">
+              <div className="h-8 flex-1 rounded bg-kresna-light" />
+              <div className="h-8 flex-1 rounded bg-kresna-light" />
             </div>
           </div>
         ))}

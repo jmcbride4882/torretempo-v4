@@ -94,8 +94,8 @@ function DraggableEmployeeCard({ member, hours }: DraggableEmployeeCardProps) {
       whileHover={{ scale: 1.02 }}
       whileTap={{ scale: 0.98 }}
       className={cn(
-        'cursor-grab rounded-xl border border-slate-200 bg-white p-3 transition-all',
-        'hover:border-slate-300 hover:bg-slate-50',
+        'cursor-grab rounded-xl border border-kresna-border bg-white p-3 transition-all',
+        'hover:border-kresna-border hover:bg-kresna-light',
         isDragging && 'cursor-grabbing opacity-50 scale-105 shadow-lg shadow-primary-500/5'
       )}
     >
@@ -116,15 +116,15 @@ function DraggableEmployeeCard({ member, hours }: DraggableEmployeeCardProps) {
         {/* Info */}
         <div className="min-w-0 flex-1">
           <div className="flex items-center gap-2">
-            <p className="truncate text-sm font-medium text-slate-900">{name}</p>
-            <span className="shrink-0 rounded-full bg-slate-100 px-1.5 py-0.5 text-[10px] uppercase text-slate-500">
+            <p className="truncate text-sm font-medium text-charcoal">{name}</p>
+            <span className="shrink-0 rounded-full bg-kresna-light px-1.5 py-0.5 text-[10px] uppercase text-kresna-gray">
               {member.role}
             </span>
           </div>
 
           {/* Hours Progress */}
           <div className="mt-1.5 flex items-center gap-2">
-            <div className="h-1.5 flex-1 rounded-full bg-slate-200">
+            <div className="h-1.5 flex-1 rounded-full bg-kresna-border">
               <div
                 className={cn('h-full rounded-full transition-all', getHoursColor(hours))}
                 style={{ width: `${hoursPercent}%` }}
@@ -142,12 +142,12 @@ function DraggableEmployeeCard({ member, hours }: DraggableEmployeeCardProps) {
 
 function EmployeeCardSkeleton() {
   return (
-    <div className="animate-pulse rounded-xl border border-slate-200 bg-white p-3">
+    <div className="animate-pulse rounded-xl border border-kresna-border bg-white p-3">
       <div className="flex items-center gap-3">
-        <div className="h-10 w-10 rounded-full bg-slate-200" />
+        <div className="h-10 w-10 rounded-full bg-kresna-border" />
         <div className="flex-1 space-y-2">
-          <div className="h-4 w-24 rounded bg-slate-200" />
-          <div className="h-1.5 w-full rounded-full bg-slate-200" />
+          <div className="h-4 w-24 rounded bg-kresna-border" />
+          <div className="h-1.5 w-full rounded-full bg-kresna-border" />
         </div>
       </div>
     </div>
@@ -256,22 +256,22 @@ export function EmployeeSidebar({ organizationSlug, weekStart, className }: Empl
     <div className={cn('flex flex-col', className)}>
       {/* Header */}
       <div className="mb-4 flex items-center gap-2">
-        <Users className="h-4 w-4 text-slate-400" />
-        <h3 className="text-sm font-medium text-slate-700">{t('roster.employees')}</h3>
-        <span className="ml-auto rounded-full bg-slate-100 px-2 py-0.5 text-xs text-slate-400">
+        <Users className="h-4 w-4 text-kresna-gray" />
+        <h3 className="text-sm font-medium text-kresna-gray-dark">{t('roster.employees')}</h3>
+        <span className="ml-auto rounded-full bg-kresna-light px-2 py-0.5 text-xs text-kresna-gray">
           {members.length}
         </span>
       </div>
 
       {/* Search */}
       <div className="relative mb-4">
-        <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+        <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-kresna-gray" />
         <Input
           type="text"
           placeholder={t('roster.searchEmployees')}
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          className="border-slate-200 bg-white pl-9 text-sm text-slate-900 placeholder:text-slate-400 focus:border-primary-500"
+          className="border-kresna-border bg-white pl-9 text-sm text-charcoal placeholder:text-kresna-gray focus:border-primary-500"
         />
       </div>
 
@@ -288,9 +288,9 @@ export function EmployeeSidebar({ organizationSlug, weekStart, className }: Empl
             <p className="text-sm text-red-600">{error}</p>
           </div>
         ) : filteredMembers.length === 0 ? (
-          <div className="rounded-lg border border-slate-200 bg-white p-6 text-center">
-            <User className="mx-auto h-8 w-8 text-slate-400" />
-            <p className="mt-2 text-sm text-slate-400">
+          <div className="rounded-lg border border-kresna-border bg-white p-6 text-center">
+            <User className="mx-auto h-8 w-8 text-kresna-gray" />
+            <p className="mt-2 text-sm text-kresna-gray">
               {searchQuery ? t('roster.noEmployeesMatch') : t('roster.noEmployeesFound')}
             </p>
           </div>
@@ -306,20 +306,20 @@ export function EmployeeSidebar({ organizationSlug, weekStart, className }: Empl
       </div>
 
       {/* Footer - Hours Legend */}
-      <div className="mt-4 border-t border-slate-200 pt-4">
-        <p className="mb-2 text-xs font-medium text-slate-400">{t('roster.weeklyHoursLabel')}</p>
+      <div className="mt-4 border-t border-kresna-border pt-4">
+        <p className="mb-2 text-xs font-medium text-kresna-gray">{t('roster.weeklyHoursLabel')}</p>
         <div className="flex items-center gap-3 text-[10px]">
           <div className="flex items-center gap-1">
             <div className="h-2 w-2 rounded-full bg-emerald-500" />
-            <span className="text-slate-400">&lt;32h</span>
+            <span className="text-kresna-gray">&lt;32h</span>
           </div>
           <div className="flex items-center gap-1">
             <div className="h-2 w-2 rounded-full bg-amber-500" />
-            <span className="text-slate-400">32-38h</span>
+            <span className="text-kresna-gray">32-38h</span>
           </div>
           <div className="flex items-center gap-1">
             <div className="h-2 w-2 rounded-full bg-red-500" />
-            <span className="text-slate-400">&gt;38h</span>
+            <span className="text-kresna-gray">&gt;38h</span>
           </div>
         </div>
       </div>

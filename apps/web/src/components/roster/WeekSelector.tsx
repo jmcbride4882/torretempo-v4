@@ -66,7 +66,7 @@ export function WeekSelector({ currentDate, onDateChange, onToday }: WeekSelecto
             variant="ghost"
             size="icon"
             onClick={goToPreviousWeek}
-            className="h-9 w-9 rounded-lg border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 hover:text-slate-900"
+            className="h-9 w-9 rounded-lg border border-kresna-border bg-white text-kresna-gray-dark hover:bg-kresna-light hover:text-charcoal"
           >
             <ChevronLeft className="h-4 w-4" />
           </Button>
@@ -77,7 +77,7 @@ export function WeekSelector({ currentDate, onDateChange, onToday }: WeekSelecto
             variant="ghost"
             size="icon"
             onClick={goToNextWeek}
-            className="h-9 w-9 rounded-lg border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 hover:text-slate-900"
+            className="h-9 w-9 rounded-lg border border-kresna-border bg-white text-kresna-gray-dark hover:bg-kresna-light hover:text-charcoal"
           >
             <ChevronRight className="h-4 w-4" />
           </Button>
@@ -90,15 +90,15 @@ export function WeekSelector({ currentDate, onDateChange, onToday }: WeekSelecto
           'flex h-9 items-center gap-2 rounded-lg border px-3',
           isCurrent
             ? 'border-primary-200 bg-primary-50'
-            : 'border-slate-200 bg-white'
+            : 'border-kresna-border bg-white'
         )}>
           <Calendar className={cn(
             'h-4 w-4',
-            isCurrent ? 'text-primary-600' : 'text-slate-500'
+            isCurrent ? 'text-primary-600' : 'text-kresna-gray'
           )} />
           <span className={cn(
             'font-medium tabular-nums',
-            isCurrent ? 'text-primary-700' : 'text-slate-900'
+            isCurrent ? 'text-primary-700' : 'text-charcoal'
           )}>
             {formatDateRange(start, end)}
           </span>

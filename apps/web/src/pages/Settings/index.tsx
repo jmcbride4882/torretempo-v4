@@ -46,18 +46,18 @@ export default function SettingsPage() {
     <div className="mx-auto max-w-7xl space-y-6">
       {/* Page header */}
       <div className="flex items-center gap-3">
-        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-slate-100">
-          <SettingsIcon className="h-5 w-5 text-slate-600" />
+        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-kresna-light">
+          <SettingsIcon className="h-5 w-5 text-kresna-gray-dark" />
         </div>
         <div>
-          <h1 className="text-2xl font-bold text-slate-900">{t('settings.title')}</h1>
-          <p className="text-sm text-slate-500">{t('settings.subtitle')}</p>
+          <h1 className="text-2xl font-bold text-charcoal">{t('settings.title')}</h1>
+          <p className="text-sm text-kresna-gray">{t('settings.subtitle')}</p>
         </div>
       </div>
 
       {/* Tabs */}
-      <div className="rounded-2xl border border-slate-200 bg-white overflow-hidden">
-        <div className="border-b border-slate-200">
+      <div className="rounded-3xl border border-kresna-border bg-white overflow-hidden">
+        <div className="border-b border-kresna-border">
           <div className="flex overflow-x-auto scrollbar-hide">
             {tabs.map((tab) => {
               const Icon = tab.icon;
@@ -69,7 +69,7 @@ export default function SettingsPage() {
                     'relative flex items-center gap-2 whitespace-nowrap border-b-2 px-6 py-4 text-sm font-medium transition-colors min-h-touch',
                     activeTab === tab.id
                       ? 'border-primary-500 text-primary-600'
-                      : 'border-transparent text-slate-500 hover:text-slate-700'
+                      : 'border-transparent text-kresna-gray hover:text-kresna-gray-dark'
                   )}
                 >
                   <Icon className="h-4 w-4" />
@@ -154,14 +154,14 @@ function NotificationSettings({ slug }: { slug: string }) {
       {/* Push Notifications */}
       <div className="space-y-4">
         <div>
-          <h3 className="text-lg font-semibold text-slate-900">{t('settings.pushNotifications')}</h3>
-          <p className="text-sm text-slate-500">{t('settings.pushNotificationsDesc')}</p>
+          <h3 className="text-lg font-semibold text-charcoal">{t('settings.pushNotifications')}</h3>
+          <p className="text-sm text-kresna-gray">{t('settings.pushNotificationsDesc')}</p>
         </div>
 
         {!push.isSupported ? (
-          <div className="rounded-xl border border-slate-200 bg-slate-50 p-4 flex items-center gap-3">
-            <BellOff className="h-5 w-5 text-slate-400" />
-            <p className="text-sm text-slate-500">{t('settings.pushNotSupported')}</p>
+          <div className="rounded-xl border border-kresna-border bg-kresna-light p-4 flex items-center gap-3">
+            <BellOff className="h-5 w-5 text-kresna-gray" />
+            <p className="text-sm text-kresna-gray">{t('settings.pushNotSupported')}</p>
           </div>
         ) : push.permission === 'denied' ? (
           <div className="rounded-xl border border-red-200 bg-red-50 p-4 flex items-center gap-3">
@@ -172,19 +172,19 @@ function NotificationSettings({ slug }: { slug: string }) {
             </div>
           </div>
         ) : (
-          <div className="rounded-xl border border-slate-200 bg-white p-4 flex items-center justify-between">
+          <div className="rounded-xl border border-kresna-border bg-white p-4 flex items-center justify-between">
             <div className="flex items-center gap-3">
               <div className={cn(
                 'h-10 w-10 rounded-xl flex items-center justify-center',
-                push.isSubscribed ? 'bg-emerald-50' : 'bg-slate-100'
+                push.isSubscribed ? 'bg-emerald-50' : 'bg-kresna-light'
               )}>
-                <Smartphone className={cn('h-5 w-5', push.isSubscribed ? 'text-emerald-600' : 'text-slate-400')} />
+                <Smartphone className={cn('h-5 w-5', push.isSubscribed ? 'text-emerald-600' : 'text-kresna-gray')} />
               </div>
               <div>
-                <p className="text-sm font-medium text-slate-900">
+                <p className="text-sm font-medium text-charcoal">
                   {push.isSubscribed ? t('settings.pushEnabled') : t('settings.pushDisabled')}
                 </p>
-                <p className="text-xs text-slate-500">
+                <p className="text-xs text-kresna-gray">
                   {push.isSubscribed
                     ? t('settings.pushEnabledDesc')
                     : t('settings.pushDisabledDesc')}
@@ -209,8 +209,8 @@ function NotificationSettings({ slug }: { slug: string }) {
       {/* Notification Preferences */}
       <div className="space-y-4">
         <div>
-          <h3 className="text-lg font-semibold text-slate-900">{t('settings.preferences')}</h3>
-          <p className="text-sm text-slate-500">{t('settings.preferencesDesc')}</p>
+          <h3 className="text-lg font-semibold text-charcoal">{t('settings.preferences')}</h3>
+          <p className="text-sm text-kresna-gray">{t('settings.preferencesDesc')}</p>
         </div>
 
         <div className="space-y-2">
@@ -219,22 +219,22 @@ function NotificationSettings({ slug }: { slug: string }) {
             return (
               <div
                 key={pref.id}
-                className="rounded-xl border border-slate-200 bg-white p-4 flex items-center justify-between"
+                className="rounded-xl border border-kresna-border bg-white p-4 flex items-center justify-between"
               >
                 <div className="flex items-center gap-3">
-                  <div className="h-10 w-10 rounded-xl bg-slate-100 flex items-center justify-center">
-                    <Icon className="h-5 w-5 text-slate-500" />
+                  <div className="h-10 w-10 rounded-xl bg-kresna-light flex items-center justify-center">
+                    <Icon className="h-5 w-5 text-kresna-gray" />
                   </div>
                   <div>
-                    <p className="text-sm font-medium text-slate-900">{pref.label}</p>
-                    <p className="text-xs text-slate-500">{pref.description}</p>
+                    <p className="text-sm font-medium text-charcoal">{pref.label}</p>
+                    <p className="text-xs text-kresna-gray">{pref.description}</p>
                   </div>
                 </div>
                 <button
                   onClick={() => togglePref(pref.id)}
                   className={cn(
                     'relative h-6 w-11 rounded-full transition-colors shrink-0',
-                    pref.enabled ? 'bg-primary-500' : 'bg-slate-300'
+                    pref.enabled ? 'bg-primary-500' : 'bg-kresna-border'
                   )}
                 >
                   <span
@@ -253,24 +253,24 @@ function NotificationSettings({ slug }: { slug: string }) {
       {/* Do Not Disturb */}
       <div className="space-y-4">
         <div>
-          <h3 className="text-lg font-semibold text-slate-900 flex items-center gap-2">
+          <h3 className="text-lg font-semibold text-charcoal flex items-center gap-2">
             <Moon className="h-5 w-5 text-primary-600" />
             {t('settings.dnd')}
           </h3>
-          <p className="text-sm text-slate-500">{t('settings.dndDesc')}</p>
+          <p className="text-sm text-kresna-gray">{t('settings.dndDesc')}</p>
         </div>
 
-        <div className="rounded-xl border border-slate-200 bg-white p-4 space-y-4">
+        <div className="rounded-xl border border-kresna-border bg-white p-4 space-y-4">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-slate-900">{t('settings.enableDnd')}</p>
-              <p className="text-xs text-slate-500">{t('settings.enableDndDesc')}</p>
+              <p className="text-sm font-medium text-charcoal">{t('settings.enableDnd')}</p>
+              <p className="text-xs text-kresna-gray">{t('settings.enableDndDesc')}</p>
             </div>
             <button
               onClick={() => setDndEnabled(!dndEnabled)}
               className={cn(
                 'relative h-6 w-11 rounded-full transition-colors shrink-0',
-                dndEnabled ? 'bg-primary-500' : 'bg-slate-300'
+                dndEnabled ? 'bg-primary-500' : 'bg-kresna-border'
               )}
             >
               <span
@@ -283,23 +283,23 @@ function NotificationSettings({ slug }: { slug: string }) {
           </div>
 
           {dndEnabled && (
-            <div className="flex items-center gap-4 pt-4 border-t border-slate-200">
+            <div className="flex items-center gap-4 pt-4 border-t border-kresna-border">
               <div className="flex-1">
-                <label className="text-xs text-slate-500 block mb-1">{t('settings.from')}</label>
+                <label className="text-xs text-kresna-gray block mb-1">{t('settings.from')}</label>
                 <input
                   type="time"
                   value={dndStart}
                   onChange={(e) => setDndStart(e.target.value)}
-                  className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900"
+                  className="w-full rounded-xl border border-kresna-border bg-white px-3 py-2 text-sm text-charcoal"
                 />
               </div>
               <div className="flex-1">
-                <label className="text-xs text-slate-500 block mb-1">{t('settings.to')}</label>
+                <label className="text-xs text-kresna-gray block mb-1">{t('settings.to')}</label>
                 <input
                   type="time"
                   value={dndEnd}
                   onChange={(e) => setDndEnd(e.target.value)}
-                  className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900"
+                  className="w-full rounded-xl border border-kresna-border bg-white px-3 py-2 text-sm text-charcoal"
                 />
               </div>
             </div>
@@ -366,8 +366,8 @@ function SecuritySettings() {
       {/* Active Sessions */}
       <div className="space-y-4">
         <div>
-          <h3 className="text-lg font-semibold text-slate-900">{t('settings.activeSessions')}</h3>
-          <p className="text-sm text-slate-500">{t('settings.activeSessionsDesc')}</p>
+          <h3 className="text-lg font-semibold text-charcoal">{t('settings.activeSessions')}</h3>
+          <p className="text-sm text-kresna-gray">{t('settings.activeSessionsDesc')}</p>
         </div>
 
         <div className="space-y-2">
@@ -378,32 +378,32 @@ function SecuritySettings() {
                 'rounded-xl border p-4 flex items-center justify-between',
                 session.current
                   ? 'border-emerald-200 bg-emerald-50'
-                  : 'border-slate-200 bg-white'
+                  : 'border-kresna-border bg-white'
               )}
             >
               <div className="flex items-center gap-3">
                 <div className={cn(
                   'h-10 w-10 rounded-xl flex items-center justify-center',
-                  session.current ? 'bg-emerald-100' : 'bg-slate-100'
+                  session.current ? 'bg-emerald-100' : 'bg-kresna-light'
                 )}>
                   <Monitor className={cn(
                     'h-5 w-5',
-                    session.current ? 'text-emerald-600' : 'text-slate-400'
+                    session.current ? 'text-emerald-600' : 'text-kresna-gray'
                   )} />
                 </div>
                 <div>
                   <div className="flex items-center gap-2">
-                    <p className="text-sm font-medium text-slate-900">{session.device}</p>
+                    <p className="text-sm font-medium text-charcoal">{session.device}</p>
                     {session.current && (
                       <span className="rounded-full bg-emerald-100 text-emerald-700 text-[10px] font-medium px-2 py-0.5">
                         {t('settings.current')}
                       </span>
                     )}
                   </div>
-                  <p className="text-xs text-slate-500">
+                  <p className="text-xs text-kresna-gray">
                     {session.browser} &middot; {session.ip}
                   </p>
-                  <p className="text-[11px] text-slate-400">
+                  <p className="text-[11px] text-kresna-gray">
                     {t('settings.lastActive')}: {new Date(session.lastActive).toLocaleString('es-ES')}
                   </p>
                 </div>
@@ -422,11 +422,11 @@ function SecuritySettings() {
       {/* Change Password */}
       <div className="space-y-4">
         <div>
-          <h3 className="text-lg font-semibold text-slate-900">{t('settings.changePassword')}</h3>
-          <p className="text-sm text-slate-500">{t('settings.changePasswordDesc')}</p>
+          <h3 className="text-lg font-semibold text-charcoal">{t('settings.changePassword')}</h3>
+          <p className="text-sm text-kresna-gray">{t('settings.changePasswordDesc')}</p>
         </div>
 
-        <div className="rounded-xl border border-slate-200 bg-white p-4 space-y-4">
+        <div className="rounded-xl border border-kresna-border bg-white p-4 space-y-4">
           {passwordChanged && (
             <div className="rounded-xl bg-emerald-50 border border-emerald-200 p-3 flex items-center gap-2">
               <Shield className="h-4 w-4 text-emerald-600" />
@@ -435,32 +435,32 @@ function SecuritySettings() {
           )}
 
           <div>
-            <label className="text-xs text-slate-500 block mb-1">{t('settings.currentPassword')}</label>
+            <label className="text-xs text-kresna-gray block mb-1">{t('settings.currentPassword')}</label>
             <input
               type="password"
               value={currentPassword}
               onChange={(e) => setCurrentPassword(e.target.value)}
-              className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-900"
+              className="w-full rounded-xl border border-kresna-border bg-white px-3 py-2.5 text-sm text-charcoal"
               placeholder={t('settings.enterCurrentPassword')}
             />
           </div>
           <div>
-            <label className="text-xs text-slate-500 block mb-1">{t('settings.newPassword')}</label>
+            <label className="text-xs text-kresna-gray block mb-1">{t('settings.newPassword')}</label>
             <input
               type="password"
               value={newPassword}
               onChange={(e) => setNewPassword(e.target.value)}
-              className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-900"
+              className="w-full rounded-xl border border-kresna-border bg-white px-3 py-2.5 text-sm text-charcoal"
               placeholder={t('settings.atLeast8')}
             />
           </div>
           <div>
-            <label className="text-xs text-slate-500 block mb-1">{t('settings.confirmPassword')}</label>
+            <label className="text-xs text-kresna-gray block mb-1">{t('settings.confirmPassword')}</label>
             <input
               type="password"
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
-              className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-900"
+              className="w-full rounded-xl border border-kresna-border bg-white px-3 py-2.5 text-sm text-charcoal"
               placeholder={t('settings.reenterPassword')}
             />
           </div>
@@ -479,8 +479,8 @@ function SecuritySettings() {
       {/* Sign Out All Devices */}
       <div className="space-y-4">
         <div>
-          <h3 className="text-lg font-semibold text-slate-900">{t('settings.signOutEverywhere')}</h3>
-          <p className="text-sm text-slate-500">{t('settings.signOutEverywhereDesc')}</p>
+          <h3 className="text-lg font-semibold text-charcoal">{t('settings.signOutEverywhere')}</h3>
+          <p className="text-sm text-kresna-gray">{t('settings.signOutEverywhereDesc')}</p>
         </div>
         <Button
           variant="outline"

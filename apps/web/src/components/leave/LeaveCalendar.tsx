@@ -19,9 +19,9 @@ interface LeaveCalendarProps {
 
 const typeColors: Record<string, string> = {
   vacation: 'bg-emerald-100 text-emerald-700 border-emerald-200',
-  sick: 'bg-blue-100 text-blue-700 border-blue-200',
+  sick: 'bg-primary-100 text-primary-700 border-primary-200',
   personal: 'bg-purple-100 text-purple-700 border-purple-200',
-  unpaid: 'bg-slate-100 text-slate-700 border-slate-200',
+  unpaid: 'bg-kresna-light text-kresna-gray-dark border-kresna-border',
 };
 
 export function LeaveCalendar({ leaves, month, className }: LeaveCalendarProps) {
@@ -54,29 +54,29 @@ export function LeaveCalendar({ leaves, month, className }: LeaveCalendarProps) 
 
   if (employees.length === 0) {
     return (
-      <div className={cn('rounded-2xl border border-slate-200 bg-white p-8 text-center', className)}>
-        <p className="text-sm text-slate-500">{t('leave.noTeamLeave')}</p>
+      <div className={cn('rounded-2xl border border-kresna-border bg-white p-8 text-center', className)}>
+        <p className="text-sm text-kresna-gray">{t('leave.noTeamLeave')}</p>
       </div>
     );
   }
 
   return (
-    <div className={cn('rounded-2xl border border-slate-200 bg-white overflow-x-auto', className)}>
+    <div className={cn('rounded-2xl border border-kresna-border bg-white overflow-x-auto', className)}>
       <table className="w-full text-xs">
         <thead>
-          <tr className="border-b border-slate-200 bg-slate-50">
-            <th className="sticky left-0 bg-slate-50 px-3 py-2 text-left text-slate-500 font-medium min-w-[120px]">
+          <tr className="border-b border-kresna-border bg-kresna-light">
+            <th className="sticky left-0 bg-kresna-light px-3 py-2 text-left text-kresna-gray font-medium min-w-[120px]">
               {t('common.employee')}
             </th>
             {days.map(d => (
-              <th key={d} className="px-1 py-2 text-center text-slate-400 font-normal min-w-[28px]">{d}</th>
+              <th key={d} className="px-1 py-2 text-center text-kresna-gray font-normal min-w-[28px]">{d}</th>
             ))}
           </tr>
         </thead>
         <tbody>
           {employees.map(emp => (
-            <tr key={emp} className="border-b border-slate-100">
-              <td className="sticky left-0 bg-white px-3 py-2 text-slate-700 font-medium truncate max-w-[120px]">{emp}</td>
+            <tr key={emp} className="border-b border-kresna-border">
+              <td className="sticky left-0 bg-white px-3 py-2 text-kresna-gray-dark font-medium truncate max-w-[120px]">{emp}</td>
               {days.map(d => {
                 const leave = isOnLeave(emp, d);
                 return (

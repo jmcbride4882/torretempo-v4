@@ -68,7 +68,7 @@ export function NotificationBell() {
           size="icon"
           className={cn(
             'relative group',
-            isOpen && 'bg-slate-100'
+            isOpen && 'bg-kresna-light'
           )}
           aria-label={`Notifications${unreadCount > 0 ? ` (${unreadCount} unread)` : ''}`}
         >
@@ -77,7 +77,7 @@ export function NotificationBell() {
             <Bell
               className={cn(
                 'h-5 w-5 transition-colors duration-200',
-                isOpen ? 'text-slate-900' : 'text-slate-500 group-hover:text-slate-900'
+                isOpen ? 'text-charcoal' : 'text-kresna-gray group-hover:text-charcoal'
               )}
             />
           </div>
@@ -102,7 +102,7 @@ export function NotificationBell() {
 
           {/* Loading state - subtle pulse */}
           {isLoading && (
-            <span className="absolute right-1.5 top-1.5 h-2 w-2 rounded-full bg-slate-300 animate-pulse" />
+            <span className="absolute right-1.5 top-1.5 h-2 w-2 rounded-full bg-kresna-gray animate-pulse" />
           )}
 
           {/* Error state - dim indicator */}

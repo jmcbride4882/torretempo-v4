@@ -75,7 +75,7 @@ export function MapPicker({ lat, lng, onLocationSelect, height = '400px' }: MapP
       {/* Inline map view */}
       <div className="relative">
         <div 
-          className="overflow-hidden rounded-lg border border-slate-200" 
+          className="overflow-hidden rounded-lg border border-kresna-border" 
           style={{ height }}
         >
           <MapView />
@@ -98,10 +98,10 @@ export function MapPicker({ lat, lng, onLocationSelect, height = '400px' }: MapP
       {isFullscreen && (
         <div className="fixed inset-0 z-[9999] bg-white">
           {/* Header */}
-          <div className="absolute left-0 right-0 top-0 z-[10000] flex items-center justify-between border-b border-slate-200 bg-white p-4">
+          <div className="absolute left-0 right-0 top-0 z-[10000] flex items-center justify-between border-b border-kresna-border bg-white p-4">
             <div>
-              <h3 className="font-semibold text-slate-900">Select Location</h3>
-              <p className="text-xs text-slate-500">Tap on the map to set coordinates</p>
+              <h3 className="font-semibold text-charcoal">Select Location</h3>
+              <p className="text-xs text-kresna-gray">Tap on the map to set coordinates</p>
             </div>
             <Button
               type="button"
@@ -122,10 +122,10 @@ export function MapPicker({ lat, lng, onLocationSelect, height = '400px' }: MapP
 
           {/* Coordinates display */}
           {position && (
-            <div className="absolute bottom-0 left-0 right-0 z-[10000] border-t border-slate-200 bg-white p-4">
+            <div className="absolute bottom-0 left-0 right-0 z-[10000] border-t border-kresna-border bg-white p-4">
               <div className="text-center">
-                <p className="text-xs text-slate-500">Selected Coordinates</p>
-                <p className="font-mono text-sm text-slate-900">
+                <p className="text-xs text-kresna-gray">Selected Coordinates</p>
+                <p className="font-mono text-sm text-charcoal">
                   {position[0].toFixed(6)}, {position[1].toFixed(6)}
                 </p>
               </div>

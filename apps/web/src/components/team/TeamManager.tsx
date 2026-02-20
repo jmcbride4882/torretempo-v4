@@ -43,8 +43,8 @@ const ROLE_LABEL_KEYS = {
 
 const ROLE_COLORS = {
   owner: 'bg-amber-50 text-amber-700 border-amber-200',
-  admin: 'bg-blue-50 text-blue-700 border-blue-200',
-  member: 'bg-slate-50 text-slate-600 border-slate-200',
+  admin: 'bg-primary-50 text-primary-700 border-primary-200',
+  member: 'bg-kresna-light text-kresna-gray-dark border-kresna-border',
 };
 
 export function TeamManager({ organizationSlug }: TeamManagerProps) {
@@ -87,8 +87,8 @@ export function TeamManager({ organizationSlug }: TeamManagerProps) {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center py-12">
-        <Loader2 className="h-6 w-6 animate-spin text-slate-400" />
-        <span className="ml-2 text-sm text-slate-400">{t('team.loadingMembers')}</span>
+        <Loader2 className="h-6 w-6 animate-spin text-kresna-gray" />
+        <span className="ml-2 text-sm text-kresna-gray">{t('team.loadingMembers')}</span>
       </div>
     );
   }
@@ -98,14 +98,14 @@ export function TeamManager({ organizationSlug }: TeamManagerProps) {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h3 className="text-lg font-semibold text-slate-900">{t('team.teamMembers')}</h3>
-          <p className="text-sm text-slate-500">
+          <h3 className="text-lg font-semibold text-charcoal">{t('team.teamMembers')}</h3>
+          <p className="text-sm text-kresna-gray">
             {t('team.memberInOrg', { count: members.length })}
           </p>
         </div>
         <Button
           onClick={() => setIsInviteModalOpen(true)}
-          className="gap-2 bg-blue-600 hover:bg-blue-700"
+          className="gap-2 bg-primary-600 hover:bg-primary-700"
         >
           <UserPlus className="h-4 w-4" />
           {t('team.inviteMember')}
@@ -114,12 +114,12 @@ export function TeamManager({ organizationSlug }: TeamManagerProps) {
 
       {/* Members List */}
       {members.length === 0 ? (
-        <div className="rounded-xl border border-slate-200 bg-slate-50 p-12 text-center">
-          <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-slate-100">
-            <Users className="h-8 w-8 text-slate-400" />
+        <div className="rounded-xl border border-kresna-border bg-kresna-light p-12 text-center">
+          <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-kresna-light">
+            <Users className="h-8 w-8 text-kresna-gray" />
           </div>
-          <h3 className="mb-2 text-lg font-semibold text-slate-900">{t('team.noMembersYet')}</h3>
-          <p className="text-sm text-slate-500">
+          <h3 className="mb-2 text-lg font-semibold text-charcoal">{t('team.noMembersYet')}</h3>
+          <p className="text-sm text-kresna-gray">
             {t('team.noMembersDesc')}
           </p>
         </div>
@@ -137,8 +137,8 @@ export function TeamManager({ organizationSlug }: TeamManagerProps) {
                   exit={{ opacity: 0, scale: 0.95 }}
                   transition={{ delay: index * 0.05 }}
                   className={cn(
-                    'group relative overflow-hidden rounded-xl border bg-white p-4 transition-all hover:bg-slate-50',
-                    'border-slate-200 hover:border-slate-300'
+                    'group relative overflow-hidden rounded-xl border bg-white p-4 transition-all hover:bg-kresna-light',
+                    'border-kresna-border hover:border-kresna-border'
                   )}
                 >
                   <div className="flex items-center gap-4">
@@ -151,7 +151,7 @@ export function TeamManager({ organizationSlug }: TeamManagerProps) {
                           className="h-full w-full rounded-full object-cover"
                         />
                       ) : (
-                        <div className="flex h-full w-full items-center justify-center rounded-full bg-slate-100 text-lg font-semibold text-slate-600">
+                        <div className="flex h-full w-full items-center justify-center rounded-full bg-kresna-light text-lg font-semibold text-kresna-gray-dark">
                           {member.user?.name?.[0]?.toUpperCase() || member.user?.email?.[0]?.toUpperCase() || 'U'}
                         </div>
                       )}
@@ -161,8 +161,8 @@ export function TeamManager({ organizationSlug }: TeamManagerProps) {
                         <RoleIcon className={cn(
                           'h-4 w-4',
                           member.role === 'owner' && 'text-amber-500',
-                          member.role === 'admin' && 'text-blue-500',
-                          member.role === 'member' && 'text-slate-500'
+                          member.role === 'admin' && 'text-primary-500',
+                          member.role === 'member' && 'text-kresna-gray'
                         )} />
                       </div>
                     </div>
@@ -170,7 +170,7 @@ export function TeamManager({ organizationSlug }: TeamManagerProps) {
                     {/* Member Info */}
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2">
-                        <h4 className="font-semibold text-slate-900 truncate">
+                        <h4 className="font-semibold text-charcoal truncate">
                           {member.user?.name || t('team.unknownUser')}
                         </h4>
                         <Badge
@@ -180,10 +180,10 @@ export function TeamManager({ organizationSlug }: TeamManagerProps) {
                           {t(ROLE_LABEL_KEYS[member.role])}
                         </Badge>
                       </div>
-                      <p className="text-sm text-slate-500 truncate">
+                      <p className="text-sm text-kresna-gray truncate">
                         {member.user?.email || t('team.noEmail')}
                       </p>
-                      <p className="text-xs text-slate-400 mt-1">
+                      <p className="text-xs text-kresna-gray mt-1">
                         {t('team.joined', { date: new Date(member.createdAt).toLocaleDateString() })}
                       </p>
                     </div>
@@ -196,11 +196,11 @@ export function TeamManager({ organizationSlug }: TeamManagerProps) {
       )}
 
       {/* Info note */}
-      <div className="flex items-start gap-3 rounded-lg border border-blue-200 bg-blue-50 p-4">
-        <AlertCircle className="h-5 w-5 shrink-0 text-blue-500 mt-0.5" />
-        <div className="text-sm text-blue-700">
+      <div className="flex items-start gap-3 rounded-lg border border-primary-200 bg-primary-50 p-4">
+        <AlertCircle className="h-5 w-5 shrink-0 text-primary-500 mt-0.5" />
+        <div className="text-sm text-primary-700">
           <p className="font-medium mb-1">{t('team.inviteInfoTitle')}</p>
-          <p className="text-blue-600">
+          <p className="text-primary-600">
             {t('team.inviteInfoDesc')}
           </p>
         </div>

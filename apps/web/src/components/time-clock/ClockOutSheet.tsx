@@ -259,8 +259,8 @@ export function ClockOutSheet({ isOpen, onClose, organizationSlug, activeEntry }
             <AlertCircle className="h-8 w-8 text-red-600" />
           </div>
           <div className="text-center">
-            <p className="text-lg font-semibold text-slate-900">{t('clock.noActiveEntry')}</p>
-            <p className="text-sm text-slate-500 mt-1">
+            <p className="text-lg font-semibold text-charcoal">{t('clock.noActiveEntry')}</p>
+            <p className="text-sm text-kresna-gray mt-1">
               {t('clock.noActiveEntryDescription')}
             </p>
           </div>
@@ -288,22 +288,22 @@ export function ClockOutSheet({ isOpen, onClose, organizationSlug, activeEntry }
         <div className="text-center">
           <div className="flex items-center justify-center gap-2 mb-2">
             <Clock className="h-5 w-5 text-amber-600" />
-            <h2 className="text-xl font-semibold text-slate-900">{t('clock.clockOut')}</h2>
+            <h2 className="text-xl font-semibold text-charcoal">{t('clock.clockOut')}</h2>
           </div>
-          <div className="text-4xl font-mono font-bold text-slate-900 tracking-tight">
+          <div className="text-4xl font-mono font-bold text-charcoal tracking-tight">
             {timeFormatter.format(currentTime)}
           </div>
-          <p className="text-sm text-slate-500 mt-1">
+          <p className="text-sm text-kresna-gray mt-1">
             {dateFormatter.format(currentTime)}
           </p>
         </div>
 
         {/* Duration Summary Card */}
         {activeEntry && (
-          <div className="bg-white border border-slate-200 shadow-sm rounded-xl p-4 space-y-4">
-            <div className="flex items-center gap-2 pb-2 border-b border-slate-200">
+          <div className="bg-white border border-kresna-border shadow-sm rounded-xl p-4 space-y-4">
+            <div className="flex items-center gap-2 pb-2 border-b border-kresna-border">
               <Timer className="h-4 w-4 text-emerald-600" />
-              <span className="text-sm font-medium text-slate-700">{t('clock.durationSummary')}</span>
+              <span className="text-sm font-medium text-kresna-gray-dark">{t('clock.durationSummary')}</span>
             </div>
 
             {/* Clock In Time */}
@@ -312,9 +312,9 @@ export function ClockOutSheet({ isOpen, onClose, organizationSlug, activeEntry }
                 <div className="h-8 w-8 rounded-full bg-emerald-50 flex items-center justify-center">
                   <Clock className="h-4 w-4 text-emerald-600" />
                 </div>
-                <span className="text-sm text-slate-500">{t('clock.clockedInAt')}</span>
+                <span className="text-sm text-kresna-gray">{t('clock.clockedInAt')}</span>
               </div>
-              <span className="text-sm font-medium text-slate-900">
+              <span className="text-sm font-medium text-charcoal">
                 {formatTime(activeEntry.clock_in)}
               </span>
             </div>
@@ -322,12 +322,12 @@ export function ClockOutSheet({ isOpen, onClose, organizationSlug, activeEntry }
             {/* Current Duration */}
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <div className="h-8 w-8 rounded-full bg-blue-50 border border-blue-200 flex items-center justify-center">
-                  <Timer className="h-4 w-4 text-blue-600" />
+                <div className="h-8 w-8 rounded-full bg-primary-50 border border-primary-200 flex items-center justify-center">
+                  <Timer className="h-4 w-4 text-primary-600" />
                 </div>
-                <span className="text-sm text-slate-500">{t('clock.duration')}</span>
+                <span className="text-sm text-kresna-gray">{t('clock.duration')}</span>
               </div>
-              <span className="text-sm font-medium text-slate-900 font-mono">
+              <span className="text-sm font-medium text-charcoal font-mono">
                 {formatDuration(durationMinutes, t).text}
               </span>
             </div>
@@ -338,20 +338,20 @@ export function ClockOutSheet({ isOpen, onClose, organizationSlug, activeEntry }
                 <div className="h-8 w-8 rounded-full bg-amber-50 flex items-center justify-center">
                   <Coffee className="h-4 w-4 text-amber-600" />
                 </div>
-                <span className="text-sm text-slate-500">{t('clock.totalBreaks')}</span>
+                <span className="text-sm text-kresna-gray">{t('clock.totalBreaks')}</span>
               </div>
-              <span className="text-sm font-medium text-slate-700">
+              <span className="text-sm font-medium text-kresna-gray-dark">
                 {breakMinutes > 0 ? formatDuration(breakMinutes, t).text : t('common.none')}
               </span>
             </div>
 
             {/* Net Work Time - Highlighted */}
-            <div className="flex items-center justify-between pt-2 border-t border-slate-200">
+            <div className="flex items-center justify-between pt-2 border-t border-kresna-border">
               <div className="flex items-center gap-2">
                 <div className="h-8 w-8 rounded-full bg-emerald-50 flex items-center justify-center">
                   <Briefcase className="h-4 w-4 text-emerald-600" />
                 </div>
-                <span className="text-sm font-medium text-slate-900">{t('clock.netWorkTime')}</span>
+                <span className="text-sm font-medium text-charcoal">{t('clock.netWorkTime')}</span>
               </div>
               <span className="text-lg font-bold text-emerald-600 font-mono">
                 {formatDuration(netWorkMinutes, t).text}
@@ -363,7 +363,7 @@ export function ClockOutSheet({ isOpen, onClose, organizationSlug, activeEntry }
         {/* Break List Section */}
         <div className="space-y-3">
           <div className="flex items-center justify-between">
-            <Label className="text-slate-500 flex items-center gap-2">
+            <Label className="text-kresna-gray flex items-center gap-2">
               <Coffee className="h-4 w-4" />
               {t('clock.breaks')}
             </Label>
@@ -372,24 +372,24 @@ export function ClockOutSheet({ isOpen, onClose, organizationSlug, activeEntry }
               size="sm"
               onClick={handleAddBreak}
               disabled={hasActiveBreak}
-              className="h-8 px-2 text-xs text-slate-500 hover:text-slate-900"
+              className="h-8 px-2 text-xs text-kresna-gray hover:text-charcoal"
             >
               <Plus className="h-3 w-3 mr-1" />
               {t('clock.addBreak')}
             </Button>
           </div>
 
-          <div className="bg-white border border-slate-200 shadow-sm rounded-xl overflow-hidden">
+          <div className="bg-white border border-kresna-border shadow-sm rounded-xl overflow-hidden">
             {breaksLoading ? (
               <div className="flex items-center justify-center py-6">
-                <Loader2 className="h-5 w-5 text-slate-500 animate-spin" />
+                <Loader2 className="h-5 w-5 text-kresna-gray animate-spin" />
               </div>
             ) : breaks.length === 0 ? (
-              <div className="flex items-center justify-center py-6 text-sm text-slate-500">
+              <div className="flex items-center justify-center py-6 text-sm text-kresna-gray">
                 {t('clock.noBreaksTaken')}
               </div>
             ) : (
-              <div className="divide-y divide-slate-200">
+              <div className="divide-y divide-kresna-border">
                 {breaks.map((breakEntry) => {
                   const isActive = breakEntry.break_end === null;
                   const breakDuration = isActive
@@ -409,19 +409,19 @@ export function ClockOutSheet({ isOpen, onClose, organizationSlug, activeEntry }
                       <div className="flex items-center gap-3">
                         <div className={cn(
                           "h-8 w-8 rounded-full flex items-center justify-center",
-                          isActive ? "bg-amber-50" : "bg-slate-100"
+                          isActive ? "bg-amber-50" : "bg-kresna-light"
                         )}>
                           <Coffee className={cn(
                             "h-4 w-4",
-                            isActive ? "text-amber-600" : "text-slate-500"
+                            isActive ? "text-amber-600" : "text-kresna-gray"
                           )} />
                         </div>
                         <div>
                           <div className="flex items-center gap-2">
-                            <span className="text-sm text-slate-900">
+                            <span className="text-sm text-charcoal">
                               {formatTime(breakEntry.break_start)}
                               {breakEntry.break_end && (
-                                <span className="text-slate-500"> → </span>
+                                <span className="text-kresna-gray"> → </span>
                               )}
                               {breakEntry.break_end && formatTime(breakEntry.break_end)}
                             </span>
@@ -431,7 +431,7 @@ export function ClockOutSheet({ isOpen, onClose, organizationSlug, activeEntry }
                               </Badge>
                             )}
                           </div>
-                          <span className="text-xs text-slate-500">
+                          <span className="text-xs text-kresna-gray">
                             {formatDuration(breakDuration, t).text}
                           </span>
                         </div>
@@ -461,10 +461,10 @@ export function ClockOutSheet({ isOpen, onClose, organizationSlug, activeEntry }
         </div>
 
         {/* Location */}
-        <div className="flex items-center justify-between bg-white border border-slate-200 shadow-sm rounded-xl p-3">
+        <div className="flex items-center justify-between bg-white border border-kresna-border shadow-sm rounded-xl p-3">
           <div className="flex items-center gap-2">
-            <MapPin className="h-4 w-4 text-slate-500" />
-            <span className="text-sm text-slate-500">{t('clock.location')}</span>
+            <MapPin className="h-4 w-4 text-kresna-gray" />
+            <span className="text-sm text-kresna-gray">{t('clock.location')}</span>
           </div>
           {geoLoading ? (
             <Badge variant="ghost" className="gap-1">
@@ -472,7 +472,7 @@ export function ClockOutSheet({ isOpen, onClose, organizationSlug, activeEntry }
               {t('common.fetching')}
             </Badge>
           ) : position ? (
-            <span className="text-xs text-slate-500 font-mono">
+            <span className="text-xs text-kresna-gray font-mono">
               {formatAccuracy(position.coords.accuracy)} {t('clock.accuracy')}
             </span>
           ) : (
@@ -485,7 +485,7 @@ export function ClockOutSheet({ isOpen, onClose, organizationSlug, activeEntry }
         {/* Location Map */}
         {position && (
           <div className="space-y-2">
-            <Label className="text-slate-500">{t('clock.clockOutLocation')}</Label>
+            <Label className="text-kresna-gray">{t('clock.clockOutLocation')}</Label>
             <LocationMap
               lat={position.coords.latitude}
               lng={position.coords.longitude}
@@ -498,7 +498,7 @@ export function ClockOutSheet({ isOpen, onClose, organizationSlug, activeEntry }
 
         {/* Notes */}
         <div className="space-y-2">
-          <Label htmlFor="clock-out-notes" className="text-slate-500">
+          <Label htmlFor="clock-out-notes" className="text-kresna-gray">
             {t('common.notesOptional')}
           </Label>
           <textarea
@@ -509,8 +509,8 @@ export function ClockOutSheet({ isOpen, onClose, organizationSlug, activeEntry }
             rows={2}
             className={cn(
               "w-full px-3 py-2 rounded-xl resize-none",
-              "bg-slate-50 border border-slate-200",
-              "text-slate-900 placeholder:text-slate-400",
+              "bg-kresna-light border border-kresna-border",
+              "text-charcoal placeholder:text-kresna-gray",
               "focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-300",
               "text-sm"
             )}
@@ -531,8 +531,8 @@ export function ClockOutSheet({ isOpen, onClose, organizationSlug, activeEntry }
             <div className="h-16 w-16 rounded-full bg-emerald-50 flex items-center justify-center">
               <CheckCircle2 className="h-8 w-8 text-emerald-600" />
             </div>
-            <p className="text-lg font-semibold text-slate-900">{t('clock.clockedOutSuccess')}</p>
-            <p className="text-sm text-slate-500">
+            <p className="text-lg font-semibold text-charcoal">{t('clock.clockedOutSuccess')}</p>
+            <p className="text-sm text-kresna-gray">
               {t('clock.total')}: {formatDuration(netWorkMinutes, t).text}
             </p>
           </div>
@@ -547,7 +547,7 @@ export function ClockOutSheet({ isOpen, onClose, organizationSlug, activeEntry }
               className={cn(
                 "h-14 text-lg font-semibold rounded-xl",
                 "bg-amber-600 hover:bg-amber-700",
-                "disabled:bg-slate-200 disabled:text-slate-400"
+                "disabled:bg-kresna-border disabled:text-kresna-gray"
               )}
             >
               {submitting ? (
@@ -564,7 +564,7 @@ export function ClockOutSheet({ isOpen, onClose, organizationSlug, activeEntry }
               variant="ghost"
               onClick={onClose}
               disabled={submitting}
-              className="h-12 text-slate-500 hover:text-slate-900"
+              className="h-12 text-kresna-gray hover:text-charcoal"
             >
               {t('common.cancel')}
             </Button>

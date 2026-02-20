@@ -87,12 +87,12 @@ export default function AnalyticsPage() {
       {/* Page header */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-violet-50 shadow-sm">
-            <BarChart3 className="h-5 w-5 text-violet-600" />
+          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary-50 shadow-sm">
+            <BarChart3 className="h-5 w-5 text-primary-600" />
           </div>
           <div>
-            <h1 className="text-xl font-bold text-slate-900 sm:text-2xl">{t('admin.analytics.title')}</h1>
-            <p className="text-sm text-slate-500">{t('admin.analytics.growthCharts')}</p>
+            <h1 className="text-xl font-bold text-charcoal sm:text-2xl">{t('admin.analytics.title')}</h1>
+            <p className="text-sm text-kresna-gray">{t('admin.analytics.growthCharts')}</p>
           </div>
         </div>
 
@@ -102,7 +102,7 @@ export default function AnalyticsPage() {
             size="sm"
             onClick={handleRefresh}
             disabled={isRefreshing}
-            className="gap-1.5 rounded-lg border border-slate-200 bg-slate-50 text-slate-700 hover:bg-slate-100"
+            className="gap-1.5 rounded-lg border border-kresna-border bg-kresna-light text-kresna-gray-dark hover:bg-kresna-light"
           >
             <RefreshCw className={cn('h-4 w-4', isRefreshing && 'animate-spin')} />
             <span className="hidden sm:inline">{t('admin.refresh')}</span>
@@ -141,17 +141,17 @@ export default function AnalyticsPage() {
       </div>
 
       {/* User growth chart */}
-      <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
+      <div className="rounded-xl border border-kresna-border bg-white p-6 shadow-sm">
         <div className="mb-4 flex items-center justify-between">
-          <h2 className="text-lg font-semibold text-slate-900">{t('admin.analytics.growthCharts')}</h2>
+          <h2 className="text-lg font-semibold text-charcoal">{t('admin.analytics.growthCharts')}</h2>
           <div className="flex items-center gap-4 text-sm">
             <div className="flex items-center gap-2">
               <div className="h-3 w-3 rounded-full bg-pink-500" />
-              <span className="text-slate-500">{t('admin.analytics.totalUsers')}</span>
+              <span className="text-kresna-gray">{t('admin.analytics.totalUsers')}</span>
             </div>
             <div className="flex items-center gap-2">
               <div className="h-3 w-3 rounded-full bg-emerald-500" />
-              <span className="text-slate-500">{t('admin.analytics.newUsers')}</span>
+              <span className="text-kresna-gray">{t('admin.analytics.newUsers')}</span>
             </div>
           </div>
         </div>
@@ -176,7 +176,7 @@ export default function AnalyticsPage() {
                       className="absolute inset-x-0 bottom-0 rounded-t-lg bg-emerald-500/50"
                       style={{ height: `${newHeight}%` }}
                     />
-                    <div className="absolute -bottom-6 left-1/2 -translate-x-1/2 text-[10px] text-slate-500">
+                    <div className="absolute -bottom-6 left-1/2 -translate-x-1/2 text-[10px] text-kresna-gray">
                       {new Date(point.date).toLocaleDateString('en-US', { month: 'short' })}
                     </div>
                   </div>
@@ -186,8 +186,8 @@ export default function AnalyticsPage() {
           </div>
         ) : (
           <div className="flex h-64 flex-col items-center justify-center text-center">
-            <LineChart className="mb-3 h-8 w-8 text-slate-400" />
-            <p className="text-sm text-slate-500">{t('admin.analytics.noGrowthData')}</p>
+            <LineChart className="mb-3 h-8 w-8 text-kresna-gray" />
+            <p className="text-sm text-kresna-gray">{t('admin.analytics.noGrowthData')}</p>
           </div>
         )}
       </div>
@@ -195,8 +195,8 @@ export default function AnalyticsPage() {
       {/* Organization metrics */}
       <div className="grid gap-4 lg:grid-cols-2">
         {/* Orgs by tier */}
-        <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
-          <h2 className="mb-4 text-lg font-semibold text-slate-900">{t('admin.analytics.orgsByTier')}</h2>
+        <div className="rounded-xl border border-kresna-border bg-white p-6 shadow-sm">
+          <h2 className="mb-4 text-lg font-semibold text-charcoal">{t('admin.analytics.orgsByTier')}</h2>
           {analytics?.organizationMetrics?.orgsByTier && analytics.organizationMetrics.orgsByTier.length > 0 ? (
             <div className="space-y-4">
               {analytics.organizationMetrics.orgsByTier.map((item) => {
@@ -204,20 +204,20 @@ export default function AnalyticsPage() {
                 const percentage = total > 0 ? (item.count / total) * 100 : 0;
                 const colors: Record<string, string> = {
                   free: 'bg-neutral-500',
-                  starter: 'bg-blue-500',
+                  starter: 'bg-primary-500',
                   pro: 'bg-emerald-500',
-                  enterprise: 'bg-violet-500',
+                  enterprise: 'bg-primary-500',
                 };
 
                 return (
                   <div key={item.tier}>
                     <div className="mb-2 flex items-center justify-between text-sm">
-                      <span className="capitalize text-slate-700">{item.tier}</span>
-                      <span className="text-slate-500">
-                        {item.count} <span className="text-slate-400">({percentage.toFixed(1)}%)</span>
+                      <span className="capitalize text-kresna-gray-dark">{item.tier}</span>
+                      <span className="text-kresna-gray">
+                        {item.count} <span className="text-kresna-gray">({percentage.toFixed(1)}%)</span>
                       </span>
                     </div>
-                    <div className="h-2 overflow-hidden rounded-full bg-slate-100">
+                    <div className="h-2 overflow-hidden rounded-full bg-kresna-light">
                       <div
                         className={cn('h-full rounded-full', colors[item.tier] || 'bg-neutral-500')}
                         style={{ width: `${percentage}%` }}
@@ -229,15 +229,15 @@ export default function AnalyticsPage() {
             </div>
           ) : (
             <div className="flex h-48 flex-col items-center justify-center text-center">
-              <PieChart className="mb-3 h-8 w-8 text-slate-400" />
-              <p className="text-sm text-slate-500">{t('admin.analytics.noTierData')}</p>
+              <PieChart className="mb-3 h-8 w-8 text-kresna-gray" />
+              <p className="text-sm text-kresna-gray">{t('admin.analytics.noTierData')}</p>
             </div>
           )}
         </div>
 
         {/* Usage metrics */}
-        <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
-          <h2 className="mb-4 text-lg font-semibold text-slate-900">{t('admin.analytics.platformUsage')}</h2>
+        <div className="rounded-xl border border-kresna-border bg-white p-6 shadow-sm">
+          <h2 className="mb-4 text-lg font-semibold text-charcoal">{t('admin.analytics.platformUsage')}</h2>
           <div className="grid gap-4 sm:grid-cols-2">
             <UsageCard
               icon={Clock}
@@ -268,8 +268,8 @@ export default function AnalyticsPage() {
       </div>
 
       {/* Monthly revenue */}
-      <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
-        <h2 className="mb-4 text-lg font-semibold text-slate-900">{t('admin.analytics.monthlyRevenue')}</h2>
+      <div className="rounded-xl border border-kresna-border bg-white p-6 shadow-sm">
+        <h2 className="mb-4 text-lg font-semibold text-charcoal">{t('admin.analytics.monthlyRevenue')}</h2>
         {analytics?.revenueMetrics?.monthlyRevenue && analytics.revenueMetrics.monthlyRevenue.length > 0 ? (
           <div className="relative h-48">
             <div className="flex h-full items-end gap-2">
@@ -284,10 +284,10 @@ export default function AnalyticsPage() {
                     style={{ height: `${height}%` }}
                   >
                     <div className="h-full rounded-t-lg bg-emerald-500 transition-all group-hover:bg-emerald-400" />
-                    <div className="absolute -bottom-6 left-1/2 -translate-x-1/2 text-[10px] text-slate-500">
+                    <div className="absolute -bottom-6 left-1/2 -translate-x-1/2 text-[10px] text-kresna-gray">
                       {point.month.slice(5)}
                     </div>
-                    <div className="absolute -top-8 left-1/2 -translate-x-1/2 whitespace-nowrap rounded bg-slate-800 px-2 py-1 text-xs text-white opacity-0 transition-opacity group-hover:opacity-100">
+                    <div className="absolute -top-8 left-1/2 -translate-x-1/2 whitespace-nowrap rounded bg-charcoal px-2 py-1 text-xs text-white opacity-0 transition-opacity group-hover:opacity-100">
                       {formatCurrency(point.revenue)}
                     </div>
                   </div>
@@ -297,8 +297,8 @@ export default function AnalyticsPage() {
           </div>
         ) : (
           <div className="flex h-48 flex-col items-center justify-center text-center">
-            <DollarSign className="mb-3 h-8 w-8 text-slate-400" />
-            <p className="text-sm text-slate-500">{t('admin.analytics.noRevenueData')}</p>
+            <DollarSign className="mb-3 h-8 w-8 text-kresna-gray" />
+            <p className="text-sm text-kresna-gray">{t('admin.analytics.noRevenueData')}</p>
           </div>
         )}
       </div>
@@ -319,20 +319,20 @@ interface MetricCardProps {
 function MetricCard({ icon: Icon, label, value, trend, subtitle, color }: MetricCardProps) {
   const colorClasses = {
     pink: 'bg-pink-50 text-pink-600',
-    blue: 'bg-blue-50 text-blue-600',
+    blue: 'bg-primary-50 text-primary-600',
     emerald: 'bg-emerald-50 text-emerald-600',
-    amber: 'bg-violet-50 text-violet-600',
+    amber: 'bg-primary-50 text-primary-600',
   };
 
   const iconColor = {
     pink: 'text-pink-600',
-    blue: 'text-blue-600',
+    blue: 'text-primary-600',
     emerald: 'text-emerald-600',
-    amber: 'text-violet-600',
+    amber: 'text-primary-600',
   };
 
   return (
-    <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
+    <div className="rounded-xl border border-kresna-border bg-white p-5 shadow-sm">
       <div className="mb-3 flex items-center justify-between">
         <div
           className={cn(
@@ -354,9 +354,9 @@ function MetricCard({ icon: Icon, label, value, trend, subtitle, color }: Metric
           </div>
         )}
       </div>
-      <p className="text-3xl font-bold text-slate-900">{value}</p>
-      <p className="mt-1 text-sm text-slate-500">{label}</p>
-      {subtitle && <p className="mt-1 text-xs text-slate-400">{subtitle}</p>}
+      <p className="text-3xl font-bold text-charcoal">{value}</p>
+      <p className="mt-1 text-sm text-kresna-gray">{label}</p>
+      {subtitle && <p className="mt-1 text-xs text-kresna-gray">{subtitle}</p>}
     </div>
   );
 }
@@ -371,21 +371,21 @@ interface UsageCardProps {
 
 function UsageCard({ icon: Icon, label, value, color }: UsageCardProps) {
   const colorClasses = {
-    violet: 'bg-violet-50 text-violet-600',
-    blue: 'bg-blue-50 text-blue-600',
-    amber: 'bg-violet-50 text-violet-600',
+    violet: 'bg-primary-50 text-primary-600',
+    blue: 'bg-primary-50 text-primary-600',
+    amber: 'bg-primary-50 text-primary-600',
     emerald: 'bg-emerald-50 text-emerald-600',
   };
 
   return (
-    <div className="rounded-xl border border-slate-200 bg-slate-50 p-4">
+    <div className="rounded-xl border border-kresna-border bg-kresna-light p-4">
       <div className="mb-2 flex items-center gap-2">
         <div className={cn('flex h-8 w-8 items-center justify-center rounded-lg', colorClasses[color])}>
           <Icon className="h-4 w-4" />
         </div>
-        <span className="text-sm text-slate-500">{label}</span>
+        <span className="text-sm text-kresna-gray">{label}</span>
       </div>
-      <p className="text-2xl font-bold text-slate-900">{value}</p>
+      <p className="text-2xl font-bold text-charcoal">{value}</p>
     </div>
   );
 }
@@ -399,35 +399,35 @@ function AnalyticsPageSkeleton() {
       {/* Header skeleton */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className="h-10 w-10 animate-pulse rounded-xl bg-slate-100" />
+          <div className="h-10 w-10 animate-pulse rounded-xl bg-kresna-light" />
           <div className="space-y-1.5">
-            <div className="h-6 w-24 animate-pulse rounded bg-slate-100" />
-            <div className="h-4 w-40 animate-pulse rounded bg-slate-100" />
+            <div className="h-6 w-24 animate-pulse rounded bg-kresna-light" />
+            <div className="h-4 w-40 animate-pulse rounded bg-kresna-light" />
           </div>
         </div>
-        <div className="h-9 w-24 animate-pulse rounded-lg bg-slate-100" />
+        <div className="h-9 w-24 animate-pulse rounded-lg bg-kresna-light" />
       </div>
 
-      <p className="text-center text-sm text-slate-500">{t('common.loading')}</p>
+      <p className="text-center text-sm text-kresna-gray">{t('common.loading')}</p>
 
       {/* Metrics skeleton */}
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {[...Array(4)].map((_, i) => (
-          <div key={i} className="animate-pulse rounded-xl border border-slate-200 bg-slate-50 p-5">
+          <div key={i} className="animate-pulse rounded-xl border border-kresna-border bg-kresna-light p-5">
             <div className="mb-3 flex items-center justify-between">
-              <div className="h-10 w-10 rounded-xl bg-slate-100" />
-              <div className="h-6 w-16 rounded-full bg-slate-100" />
+              <div className="h-10 w-10 rounded-xl bg-kresna-light" />
+              <div className="h-6 w-16 rounded-full bg-kresna-light" />
             </div>
-            <div className="h-8 w-20 rounded bg-slate-100" />
-            <div className="mt-2 h-4 w-24 rounded bg-slate-100" />
+            <div className="h-8 w-20 rounded bg-kresna-light" />
+            <div className="mt-2 h-4 w-24 rounded bg-kresna-light" />
           </div>
         ))}
       </div>
 
       {/* Chart skeleton */}
-      <div className="animate-pulse rounded-xl border border-slate-200 bg-slate-50 p-6">
-        <div className="mb-4 h-6 w-32 rounded bg-slate-100" />
-        <div className="h-64 rounded bg-slate-50" />
+      <div className="animate-pulse rounded-xl border border-kresna-border bg-kresna-light p-6">
+        <div className="mb-4 h-6 w-32 rounded bg-kresna-light" />
+        <div className="h-64 rounded bg-kresna-light" />
       </div>
     </div>
   );

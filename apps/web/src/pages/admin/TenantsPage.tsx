@@ -64,18 +64,18 @@ import type { Tenant } from '@/lib/api/admin';
 
 // Tier badge colors
 const tierColors: Record<string, string> = {
-  free: 'bg-slate-100 text-slate-600 border-slate-300',
-  starter: 'bg-blue-50 text-blue-700 border-blue-200',
+  free: 'bg-kresna-light text-kresna-gray-dark border-kresna-border',
+  starter: 'bg-primary-50 text-primary-700 border-primary-200',
   pro: 'bg-emerald-50 text-emerald-700 border-emerald-200',
-  enterprise: 'bg-violet-50 text-violet-700 border-violet-200',
+  enterprise: 'bg-primary-50 text-primary-700 border-primary-200',
 };
 
 // Status badge colors
 const statusColors: Record<string, string> = {
   active: 'bg-emerald-50 text-emerald-700 border-emerald-200',
   suspended: 'bg-red-50 text-red-700 border-red-200',
-  cancelled: 'bg-slate-100 text-slate-600 border-slate-300',
-  past_due: 'bg-violet-50 text-violet-700 border-violet-200',
+  cancelled: 'bg-kresna-light text-kresna-gray-dark border-kresna-border',
+  past_due: 'bg-primary-50 text-primary-700 border-primary-200',
 };
 
 export default function TenantsPage() {
@@ -321,12 +321,12 @@ export default function TenantsPage() {
         className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between"
       >
         <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-violet-50 shadow-sm">
-            <Building2 className="h-5 w-5 text-violet-600" />
+          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary-50 shadow-sm">
+            <Building2 className="h-5 w-5 text-primary-600" />
           </div>
           <div>
-            <h1 className="text-xl font-bold text-slate-900 sm:text-2xl">{t('admin.tenants.title')}</h1>
-            <p className="text-sm text-slate-500">
+            <h1 className="text-xl font-bold text-charcoal sm:text-2xl">{t('admin.tenants.title')}</h1>
+            <p className="text-sm text-kresna-gray">
               {t('admin.liveMonitoring')}
             </p>
           </div>
@@ -339,7 +339,7 @@ export default function TenantsPage() {
               size="sm"
               onClick={handleExport}
               disabled={isExporting}
-              className="gap-1.5 rounded-lg border border-slate-200 bg-slate-50 text-slate-700 hover:bg-slate-100"
+              className="gap-1.5 rounded-lg border border-kresna-border bg-kresna-light text-kresna-gray-dark hover:bg-kresna-light"
             >
               <Download className={cn('h-4 w-4', isExporting && 'animate-bounce')} />
               <span className="hidden sm:inline">{isExporting ? t('admin.exporting') : t('admin.exportCsv')}</span>
@@ -351,7 +351,7 @@ export default function TenantsPage() {
               size="sm"
               onClick={handleRefresh}
               disabled={isRefreshing}
-              className="gap-1.5 rounded-lg border border-slate-200 bg-slate-50 text-slate-700 hover:bg-slate-100"
+              className="gap-1.5 rounded-lg border border-kresna-border bg-kresna-light text-kresna-gray-dark hover:bg-kresna-light"
             >
               <RefreshCw className={cn('h-4 w-4', isRefreshing && 'animate-spin')} />
               <span className="hidden sm:inline">{t('admin.refresh')}</span>
@@ -366,7 +366,7 @@ export default function TenantsPage() {
       >
         {/* Search */}
         <div className="relative flex-1 sm:max-w-xs">
-          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-500" />
+          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-kresna-gray" />
           <Input
             type="text"
             placeholder={t('common.search') + '...'}
@@ -375,7 +375,7 @@ export default function TenantsPage() {
               setSearchQuery(e.target.value);
               setPage(1);
             }}
-            className="rounded-xl border border-slate-200 bg-white shadow-sm pl-9 text-slate-900 placeholder:text-slate-400 focus:border-violet-500"
+            className="rounded-xl border border-kresna-border bg-white shadow-sm pl-9 text-charcoal placeholder:text-kresna-gray focus:border-primary-500"
           />
         </div>
 
@@ -387,15 +387,15 @@ export default function TenantsPage() {
             setPage(1);
           }}
         >
-          <SelectTrigger className="w-[140px] rounded-xl border border-slate-200 bg-white shadow-sm text-slate-900">
+          <SelectTrigger className="w-[140px] rounded-xl border border-kresna-border bg-white shadow-sm text-charcoal">
             <SelectValue placeholder="Status" />
           </SelectTrigger>
-          <SelectContent className="rounded-xl border border-slate-200 bg-white shadow-sm">
-            <SelectItem value="all" className="text-slate-700">{t('admin.filters.allStatus')}</SelectItem>
-            <SelectItem value="active" className="text-slate-700">{t('admin.filters.active')}</SelectItem>
-            <SelectItem value="suspended" className="text-slate-700">{t('admin.filters.suspended')}</SelectItem>
-            <SelectItem value="cancelled" className="text-slate-700">{t('admin.filters.cancelled')}</SelectItem>
-            <SelectItem value="past_due" className="text-slate-700">{t('admin.filters.pastDue')}</SelectItem>
+          <SelectContent className="rounded-xl border border-kresna-border bg-white shadow-sm">
+            <SelectItem value="all" className="text-kresna-gray-dark">{t('admin.filters.allStatus')}</SelectItem>
+            <SelectItem value="active" className="text-kresna-gray-dark">{t('admin.filters.active')}</SelectItem>
+            <SelectItem value="suspended" className="text-kresna-gray-dark">{t('admin.filters.suspended')}</SelectItem>
+            <SelectItem value="cancelled" className="text-kresna-gray-dark">{t('admin.filters.cancelled')}</SelectItem>
+            <SelectItem value="past_due" className="text-kresna-gray-dark">{t('admin.filters.pastDue')}</SelectItem>
           </SelectContent>
         </Select>
 
@@ -407,15 +407,15 @@ export default function TenantsPage() {
             setPage(1);
           }}
         >
-          <SelectTrigger className="w-[140px] rounded-xl border border-slate-200 bg-white shadow-sm text-slate-900">
+          <SelectTrigger className="w-[140px] rounded-xl border border-kresna-border bg-white shadow-sm text-charcoal">
             <SelectValue placeholder="Tier" />
           </SelectTrigger>
-          <SelectContent className="rounded-xl border border-slate-200 bg-white shadow-sm">
-            <SelectItem value="all" className="text-slate-700">{t('admin.filters.allTiers')}</SelectItem>
-            <SelectItem value="free" className="text-slate-700">{t('admin.filters.free')}</SelectItem>
-            <SelectItem value="starter" className="text-slate-700">{t('admin.filters.starter')}</SelectItem>
-            <SelectItem value="pro" className="text-slate-700">{t('admin.filters.pro')}</SelectItem>
-            <SelectItem value="enterprise" className="text-slate-700">{t('admin.filters.enterprise')}</SelectItem>
+          <SelectContent className="rounded-xl border border-kresna-border bg-white shadow-sm">
+            <SelectItem value="all" className="text-kresna-gray-dark">{t('admin.filters.allTiers')}</SelectItem>
+            <SelectItem value="free" className="text-kresna-gray-dark">{t('admin.filters.free')}</SelectItem>
+            <SelectItem value="starter" className="text-kresna-gray-dark">{t('admin.filters.starter')}</SelectItem>
+            <SelectItem value="pro" className="text-kresna-gray-dark">{t('admin.filters.pro')}</SelectItem>
+            <SelectItem value="enterprise" className="text-kresna-gray-dark">{t('admin.filters.enterprise')}</SelectItem>
           </SelectContent>
         </Select>
 
@@ -447,15 +447,15 @@ export default function TenantsPage() {
         {tenants.length > 0 && (
           <button
             onClick={toggleSelectAll}
-            className="flex items-center gap-2 rounded-lg border border-slate-200 bg-slate-50 px-3 py-1.5 text-slate-700 transition-colors hover:bg-slate-100"
+            className="flex items-center gap-2 rounded-lg border border-kresna-border bg-kresna-light px-3 py-1.5 text-kresna-gray-dark transition-colors hover:bg-kresna-light"
           >
             {allSelected ? (
-              <CheckSquare className="h-4 w-4 text-violet-600" />
+              <CheckSquare className="h-4 w-4 text-primary-600" />
             ) : someSelected ? (
               <div className="relative">
-                <Square className="h-4 w-4 text-violet-600" />
+                <Square className="h-4 w-4 text-primary-600" />
                 <div className="absolute inset-0 flex items-center justify-center">
-                  <div className="h-2 w-2 rounded-sm bg-violet-600" />
+                  <div className="h-2 w-2 rounded-sm bg-primary-600" />
                 </div>
               </div>
             ) : (
@@ -465,22 +465,22 @@ export default function TenantsPage() {
           </button>
         )}
         <div className="flex items-center gap-2">
-          <div className="h-2 w-2 rounded-full bg-violet-500" />
-          <span className="text-slate-500">
-            <span className="font-medium text-slate-700">{total}</span> {t('admin.total')}
+          <div className="h-2 w-2 rounded-full bg-primary-500" />
+          <span className="text-kresna-gray">
+            <span className="font-medium text-kresna-gray-dark">{total}</span> {t('admin.total')}
           </span>
         </div>
         <div className="flex items-center gap-2">
           <div className="h-2 w-2 rounded-full bg-emerald-500" />
-          <span className="text-slate-500">
-            <span className="font-medium text-slate-700">{activeCount}</span> {t('admin.active')}
+          <span className="text-kresna-gray">
+            <span className="font-medium text-kresna-gray-dark">{activeCount}</span> {t('admin.active')}
           </span>
         </div>
         {suspendedCount > 0 && (
           <div className="flex items-center gap-2">
             <div className="h-2 w-2 rounded-full bg-red-500" />
-            <span className="text-slate-500">
-              <span className="font-medium text-slate-700">{suspendedCount}</span> {t('admin.suspended')}
+            <span className="text-kresna-gray">
+              <span className="font-medium text-kresna-gray-dark">{suspendedCount}</span> {t('admin.suspended')}
             </span>
           </div>
         )}
@@ -566,14 +566,14 @@ export default function TenantsPage() {
           {/* Delete confirmation input */}
           {confirmModal?.type === 'delete' && (
             <div className="space-y-2">
-              <label className="text-sm text-slate-700">
+              <label className="text-sm text-kresna-gray-dark">
                 {t('admin.tenants.typeSlugConfirm', { slug: confirmModal.tenant.slug })}
               </label>
               <Input
                 value={deleteConfirmation}
                 onChange={(e) => setDeleteConfirmation(e.target.value)}
                 placeholder={confirmModal.tenant.slug}
-                className="rounded-xl border border-slate-200 bg-white shadow-sm text-slate-900"
+                className="rounded-xl border border-kresna-border bg-white shadow-sm text-charcoal"
                 autoFocus
               />
             </div>
@@ -612,34 +612,34 @@ export default function TenantsPage() {
           <div className="space-y-4 py-4">
             {/* Name field */}
             <div className="space-y-2">
-              <label className="text-sm font-medium text-slate-700">
+              <label className="text-sm font-medium text-kresna-gray-dark">
                 {t('admin.tenants.orgName')}
               </label>
               <Input
                 value={editForm.name}
                 onChange={(e) => setEditForm({ ...editForm, name: e.target.value })}
                 placeholder={t('admin.tenants.orgName')}
-                className="rounded-xl border border-slate-200 bg-white shadow-sm text-slate-900"
+                className="rounded-xl border border-kresna-border bg-white shadow-sm text-charcoal"
                 autoFocus
               />
             </div>
 
             {/* Logo field */}
             <div className="space-y-2">
-              <label className="text-sm font-medium text-slate-700">
+              <label className="text-sm font-medium text-kresna-gray-dark">
                 {t('admin.tenants.logoUrl')}
               </label>
               <Input
                 value={editForm.logo}
                 onChange={(e) => setEditForm({ ...editForm, logo: e.target.value })}
                 placeholder="https://example.com/logo.png"
-                className="rounded-xl border border-slate-200 bg-white shadow-sm text-slate-900"
+                className="rounded-xl border border-kresna-border bg-white shadow-sm text-charcoal"
               />
             </div>
 
             {/* Subscription tier field */}
             <div className="space-y-2">
-              <label className="text-sm font-medium text-slate-700">
+              <label className="text-sm font-medium text-kresna-gray-dark">
                 {t('admin.tenants.subscriptionTier')}
               </label>
               <Select
@@ -648,14 +648,14 @@ export default function TenantsPage() {
                   setEditForm({ ...editForm, subscriptionTier: value })
                 }
               >
-                <SelectTrigger className="rounded-xl border border-slate-200 bg-white shadow-sm text-slate-900">
+                <SelectTrigger className="rounded-xl border border-kresna-border bg-white shadow-sm text-charcoal">
                   <SelectValue />
                 </SelectTrigger>
-                <SelectContent className="rounded-xl border border-slate-200 bg-white shadow-sm">
-                  <SelectItem value="free" className="text-slate-700">{t('admin.filters.free')}</SelectItem>
-                  <SelectItem value="starter" className="text-slate-700">{t('admin.filters.starter')}</SelectItem>
-                  <SelectItem value="pro" className="text-slate-700">{t('admin.filters.pro')}</SelectItem>
-                  <SelectItem value="enterprise" className="text-slate-700">{t('admin.filters.enterprise')}</SelectItem>
+                <SelectContent className="rounded-xl border border-kresna-border bg-white shadow-sm">
+                  <SelectItem value="free" className="text-kresna-gray-dark">{t('admin.filters.free')}</SelectItem>
+                  <SelectItem value="starter" className="text-kresna-gray-dark">{t('admin.filters.starter')}</SelectItem>
+                  <SelectItem value="pro" className="text-kresna-gray-dark">{t('admin.filters.pro')}</SelectItem>
+                  <SelectItem value="enterprise" className="text-kresna-gray-dark">{t('admin.filters.enterprise')}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -672,7 +672,7 @@ export default function TenantsPage() {
             <Button
               onClick={handleEdit}
               disabled={isEditLoading || !editForm.name.trim()}
-              className="bg-blue-600 hover:bg-blue-500"
+              className="bg-primary-500 hover:bg-primary-600"
             >
               {isEditLoading ? t('common.loading') + '...' : t('common.save')}
             </Button>
@@ -683,12 +683,12 @@ export default function TenantsPage() {
       {/* Floating Bulk Action Bar */}
       {selectedIds.size > 0 && (
         <div
-          className="fixed inset-x-0 bottom-6 z-50 mx-auto flex w-fit items-center gap-3 rounded-2xl border border-slate-200 bg-white px-5 py-3 shadow-lg"
+          className="fixed inset-x-0 bottom-6 z-50 mx-auto flex w-fit items-center gap-3 rounded-2xl border border-kresna-border bg-white px-5 py-3 shadow-lg"
         >
-          <span className="text-sm font-medium text-slate-700">
-            <span className="text-violet-600">{selectedIds.size}</span> {t('admin.selected')}
+          <span className="text-sm font-medium text-kresna-gray-dark">
+            <span className="text-primary-600">{selectedIds.size}</span> {t('admin.selected')}
           </span>
-          <div className="h-5 w-px bg-slate-200" />
+          <div className="h-5 w-px bg-kresna-border" />
           <Button
             variant="ghost"
             size="sm"
@@ -698,12 +698,12 @@ export default function TenantsPage() {
             <Trash2 className="h-4 w-4" />
             {t('common.delete')}
           </Button>
-          <div className="h-5 w-px bg-slate-200" />
+          <div className="h-5 w-px bg-kresna-border" />
           <Button
             variant="ghost"
             size="sm"
             onClick={clearSelection}
-            className="gap-1.5 text-slate-500 hover:bg-slate-50 hover:text-slate-700"
+            className="gap-1.5 text-kresna-gray hover:bg-kresna-light hover:text-kresna-gray-dark"
           >
             <X className="h-4 w-4" />
             {t('admin.clearSelection')}
@@ -725,14 +725,14 @@ export default function TenantsPage() {
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-2 py-2">
-            <label className="text-sm text-slate-700">
-              {t('admin.bulkDelete.typeDeleteLabel')} <code className="rounded bg-slate-100 px-1.5 py-0.5 text-red-500">DELETE</code>:
+            <label className="text-sm text-kresna-gray-dark">
+              {t('admin.bulkDelete.typeDeleteLabel')} <code className="rounded bg-kresna-light px-1.5 py-0.5 text-red-500">DELETE</code>:
             </label>
             <Input
               value={bulkDeleteConfirm}
               onChange={(e) => setBulkDeleteConfirm(e.target.value)}
               placeholder="DELETE"
-              className="rounded-xl border border-slate-200 bg-white shadow-sm text-slate-900"
+              className="rounded-xl border border-kresna-border bg-white shadow-sm text-charcoal"
               autoFocus
             />
           </div>
@@ -772,14 +772,14 @@ function TenantCard({ tenant, isSelected, onToggleSelect, onEdit, onSuspend, onU
   return (
     <div
       className={cn(
-        'group relative overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition-all duration-300',
-        'hover:border-slate-300 hover:bg-slate-50/50 hover:shadow-md',
+        'group relative overflow-hidden rounded-2xl border border-kresna-border bg-white shadow-sm transition-all duration-300',
+        'hover:border-kresna-border hover:bg-kresna-light/50 hover:shadow-md',
         isSuspended && 'border-red-200 bg-red-50/50',
-        isSelected && 'border-violet-400 bg-violet-50 ring-1 ring-violet-300'
+        isSelected && 'border-primary-400 bg-primary-50 ring-1 ring-primary-300'
       )}
     >
       {/* Gradient accent */}
-      <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-violet-400 to-transparent opacity-0 transition-opacity group-hover:opacity-100" />
+      <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-primary-400 to-transparent opacity-0 transition-opacity group-hover:opacity-100" />
 
       {/* Selection checkbox — top-left */}
       <button
@@ -787,14 +787,14 @@ function TenantCard({ tenant, isSelected, onToggleSelect, onEdit, onSuspend, onU
         className={cn(
           'absolute left-3 top-3 z-10 flex h-6 w-6 items-center justify-center rounded-md border transition-all',
           isSelected
-            ? 'border-violet-500 bg-violet-500 text-white'
-            : 'border-slate-300 bg-slate-50 text-transparent opacity-0 group-hover:opacity-100 hover:border-slate-400'
+            ? 'border-primary-500 bg-primary-500 text-white'
+            : 'border-kresna-border bg-kresna-light text-transparent opacity-0 group-hover:opacity-100 hover:border-kresna-gray'
         )}
       >
         {isSelected ? (
           <CheckSquare className="h-4 w-4" />
         ) : (
-          <Square className="h-4 w-4 text-slate-500" />
+          <Square className="h-4 w-4 text-kresna-gray" />
         )}
       </button>
 
@@ -802,42 +802,42 @@ function TenantCard({ tenant, isSelected, onToggleSelect, onEdit, onSuspend, onU
         {/* Header */}
         <div className="mb-4 flex items-start justify-between gap-3">
           <div className="flex items-center gap-3">
-            <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-violet-50 shadow-sm">
+            <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-primary-50 shadow-sm">
               {tenant.logo ? (
                 <img src={tenant.logo} alt={tenant.name} className="h-6 w-6 rounded" />
               ) : (
-                <Building2 className="h-5 w-5 text-violet-600" />
+                <Building2 className="h-5 w-5 text-primary-600" />
               )}
             </div>
             <div className="min-w-0">
-              <h3 className="truncate font-semibold text-slate-900">{tenant.name}</h3>
-              <p className="truncate text-sm text-slate-500">/{tenant.slug}</p>
+              <h3 className="truncate font-semibold text-charcoal">{tenant.name}</h3>
+              <p className="truncate text-sm text-kresna-gray">/{tenant.slug}</p>
             </div>
           </div>
 
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="icon" className="h-8 w-8 text-slate-500 hover:text-slate-900">
+              <Button variant="ghost" size="icon" className="h-8 w-8 text-kresna-gray hover:text-charcoal">
                 <MoreVertical className="h-4 w-4" />
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="rounded-xl border border-slate-200 bg-white shadow-sm">
-              <DropdownMenuItem className="gap-2 text-slate-700">
+            <DropdownMenuContent align="end" className="rounded-xl border border-kresna-border bg-white shadow-sm">
+              <DropdownMenuItem className="gap-2 text-kresna-gray-dark">
                 <ExternalLink className="h-4 w-4" />
                 {t('admin.tenants.viewDetails')}
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={onEdit} className="gap-2 text-blue-600">
+              <DropdownMenuItem onClick={onEdit} className="gap-2 text-primary-600">
                 <Edit className="h-4 w-4" />
                 {t('common.edit')}
               </DropdownMenuItem>
-              <DropdownMenuSeparator className="bg-slate-200" />
+              <DropdownMenuSeparator className="bg-kresna-border" />
               {isSuspended ? (
                 <DropdownMenuItem onClick={onUnsuspend} className="gap-2 text-emerald-600">
                   <CheckCircle2 className="h-4 w-4" />
                   {t('admin.tenants.unsuspend')}
                 </DropdownMenuItem>
               ) : (
-                <DropdownMenuItem onClick={onSuspend} className="gap-2 text-violet-600">
+                <DropdownMenuItem onClick={onSuspend} className="gap-2 text-primary-600">
                   <Ban className="h-4 w-4" />
                   {t('admin.tenants.suspend')}
                 </DropdownMenuItem>
@@ -862,26 +862,26 @@ function TenantCard({ tenant, isSelected, onToggleSelect, onEdit, onSuspend, onU
 
         {/* Stats */}
         <div className="mb-4 grid grid-cols-2 gap-3">
-          <div className="rounded-xl border border-slate-200 bg-slate-50 p-3">
-            <div className="mb-1 flex items-center gap-1.5 text-slate-500">
+          <div className="rounded-xl border border-kresna-border bg-kresna-light p-3">
+            <div className="mb-1 flex items-center gap-1.5 text-kresna-gray">
               <Users className="h-3.5 w-3.5" />
               <span className="text-[10px] font-medium uppercase tracking-wider">{t('admin.tenants.members')}</span>
             </div>
-            <p className="text-xl font-bold text-slate-900">{tenant.memberCount}</p>
+            <p className="text-xl font-bold text-charcoal">{tenant.memberCount}</p>
           </div>
-          <div className="rounded-xl border border-slate-200 bg-slate-50 p-3">
-            <div className="mb-1 flex items-center gap-1.5 text-slate-500">
+          <div className="rounded-xl border border-kresna-border bg-kresna-light p-3">
+            <div className="mb-1 flex items-center gap-1.5 text-kresna-gray">
               <Crown className="h-3.5 w-3.5" />
               <span className="text-[10px] font-medium uppercase tracking-wider">{t('admin.tenants.owner')}</span>
             </div>
-            <p className="truncate text-sm font-medium text-slate-900">
+            <p className="truncate text-sm font-medium text-charcoal">
               {tenant.owner?.name || t('common.unknown')}
             </p>
           </div>
         </div>
 
         {/* Footer */}
-        <div className="flex items-center justify-between border-t border-slate-200 pt-4 text-xs text-slate-500">
+        <div className="flex items-center justify-between border-t border-kresna-border pt-4 text-xs text-kresna-gray">
           <span>{t('admin.tenants.created')} {new Date(tenant.createdAt).toLocaleDateString()}</span>
           {isSuspended && (
             <span className="flex items-center gap-1 text-red-500">
@@ -898,33 +898,33 @@ function TenantCard({ tenant, isSelected, onToggleSelect, onEdit, onSuspend, onU
 // Skeleton
 function TenantCardSkeleton() {
   return (
-    <div className="animate-pulse rounded-2xl border border-slate-200 bg-slate-50 p-5">
+    <div className="animate-pulse rounded-2xl border border-kresna-border bg-kresna-light p-5">
       <div className="mb-4 flex items-start justify-between">
         <div className="flex items-center gap-3">
-          <div className="h-11 w-11 rounded-xl bg-slate-100" />
+          <div className="h-11 w-11 rounded-xl bg-kresna-light" />
           <div className="space-y-1.5">
-            <div className="h-5 w-32 rounded bg-slate-100" />
-            <div className="h-4 w-20 rounded bg-slate-100" />
+            <div className="h-5 w-32 rounded bg-kresna-light" />
+            <div className="h-4 w-20 rounded bg-kresna-light" />
           </div>
         </div>
-        <div className="h-8 w-8 rounded bg-slate-100" />
+        <div className="h-8 w-8 rounded bg-kresna-light" />
       </div>
       <div className="mb-4 flex gap-2">
-        <div className="h-6 w-16 rounded-full bg-slate-100" />
-        <div className="h-6 w-16 rounded-full bg-slate-100" />
+        <div className="h-6 w-16 rounded-full bg-kresna-light" />
+        <div className="h-6 w-16 rounded-full bg-kresna-light" />
       </div>
       <div className="mb-4 grid grid-cols-2 gap-3">
-        <div className="space-y-2 rounded-xl border border-slate-200 bg-slate-50 p-3">
-          <div className="h-3 w-16 rounded bg-slate-100" />
-          <div className="h-6 w-12 rounded bg-slate-100" />
+        <div className="space-y-2 rounded-xl border border-kresna-border bg-kresna-light p-3">
+          <div className="h-3 w-16 rounded bg-kresna-light" />
+          <div className="h-6 w-12 rounded bg-kresna-light" />
         </div>
-        <div className="space-y-2 rounded-xl border border-slate-200 bg-slate-50 p-3">
-          <div className="h-3 w-16 rounded bg-slate-100" />
-          <div className="h-4 w-20 rounded bg-slate-100" />
+        <div className="space-y-2 rounded-xl border border-kresna-border bg-kresna-light p-3">
+          <div className="h-3 w-16 rounded bg-kresna-light" />
+          <div className="h-4 w-20 rounded bg-kresna-light" />
         </div>
       </div>
-      <div className="border-t border-slate-200 pt-4">
-        <div className="h-3 w-24 rounded bg-slate-100" />
+      <div className="border-t border-kresna-border pt-4">
+        <div className="h-3 w-24 rounded bg-kresna-light" />
       </div>
     </div>
   );
@@ -943,19 +943,19 @@ function EmptyState({
   if (hasFilters) {
     return (
       <div
-        className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-slate-200 bg-slate-50 px-6 py-16 text-center"
+        className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-kresna-border bg-kresna-light px-6 py-16 text-center"
       >
-        <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-xl bg-slate-100">
-          <Search className="h-7 w-7 text-slate-500" />
+        <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-xl bg-kresna-light">
+          <Search className="h-7 w-7 text-kresna-gray" />
         </div>
-        <h3 className="mb-1 text-lg font-semibold text-slate-900">{t('admin.noMatchingResults')}</h3>
-        <p className="mb-4 max-w-sm text-sm text-slate-500">
+        <h3 className="mb-1 text-lg font-semibold text-charcoal">{t('admin.noMatchingResults')}</h3>
+        <p className="mb-4 max-w-sm text-sm text-kresna-gray">
           {t('admin.adjustFilters')}
         </p>
         <Button
           variant="ghost"
           onClick={onClearFilters}
-          className="gap-2 rounded-lg border border-slate-200 text-slate-700 hover:bg-slate-50"
+          className="gap-2 rounded-lg border border-kresna-border text-kresna-gray-dark hover:bg-kresna-light"
         >
           {t('admin.clearFilters')}
         </Button>
@@ -965,15 +965,15 @@ function EmptyState({
 
   return (
     <div
-      className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-slate-200 bg-slate-50 px-6 py-16 text-center"
+      className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-kresna-border bg-kresna-light px-6 py-16 text-center"
     >
       <div
-        className="mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-violet-50"
+        className="mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-primary-50"
       >
-        <Building2 className="h-8 w-8 text-violet-600" />
+        <Building2 className="h-8 w-8 text-primary-600" />
       </div>
-      <h3 className="mb-1 text-lg font-semibold text-slate-900">{t('admin.tenants.noTenantsYet')}</h3>
-      <p className="max-w-sm text-sm text-slate-500">
+      <h3 className="mb-1 text-lg font-semibold text-charcoal">{t('admin.tenants.noTenantsYet')}</h3>
+      <p className="max-w-sm text-sm text-kresna-gray">
         {t('admin.tenants.tenantsAppearHere')}
       </p>
     </div>

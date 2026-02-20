@@ -28,8 +28,8 @@ export function ThemeToggle({ className }: { className?: string }) {
       onClick={toggle}
       className={cn(
         'inline-flex items-center justify-center rounded-lg h-9 w-9',
-        'text-slate-500 hover:text-slate-900 hover:bg-slate-100',
-        'dark:text-slate-400 dark:hover:text-white dark:hover:bg-slate-800',
+        'text-kresna-gray hover:text-charcoal hover:bg-kresna-light',
+        'dark:text-kresna-gray dark:hover:text-white dark:hover:bg-charcoal',
         'transition-colors duration-200',
         className
       )}

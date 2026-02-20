@@ -100,15 +100,15 @@ export function InviteMemberModal({ open, onOpenChange, onSuccess, organizationI
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent className="border-slate-200 bg-white sm:max-w-md">
+      <DialogContent className="border-kresna-border bg-white sm:max-w-md">
         {/* Decorative elements */}
-        <div className="pointer-events-none absolute -top-32 left-1/2 h-64 w-64 -translate-x-1/2 rounded-full bg-blue-100 blur-[100px]" />
+        <div className="pointer-events-none absolute -top-32 left-1/2 h-64 w-64 -translate-x-1/2 rounded-full bg-primary-100 blur-[100px]" />
 
         <DialogHeader className="relative">
           <motion.div
             initial={{ scale: 0.8, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
-            className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-blue-50 to-blue-100 ring-1 ring-blue-200"
+            className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-primary-50 to-primary-100 ring-1 ring-primary-200"
           >
             <AnimatePresence mode="wait">
               {state === 'success' ? (
@@ -137,16 +137,16 @@ export function InviteMemberModal({ open, onOpenChange, onSuccess, organizationI
                   animate={{ scale: 1 }}
                   exit={{ scale: 0 }}
                 >
-                  <UserPlus className="h-8 w-8 text-blue-500" />
+                  <UserPlus className="h-8 w-8 text-primary-500" />
                 </motion.div>
               )}
             </AnimatePresence>
           </motion.div>
 
-          <DialogTitle className="text-center text-xl text-slate-900">
+          <DialogTitle className="text-center text-xl text-charcoal">
             {state === 'success' ? t('team.invitationSentTitle') : t('team.inviteTeamMember')}
           </DialogTitle>
-          <DialogDescription className="text-center text-slate-500">
+          <DialogDescription className="text-center text-kresna-gray">
             {state === 'success'
               ? t('team.invitationSentDesc')
               : t('team.inviteTeamMemberDesc')
@@ -183,11 +183,11 @@ export function InviteMemberModal({ open, onOpenChange, onSuccess, organizationI
               className="relative space-y-6 py-4"
             >
               <div className="space-y-2">
-                <Label htmlFor="email" className="text-slate-700">
+                <Label htmlFor="email" className="text-kresna-gray-dark">
                   {t('team.emailAddress')}
                 </Label>
                 <div className="relative">
-                  <Mail className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+                  <Mail className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-kresna-gray" />
                   <Input
                     id="email"
                     type="email"
@@ -221,24 +221,24 @@ export function InviteMemberModal({ open, onOpenChange, onSuccess, organizationI
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="role" className="text-slate-700">
+                <Label htmlFor="role" className="text-kresna-gray-dark">
                   {t('common.role')}
                 </Label>
                 <div className="relative">
-                  <Shield className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+                  <Shield className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-kresna-gray" />
                   <select
                     id="role"
                     value={role}
                     onChange={(e) => setRole(e.target.value as MemberRole)}
                     disabled={state === 'loading'}
-                    className="w-full rounded-xl border border-slate-200 bg-white px-10 py-2.5 text-slate-900 transition-colors focus:border-primary-400 focus:outline-none focus:ring-2 focus:ring-primary-200 disabled:opacity-50"
+                    className="w-full rounded-xl border border-kresna-border bg-white px-10 py-2.5 text-charcoal transition-colors focus:border-primary-400 focus:outline-none focus:ring-2 focus:ring-primary-200 disabled:opacity-50"
                   >
                     <option value="member">{t('team.roleMember')}</option>
                     <option value="admin">{t('team.roleAdmin')}</option>
                     <option value="owner">{t('team.roleOwner')}</option>
                   </select>
                 </div>
-                <p className="text-xs text-slate-400">
+                <p className="text-xs text-kresna-gray">
                   {t('team.roleDescription')}
                 </p>
               </div>
@@ -249,14 +249,14 @@ export function InviteMemberModal({ open, onOpenChange, onSuccess, organizationI
                   variant="outline"
                   onClick={handleClose}
                   disabled={state === 'loading'}
-                  className="flex-1 border-slate-200 bg-slate-50 hover:bg-slate-100"
+                  className="flex-1 border-kresna-border bg-kresna-light hover:bg-kresna-light"
                 >
                   {t('common.cancel')}
                 </Button>
                 <Button
                   type="submit"
                   disabled={state === 'loading' || !email.trim()}
-                  className="flex-1 gap-2 bg-blue-600 hover:bg-blue-700"
+                  className="flex-1 gap-2 bg-primary-600 hover:bg-primary-700"
                 >
                   {state === 'loading' ? (
                     <>

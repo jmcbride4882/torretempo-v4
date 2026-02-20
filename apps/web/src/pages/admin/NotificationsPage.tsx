@@ -46,8 +46,8 @@ import {
 import type { BroadcastMessage } from '@/lib/api/admin';
 
 const severityColors = {
-  info: 'bg-blue-50 text-blue-700 border-blue-200',
-  warning: 'bg-violet-50 text-violet-700 border-violet-200',
+  info: 'bg-primary-50 text-primary-700 border-primary-200',
+  warning: 'bg-primary-50 text-primary-700 border-primary-200',
   urgent: 'bg-red-50 text-red-700 border-red-200',
 };
 
@@ -173,17 +173,17 @@ export default function NotificationsPage() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 p-4 md:p-8">
+    <div className="min-h-screen bg-kresna-light p-4 md:p-8">
       {/* Header */}
       <div className="max-w-7xl mx-auto mb-8">
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-3">
-            <div className="p-2 rounded-xl bg-violet-50 border border-violet-200">
-              <Bell className="w-6 h-6 text-violet-600" />
+            <div className="p-2 rounded-xl bg-primary-50 border border-primary-200">
+              <Bell className="w-6 h-6 text-primary-600" />
             </div>
             <div>
-              <h1 className="text-2xl font-bold text-slate-900">{t('admin.notifications.title')}</h1>
-              <p className="text-sm text-slate-500 mt-1">
+              <h1 className="text-2xl font-bold text-charcoal">{t('admin.notifications.title')}</h1>
+              <p className="text-sm text-kresna-gray mt-1">
                 {t('admin.notifications.createBroadcast')}
               </p>
             </div>
@@ -194,7 +194,7 @@ export default function NotificationsPage() {
               size="sm"
               onClick={() => loadBroadcasts()}
               disabled={isRefreshing}
-              className="border-slate-200 hover:bg-slate-100"
+              className="border-kresna-border hover:bg-kresna-light"
             >
               <RefreshCw
                 className={cn('w-4 h-4 mr-2', isRefreshing && 'animate-spin')}
@@ -204,7 +204,7 @@ export default function NotificationsPage() {
             <Button
               size="sm"
               onClick={() => setCreateModal(true)}
-              className="bg-violet-600 hover:bg-violet-700"
+              className="bg-primary-600 hover:bg-primary-700"
             >
               <Plus className="w-4 h-4 mr-2" />
               {t('common.create')}
@@ -217,17 +217,17 @@ export default function NotificationsPage() {
       <div className="max-w-7xl mx-auto">
         {isLoading ? (
           <div className="text-center py-12">
-            <RefreshCw className="w-8 h-8 text-slate-400 mx-auto mb-3 animate-spin" />
-            <p className="text-slate-500">{t('common.loading')}</p>
+            <RefreshCw className="w-8 h-8 text-kresna-gray mx-auto mb-3 animate-spin" />
+            <p className="text-kresna-gray">{t('common.loading')}</p>
           </div>
         ) : broadcasts.length === 0 ? (
           <div className="text-center py-12">
-            <Bell className="w-12 h-12 text-slate-300 mx-auto mb-3" />
-            <p className="text-slate-500">{t('admin.notifications.noBroadcasts')}</p>
+            <Bell className="w-12 h-12 text-kresna-border mx-auto mb-3" />
+            <p className="text-kresna-gray">{t('admin.notifications.noBroadcasts')}</p>
             <Button
               size="sm"
               onClick={() => setCreateModal(true)}
-              className="mt-4 bg-violet-600 hover:bg-violet-700"
+              className="mt-4 bg-primary-600 hover:bg-primary-700"
             >
               <Plus className="w-4 h-4 mr-2" />
               {t('admin.notifications.createBroadcast')}
@@ -244,14 +244,14 @@ export default function NotificationsPage() {
                 <div
                   key={broadcast.id}
                   className={cn(
-                    'rounded-xl border border-slate-200 bg-white shadow-sm p-6',
+                    'rounded-xl border border-kresna-border bg-white shadow-sm p-6',
                     isExpired && 'opacity-60'
                   )}
                 >
                   <div className="flex items-start justify-between">
                     <div className="flex-1">
                       <div className="flex items-center gap-3 mb-2">
-                        <h3 className="text-lg font-semibold text-slate-900">
+                        <h3 className="text-lg font-semibold text-charcoal">
                           {broadcast.title}
                         </h3>
                         <Badge className={severityColors[broadcast.severity]}>
@@ -259,15 +259,15 @@ export default function NotificationsPage() {
                           {t(`admin.notifications.severity${broadcast.severity.charAt(0).toUpperCase()}${broadcast.severity.slice(1)}`)}
                         </Badge>
                         {isExpired && (
-                          <Badge className="bg-slate-100 text-slate-500 border-slate-200">
+                          <Badge className="bg-kresna-light text-kresna-gray border-kresna-border">
                             {t('admin.notifications.expired')}
                           </Badge>
                         )}
                       </div>
-                      <p className="text-sm text-slate-700 mb-4">
+                      <p className="text-sm text-kresna-gray-dark mb-4">
                         {broadcast.message}
                       </p>
-                      <div className="flex items-center gap-4 text-xs text-slate-500">
+                      <div className="flex items-center gap-4 text-xs text-kresna-gray">
                         <div className="flex items-center gap-1">
                           <TargetIcon className="w-3 h-3" />
                           <span>
@@ -308,18 +308,18 @@ export default function NotificationsPage() {
       {/* Create Modal */}
       {createModal && (
         <Dialog open={createModal} onOpenChange={setCreateModal}>
-          <DialogContent className="bg-white border-slate-200 max-w-2xl">
+          <DialogContent className="bg-white border-kresna-border max-w-2xl">
             <DialogHeader>
-              <DialogTitle className="text-slate-900">
+              <DialogTitle className="text-charcoal">
                 {t('admin.notifications.createBroadcast')}
               </DialogTitle>
-              <DialogDescription className="text-slate-500">
+              <DialogDescription className="text-kresna-gray">
                 {t('admin.notifications.sendDescription')}
               </DialogDescription>
             </DialogHeader>
             <div className="space-y-4 py-4">
               <div>
-                <label className="text-sm font-medium text-slate-700 mb-2 block">
+                <label className="text-sm font-medium text-kresna-gray-dark mb-2 block">
                   {t('admin.notifications.titleLabel')} *
                 </label>
                 <Input
@@ -328,11 +328,11 @@ export default function NotificationsPage() {
                   onChange={(e) =>
                     setForm({ ...form, title: e.target.value })
                   }
-                  className="bg-slate-50 border-slate-200 text-slate-900"
+                  className="bg-kresna-light border-kresna-border text-charcoal"
                 />
               </div>
               <div>
-                <label className="text-sm font-medium text-slate-700 mb-2 block">
+                <label className="text-sm font-medium text-kresna-gray-dark mb-2 block">
                   {t('admin.notifications.messageLabel')} *
                 </label>
                 <textarea
@@ -342,12 +342,12 @@ export default function NotificationsPage() {
                     setForm({ ...form, message: e.target.value })
                   }
                   rows={4}
-                  className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-md text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-violet-500"
+                  className="w-full px-3 py-2 bg-kresna-light border border-kresna-border rounded-md text-charcoal placeholder:text-kresna-gray focus:outline-none focus:ring-2 focus:ring-primary-500"
                 />
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="text-sm font-medium text-slate-700 mb-2 block">
+                  <label className="text-sm font-medium text-kresna-gray-dark mb-2 block">
                     {t('admin.notifications.severity')}
                   </label>
                   <Select
@@ -356,10 +356,10 @@ export default function NotificationsPage() {
                       setForm({ ...form, severity: value })
                     }
                   >
-                    <SelectTrigger className="bg-slate-50 border-slate-200 text-slate-900">
+                    <SelectTrigger className="bg-kresna-light border-kresna-border text-charcoal">
                       <SelectValue />
                     </SelectTrigger>
-                    <SelectContent className="bg-white border-slate-200">
+                    <SelectContent className="bg-white border-kresna-border">
                       <SelectItem value="info">{t('admin.notifications.severityInfo')}</SelectItem>
                       <SelectItem value="warning">{t('admin.notifications.severityWarning')}</SelectItem>
                       <SelectItem value="urgent">{t('admin.notifications.severityUrgent')}</SelectItem>
@@ -367,7 +367,7 @@ export default function NotificationsPage() {
                   </Select>
                 </div>
                 <div>
-                  <label className="text-sm font-medium text-slate-700 mb-2 block">
+                  <label className="text-sm font-medium text-kresna-gray-dark mb-2 block">
                     {t('admin.notifications.target')}
                   </label>
                   <Select
@@ -376,10 +376,10 @@ export default function NotificationsPage() {
                       setForm({ ...form, target_type: value })
                     }
                   >
-                    <SelectTrigger className="bg-slate-50 border-slate-200 text-slate-900">
+                    <SelectTrigger className="bg-kresna-light border-kresna-border text-charcoal">
                       <SelectValue />
                     </SelectTrigger>
-                    <SelectContent className="bg-white border-slate-200">
+                    <SelectContent className="bg-white border-kresna-border">
                       <SelectItem value="all">{t('admin.notifications.allUsers')}</SelectItem>
                       <SelectItem value="organization">
                         {t('admin.notifications.specificOrgs')}
@@ -391,7 +391,7 @@ export default function NotificationsPage() {
               </div>
               {form.target_type !== 'all' && (
                 <div>
-                  <label className="text-sm font-medium text-slate-700 mb-2 block">
+                  <label className="text-sm font-medium text-kresna-gray-dark mb-2 block">
                     {t('admin.notifications.targetIdsLabel')}
                   </label>
                   <Input
@@ -400,15 +400,15 @@ export default function NotificationsPage() {
                     onChange={(e) =>
                       setForm({ ...form, target_ids: e.target.value })
                     }
-                    className="bg-slate-50 border-slate-200 text-slate-900"
+                    className="bg-kresna-light border-kresna-border text-charcoal"
                   />
-                  <p className="text-xs text-slate-500 mt-1">
+                  <p className="text-xs text-kresna-gray mt-1">
                     {t('admin.notifications.targetIdsHint')}
                   </p>
                 </div>
               )}
               <div>
-                <label className="text-sm font-medium text-slate-700 mb-2 block">
+                <label className="text-sm font-medium text-kresna-gray-dark mb-2 block">
                   {t('admin.notifications.expirationLabel')}
                 </label>
                 <Input
@@ -417,9 +417,9 @@ export default function NotificationsPage() {
                   onChange={(e) =>
                     setForm({ ...form, expires_at: e.target.value })
                   }
-                  className="bg-slate-50 border-slate-200 text-slate-900"
+                  className="bg-kresna-light border-kresna-border text-charcoal"
                 />
-                <p className="text-xs text-slate-500 mt-1">
+                <p className="text-xs text-kresna-gray mt-1">
                   {t('admin.notifications.expirationHint')}
                 </p>
               </div>
@@ -429,14 +429,14 @@ export default function NotificationsPage() {
                 variant="outline"
                 onClick={() => setCreateModal(false)}
                 disabled={isActionLoading}
-                className="border-slate-200 hover:bg-slate-100"
+                className="border-kresna-border hover:bg-kresna-light"
               >
                 {t('common.cancel')}
               </Button>
               <Button
                 onClick={handleCreate}
                 disabled={isActionLoading || !form.title.trim() || !form.message.trim()}
-                className="bg-violet-600 hover:bg-violet-700"
+                className="bg-primary-600 hover:bg-primary-700"
               >
                 {isActionLoading ? t('admin.notifications.sending') : t('common.save')}
               </Button>
@@ -448,13 +448,13 @@ export default function NotificationsPage() {
       {/* Delete Confirmation Modal */}
       {deleteModal && (
         <Dialog open={!!deleteModal} onOpenChange={() => setDeleteModal(null)}>
-          <DialogContent className="bg-white border-slate-200">
+          <DialogContent className="bg-white border-kresna-border">
             <DialogHeader>
-              <DialogTitle className="text-slate-900 flex items-center gap-2">
+              <DialogTitle className="text-charcoal flex items-center gap-2">
                 <Trash2 className="w-5 h-5 text-red-600" />
                 {t('admin.notifications.deleteBroadcast')}
               </DialogTitle>
-              <DialogDescription className="text-slate-500">
+              <DialogDescription className="text-kresna-gray">
                 {t('admin.notifications.deleteConfirmation', { title: deleteModal.title })}
               </DialogDescription>
             </DialogHeader>
@@ -463,7 +463,7 @@ export default function NotificationsPage() {
                 variant="outline"
                 onClick={() => setDeleteModal(null)}
                 disabled={isActionLoading}
-                className="border-slate-200 hover:bg-slate-100"
+                className="border-kresna-border hover:bg-kresna-light"
               >
                 {t('common.cancel')}
               </Button>

@@ -104,12 +104,12 @@ export function EmployeeOnboardingWizard({ organizationSlug, onComplete, onCance
                 'h-10 w-10 rounded-xl flex items-center justify-center border',
                 isActive ? 'bg-primary-50 border-primary-200 text-primary-600' :
                 isComplete ? 'bg-emerald-50 border-emerald-200 text-emerald-600' :
-                'bg-slate-50 border-slate-200 text-slate-400'
+                'bg-kresna-light border-kresna-border text-kresna-gray'
               )}>
                 {isComplete ? <CheckCircle2 className="h-5 w-5" /> : <Icon className="h-5 w-5" />}
               </div>
               {i < STEPS.length - 1 && (
-                <div className={cn('h-0.5 w-8 sm:w-16', isComplete ? 'bg-emerald-300' : 'bg-slate-200')} />
+                <div className={cn('h-0.5 w-8 sm:w-16', isComplete ? 'bg-emerald-300' : 'bg-kresna-border')} />
               )}
             </div>
           );
@@ -118,10 +118,10 @@ export function EmployeeOnboardingWizard({ organizationSlug, onComplete, onCance
 
       {/* Step title */}
       <div>
-        <h3 className="text-lg font-semibold text-slate-900">
+        <h3 className="text-lg font-semibold text-charcoal">
           {t(`team.onboarding.step${currentStep + 1}Title`)}
         </h3>
-        <p className="text-sm text-slate-500">{t(`team.onboarding.step${currentStep + 1}Description`)}</p>
+        <p className="text-sm text-kresna-gray">{t(`team.onboarding.step${currentStep + 1}Description`)}</p>
       </div>
 
       {/* Step content */}
@@ -169,7 +169,7 @@ export function EmployeeOnboardingWizard({ organizationSlug, onComplete, onCance
               <select
                 value={formData.contract_type}
                 onChange={e => updateField('contract_type', e.target.value)}
-                className="w-full h-10 rounded-md border border-slate-200 bg-white px-3 text-sm text-slate-900"
+                className="w-full h-10 rounded-md border border-kresna-border bg-white px-3 text-sm text-charcoal"
               >
                 <option value="indefinido">{t('team.contractIndefinido')}</option>
                 <option value="temporal">{t('team.contractTemporal')}</option>
@@ -223,7 +223,7 @@ export function EmployeeOnboardingWizard({ organizationSlug, onComplete, onCance
               <select
                 value={formData.preferred_shift}
                 onChange={e => updateField('preferred_shift', e.target.value)}
-                className="w-full h-10 rounded-md border border-slate-200 bg-white px-3 text-sm text-slate-900"
+                className="w-full h-10 rounded-md border border-kresna-border bg-white px-3 text-sm text-charcoal"
               >
                 <option value="">{t('common.noPreference')}</option>
                 <option value="morning">{t('team.shiftMorning')}</option>
@@ -241,7 +241,7 @@ export function EmployeeOnboardingWizard({ organizationSlug, onComplete, onCance
       )}
 
       {/* Navigation buttons */}
-      <div className="flex items-center justify-between pt-4 border-t border-slate-200">
+      <div className="flex items-center justify-between pt-4 border-t border-kresna-border">
         <Button variant="outline" onClick={currentStep === 0 ? onCancel : handleBack} className="gap-2">
           <ArrowLeft className="h-4 w-4" />
           {currentStep === 0 ? t('common.cancel') : t('common.back')}

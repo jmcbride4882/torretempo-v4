@@ -10,9 +10,9 @@ export interface ProgressProps extends React.HTMLAttributes<HTMLDivElement> {
 }
 
 const barVariants: Record<string, string> = {
-  default: 'bg-slate-600 dark:bg-slate-400',
-  primary: 'bg-gradient-to-r from-violet-500 to-indigo-600',
-  accent: 'bg-gradient-to-r from-cyan-500 to-blue-500',
+  default: 'bg-kresna-gray-dark',
+  primary: 'bg-gradient-to-r from-primary-500 to-primary-600',
+  accent: 'bg-gradient-to-r from-primary-400 to-primary-600',
   success: 'bg-emerald-500',
   warning: 'bg-amber-500',
   destructive: 'bg-red-500',
@@ -31,13 +31,13 @@ const Progress = React.forwardRef<HTMLDivElement, ProgressProps>(
     return (
       <div ref={ref} className={cn('w-full', className)} {...props}>
         {showLabel && (
-          <div className="flex justify-between text-xs text-slate-500 dark:text-slate-400 mb-1.5">
+          <div className="flex justify-between text-xs text-kresna-gray mb-1.5">
             <span>{value} / {max}</span>
             <span>{Math.round(percentage)}%</span>
           </div>
         )}
         <div className={cn(
-          'w-full rounded-full bg-slate-100 dark:bg-slate-700 overflow-hidden',
+          'w-full rounded-full bg-kresna-light overflow-hidden',
           sizeVariants[size]
         )}>
           <div

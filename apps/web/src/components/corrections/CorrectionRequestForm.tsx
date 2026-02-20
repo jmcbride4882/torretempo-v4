@@ -77,13 +77,13 @@ export function CorrectionRequestForm({ entries, organizationSlug, onSubmit, onC
       {/* Select time entry */}
       <div className="space-y-2">
         <Label className="flex items-center gap-2">
-          <Clock className="h-4 w-4 text-slate-500" />
+          <Clock className="h-4 w-4 text-kresna-gray" />
           {t('corrections.selectEntry')}
         </Label>
         <select
           value={selectedEntryId}
           onChange={e => setSelectedEntryId(e.target.value)}
-          className="w-full h-10 rounded-md border border-slate-200 bg-white px-3 text-sm text-slate-900"
+          className="w-full h-10 rounded-md border border-kresna-border bg-white px-3 text-sm text-charcoal"
           required
         >
           <option value="">{t('corrections.chooseEntry')}</option>
@@ -109,7 +109,7 @@ export function CorrectionRequestForm({ entries, organizationSlug, onSubmit, onC
                 'rounded-xl border px-3 py-2 text-xs font-medium transition-all',
                 correctionType === type
                   ? 'bg-primary-50 border-primary-200 text-primary-700'
-                  : 'bg-slate-50 border-slate-200 text-slate-600 hover:bg-slate-100'
+                  : 'bg-kresna-light border-kresna-border text-kresna-gray-dark hover:bg-kresna-light'
               )}
             >
               {t(`corrections.type.${type}`)}
@@ -129,7 +129,7 @@ export function CorrectionRequestForm({ entries, organizationSlug, onSubmit, onC
       {/* Reason */}
       <div className="space-y-2">
         <Label className="flex items-center gap-2">
-          <FileText className="h-4 w-4 text-slate-500" />
+          <FileText className="h-4 w-4 text-kresna-gray" />
           {t('corrections.reason')} *
         </Label>
         <textarea
@@ -138,7 +138,7 @@ export function CorrectionRequestForm({ entries, organizationSlug, onSubmit, onC
           placeholder={t('corrections.reasonPlaceholder')}
           rows={3}
           required
-          className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 placeholder:text-slate-400 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500 resize-none"
+          className="w-full rounded-lg border border-kresna-border bg-white px-3 py-2 text-sm text-charcoal placeholder:text-kresna-gray focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500 resize-none"
         />
       </div>
 
@@ -151,7 +151,7 @@ export function CorrectionRequestForm({ entries, organizationSlug, onSubmit, onC
       )}
 
       {/* Actions */}
-      <div className="flex justify-end gap-3 pt-4 border-t border-slate-200">
+      <div className="flex justify-end gap-3 pt-4 border-t border-kresna-border">
         <Button type="button" variant="outline" onClick={onCancel}>{t('common.cancel')}</Button>
         <Button type="submit" disabled={isSubmitting || !selectedEntryId || !reason.trim()}>
           {isSubmitting ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}

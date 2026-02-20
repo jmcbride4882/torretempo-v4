@@ -15,21 +15,21 @@ export function LeaveBalanceCard({ vacationTotal, vacationUsed, sickDaysUsed, cl
   const vacationPercent = vacationTotal > 0 ? (vacationUsed / vacationTotal) * 100 : 0;
 
   return (
-    <div className={cn('rounded-2xl border border-slate-200 bg-white p-5 space-y-4', className)}>
-      <h3 className="text-sm font-medium text-slate-700">{t('leave.balance')}</h3>
+    <div className={cn('rounded-2xl border border-kresna-border bg-white p-5 space-y-4', className)}>
+      <h3 className="text-sm font-medium text-kresna-gray-dark">{t('leave.balance')}</h3>
 
       {/* Vacation */}
       <div className="space-y-2">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Palmtree className="h-4 w-4 text-emerald-600" />
-            <span className="text-sm text-slate-700">{t('leave.vacation')}</span>
+            <span className="text-sm text-kresna-gray-dark">{t('leave.vacation')}</span>
           </div>
-          <span className="text-sm font-medium text-slate-900">
+          <span className="text-sm font-medium text-charcoal">
             {vacationRemaining} {t('leave.daysRemaining')}
           </span>
         </div>
-        <div className="h-2 rounded-full bg-slate-100 overflow-hidden">
+        <div className="h-2 rounded-full bg-kresna-light overflow-hidden">
           <div
             className={cn(
               'h-full rounded-full transition-all duration-500',
@@ -38,18 +38,18 @@ export function LeaveBalanceCard({ vacationTotal, vacationUsed, sickDaysUsed, cl
             style={{ width: `${Math.min(vacationPercent, 100)}%` }}
           />
         </div>
-        <p className="text-xs text-slate-500">
+        <p className="text-xs text-kresna-gray">
           {vacationUsed} {t('leave.used')} / {vacationTotal} {t('leave.total')}
         </p>
       </div>
 
       {/* Sick days */}
-      <div className="flex items-center justify-between pt-3 border-t border-slate-100">
+      <div className="flex items-center justify-between pt-3 border-t border-kresna-border">
         <div className="flex items-center gap-2">
-          <Stethoscope className="h-4 w-4 text-blue-600" />
-          <span className="text-sm text-slate-700">{t('leave.sickDays')}</span>
+          <Stethoscope className="h-4 w-4 text-primary-600" />
+          <span className="text-sm text-kresna-gray-dark">{t('leave.sickDays')}</span>
         </div>
-        <span className="text-sm font-medium text-slate-900">
+        <span className="text-sm font-medium text-charcoal">
           {sickDaysUsed} {t('leave.daysUsed')}
         </span>
       </div>

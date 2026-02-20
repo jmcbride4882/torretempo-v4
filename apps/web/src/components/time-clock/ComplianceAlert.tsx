@@ -71,10 +71,10 @@ export interface ComplianceAlertProps {
 const SEVERITY_CONFIG = {
   low: {
     icon: Info,
-    color: 'text-blue-400',
-    bg: 'bg-blue-500/10',
-    border: 'border-blue-500/20',
-    badge: 'bg-blue-500/20 text-blue-400',
+    color: 'text-primary-400',
+    bg: 'bg-primary-500/10',
+    border: 'border-primary-500/20',
+    badge: 'bg-primary-500/20 text-primary-400',
   },
   medium: {
     icon: AlertCircle,
@@ -123,7 +123,7 @@ function ViolationItem({ violation }: { violation: ComplianceViolation }) {
       <div className="flex items-start gap-3">
         <Icon className={cn("h-5 w-5 flex-shrink-0 mt-0.5", config.color)} />
         <div className="flex-1 space-y-2">
-          <p className="text-sm font-medium text-slate-900">{violation.message}</p>
+          <p className="text-sm font-medium text-charcoal">{violation.message}</p>
 
           {violation.ruleReference && (
             <div className="flex items-center gap-2">
@@ -134,7 +134,7 @@ function ViolationItem({ violation }: { violation: ComplianceViolation }) {
           )}
 
           {violation.recommendedAction && (
-            <p className="text-xs text-slate-500">
+            <p className="text-xs text-kresna-gray">
               <span className="font-medium">{t('compliance.recommended')}:</span> {violation.recommendedAction}
             </p>
           )}
@@ -179,17 +179,17 @@ export function ComplianceAlert({
   if (isBlocking && criticalViolations.length > 0) {
     return (
       <Dialog open={isOpen} onOpenChange={onClose}>
-        <DialogContent className="sm:max-w-lg bg-white border-slate-200">
+        <DialogContent className="sm:max-w-lg bg-white border-kresna-border">
           <DialogHeader>
             <div className="flex items-center gap-3">
               <div className="h-10 w-10 rounded-full bg-red-500/20 flex items-center justify-center">
                 <ShieldAlert className="h-5 w-5 text-red-400" />
               </div>
               <div>
-                <DialogTitle className="text-slate-900">
+                <DialogTitle className="text-charcoal">
                   {t('compliance.violationTitle')}
                 </DialogTitle>
-                <DialogDescription className="text-slate-500">
+                <DialogDescription className="text-kresna-gray">
                   {t('compliance.violationBlocked')}
                 </DialogDescription>
               </div>
@@ -203,7 +203,7 @@ export function ComplianceAlert({
           </div>
 
           {summary && (
-            <div className="flex items-center justify-between text-xs text-slate-500 py-2 border-t border-slate-200">
+            <div className="flex items-center justify-between text-xs text-kresna-gray py-2 border-t border-kresna-border">
               <span>{t('compliance.checksPerformed', { count: summary.checks })}</span>
               <span className="text-red-400">{t('compliance.violationsFound', { count: summary.violations })}</span>
             </div>
@@ -214,7 +214,7 @@ export function ComplianceAlert({
               <Button
                 variant="outline"
                 onClick={() => setShowOverrideForm(true)}
-                className="w-full border-slate-200"
+                className="w-full border-kresna-border"
               >
                 {t('compliance.managerOverride')}
               </Button>
@@ -233,8 +233,8 @@ export function ComplianceAlert({
                   rows={2}
                   className={cn(
                     "w-full px-3 py-2 rounded-lg resize-none",
-                    "bg-slate-50 border border-slate-200",
-                    "text-slate-900 placeholder:text-slate-400",
+                    "bg-kresna-light border border-kresna-border",
+                    "text-charcoal placeholder:text-kresna-gray",
                     "focus:outline-none focus:ring-2 focus:ring-amber-500/50",
                     "text-sm"
                   )}
@@ -262,7 +262,7 @@ export function ComplianceAlert({
               <Button
                 variant="ghost"
                 onClick={onClose}
-                className="w-full text-slate-400"
+                className="w-full text-kresna-gray"
               >
                 {t('common.close')}
               </Button>
@@ -295,18 +295,18 @@ export function ComplianceAlert({
                 <p className="text-sm font-medium text-yellow-700">
                   {t('compliance.warningTitle')}
                 </p>
-                <p className="text-xs text-slate-700 mt-1">
+                <p className="text-xs text-kresna-gray-dark mt-1">
                   {warnings[0]?.message}
                 </p>
                 {warnings.length > 1 && (
-                  <p className="text-xs text-slate-500 mt-1">
+                  <p className="text-xs text-kresna-gray mt-1">
                     {t('compliance.moreWarnings', { count: warnings.length - 1 })}
                   </p>
                 )}
               </div>
               <button
                 onClick={onClose}
-                className="text-slate-400 hover:text-slate-900 transition-colors"
+                className="text-kresna-gray hover:text-charcoal transition-colors"
               >
                 <X className="h-4 w-4" />
               </button>
@@ -339,14 +339,14 @@ export function ComplianceAlert({
                 {t('compliance.allChecksPassed')}
               </p>
               {summary && (
-                <p className="text-xs text-slate-500 mt-0.5">
+                <p className="text-xs text-kresna-gray mt-0.5">
                   {t('compliance.checksCount', { count: summary.checks })}
                 </p>
               )}
             </div>
             <button
               onClick={onClose}
-              className="text-slate-400 hover:text-slate-900 transition-colors"
+              className="text-kresna-gray hover:text-charcoal transition-colors"
             >
               <X className="h-4 w-4" />
             </button>

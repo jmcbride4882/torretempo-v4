@@ -98,7 +98,7 @@ function CircularProgress({ score }: { score: number }) {
         >
           {score}
         </motion.span>
-        <p className="text-xs text-slate-500">/ 100</p>
+        <p className="text-xs text-kresna-gray">/ 100</p>
       </div>
     </div>
   );
@@ -146,7 +146,7 @@ function ViolationCard({ violation }: { violation: ComplianceViolation }) {
             <p className={cn('text-sm font-medium', isCritical ? 'text-red-300' : 'text-amber-300')}>
               {t(`compliance.violationTypes.${violation.violationType}`)}
             </p>
-            <p className="text-[10px] text-slate-500">{formatDate(violation.affectedDate)}</p>
+            <p className="text-[10px] text-kresna-gray">{formatDate(violation.affectedDate)}</p>
           </div>
         </div>
 
@@ -164,20 +164,20 @@ function ViolationCard({ violation }: { violation: ComplianceViolation }) {
       </div>
 
       {/* Description */}
-      <p className="mb-3 text-sm text-slate-700">{violation.description}</p>
+      <p className="mb-3 text-sm text-kresna-gray-dark">{violation.description}</p>
 
       {/* Details */}
-      <div className="mb-3 grid grid-cols-3 gap-2 rounded-lg border border-slate-100 bg-slate-50 p-2 text-xs">
+      <div className="mb-3 grid grid-cols-3 gap-2 rounded-lg border border-kresna-border bg-kresna-light p-2 text-xs">
         <div className="text-center">
-          <p className="text-slate-500">{t('compliance.actual')}</p>
-          <p className="font-medium text-slate-900">{violation.details.actualValue}h</p>
+          <p className="text-kresna-gray">{t('compliance.actual')}</p>
+          <p className="font-medium text-charcoal">{violation.details.actualValue}h</p>
         </div>
         <div className="text-center">
-          <p className="text-slate-500">{t('compliance.limitValue')}</p>
-          <p className="font-medium text-slate-900">{violation.details.limitValue}h</p>
+          <p className="text-kresna-gray">{t('compliance.limitValue')}</p>
+          <p className="font-medium text-charcoal">{violation.details.limitValue}h</p>
         </div>
         <div className="text-center">
-          <p className="text-slate-500">{t('compliance.excess')}</p>
+          <p className="text-kresna-gray">{t('compliance.excess')}</p>
           <p className={cn('font-medium', isCritical ? 'text-red-400' : 'text-amber-400')}>
             +{violation.details.excess}h
           </p>
@@ -185,19 +185,19 @@ function ViolationCard({ violation }: { violation: ComplianceViolation }) {
       </div>
 
       {/* Status */}
-      <div className="flex items-center justify-between border-t border-slate-100 pt-3">
+      <div className="flex items-center justify-between border-t border-kresna-border pt-3">
         <div className="flex items-center gap-1.5">
           <StatusIcon className={cn('h-3.5 w-3.5', status.className)} />
           <span className={cn('text-xs font-medium', status.className)}>{t(status.labelKey)}</span>
         </div>
         {violation.userName && (
-          <span className="text-xs text-slate-500">{violation.userName}</span>
+          <span className="text-xs text-kresna-gray">{violation.userName}</span>
         )}
       </div>
 
       {/* Correction notes */}
       {violation.correctionNotes && (
-        <div className="mt-2 rounded-lg bg-slate-50 p-2 text-xs italic text-slate-500">
+        <div className="mt-2 rounded-lg bg-kresna-light p-2 text-xs italic text-kresna-gray">
           {violation.correctionNotes}
         </div>
       )}
@@ -239,8 +239,8 @@ export function ComplianceStatus({ violations, complianceScore, className }: Com
         <div className="mx-auto mb-4 flex h-24 w-24 items-center justify-center rounded-2xl bg-gradient-to-br from-emerald-600/20 to-emerald-600/5">
           <ShieldCheck className="h-12 w-12 text-emerald-400" />
         </div>
-        <h3 className="mb-1 text-xl font-bold text-slate-900">{t('compliance.perfectTitle')}</h3>
-        <p className="text-sm text-slate-500">
+        <h3 className="mb-1 text-xl font-bold text-charcoal">{t('compliance.perfectTitle')}</h3>
+        <p className="text-sm text-kresna-gray">
           {t('compliance.perfectDesc')}
         </p>
       </motion.div>
@@ -258,7 +258,7 @@ export function ComplianceStatus({ violations, complianceScore, className }: Com
         <CircularProgress score={complianceScore} />
 
         <div className="flex flex-1 flex-col gap-3 sm:ml-6">
-          <h3 className="text-lg font-semibold text-slate-900">
+          <h3 className="text-lg font-semibold text-charcoal">
             {t('compliance.complianceScore')}{' '}
             <span
               className={cn(
@@ -282,14 +282,14 @@ export function ComplianceStatus({ violations, complianceScore, className }: Com
             <div className="rounded-lg border border-red-500/20 bg-red-500/10 p-2.5">
               <div className="flex items-center gap-1.5">
                 <XCircle className="h-4 w-4 text-red-400" />
-                <span className="text-xs text-slate-500">{t('compliance.criticalLabel')}</span>
+                <span className="text-xs text-kresna-gray">{t('compliance.criticalLabel')}</span>
               </div>
               <p className="mt-1 text-lg font-bold text-red-300">{criticalCount}</p>
             </div>
             <div className="rounded-lg border border-amber-500/20 bg-amber-500/10 p-2.5">
               <div className="flex items-center gap-1.5">
                 <AlertTriangle className="h-4 w-4 text-amber-400" />
-                <span className="text-xs text-slate-500">{t('compliance.warningsLabel')}</span>
+                <span className="text-xs text-kresna-gray">{t('compliance.warningsLabel')}</span>
               </div>
               <p className="mt-1 text-lg font-bold text-amber-300">{warningCount}</p>
             </div>
@@ -300,9 +300,9 @@ export function ComplianceStatus({ violations, complianceScore, className }: Com
             {Object.entries(groupedViolations).map(([type, items]) => {
               if (items.length === 0) return null;
               return (
-                <div key={type} className="flex items-center justify-between text-slate-500">
+                <div key={type} className="flex items-center justify-between text-kresna-gray">
                   <span>{t(`compliance.violationTypes.${type}`)}</span>
-                  <span className="font-medium text-slate-900">{items.length}</span>
+                  <span className="font-medium text-charcoal">{items.length}</span>
                 </div>
               );
             })}
@@ -312,7 +312,7 @@ export function ComplianceStatus({ violations, complianceScore, className }: Com
 
       {/* Violations list */}
       <div className="space-y-3">
-        <h4 className="text-sm font-medium text-slate-700">{t('compliance.violationsCount', { count: violations.length })}</h4>
+        <h4 className="text-sm font-medium text-kresna-gray-dark">{t('compliance.violationsCount', { count: violations.length })}</h4>
         <AnimatePresence mode="popLayout">
           {violations.map((violation) => (
             <ViolationCard key={violation.id} violation={violation} />

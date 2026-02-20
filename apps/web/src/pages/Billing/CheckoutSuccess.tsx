@@ -9,7 +9,7 @@ const CONFETTI_DOTS = Array.from({ length: 12 }, (_, i) => ({
   left: Math.random() * 100,
   delay: Math.random() * 2,
   duration: Math.random() * 2 + 3,
-  color: ['bg-emerald-400', 'bg-violet-400', 'bg-slate-300', 'bg-emerald-300', 'bg-violet-300'][
+  color: ['bg-emerald-400', 'bg-primary-400', 'bg-kresna-border', 'bg-emerald-300', 'bg-primary-300'][
     i % 5
   ],
 }));
@@ -47,12 +47,12 @@ export default function CheckoutSuccess() {
       </div>
 
       {/* Title */}
-      <h1 className="mb-2 text-center text-2xl font-bold text-slate-900">
+      <h1 className="mb-2 text-center text-2xl font-bold text-charcoal">
         {t('billing.checkoutSuccess', { defaultValue: 'Payment successful!' })}
       </h1>
 
       {/* Subtitle */}
-      <p className="mb-2 text-center text-base text-slate-500">
+      <p className="mb-2 text-center text-base text-kresna-gray">
         {t('billing.checkoutSuccessDesc', {
           defaultValue: 'Your subscription is now active',
         })}
@@ -60,7 +60,7 @@ export default function CheckoutSuccess() {
 
       {/* Plan name */}
       {planName && (
-        <p className="mb-8 text-center text-sm font-medium text-violet-600">
+        <p className="mb-8 text-center text-sm font-medium text-primary-600">
           {t('billing.planLabel', { plan: planName, defaultValue: '{{plan}} plan' })}
         </p>
       )}
@@ -70,14 +70,14 @@ export default function CheckoutSuccess() {
       <div className="flex w-full max-w-xs flex-col gap-3">
         <Button
           onClick={() => navigate(`/t/${slug}/dashboard`)}
-          className="w-full bg-gradient-to-r from-violet-600 to-violet-500 text-white shadow-md hover:opacity-90"
+          className="w-full bg-gradient-to-r from-primary-600 to-primary-500 text-white shadow-md hover:opacity-90"
         >
           {t('billing.goToDashboard', { defaultValue: 'Go to Dashboard' })}
         </Button>
         <Button
           variant="outline"
           onClick={() => navigate(`/t/${slug}/billing`)}
-          className="w-full border-slate-300 text-slate-700 hover:bg-slate-50"
+          className="w-full border-kresna-border text-kresna-gray-dark hover:bg-kresna-light"
         >
           {t('billing.manageBilling', { defaultValue: 'Manage Billing' })}
         </Button>

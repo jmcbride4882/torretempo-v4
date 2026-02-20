@@ -220,13 +220,13 @@ function ActiveEntryCard({
           </div>
 
           <div className="flex items-baseline gap-1">
-            <span className="text-4xl font-bold tabular-nums text-slate-900">{hours}</span>
-            <span className="text-lg text-slate-500">{t('clock.hours')}</span>
-            <span className="text-4xl font-bold tabular-nums text-slate-900 ml-2">{mins}</span>
-            <span className="text-lg text-slate-500">{t('clock.minutes')}</span>
+            <span className="text-4xl font-bold tabular-nums text-charcoal">{hours}</span>
+            <span className="text-lg text-kresna-gray">{t('clock.hours')}</span>
+            <span className="text-4xl font-bold tabular-nums text-charcoal ml-2">{mins}</span>
+            <span className="text-lg text-kresna-gray">{t('clock.minutes')}</span>
           </div>
 
-          <div className="flex items-center gap-4 text-sm text-slate-500">
+          <div className="flex items-center gap-4 text-sm text-kresna-gray">
             <div className="flex items-center gap-1.5">
               <Clock className="h-3.5 w-3.5" />
               <span>{t('clock.startedAt')} {formatTime(entry.clock_in)}</span>
@@ -296,7 +296,7 @@ function ActiveEntryCard({
 
       {entry.linked_shift_id && (
         <div className="mt-4 pt-4 border-t border-emerald-200">
-          <div className="flex items-center justify-between text-xs text-slate-500 mb-2">
+          <div className="flex items-center justify-between text-xs text-kresna-gray mb-2">
             <span>{t('clock.shiftProgress')}</span>
             <span>{Math.min(100, Math.round((durationMinutes / 480) * 100))}%</span>
           </div>
@@ -343,9 +343,9 @@ function FilterBar({
   ];
 
   return (
-    <div className="rounded-xl border border-slate-200 bg-white p-4 space-y-4">
+    <div className="rounded-xl border border-kresna-border bg-white p-4 space-y-4">
       <div className="space-y-2">
-        <label className="text-xs font-medium text-slate-500 uppercase tracking-wider">
+        <label className="text-xs font-medium text-kresna-gray uppercase tracking-wider">
           {t('clock.dateRange')}
         </label>
         <div className="flex flex-wrap gap-2">
@@ -358,7 +358,7 @@ function FilterBar({
                 'px-3 py-1.5 rounded-lg text-sm font-medium transition-all',
                 dateFilter === filter.id
                   ? 'bg-primary-50 text-primary-700 ring-1 ring-primary-200'
-                  : 'bg-slate-100 text-slate-600 hover:bg-slate-200 hover:text-slate-900',
+                  : 'bg-kresna-light text-kresna-gray-dark hover:bg-kresna-border hover:text-charcoal',
                 filter.id === 'custom' && 'opacity-50 cursor-not-allowed'
               )}
             >
@@ -369,7 +369,7 @@ function FilterBar({
       </div>
 
       <div className="space-y-2">
-        <label className="text-xs font-medium text-slate-500 uppercase tracking-wider">
+        <label className="text-xs font-medium text-kresna-gray uppercase tracking-wider">
           {t('clock.status')}
         </label>
         <div className="flex flex-wrap gap-2">
@@ -381,7 +381,7 @@ function FilterBar({
                 'px-3 py-1.5 rounded-lg text-sm font-medium transition-all',
                 statusFilter === filter.id
                   ? 'bg-primary-50 text-primary-700 ring-1 ring-primary-200'
-                  : 'bg-slate-100 text-slate-600 hover:bg-slate-200 hover:text-slate-900'
+                  : 'bg-kresna-light text-kresna-gray-dark hover:bg-kresna-border hover:text-charcoal'
               )}
             >
               {filter.label}
@@ -428,16 +428,16 @@ function EntryCard({
   const status = statusConfig[entry.status] || statusConfig.completed;
 
   return (
-    <div className="rounded-xl border border-slate-200 bg-white overflow-hidden">
+    <div className="rounded-xl border border-kresna-border bg-white overflow-hidden">
       <button
         onClick={onToggle}
-        className="w-full p-4 flex items-center justify-between gap-4 text-left hover:bg-slate-50 transition-colors"
+        className="w-full p-4 flex items-center justify-between gap-4 text-left hover:bg-kresna-light transition-colors"
       >
         <div className="flex items-center gap-4 flex-1 min-w-0">
           <div className="flex-1 min-w-0">
-            <div className="flex items-center gap-2 text-slate-900 font-medium">
+            <div className="flex items-center gap-2 text-charcoal font-medium">
               <span>{formatTime(entry.clock_in)}</span>
-              <span className="text-slate-400">→</span>
+              <span className="text-kresna-gray">→</span>
               <span>{entry.clock_out ? formatTime(entry.clock_out) : '...'}</span>
             </div>
             <div className="flex items-center gap-3 mt-1">
@@ -445,7 +445,7 @@ function EntryCard({
                 <Timer className="h-3 w-3" />
                 {formatDuration(duration, t)}
               </Badge>
-              <div className="flex items-center gap-1 text-xs text-slate-400">
+              <div className="flex items-center gap-1 text-xs text-kresna-gray">
                 {getMethodIcon(entry.clock_in_method)}
                 <MapPin className="h-3 w-3 ml-1" />
               </div>
@@ -462,14 +462,14 @@ function EntryCard({
           </Badge>
         </div>
 
-        <ChevronDown className={cn('h-5 w-5 text-slate-400 transition-transform', isExpanded && 'rotate-180')} />
+        <ChevronDown className={cn('h-5 w-5 text-kresna-gray transition-transform', isExpanded && 'rotate-180')} />
       </button>
 
       {isExpanded && (
-        <div className="px-4 pb-4 pt-0 border-t border-slate-100 space-y-4">
+        <div className="px-4 pb-4 pt-0 border-t border-kresna-border space-y-4">
           {entry.break_minutes > 0 && (
             <div className="pt-4">
-              <div className="flex items-center gap-2 text-sm text-slate-500 mb-2">
+              <div className="flex items-center gap-2 text-sm text-kresna-gray mb-2">
                 <Coffee className="h-4 w-4" />
                 <span>{t('clock.breaks')}: {formatDuration(entry.break_minutes, t)}</span>
               </div>
@@ -478,16 +478,16 @@ function EntryCard({
 
           {entry.notes && (
             <div className="pt-2">
-              <p className="text-sm text-slate-500">{entry.notes}</p>
+              <p className="text-sm text-kresna-gray">{entry.notes}</p>
             </div>
           )}
 
           <div className="pt-2 space-y-2">
-            <p className="text-xs text-slate-500 uppercase tracking-wider">{t('clock.locations')}</p>
+            <p className="text-xs text-kresna-gray uppercase tracking-wider">{t('clock.locations')}</p>
             <div className="grid grid-cols-2 gap-4 text-xs">
               <div>
-                <span className="text-slate-400">{t('clock.clockIn')}:</span>
-                <p className="text-slate-600 font-mono mt-0.5">
+                <span className="text-kresna-gray">{t('clock.clockIn')}:</span>
+                <p className="text-kresna-gray-dark font-mono mt-0.5">
                   {entry.clock_in_location
                     ? `${entry.clock_in_location.lat.toFixed(5)}, ${entry.clock_in_location.lng.toFixed(5)}`
                     : t('common.notAvailable')}
@@ -495,8 +495,8 @@ function EntryCard({
               </div>
               {entry.clock_out_location && (
                 <div>
-                  <span className="text-slate-400">{t('clock.clockOut')}:</span>
-                  <p className="text-slate-600 font-mono mt-0.5">
+                  <span className="text-kresna-gray">{t('clock.clockOut')}:</span>
+                  <p className="text-kresna-gray-dark font-mono mt-0.5">
                     {entry.clock_out_location.lat.toFixed(5)},{' '}
                     {entry.clock_out_location.lng.toFixed(5)}
                   </p>
@@ -542,19 +542,19 @@ function SummaryStats({ entries }: { entries: TimeEntry[] }) {
   }, [entries]);
 
   return (
-    <div className="rounded-xl border border-slate-200 bg-white p-4 sticky bottom-0 pb-safe">
+    <div className="rounded-xl border border-kresna-border bg-white p-4 sticky bottom-0 pb-safe">
       <div className="grid grid-cols-3 gap-4">
         <div className="text-center">
-          <p className="text-2xl font-bold text-slate-900">{stats.weekHours}</p>
-          <p className="text-xs text-slate-500 mt-0.5">{t('clock.thisWeek')}</p>
+          <p className="text-2xl font-bold text-charcoal">{stats.weekHours}</p>
+          <p className="text-xs text-kresna-gray mt-0.5">{t('clock.thisWeek')}</p>
         </div>
-        <div className="text-center border-x border-slate-200">
-          <p className="text-2xl font-bold text-slate-900">{stats.avgPerDay}</p>
-          <p className="text-xs text-slate-500 mt-0.5">{t('clock.avgPerDay')}</p>
+        <div className="text-center border-x border-kresna-border">
+          <p className="text-2xl font-bold text-charcoal">{stats.avgPerDay}</p>
+          <p className="text-xs text-kresna-gray mt-0.5">{t('clock.avgPerDay')}</p>
         </div>
         <div className="text-center">
-          <p className="text-2xl font-bold text-slate-900">{stats.breakPercentage}%</p>
-          <p className="text-xs text-slate-500 mt-0.5">{t('clock.breakTime')}</p>
+          <p className="text-2xl font-bold text-charcoal">{stats.breakPercentage}%</p>
+          <p className="text-xs text-kresna-gray mt-0.5">{t('clock.breakTime')}</p>
         </div>
       </div>
     </div>
@@ -565,12 +565,12 @@ function EmptyState({ onClockIn }: { onClockIn: () => void }) {
   const { t } = useTranslation();
 
   return (
-    <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-slate-300 bg-slate-50 px-6 py-16 text-center">
+    <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-kresna-border bg-kresna-light px-6 py-16 text-center">
       <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-primary-50">
         <Clock className="h-8 w-8 text-primary-600" />
       </div>
-      <h3 className="mb-1 text-lg font-semibold text-slate-900">{t('clock.noEntries')}</h3>
-      <p className="mb-6 max-w-sm text-sm text-slate-500">
+      <h3 className="mb-1 text-lg font-semibold text-charcoal">{t('clock.noEntries')}</h3>
+      <p className="mb-6 max-w-sm text-sm text-kresna-gray">
         {t('clock.noEntriesDesc')}
       </p>
       <Button onClick={onClockIn} className="gap-2 bg-emerald-600 hover:bg-emerald-500">
@@ -583,13 +583,13 @@ function EmptyState({ onClockIn }: { onClockIn: () => void }) {
 
 function EntrySkeleton() {
   return (
-    <div className="rounded-xl border border-slate-200 bg-white p-4 animate-pulse">
+    <div className="rounded-xl border border-kresna-border bg-white p-4 animate-pulse">
       <div className="flex items-center justify-between gap-4">
         <div className="flex-1 space-y-2">
-          <div className="h-5 bg-slate-200 rounded w-32" />
-          <div className="h-4 bg-slate-100 rounded w-24" />
+          <div className="h-5 bg-kresna-border rounded w-32" />
+          <div className="h-4 bg-kresna-light rounded w-24" />
         </div>
-        <div className="h-6 bg-slate-100 rounded w-20" />
+        <div className="h-6 bg-kresna-light rounded w-20" />
       </div>
     </div>
   );
@@ -761,8 +761,8 @@ export default function TimeEntryList() {
             <Clock className="h-5 w-5 text-primary-600" />
           </div>
           <div>
-            <h1 className="text-xl font-bold text-slate-900 sm:text-2xl">{t('clock.title')}</h1>
-            <p className="text-sm text-slate-500">{t('clock.subtitle')}</p>
+            <h1 className="text-xl font-bold text-charcoal sm:text-2xl">{t('clock.title')}</h1>
+            <p className="text-sm text-kresna-gray">{t('clock.subtitle')}</p>
           </div>
         </div>
 
@@ -846,9 +846,9 @@ export default function TimeEntryList() {
           {groupedEntries.map((group) => (
             <div key={group.date} className="space-y-3">
               <div className="flex items-center gap-2">
-                <Calendar className="h-4 w-4 text-slate-400" />
-                <h3 className="text-sm font-medium text-slate-500">{group.label}</h3>
-                <div className="flex-1 h-px bg-slate-200" />
+                <Calendar className="h-4 w-4 text-kresna-gray" />
+                <h3 className="text-sm font-medium text-kresna-gray">{group.label}</h3>
+                <div className="flex-1 h-px bg-kresna-border" />
               </div>
 
               <div className="space-y-2">

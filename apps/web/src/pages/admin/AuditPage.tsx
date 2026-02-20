@@ -37,15 +37,15 @@ import type { AuditLogEntry } from '@/lib/api/admin';
 // Action colors
 const actionColors: Record<string, string> = {
   create: 'bg-emerald-50 text-emerald-700 border-emerald-200',
-  update: 'bg-blue-50 text-blue-700 border-blue-200',
+  update: 'bg-primary-50 text-primary-700 border-primary-200',
   delete: 'bg-red-50 text-red-700 border-red-200',
-  login: 'bg-violet-50 text-violet-700 border-violet-200',
-  logout: 'bg-slate-100 text-slate-700 border-slate-200',
-  suspend: 'bg-violet-50 text-violet-700 border-violet-200',
+  login: 'bg-primary-50 text-primary-700 border-primary-200',
+  logout: 'bg-kresna-light text-kresna-gray-dark border-kresna-border',
+  suspend: 'bg-primary-50 text-primary-700 border-primary-200',
   unsuspend: 'bg-teal-50 text-teal-700 border-teal-200',
   ban: 'bg-red-50 text-red-700 border-red-200',
   unban: 'bg-emerald-50 text-emerald-700 border-emerald-200',
-  grant: 'bg-violet-50 text-violet-700 border-violet-200',
+  grant: 'bg-primary-50 text-primary-700 border-primary-200',
   revoke: 'bg-red-50 text-red-700 border-red-200',
 };
 
@@ -189,12 +189,12 @@ export default function AuditPage() {
       {/* Page header */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-violet-50 border border-violet-200">
-            <FileText className="h-5 w-5 text-violet-600" />
+          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary-50 border border-primary-200">
+            <FileText className="h-5 w-5 text-primary-600" />
           </div>
           <div>
-            <h1 className="text-xl font-bold text-slate-900 sm:text-2xl">{t('admin.audit.title')}</h1>
-            <p className="text-sm text-slate-500">{t('admin.audit.subtitle')}</p>
+            <h1 className="text-xl font-bold text-charcoal sm:text-2xl">{t('admin.audit.title')}</h1>
+            <p className="text-sm text-kresna-gray">{t('admin.audit.subtitle')}</p>
           </div>
         </div>
 
@@ -206,8 +206,8 @@ export default function AuditPage() {
             className={cn(
               'gap-1.5 rounded-lg border sm:hidden',
               showFilters || hasActiveFilters
-                ? 'border-violet-200 bg-violet-50 text-violet-700'
-                : 'border-slate-200 bg-slate-50 text-slate-700'
+                ? 'border-primary-200 bg-primary-50 text-primary-700'
+                : 'border-kresna-border bg-kresna-light text-kresna-gray-dark'
             )}
           >
             <Filter className="h-4 w-4" />
@@ -219,7 +219,7 @@ export default function AuditPage() {
             size="sm"
             onClick={handleExport}
             disabled={isExporting}
-            className="gap-1.5 rounded-lg border border-slate-200 bg-slate-50 text-slate-700 hover:bg-slate-100"
+            className="gap-1.5 rounded-lg border border-kresna-border bg-kresna-light text-kresna-gray-dark hover:bg-kresna-light"
           >
             <Download className={cn('h-4 w-4', isExporting && 'animate-bounce')} />
             <span className="hidden sm:inline">{isExporting ? t('admin.exporting') : t('admin.exportCsv')}</span>
@@ -230,7 +230,7 @@ export default function AuditPage() {
             size="sm"
             onClick={handleRefresh}
             disabled={isRefreshing}
-            className="gap-1.5 rounded-lg border border-slate-200 bg-slate-50 text-slate-700 hover:bg-slate-100"
+            className="gap-1.5 rounded-lg border border-kresna-border bg-kresna-light text-kresna-gray-dark hover:bg-kresna-light"
           >
             <RefreshCw className={cn('h-4 w-4', isRefreshing && 'animate-spin')} />
             <span className="hidden sm:inline">{t('admin.refresh')}</span>
@@ -242,12 +242,12 @@ export default function AuditPage() {
       <div className="hidden flex-wrap items-center gap-3 sm:flex">
         {/* Action filter */}
         <Select value={actionFilter} onValueChange={(v) => { setActionFilter(v); setPage(1); }}>
-          <SelectTrigger className="w-[140px] rounded-xl border border-slate-200 bg-white shadow-sm text-slate-900">
+          <SelectTrigger className="w-[140px] rounded-xl border border-kresna-border bg-white shadow-sm text-charcoal">
             <SelectValue placeholder={t('admin.audit.action')} />
           </SelectTrigger>
-          <SelectContent className="rounded-xl border border-slate-200 bg-white shadow-sm">
+          <SelectContent className="rounded-xl border border-kresna-border bg-white shadow-sm">
             {actionOptions.map((opt) => (
-              <SelectItem key={opt.value} value={opt.value} className="text-slate-700">
+              <SelectItem key={opt.value} value={opt.value} className="text-kresna-gray-dark">
                 {t(opt.labelKey)}
               </SelectItem>
             ))}
@@ -256,12 +256,12 @@ export default function AuditPage() {
 
         {/* Target type filter */}
         <Select value={targetTypeFilter} onValueChange={(v) => { setTargetTypeFilter(v); setPage(1); }}>
-          <SelectTrigger className="w-[140px] rounded-xl border border-slate-200 bg-white shadow-sm text-slate-900">
+          <SelectTrigger className="w-[140px] rounded-xl border border-kresna-border bg-white shadow-sm text-charcoal">
             <SelectValue placeholder={t('admin.audit.target')} />
           </SelectTrigger>
-          <SelectContent className="rounded-xl border border-slate-200 bg-white shadow-sm">
+          <SelectContent className="rounded-xl border border-kresna-border bg-white shadow-sm">
             {targetTypeOptions.map((opt) => (
-              <SelectItem key={opt.value} value={opt.value} className="text-slate-700">
+              <SelectItem key={opt.value} value={opt.value} className="text-kresna-gray-dark">
                 {t(opt.labelKey)}
               </SelectItem>
             ))}
@@ -282,7 +282,7 @@ export default function AuditPage() {
             variant="ghost"
             size="sm"
             onClick={clearFilters}
-            className="gap-1 text-slate-500 hover:text-slate-900"
+            className="gap-1 text-kresna-gray hover:text-charcoal"
           >
             <X className="h-3.5 w-3.5" />
             {t('common.clear')}
@@ -292,17 +292,17 @@ export default function AuditPage() {
 
       {/* Mobile Filters */}
       {showFilters && (
-        <div className="rounded-xl border border-slate-200 bg-white shadow-sm overflow-hidden p-4 sm:hidden">
+        <div className="rounded-xl border border-kresna-border bg-white shadow-sm overflow-hidden p-4 sm:hidden">
           <div className="space-y-3">
             <div>
-              <label className="mb-1.5 block text-xs font-medium text-slate-500">{t('admin.audit.action')}</label>
+              <label className="mb-1.5 block text-xs font-medium text-kresna-gray">{t('admin.audit.action')}</label>
               <Select value={actionFilter} onValueChange={(v) => { setActionFilter(v); setPage(1); }}>
-                <SelectTrigger className="w-full rounded-xl border border-slate-200 bg-white shadow-sm text-slate-900">
+                <SelectTrigger className="w-full rounded-xl border border-kresna-border bg-white shadow-sm text-charcoal">
                   <SelectValue />
                 </SelectTrigger>
-                <SelectContent className="rounded-xl border border-slate-200 bg-white shadow-sm">
+                <SelectContent className="rounded-xl border border-kresna-border bg-white shadow-sm">
                   {actionOptions.map((opt) => (
-                    <SelectItem key={opt.value} value={opt.value} className="text-slate-700">
+                    <SelectItem key={opt.value} value={opt.value} className="text-kresna-gray-dark">
                       {t(opt.labelKey)}
                     </SelectItem>
                   ))}
@@ -310,14 +310,14 @@ export default function AuditPage() {
               </Select>
             </div>
             <div>
-              <label className="mb-1.5 block text-xs font-medium text-slate-500">{t('admin.audit.target')}</label>
+              <label className="mb-1.5 block text-xs font-medium text-kresna-gray">{t('admin.audit.target')}</label>
               <Select value={targetTypeFilter} onValueChange={(v) => { setTargetTypeFilter(v); setPage(1); }}>
-                <SelectTrigger className="w-full rounded-xl border border-slate-200 bg-white shadow-sm text-slate-900">
+                <SelectTrigger className="w-full rounded-xl border border-kresna-border bg-white shadow-sm text-charcoal">
                   <SelectValue />
                 </SelectTrigger>
-                <SelectContent className="rounded-xl border border-slate-200 bg-white shadow-sm">
+                <SelectContent className="rounded-xl border border-kresna-border bg-white shadow-sm">
                   {targetTypeOptions.map((opt) => (
-                    <SelectItem key={opt.value} value={opt.value} className="text-slate-700">
+                    <SelectItem key={opt.value} value={opt.value} className="text-kresna-gray-dark">
                       {t(opt.labelKey)}
                     </SelectItem>
                   ))}
@@ -325,7 +325,7 @@ export default function AuditPage() {
               </Select>
             </div>
             <div>
-              <label className="mb-1.5 block text-xs font-medium text-slate-500">{t('admin.audit.dateRange')}</label>
+              <label className="mb-1.5 block text-xs font-medium text-kresna-gray">{t('admin.audit.dateRange')}</label>
               <DateRangePicker
                 startDate={startDate}
                 endDate={endDate}
@@ -340,7 +340,7 @@ export default function AuditPage() {
                 variant="ghost"
                 size="sm"
                 onClick={clearFilters}
-                className="w-full gap-1 text-slate-500 hover:text-slate-900"
+                className="w-full gap-1 text-kresna-gray hover:text-charcoal"
               >
                 <X className="h-3.5 w-3.5" />
                 {t('admin.clearFilters')}
@@ -353,21 +353,21 @@ export default function AuditPage() {
       {/* Stats bar */}
       <div className="flex items-center gap-4 text-sm">
         <div className="flex items-center gap-2">
-          <div className="h-2 w-2 rounded-full bg-violet-500" />
-          <span className="text-slate-500">
-            <span className="font-medium text-slate-700">{total}</span> {t('admin.audit.entries')}
+          <div className="h-2 w-2 rounded-full bg-primary-500" />
+          <span className="text-kresna-gray">
+            <span className="font-medium text-kresna-gray-dark">{total}</span> {t('admin.audit.entries')}
           </span>
         </div>
         {hasActiveFilters && (
           <div className="flex items-center gap-2">
-            <Filter className="h-3.5 w-3.5 text-violet-600" />
-            <span className="text-slate-500">{t('admin.audit.filtered')}</span>
+            <Filter className="h-3.5 w-3.5 text-primary-600" />
+            <span className="text-kresna-gray">{t('admin.audit.filtered')}</span>
           </div>
         )}
       </div>
 
       {/* Audit log table */}
-      <div className="rounded-xl border border-slate-200 bg-white shadow-sm overflow-hidden">
+      <div className="rounded-xl border border-kresna-border bg-white shadow-sm overflow-hidden">
         {isLoading ? (
           <AuditTableSkeleton />
         ) : logs.length === 0 ? (
@@ -376,20 +376,20 @@ export default function AuditPage() {
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead>
-                <tr className="border-b border-slate-200 bg-slate-50">
-                  <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-slate-500">
+                <tr className="border-b border-kresna-border bg-kresna-light">
+                  <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-kresna-gray">
                     {t('admin.audit.action')}
                   </th>
-                  <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-slate-500">
+                  <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-kresna-gray">
                     {t('admin.audit.actor')}
                   </th>
-                  <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-slate-500">
+                  <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-kresna-gray">
                     {t('admin.audit.target')}
                   </th>
-                  <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-slate-500">
+                  <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-kresna-gray">
                     {t('admin.audit.time')}
                   </th>
-                  <th className="px-4 py-3 text-right text-xs font-medium uppercase tracking-wider text-slate-500">
+                  <th className="px-4 py-3 text-right text-xs font-medium uppercase tracking-wider text-kresna-gray">
                     {t('admin.audit.details')}
                   </th>
                 </tr>
@@ -398,12 +398,12 @@ export default function AuditPage() {
                 {logs.map((log) => {
                   const isExpanded = expandedRows.has(log.id);
                   const actionKey = log.action.split('.')[0] ?? '';
-                  const actionColor = actionColors[actionKey] ?? 'bg-slate-100 text-slate-700 border-slate-200';
+                  const actionColor = actionColors[actionKey] ?? 'bg-kresna-light text-kresna-gray-dark border-kresna-border';
 
                   return (
                     <tr
                       key={log.id}
-                      className="border-b border-slate-100 hover:bg-slate-50"
+                      className="border-b border-kresna-border hover:bg-kresna-light"
                     >
                       <td className="px-4 py-3">
                         <Badge className={cn('border', actionColor)}>
@@ -412,23 +412,23 @@ export default function AuditPage() {
                       </td>
                       <td className="px-4 py-3">
                         <div className="flex items-center gap-2">
-                          <div className="flex h-8 w-8 items-center justify-center rounded-full bg-violet-100 text-xs font-medium text-violet-700">
+                          <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary-100 text-xs font-medium text-primary-700">
                             {log.actorName.charAt(0).toUpperCase()}
                           </div>
                           <div className="min-w-0">
-                            <p className="truncate text-sm font-medium text-slate-900">{log.actorName}</p>
-                            <p className="truncate text-xs text-slate-500">{log.actorEmail}</p>
+                            <p className="truncate text-sm font-medium text-charcoal">{log.actorName}</p>
+                            <p className="truncate text-xs text-kresna-gray">{log.actorEmail}</p>
                           </div>
                         </div>
                       </td>
                       <td className="px-4 py-3">
                         <div className="min-w-0">
-                          <p className="text-sm text-slate-900">{log.targetName || log.targetId.slice(0, 8)}</p>
-                          <p className="text-xs capitalize text-slate-500">{log.targetType}</p>
+                          <p className="text-sm text-charcoal">{log.targetName || log.targetId.slice(0, 8)}</p>
+                          <p className="text-xs capitalize text-kresna-gray">{log.targetType}</p>
                         </div>
                       </td>
                       <td className="px-4 py-3">
-                        <div className="flex items-center gap-1.5 text-sm text-slate-500">
+                        <div className="flex items-center gap-1.5 text-sm text-kresna-gray">
                           <Clock className="h-3.5 w-3.5" />
                           {new Date(log.createdAt).toLocaleString()}
                         </div>
@@ -438,7 +438,7 @@ export default function AuditPage() {
                           variant="ghost"
                           size="sm"
                           onClick={() => toggleRow(log.id)}
-                          className="text-slate-500 hover:text-slate-900"
+                          className="text-kresna-gray hover:text-charcoal"
                         >
                           {isExpanded ? (
                             <ChevronUp className="h-4 w-4" />
@@ -461,31 +461,31 @@ export default function AuditPage() {
               return (
                 <div
                   key={`${log.id}-details`}
-                  className="border-b border-slate-100 bg-slate-50 px-4 py-4"
+                  className="border-b border-kresna-border bg-kresna-light px-4 py-4"
                 >
                   <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
                     <div>
-                      <div className="mb-1 flex items-center gap-1.5 text-xs text-slate-500">
+                      <div className="mb-1 flex items-center gap-1.5 text-xs text-kresna-gray">
                         <User className="h-3 w-3" />
                         {t('admin.audit.actorId')}
                       </div>
-                      <p className="font-mono text-sm text-slate-700">{log.actorId}</p>
+                      <p className="font-mono text-sm text-kresna-gray-dark">{log.actorId}</p>
                     </div>
                     <div>
-                      <div className="mb-1 flex items-center gap-1.5 text-xs text-slate-500">
+                      <div className="mb-1 flex items-center gap-1.5 text-xs text-kresna-gray">
                         <Globe className="h-3 w-3" />
                         {t('admin.audit.ipAddress')}
                       </div>
-                      <p className="font-mono text-sm text-slate-700">{log.ipAddress}</p>
+                      <p className="font-mono text-sm text-kresna-gray-dark">{log.ipAddress}</p>
                     </div>
                     <div className="sm:col-span-2">
-                      <div className="mb-1 text-xs text-slate-500">{t('admin.audit.userAgent')}</div>
-                      <p className="truncate text-sm text-slate-500">{log.userAgent}</p>
+                      <div className="mb-1 text-xs text-kresna-gray">{t('admin.audit.userAgent')}</div>
+                      <p className="truncate text-sm text-kresna-gray">{log.userAgent}</p>
                     </div>
                     {Object.keys(log.metadata).length > 0 && (
                       <div className="sm:col-span-2 lg:col-span-4">
-                        <div className="mb-1 text-xs text-slate-500">{t('admin.audit.metadata')}</div>
-                        <pre className="overflow-x-auto rounded-lg bg-slate-100 p-3 text-xs text-slate-700">
+                        <div className="mb-1 text-xs text-kresna-gray">{t('admin.audit.metadata')}</div>
+                        <pre className="overflow-x-auto rounded-lg bg-kresna-light p-3 text-xs text-kresna-gray-dark">
                           {JSON.stringify(log.metadata, null, 2)}
                         </pre>
                       </div>
@@ -519,14 +519,14 @@ function AuditTableSkeleton() {
       <div className="space-y-3">
         {[...Array(8)].map((_, i) => (
           <div key={i} className="flex animate-pulse items-center gap-4">
-            <div className="h-6 w-20 rounded-full bg-slate-100" />
-            <div className="h-8 w-8 rounded-full bg-slate-100" />
+            <div className="h-6 w-20 rounded-full bg-kresna-light" />
+            <div className="h-8 w-8 rounded-full bg-kresna-light" />
             <div className="flex-1 space-y-1">
-              <div className="h-4 w-32 rounded bg-slate-100" />
-              <div className="h-3 w-24 rounded bg-slate-100" />
+              <div className="h-4 w-32 rounded bg-kresna-light" />
+              <div className="h-3 w-24 rounded bg-kresna-light" />
             </div>
-            <div className="h-4 w-24 rounded bg-slate-100" />
-            <div className="h-8 w-8 rounded bg-slate-100" />
+            <div className="h-4 w-24 rounded bg-kresna-light" />
+            <div className="h-8 w-8 rounded bg-kresna-light" />
           </div>
         ))}
       </div>
@@ -547,17 +547,17 @@ function EmptyState({
   if (hasFilters) {
     return (
       <div className="flex flex-col items-center justify-center px-6 py-16 text-center">
-        <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-xl bg-slate-100">
-          <Search className="h-7 w-7 text-slate-400" />
+        <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-xl bg-kresna-light">
+          <Search className="h-7 w-7 text-kresna-gray" />
         </div>
-        <h3 className="mb-1 text-lg font-semibold text-slate-900">{t('admin.noMatchingResults')}</h3>
-        <p className="mb-4 max-w-sm text-sm text-slate-500">
+        <h3 className="mb-1 text-lg font-semibold text-charcoal">{t('admin.noMatchingResults')}</h3>
+        <p className="mb-4 max-w-sm text-sm text-kresna-gray">
           {t('admin.adjustFilters')}
         </p>
         <Button
           variant="ghost"
           onClick={onClearFilters}
-          className="gap-2 rounded-lg border border-slate-200 text-slate-700 hover:bg-slate-50"
+          className="gap-2 rounded-lg border border-kresna-border text-kresna-gray-dark hover:bg-kresna-light"
         >
           {t('admin.clearFilters')}
         </Button>
@@ -567,11 +567,11 @@ function EmptyState({
 
   return (
     <div className="flex flex-col items-center justify-center px-6 py-16 text-center">
-      <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-violet-50">
-        <FileText className="h-8 w-8 text-violet-600" />
+      <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-primary-50">
+        <FileText className="h-8 w-8 text-primary-600" />
       </div>
-      <h3 className="mb-1 text-lg font-semibold text-slate-900">{t('admin.audit.noLogsYet')}</h3>
-      <p className="max-w-sm text-sm text-slate-500">
+      <h3 className="mb-1 text-lg font-semibold text-charcoal">{t('admin.audit.noLogsYet')}</h3>
+      <p className="max-w-sm text-sm text-kresna-gray">
         {t('admin.audit.logsAppearHere')}
       </p>
     </div>

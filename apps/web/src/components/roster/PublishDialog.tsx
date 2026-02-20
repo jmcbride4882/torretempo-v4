@@ -130,47 +130,47 @@ export function PublishDialog({
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent className="max-w-md border border-slate-200 bg-white rounded-xl shadow-sm">
+      <DialogContent className="max-w-md border border-kresna-border bg-white rounded-xl shadow-sm">
         <DialogHeader>
-          <DialogTitle className="flex items-center gap-2 text-xl text-slate-900">
+          <DialogTitle className="flex items-center gap-2 text-xl text-charcoal">
             <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary-50">
               <Send className="h-4 w-4 text-primary-500" />
             </div>
             {t('roster.publishTitle')}
           </DialogTitle>
-          <DialogDescription className="text-slate-500">
+          <DialogDescription className="text-kresna-gray">
             {t('roster.publishDesc')}
           </DialogDescription>
         </DialogHeader>
 
         <div className="space-y-4 py-4">
           {/* Week Range */}
-          <div className="flex items-center gap-3 rounded-lg border border-slate-200 bg-slate-50 p-3">
+          <div className="flex items-center gap-3 rounded-lg border border-kresna-border bg-kresna-light p-3">
             <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary-50">
               <Calendar className="h-5 w-5 text-primary-500" />
             </div>
             <div>
-              <p className="text-sm font-medium text-slate-900">
+              <p className="text-sm font-medium text-charcoal">
                 {formatDateRange(weekStart, weekEnd, locale)}
               </p>
-              <p className="text-xs text-slate-400">{t('roster.weekToPublish')}</p>
+              <p className="text-xs text-kresna-gray">{t('roster.weekToPublish')}</p>
             </div>
           </div>
 
           {/* Stats */}
           <div className="grid grid-cols-2 gap-3">
-            <div className="rounded-lg border border-slate-200 bg-slate-50 p-3 text-center">
-              <p className="text-2xl font-bold text-slate-900">{draftShifts.length}</p>
-              <p className="text-xs text-slate-400">
+            <div className="rounded-lg border border-kresna-border bg-kresna-light p-3 text-center">
+              <p className="text-2xl font-bold text-charcoal">{draftShifts.length}</p>
+              <p className="text-xs text-kresna-gray">
                 {t('roster.draftShiftCount', { count: draftShifts.length })}
               </p>
             </div>
-            <div className="rounded-lg border border-slate-200 bg-slate-50 p-3 text-center">
+            <div className="rounded-lg border border-kresna-border bg-kresna-light p-3 text-center">
               <div className="flex items-center justify-center gap-1">
-                <Users className="h-4 w-4 text-slate-500" />
-                <p className="text-2xl font-bold text-slate-900">{employeeCount}</p>
+                <Users className="h-4 w-4 text-kresna-gray" />
+                <p className="text-2xl font-bold text-charcoal">{employeeCount}</p>
               </div>
-              <p className="text-xs text-slate-400">
+              <p className="text-xs text-kresna-gray">
                 {t('roster.employeesToNotify', { count: employeeCount })}
               </p>
             </div>
@@ -198,12 +198,12 @@ export function PublishDialog({
             <motion.div
               initial={{ opacity: 0, y: -5 }}
               animate={{ opacity: 1, y: 0 }}
-              className="flex items-start gap-2 rounded-lg border border-slate-200 bg-slate-50 p-3"
+              className="flex items-start gap-2 rounded-lg border border-kresna-border bg-kresna-light p-3"
             >
-              <AlertTriangle className="h-4 w-4 shrink-0 text-slate-500" />
+              <AlertTriangle className="h-4 w-4 shrink-0 text-kresna-gray" />
               <div>
-                <p className="text-sm font-medium text-slate-700">{t('roster.noDraftShifts')}</p>
-                <p className="text-xs text-slate-500">
+                <p className="text-sm font-medium text-kresna-gray-dark">{t('roster.noDraftShifts')}</p>
+                <p className="text-xs text-kresna-gray">
                   {t('roster.noDraftShiftsDesc')}
                 </p>
               </div>
@@ -268,7 +268,7 @@ export function PublishDialog({
             variant="ghost"
             onClick={handleClose}
             disabled={isPublishing}
-            className="rounded-lg border border-slate-200 bg-slate-50 text-slate-700 hover:bg-slate-100"
+            className="rounded-lg border border-kresna-border bg-kresna-light text-kresna-gray-dark hover:bg-kresna-light"
           >
             {t('common.cancel')}
           </Button>

@@ -62,10 +62,10 @@ function formatCurrency(amount: number): string {
 
 // Tier colors
 const tierColors: Record<string, { bg: string; text: string; border: string }> = {
-  free: { bg: 'bg-slate-100', text: 'text-slate-700', border: 'border-slate-300' },
-  starter: { bg: 'bg-blue-50', text: 'text-blue-700', border: 'border-blue-200' },
+  free: { bg: 'bg-kresna-light', text: 'text-kresna-gray-dark', border: 'border-kresna-border' },
+  starter: { bg: 'bg-primary-50', text: 'text-primary-700', border: 'border-primary-200' },
   pro: { bg: 'bg-emerald-50', text: 'text-emerald-700', border: 'border-emerald-200' },
-  enterprise: { bg: 'bg-violet-50', text: 'text-violet-700', border: 'border-violet-200' },
+  enterprise: { bg: 'bg-primary-50', text: 'text-primary-700', border: 'border-primary-200' },
 };
 
 export default function SubscriptionsPage() {
@@ -118,8 +118,8 @@ export default function SubscriptionsPage() {
             <CreditCard className="h-5 w-5 text-emerald-600" />
           </div>
           <div>
-            <h1 className="text-xl font-bold text-slate-900 sm:text-2xl">{t('admin.subscriptions.title')}</h1>
-            <p className="text-sm text-slate-500">
+            <h1 className="text-xl font-bold text-charcoal sm:text-2xl">{t('admin.subscriptions.title')}</h1>
+            <p className="text-sm text-kresna-gray">
               {t('admin.subscriptions.subtitle')}
             </p>
           </div>
@@ -131,7 +131,7 @@ export default function SubscriptionsPage() {
             size="sm"
             onClick={handleRefresh}
             disabled={isRefreshing}
-            className="gap-1.5 rounded-lg border border-slate-200 bg-slate-50 text-slate-700 hover:bg-slate-100"
+            className="gap-1.5 rounded-lg border border-kresna-border bg-kresna-light text-kresna-gray-dark hover:bg-kresna-light"
           >
             <RefreshCw className={cn('h-4 w-4', isRefreshing && 'animate-spin')} />
             <span className="hidden sm:inline">{t('admin.refresh')}</span>
@@ -186,9 +186,9 @@ export default function SubscriptionsPage() {
 
       {/* Tier breakdown */}
       <div
-        className="rounded-xl border border-slate-200 bg-white shadow-sm p-6"
+        className="rounded-xl border border-kresna-border bg-white shadow-sm p-6"
       >
-        <h2 className="mb-4 text-lg font-semibold text-slate-900">{t('admin.subscriptions.subscriptionTiers')}</h2>
+        <h2 className="mb-4 text-lg font-semibold text-charcoal">{t('admin.subscriptions.subscriptionTiers')}</h2>
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {Object.entries(metrics?.tierBreakdown || {}).map(([tier, count]) => {
             const colors = tierColors[tier] ?? tierColors.free;
@@ -200,24 +200,24 @@ export default function SubscriptionsPage() {
                 key={tier}
                 className={cn(
                   'relative overflow-hidden rounded-xl border p-4',
-                  colors?.border ?? 'border-slate-300',
-                  colors?.bg ?? 'bg-slate-100'
+                  colors?.border ?? 'border-kresna-border',
+                  colors?.bg ?? 'bg-kresna-light'
                 )}
               >
                 <div className="mb-2 flex items-center justify-between">
-                  <span className={cn('text-sm font-medium capitalize', colors?.text ?? 'text-slate-700')}>{tier}</span>
-                  <Badge className={cn('border', colors?.bg ?? 'bg-slate-100', colors?.text ?? 'text-slate-700', colors?.border ?? 'border-slate-300')}>
+                  <span className={cn('text-sm font-medium capitalize', colors?.text ?? 'text-kresna-gray-dark')}>{tier}</span>
+                  <Badge className={cn('border', colors?.bg ?? 'bg-kresna-light', colors?.text ?? 'text-kresna-gray-dark', colors?.border ?? 'border-kresna-border')}>
                     {percentage}%
                   </Badge>
                 </div>
-                <p className="text-3xl font-bold text-slate-900">{count}</p>
-                <p className="mt-1 text-sm text-slate-500">{t('admin.subscriptions.organizations')}</p>
+                <p className="text-3xl font-bold text-charcoal">{count}</p>
+                <p className="mt-1 text-sm text-kresna-gray">{t('admin.subscriptions.organizations')}</p>
 
                 {/* Progress bar */}
-                <div className="mt-3 h-1.5 overflow-hidden rounded-full bg-slate-100">
+                <div className="mt-3 h-1.5 overflow-hidden rounded-full bg-kresna-light">
                   <div
                     style={{ width: `${percentage}%` }}
-                    className={cn('h-full rounded-full', (colors?.bg ?? 'bg-slate-100').replace('50', '400').replace('100', '400'))}
+                    className={cn('h-full rounded-full', (colors?.bg ?? 'bg-kresna-light').replace('50', '400').replace('100', '400'))}
                   />
                 </div>
               </div>
@@ -230,47 +230,47 @@ export default function SubscriptionsPage() {
       <div
         className="grid gap-4 sm:grid-cols-3"
       >
-        <div className="rounded-xl border border-slate-200 bg-white shadow-sm p-5">
-          <div className="mb-2 flex items-center gap-2 text-slate-500">
+        <div className="rounded-xl border border-kresna-border bg-white shadow-sm p-5">
+          <div className="mb-2 flex items-center gap-2 text-kresna-gray">
             <Building2 className="h-4 w-4" />
             <span className="text-xs font-medium uppercase tracking-wider">{t('admin.subscriptions.totalOrganizations')}</span>
           </div>
-          <p className="text-3xl font-bold text-slate-900">{metrics?.totalActive || 0}</p>
-          <p className="mt-1 text-sm text-slate-500">
+          <p className="text-3xl font-bold text-charcoal">{metrics?.totalActive || 0}</p>
+          <p className="mt-1 text-sm text-kresna-gray">
             {t('admin.subscriptions.freeAndPaidSummary', { free: metrics?.totalFree || 0, paid: metrics?.totalPaid || 0 })}
           </p>
         </div>
 
-        <div className="rounded-xl border border-slate-200 bg-white shadow-sm p-5">
-          <div className="mb-2 flex items-center gap-2 text-slate-500">
+        <div className="rounded-xl border border-kresna-border bg-white shadow-sm p-5">
+          <div className="mb-2 flex items-center gap-2 text-kresna-gray">
             <DollarSign className="h-4 w-4" />
             <span className="text-xs font-medium uppercase tracking-wider">{t('admin.subscriptions.avgRevenuePerOrg')}</span>
           </div>
-          <p className="text-3xl font-bold text-slate-900">
+          <p className="text-3xl font-bold text-charcoal">
             {formatCurrency(metrics?.totalPaid ? (metrics.mrr / metrics.totalPaid) : 0)}
           </p>
-          <p className="mt-1 text-sm text-slate-500">{t('admin.subscriptions.perMonth')}</p>
+          <p className="mt-1 text-sm text-kresna-gray">{t('admin.subscriptions.perMonth')}</p>
         </div>
 
-        <div className="rounded-xl border border-slate-200 bg-white shadow-sm p-5">
-          <div className="mb-2 flex items-center gap-2 text-slate-500">
+        <div className="rounded-xl border border-kresna-border bg-white shadow-sm p-5">
+          <div className="mb-2 flex items-center gap-2 text-kresna-gray">
             <TrendingUp className="h-4 w-4" />
             <span className="text-xs font-medium uppercase tracking-wider">{t('admin.subscriptions.conversionRate')}</span>
           </div>
-          <p className="text-3xl font-bold text-slate-900">
+          <p className="text-3xl font-bold text-charcoal">
             {metrics?.totalActive
               ? (((metrics.totalPaid || 0) / metrics.totalActive) * 100).toFixed(1)
               : '0'}%
           </p>
-          <p className="mt-1 text-sm text-slate-500">{t('admin.subscriptions.freeToPaid')}</p>
+          <p className="mt-1 text-sm text-kresna-gray">{t('admin.subscriptions.freeToPaid')}</p>
         </div>
       </div>
 
       {/* Recent changes */}
       <div
-        className="rounded-xl border border-slate-200 bg-white shadow-sm p-6"
+        className="rounded-xl border border-kresna-border bg-white shadow-sm p-6"
       >
-        <h2 className="mb-4 text-lg font-semibold text-slate-900">{t('admin.subscriptions.recentChanges')}</h2>
+        <h2 className="mb-4 text-lg font-semibold text-charcoal">{t('admin.subscriptions.recentChanges')}</h2>
         {metrics?.recentChanges && metrics.recentChanges.length > 0 ? (
           <div className="space-y-3">
             {metrics.recentChanges.map((change) => {
@@ -281,7 +281,7 @@ export default function SubscriptionsPage() {
               return (
                 <div
                   key={change.id}
-                  className="flex items-center justify-between rounded-lg border border-slate-200 bg-slate-50 p-4"
+                  className="flex items-center justify-between rounded-lg border border-kresna-border bg-kresna-light p-4"
                 >
                   <div className="flex items-center gap-3">
                     <div
@@ -297,13 +297,13 @@ export default function SubscriptionsPage() {
                       )}
                     </div>
                     <div>
-                      <p className="font-medium text-slate-900">{change.organizationName}</p>
-                      <p className="text-sm text-slate-500">
+                      <p className="font-medium text-charcoal">{change.organizationName}</p>
+                      <p className="text-sm text-kresna-gray">
                         {change.fromTier} &rarr; {change.toTier}
                       </p>
                     </div>
                   </div>
-                  <span className="text-sm text-slate-500">
+                  <span className="text-sm text-kresna-gray">
                     {new Date(change.changedAt).toLocaleDateString()}
                   </span>
                 </div>
@@ -311,9 +311,9 @@ export default function SubscriptionsPage() {
             })}
           </div>
         ) : (
-          <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-slate-200 bg-slate-50 py-12 text-center">
-            <CreditCard className="mb-3 h-8 w-8 text-slate-400" />
-            <p className="text-sm text-slate-500">{t('admin.subscriptions.noRecentChanges')}</p>
+          <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-kresna-border bg-kresna-light py-12 text-center">
+            <CreditCard className="mb-3 h-8 w-8 text-kresna-gray" />
+            <p className="text-sm text-kresna-gray">{t('admin.subscriptions.noRecentChanges')}</p>
           </div>
         )}
       </div>
@@ -348,8 +348,8 @@ function MetricCard({
 }: MetricCardProps) {
   const colorClasses = {
     emerald: 'bg-emerald-50 text-emerald-600',
-    blue: 'bg-blue-50 text-blue-600',
-    violet: 'bg-violet-50 text-violet-600',
+    blue: 'bg-primary-50 text-primary-600',
+    violet: 'bg-primary-50 text-primary-600',
     red: 'bg-red-50 text-red-600',
   };
 
@@ -357,7 +357,7 @@ function MetricCard({
 
   return (
     <div
-      className="rounded-xl border border-slate-200 bg-white shadow-sm p-5"
+      className="rounded-xl border border-kresna-border bg-white shadow-sm p-5"
     >
       <div className="mb-3 flex items-center justify-between">
         <div
@@ -386,10 +386,10 @@ function MetricCard({
           </div>
         )}
       </div>
-      <p className="text-3xl font-bold text-slate-900">{value}</p>
-      <p className="mt-1 text-sm text-slate-500">{label}</p>
+      <p className="text-3xl font-bold text-charcoal">{value}</p>
+      <p className="mt-1 text-sm text-kresna-gray">{label}</p>
       {(trendLabel || subtitle) && (
-        <p className="mt-2 text-xs text-slate-500">{trendLabel || subtitle}</p>
+        <p className="mt-2 text-xs text-kresna-gray">{trendLabel || subtitle}</p>
       )}
     </div>
   );
@@ -448,38 +448,38 @@ function BillingOperations({ onSuccess }: BillingOperationsProps) {
   return (
     <>
       <div
-        className="rounded-xl border border-slate-200 bg-white shadow-sm p-6"
+        className="rounded-xl border border-kresna-border bg-white shadow-sm p-6"
       >
-        <h2 className="mb-4 text-lg font-semibold text-slate-900">{t('admin.subscriptions.billingOperations')}</h2>
-        <p className="mb-5 text-sm text-slate-500">
+        <h2 className="mb-4 text-lg font-semibold text-charcoal">{t('admin.subscriptions.billingOperations')}</h2>
+        <p className="mb-5 text-sm text-kresna-gray">
           {t('admin.subscriptions.billingDescription')}
         </p>
         <div className="grid gap-4 sm:grid-cols-3">
           {/* Create Invoice */}
           <button
             onClick={() => setInvoiceOpen(true)}
-            className="group relative flex flex-col items-center gap-3 overflow-hidden rounded-xl border border-blue-200 bg-blue-50 p-6 text-center transition-all duration-200 hover:border-blue-300 hover:bg-blue-100"
+            className="group relative flex flex-col items-center gap-3 overflow-hidden rounded-xl border border-primary-200 bg-primary-50 p-6 text-center transition-all duration-200 hover:border-primary-300 hover:bg-primary-100"
           >
-            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-blue-100 shadow-sm transition-transform duration-200 group-hover:scale-110">
-              <DollarSign className="h-6 w-6 text-blue-600" />
+            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary-100 shadow-sm transition-transform duration-200 group-hover:scale-110">
+              <DollarSign className="h-6 w-6 text-primary-600" />
             </div>
             <div>
-              <p className="font-semibold text-slate-900">{t('admin.subscriptions.createInvoice')}</p>
-              <p className="mt-1 text-xs text-slate-500">{t('admin.subscriptions.generateManualInvoice')}</p>
+              <p className="font-semibold text-charcoal">{t('admin.subscriptions.createInvoice')}</p>
+              <p className="mt-1 text-xs text-kresna-gray">{t('admin.subscriptions.generateManualInvoice')}</p>
             </div>
           </button>
 
           {/* Process Refund */}
           <button
             onClick={() => setRefundOpen(true)}
-            className="group relative flex flex-col items-center gap-3 overflow-hidden rounded-xl border border-violet-200 bg-violet-50 p-6 text-center transition-all duration-200 hover:border-violet-300 hover:bg-violet-100"
+            className="group relative flex flex-col items-center gap-3 overflow-hidden rounded-xl border border-primary-200 bg-primary-50 p-6 text-center transition-all duration-200 hover:border-primary-300 hover:bg-primary-100"
           >
-            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-violet-100 shadow-sm transition-transform duration-200 group-hover:scale-110">
-              <RefreshCw className="h-6 w-6 text-violet-600" />
+            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary-100 shadow-sm transition-transform duration-200 group-hover:scale-110">
+              <RefreshCw className="h-6 w-6 text-primary-600" />
             </div>
             <div>
-              <p className="font-semibold text-slate-900">{t('admin.subscriptions.processRefund')}</p>
-              <p className="mt-1 text-xs text-slate-500">{t('admin.subscriptions.refundPayment')}</p>
+              <p className="font-semibold text-charcoal">{t('admin.subscriptions.processRefund')}</p>
+              <p className="mt-1 text-xs text-kresna-gray">{t('admin.subscriptions.refundPayment')}</p>
             </div>
           </button>
 
@@ -492,8 +492,8 @@ function BillingOperations({ onSuccess }: BillingOperationsProps) {
               <Plus className="h-6 w-6 text-emerald-600" />
             </div>
             <div>
-              <p className="font-semibold text-slate-900">{t('admin.subscriptions.applyCredit')}</p>
-              <p className="mt-1 text-xs text-slate-500">{t('admin.subscriptions.addAccountCredit')}</p>
+              <p className="font-semibold text-charcoal">{t('admin.subscriptions.applyCredit')}</p>
+              <p className="mt-1 text-xs text-kresna-gray">{t('admin.subscriptions.addAccountCredit')}</p>
             </div>
           </button>
         </div>
@@ -593,8 +593,8 @@ function CreateInvoiceModal({ open, onOpenChange, onSuccess }: BillingModalProps
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-50">
-              <DollarSign className="h-4 w-4 text-blue-600" />
+            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary-50">
+              <DollarSign className="h-4 w-4 text-primary-600" />
             </div>
             {t('admin.subscriptions.createInvoice')}
           </DialogTitle>
@@ -626,7 +626,7 @@ function CreateInvoiceModal({ open, onOpenChange, onSuccess }: BillingModalProps
           <div className="space-y-2">
             <Label htmlFor="invoice-amount">{t('admin.subscriptions.amountCents')}</Label>
             <div className="relative">
-              <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-sm text-slate-500">&euro;</span>
+              <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-sm text-kresna-gray">&euro;</span>
               <Input
                 id="invoice-amount"
                 type="number"
@@ -642,7 +642,7 @@ function CreateInvoiceModal({ open, onOpenChange, onSuccess }: BillingModalProps
               />
             </div>
             {amount && !fieldErrors.amount && (
-              <p className="text-xs text-slate-500">
+              <p className="text-xs text-kresna-gray">
                 = {formatCents(Number(amount) || 0)}
               </p>
             )}
@@ -664,7 +664,7 @@ function CreateInvoiceModal({ open, onOpenChange, onSuccess }: BillingModalProps
               }}
               rows={3}
               className={cn(
-                'flex w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 placeholder:text-slate-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-600 focus-visible:ring-offset-2 focus-visible:ring-offset-white disabled:cursor-not-allowed disabled:opacity-50 transition-all duration-200 resize-none',
+                'flex w-full rounded-lg border border-kresna-border bg-white px-3 py-2 text-sm text-charcoal placeholder:text-kresna-gray focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-600 focus-visible:ring-offset-2 focus-visible:ring-offset-white disabled:cursor-not-allowed disabled:opacity-50 transition-all duration-200 resize-none',
                 fieldErrors.description && 'border-red-500/50 focus-visible:ring-red-500'
               )}
             />
@@ -682,14 +682,14 @@ function CreateInvoiceModal({ open, onOpenChange, onSuccess }: BillingModalProps
             variant="ghost"
             onClick={() => handleOpenChange(false)}
             disabled={isSubmitting}
-            className="text-slate-500 hover:text-slate-900"
+            className="text-kresna-gray hover:text-charcoal"
           >
             {t('common.cancel')}
           </Button>
           <Button
             onClick={handleSubmit}
             disabled={isSubmitting}
-            className="gap-2 bg-blue-600 hover:bg-blue-700"
+            className="gap-2 bg-primary-500 hover:bg-primary-600"
           >
             {isSubmitting && <Loader2 className="h-4 w-4 animate-spin" />}
             {t('admin.subscriptions.createInvoice')}
@@ -769,8 +769,8 @@ function ProcessRefundModal({ open, onOpenChange, onSuccess }: BillingModalProps
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-violet-50">
-              <RefreshCw className="h-4 w-4 text-violet-600" />
+            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary-50">
+              <RefreshCw className="h-4 w-4 text-primary-600" />
             </div>
             {t('admin.subscriptions.processRefund')}
           </DialogTitle>
@@ -802,10 +802,10 @@ function ProcessRefundModal({ open, onOpenChange, onSuccess }: BillingModalProps
           <div className="space-y-2">
             <Label htmlFor="refund-amount">
               {t('admin.subscriptions.amountCents')}
-              <span className="ml-1 text-xs font-normal text-slate-500">— {t('admin.subscriptions.fullRefund')}</span>
+              <span className="ml-1 text-xs font-normal text-kresna-gray">— {t('admin.subscriptions.fullRefund')}</span>
             </Label>
             <div className="relative">
-              <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-sm text-slate-500">&euro;</span>
+              <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-sm text-kresna-gray">&euro;</span>
               <Input
                 id="refund-amount"
                 type="number"
@@ -821,7 +821,7 @@ function ProcessRefundModal({ open, onOpenChange, onSuccess }: BillingModalProps
               />
             </div>
             {amount && !fieldErrors.amount && (
-              <p className="text-xs text-slate-500">
+              <p className="text-xs text-kresna-gray">
                 = {formatCents(Number(amount) || 0)}
               </p>
             )}
@@ -863,14 +863,14 @@ function ProcessRefundModal({ open, onOpenChange, onSuccess }: BillingModalProps
             variant="ghost"
             onClick={() => handleOpenChange(false)}
             disabled={isSubmitting}
-            className="text-slate-500 hover:text-slate-900"
+            className="text-kresna-gray hover:text-charcoal"
           >
             {t('common.cancel')}
           </Button>
           <Button
             onClick={handleSubmit}
             disabled={isSubmitting}
-            className="gap-2 bg-violet-600 hover:bg-violet-700"
+            className="gap-2 bg-primary-600 hover:bg-primary-700"
           >
             {isSubmitting && <Loader2 className="h-4 w-4 animate-spin" />}
             {t('admin.subscriptions.processRefund')}
@@ -982,7 +982,7 @@ function ApplyCreditModal({ open, onOpenChange, onSuccess }: BillingModalProps) 
           <div className="space-y-2">
             <Label htmlFor="credit-amount">{t('admin.subscriptions.amountCents')}</Label>
             <div className="relative">
-              <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-sm text-slate-500">&euro;</span>
+              <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-sm text-kresna-gray">&euro;</span>
               <Input
                 id="credit-amount"
                 type="number"
@@ -998,7 +998,7 @@ function ApplyCreditModal({ open, onOpenChange, onSuccess }: BillingModalProps) 
               />
             </div>
             {amount && !fieldErrors.amount && (
-              <p className="text-xs text-slate-500">
+              <p className="text-xs text-kresna-gray">
                 = {formatCents(Number(amount) || 0)}
               </p>
             )}
@@ -1020,7 +1020,7 @@ function ApplyCreditModal({ open, onOpenChange, onSuccess }: BillingModalProps) 
               }}
               rows={3}
               className={cn(
-                'flex w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 placeholder:text-slate-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-600 focus-visible:ring-offset-2 focus-visible:ring-offset-white disabled:cursor-not-allowed disabled:opacity-50 transition-all duration-200 resize-none',
+                'flex w-full rounded-lg border border-kresna-border bg-white px-3 py-2 text-sm text-charcoal placeholder:text-kresna-gray focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-600 focus-visible:ring-offset-2 focus-visible:ring-offset-white disabled:cursor-not-allowed disabled:opacity-50 transition-all duration-200 resize-none',
                 fieldErrors.description && 'border-red-500/50 focus-visible:ring-red-500'
               )}
             />
@@ -1038,7 +1038,7 @@ function ApplyCreditModal({ open, onOpenChange, onSuccess }: BillingModalProps) 
             variant="ghost"
             onClick={() => handleOpenChange(false)}
             disabled={isSubmitting}
-            className="text-slate-500 hover:text-slate-900"
+            className="text-kresna-gray hover:text-charcoal"
           >
             {t('common.cancel')}
           </Button>
@@ -1089,38 +1089,38 @@ function SubscriptionsPageSkeleton() {
       {/* Header skeleton */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className="h-10 w-10 animate-pulse rounded-xl bg-slate-100" />
+          <div className="h-10 w-10 animate-pulse rounded-xl bg-kresna-light" />
           <div className="space-y-1.5">
-            <div className="h-6 w-32 animate-pulse rounded bg-slate-100" />
-            <div className="h-4 w-48 animate-pulse rounded bg-slate-100" />
+            <div className="h-6 w-32 animate-pulse rounded bg-kresna-light" />
+            <div className="h-4 w-48 animate-pulse rounded bg-kresna-light" />
           </div>
         </div>
-        <div className="h-9 w-24 animate-pulse rounded-lg bg-slate-100" />
+        <div className="h-9 w-24 animate-pulse rounded-lg bg-kresna-light" />
       </div>
 
       {/* Metrics skeleton */}
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {[...Array(4)].map((_, i) => (
-          <div key={i} className="animate-pulse rounded-xl border border-slate-200 bg-slate-50 p-5">
+          <div key={i} className="animate-pulse rounded-xl border border-kresna-border bg-kresna-light p-5">
             <div className="mb-3 flex items-center justify-between">
-              <div className="h-10 w-10 rounded-xl bg-slate-100" />
-              <div className="h-6 w-16 rounded-full bg-slate-100" />
+              <div className="h-10 w-10 rounded-xl bg-kresna-light" />
+              <div className="h-6 w-16 rounded-full bg-kresna-light" />
             </div>
-            <div className="h-8 w-24 rounded bg-slate-100" />
-            <div className="mt-2 h-4 w-32 rounded bg-slate-100" />
+            <div className="h-8 w-24 rounded bg-kresna-light" />
+            <div className="mt-2 h-4 w-32 rounded bg-kresna-light" />
           </div>
         ))}
       </div>
 
       {/* Tier breakdown skeleton */}
-      <div className="animate-pulse rounded-xl border border-slate-200 bg-slate-50 p-6">
-        <div className="mb-4 h-6 w-40 rounded bg-slate-100" />
+      <div className="animate-pulse rounded-xl border border-kresna-border bg-kresna-light p-6">
+        <div className="mb-4 h-6 w-40 rounded bg-kresna-light" />
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {[...Array(4)].map((_, i) => (
-            <div key={i} className="rounded-xl border border-slate-200 bg-slate-50 p-4">
-              <div className="mb-2 h-4 w-16 rounded bg-slate-100" />
-              <div className="h-8 w-12 rounded bg-slate-100" />
-              <div className="mt-3 h-1.5 rounded-full bg-slate-100" />
+            <div key={i} className="rounded-xl border border-kresna-border bg-kresna-light p-4">
+              <div className="mb-2 h-4 w-16 rounded bg-kresna-light" />
+              <div className="h-8 w-12 rounded bg-kresna-light" />
+              <div className="mt-3 h-1.5 rounded-full bg-kresna-light" />
             </div>
           ))}
         </div>

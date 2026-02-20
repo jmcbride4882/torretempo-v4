@@ -205,17 +205,17 @@ export default function FeatureFlagsPage() {
   });
 
   return (
-    <div className="min-h-screen bg-slate-50 p-4 md:p-8">
+    <div className="min-h-screen bg-kresna-light p-4 md:p-8">
       {/* Header */}
       <div className="max-w-7xl mx-auto mb-8">
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-3">
-            <div className="p-2 rounded-xl bg-violet-50 border border-violet-200">
-              <Flag className="w-6 h-6 text-violet-600" />
+            <div className="p-2 rounded-xl bg-primary-50 border border-primary-200">
+              <Flag className="w-6 h-6 text-primary-600" />
             </div>
             <div>
-              <h1 className="text-2xl font-bold text-slate-900">{t('admin.featureFlags.title')}</h1>
-              <p className="text-sm text-slate-500 mt-1">
+              <h1 className="text-2xl font-bold text-charcoal">{t('admin.featureFlags.title')}</h1>
+              <p className="text-sm text-kresna-gray mt-1">
                 {t('admin.featureFlags.perTenant')}
               </p>
             </div>
@@ -226,7 +226,7 @@ export default function FeatureFlagsPage() {
               size="sm"
               onClick={() => loadFlags()}
               disabled={isRefreshing}
-              className="border-slate-200 hover:bg-slate-100"
+              className="border-kresna-border hover:bg-kresna-light"
             >
               <RefreshCw
                 className={cn('w-4 h-4 mr-2', isRefreshing && 'animate-spin')}
@@ -236,7 +236,7 @@ export default function FeatureFlagsPage() {
             <Button
               size="sm"
               onClick={() => setCreateModal(true)}
-              className="bg-violet-600 hover:bg-violet-500"
+              className="bg-primary-600 hover:bg-primary-500"
             >
               <Plus className="w-4 h-4 mr-2" />
               {t('admin.featureFlags.createFlag')}
@@ -246,12 +246,12 @@ export default function FeatureFlagsPage() {
 
         {/* Search */}
         <div className="relative">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-kresna-gray" />
           <Input
             placeholder={t('admin.featureFlags.searchPlaceholder')}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-10 bg-white border-slate-200 text-slate-900 placeholder:text-slate-400"
+            className="pl-10 bg-white border-kresna-border text-charcoal placeholder:text-kresna-gray"
           />
         </div>
       </div>
@@ -260,20 +260,20 @@ export default function FeatureFlagsPage() {
       <div className="max-w-7xl mx-auto">
         {isLoading ? (
           <div className="text-center py-12">
-            <RefreshCw className="w-8 h-8 text-slate-400 mx-auto mb-3 animate-spin" />
-            <p className="text-slate-500">{t('common.loading')}</p>
+            <RefreshCw className="w-8 h-8 text-kresna-gray mx-auto mb-3 animate-spin" />
+            <p className="text-kresna-gray">{t('common.loading')}</p>
           </div>
         ) : filteredFlags.length === 0 ? (
           <div className="text-center py-12">
-            <Flag className="w-12 h-12 text-slate-300 mx-auto mb-3" />
-            <p className="text-slate-500">
+            <Flag className="w-12 h-12 text-kresna-border mx-auto mb-3" />
+            <p className="text-kresna-gray">
               {searchQuery ? t('admin.featureFlags.noFlagsMatch') : t('admin.featureFlags.noFlagsYet')}
             </p>
             {!searchQuery && (
               <Button
                 size="sm"
                 onClick={() => setCreateModal(true)}
-                className="mt-4 bg-violet-600 hover:bg-violet-500"
+                className="mt-4 bg-primary-600 hover:bg-primary-500"
               >
                 <Plus className="w-4 h-4 mr-2" />
                 {t('admin.featureFlags.createFirstFlag')}
@@ -285,12 +285,12 @@ export default function FeatureFlagsPage() {
             {filteredFlags.map((flag) => (
               <div
                 key={flag.id}
-                className="rounded-xl border border-slate-200 bg-white shadow-sm p-6"
+                className="rounded-xl border border-kresna-border bg-white shadow-sm p-6"
               >
                 <div className="flex items-start justify-between">
                   <div className="flex-1">
                     <div className="flex items-center gap-3 mb-2">
-                      <code className="text-lg font-mono font-semibold text-slate-900">
+                      <code className="text-lg font-mono font-semibold text-charcoal">
                         {flag.flag_key}
                       </code>
                       {flag.enabled_globally ? (
@@ -299,17 +299,17 @@ export default function FeatureFlagsPage() {
                           {t('admin.featureFlags.enabled')}
                         </Badge>
                       ) : (
-                        <Badge className="bg-slate-100 text-slate-500 border-slate-200">
+                        <Badge className="bg-kresna-light text-kresna-gray border-kresna-border">
                           {t('admin.featureFlags.disabled')}
                         </Badge>
                       )}
                     </div>
                     {flag.description && (
-                      <p className="text-sm text-slate-500 mb-3">
+                      <p className="text-sm text-kresna-gray mb-3">
                         {flag.description}
                       </p>
                     )}
-                    <div className="flex items-center gap-4 text-xs text-slate-400">
+                    <div className="flex items-center gap-4 text-xs text-kresna-gray">
                       {flag.enabled_for_orgs &&
                         flag.enabled_for_orgs.length > 0 && (
                           <div className="flex items-center gap-1">
@@ -339,10 +339,10 @@ export default function FeatureFlagsPage() {
                       size="sm"
                       onClick={() => handleToggleGlobal(flag)}
                       className={cn(
-                        'border-slate-200',
+                        'border-kresna-border',
                         flag.enabled_globally
                           ? 'hover:bg-emerald-50 text-emerald-600'
-                          : 'hover:bg-slate-100 text-slate-500'
+                          : 'hover:bg-kresna-light text-kresna-gray'
                       )}
                     >
                       {flag.enabled_globally ? (
@@ -356,7 +356,7 @@ export default function FeatureFlagsPage() {
                       variant="outline"
                       size="sm"
                       onClick={() => openEditModal(flag)}
-                      className="border-slate-200 hover:bg-slate-100"
+                      className="border-kresna-border hover:bg-kresna-light"
                     >
                       <Edit className="w-4 h-4 mr-2" />
                       {t('common.edit')}
@@ -380,18 +380,18 @@ export default function FeatureFlagsPage() {
       {/* Create Modal */}
       {createModal && (
         <Dialog open={createModal} onOpenChange={setCreateModal}>
-          <DialogContent className="bg-white border-slate-200">
+          <DialogContent className="bg-white border-kresna-border">
             <DialogHeader>
-              <DialogTitle className="text-slate-900">
+              <DialogTitle className="text-charcoal">
                 {t('admin.featureFlags.createFeatureFlag')}
               </DialogTitle>
-              <DialogDescription className="text-slate-500">
+              <DialogDescription className="text-kresna-gray">
                 {t('admin.featureFlags.createDescription')}
               </DialogDescription>
             </DialogHeader>
             <div className="space-y-4 py-4">
               <div>
-                <label className="text-sm font-medium text-slate-700 mb-2 block">
+                <label className="text-sm font-medium text-kresna-gray-dark mb-2 block">
                   {t('admin.featureFlags.flagKeyLabel')} *
                 </label>
                 <Input
@@ -400,14 +400,14 @@ export default function FeatureFlagsPage() {
                   onChange={(e) =>
                     setForm({ ...form, flag_key: e.target.value })
                   }
-                  className="bg-slate-50 border-slate-200 text-slate-900 placeholder:text-slate-400"
+                  className="bg-kresna-light border-kresna-border text-charcoal placeholder:text-kresna-gray"
                 />
-                <p className="text-xs text-slate-400 mt-1">
+                <p className="text-xs text-kresna-gray mt-1">
                   {t('admin.featureFlags.flagKeyHint')}
                 </p>
               </div>
               <div>
-                <label className="text-sm font-medium text-slate-700 mb-2 block">
+                <label className="text-sm font-medium text-kresna-gray-dark mb-2 block">
                   {t('admin.featureFlags.descriptionLabel')}
                 </label>
                 <Input
@@ -416,7 +416,7 @@ export default function FeatureFlagsPage() {
                   onChange={(e) =>
                     setForm({ ...form, description: e.target.value })
                   }
-                  className="bg-slate-50 border-slate-200 text-slate-900 placeholder:text-slate-400"
+                  className="bg-kresna-light border-kresna-border text-charcoal placeholder:text-kresna-gray"
                 />
               </div>
               <div className="flex items-center gap-2">
@@ -427,11 +427,11 @@ export default function FeatureFlagsPage() {
                   onChange={(e) =>
                     setForm({ ...form, enabled_globally: e.target.checked })
                   }
-                  className="w-4 h-4 rounded bg-slate-50 border-slate-200"
+                  className="w-4 h-4 rounded bg-kresna-light border-kresna-border"
                 />
                 <label
                   htmlFor="enabled_globally"
-                  className="text-sm text-slate-700"
+                  className="text-sm text-kresna-gray-dark"
                 >
                   {t('admin.featureFlags.global')}
                 </label>
@@ -442,14 +442,14 @@ export default function FeatureFlagsPage() {
                 variant="outline"
                 onClick={() => setCreateModal(false)}
                 disabled={isActionLoading}
-                className="border-slate-200 hover:bg-slate-100"
+                className="border-kresna-border hover:bg-kresna-light"
               >
                 {t('common.cancel')}
               </Button>
               <Button
                 onClick={handleCreate}
                 disabled={isActionLoading || !form.flag_key.trim()}
-                className="bg-violet-600 hover:bg-violet-500"
+                className="bg-primary-600 hover:bg-primary-500"
               >
                 {isActionLoading ? t('admin.featureFlags.creating') : t('common.save')}
               </Button>
@@ -461,28 +461,28 @@ export default function FeatureFlagsPage() {
       {/* Edit Modal */}
       {editModal && (
         <Dialog open={!!editModal} onOpenChange={() => setEditModal(null)}>
-          <DialogContent className="bg-white border-slate-200 max-w-2xl">
+          <DialogContent className="bg-white border-kresna-border max-w-2xl">
             <DialogHeader>
-              <DialogTitle className="text-slate-900">
+              <DialogTitle className="text-charcoal">
                 {t('admin.featureFlags.editFeatureFlag')}
               </DialogTitle>
-              <DialogDescription className="text-slate-500">
+              <DialogDescription className="text-kresna-gray">
                 {t('admin.featureFlags.editDescription')}
               </DialogDescription>
             </DialogHeader>
             <div className="space-y-4 py-4">
               <div>
-                <label className="text-sm font-medium text-slate-700 mb-2 block">
+                <label className="text-sm font-medium text-kresna-gray-dark mb-2 block">
                   {t('admin.featureFlags.flagKeyReadOnly')}
                 </label>
                 <Input
                   value={form.flag_key}
                   disabled
-                  className="bg-slate-100 border-slate-200 text-slate-400"
+                  className="bg-kresna-light border-kresna-border text-kresna-gray"
                 />
               </div>
               <div>
-                <label className="text-sm font-medium text-slate-700 mb-2 block">
+                <label className="text-sm font-medium text-kresna-gray-dark mb-2 block">
                   {t('admin.featureFlags.descriptionLabel')}
                 </label>
                 <Input
@@ -491,7 +491,7 @@ export default function FeatureFlagsPage() {
                   onChange={(e) =>
                     setForm({ ...form, description: e.target.value })
                   }
-                  className="bg-slate-50 border-slate-200 text-slate-900 placeholder:text-slate-400"
+                  className="bg-kresna-light border-kresna-border text-charcoal placeholder:text-kresna-gray"
                 />
               </div>
               <div className="flex items-center gap-2">
@@ -502,17 +502,17 @@ export default function FeatureFlagsPage() {
                   onChange={(e) =>
                     setForm({ ...form, enabled_globally: e.target.checked })
                   }
-                  className="w-4 h-4 rounded bg-slate-50 border-slate-200"
+                  className="w-4 h-4 rounded bg-kresna-light border-kresna-border"
                 />
                 <label
                   htmlFor="edit_enabled_globally"
-                  className="text-sm text-slate-700"
+                  className="text-sm text-kresna-gray-dark"
                 >
                   {t('admin.featureFlags.global')}
                 </label>
               </div>
               <div>
-                <label className="text-sm font-medium text-slate-700 mb-2 block">
+                <label className="text-sm font-medium text-kresna-gray-dark mb-2 block">
                   {t('admin.featureFlags.enabledForOrgsLabel')}
                 </label>
                 <Input
@@ -521,14 +521,14 @@ export default function FeatureFlagsPage() {
                   onChange={(e) =>
                     setForm({ ...form, enabled_for_orgs: e.target.value })
                   }
-                  className="bg-slate-50 border-slate-200 text-slate-900 placeholder:text-slate-400"
+                  className="bg-kresna-light border-kresna-border text-charcoal placeholder:text-kresna-gray"
                 />
-                <p className="text-xs text-slate-400 mt-1">
+                <p className="text-xs text-kresna-gray mt-1">
                   {t('admin.featureFlags.enabledOrgsHint')}
                 </p>
               </div>
               <div>
-                <label className="text-sm font-medium text-slate-700 mb-2 block">
+                <label className="text-sm font-medium text-kresna-gray-dark mb-2 block">
                   {t('admin.featureFlags.disabledForOrgsLabel')}
                 </label>
                 <Input
@@ -537,9 +537,9 @@ export default function FeatureFlagsPage() {
                   onChange={(e) =>
                     setForm({ ...form, disabled_for_orgs: e.target.value })
                   }
-                  className="bg-slate-50 border-slate-200 text-slate-900 placeholder:text-slate-400"
+                  className="bg-kresna-light border-kresna-border text-charcoal placeholder:text-kresna-gray"
                 />
-                <p className="text-xs text-slate-400 mt-1">
+                <p className="text-xs text-kresna-gray mt-1">
                   {t('admin.featureFlags.disabledOrgsHint')}
                 </p>
               </div>
@@ -549,14 +549,14 @@ export default function FeatureFlagsPage() {
                 variant="outline"
                 onClick={() => setEditModal(null)}
                 disabled={isActionLoading}
-                className="border-slate-200 hover:bg-slate-100"
+                className="border-kresna-border hover:bg-kresna-light"
               >
                 {t('common.cancel')}
               </Button>
               <Button
                 onClick={handleUpdate}
                 disabled={isActionLoading}
-                className="bg-violet-600 hover:bg-violet-500"
+                className="bg-primary-600 hover:bg-primary-500"
               >
                 {isActionLoading ? t('admin.featureFlags.updating') : t('common.save')}
               </Button>
@@ -568,13 +568,13 @@ export default function FeatureFlagsPage() {
       {/* Delete Confirmation Modal */}
       {deleteModal && (
         <Dialog open={!!deleteModal} onOpenChange={() => setDeleteModal(null)}>
-          <DialogContent className="bg-white border-slate-200">
+          <DialogContent className="bg-white border-kresna-border">
             <DialogHeader>
-              <DialogTitle className="text-slate-900 flex items-center gap-2">
+              <DialogTitle className="text-charcoal flex items-center gap-2">
                 <Trash2 className="w-5 h-5 text-red-600" />
                 {t('admin.featureFlags.deleteFeatureFlag')}
               </DialogTitle>
-              <DialogDescription className="text-slate-500">
+              <DialogDescription className="text-kresna-gray">
                 {t('admin.featureFlags.deleteConfirmation', { key: deleteModal.flag_key })}
               </DialogDescription>
             </DialogHeader>
@@ -583,7 +583,7 @@ export default function FeatureFlagsPage() {
                 variant="outline"
                 onClick={() => setDeleteModal(null)}
                 disabled={isActionLoading}
-                className="border-slate-200 hover:bg-slate-100"
+                className="border-kresna-border hover:bg-kresna-light"
               >
                 {t('common.cancel')}
               </Button>

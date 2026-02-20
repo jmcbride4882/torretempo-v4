@@ -76,32 +76,32 @@ function DataTableInner<T>(
     <div ref={ref} className={cn('w-full', className)} {...props}>
       {searchable && (
         <div className="relative mb-4">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 dark:text-slate-500" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-kresna-gray dark:text-kresna-gray" />
           <input
             type="text"
             value={search}
             onChange={e => setSearch(e.target.value)}
             placeholder={searchPlaceholder}
             className={cn(
-              'w-full pl-10 pr-4 py-2 rounded-lg border border-slate-200 bg-white text-sm text-slate-900',
-              'placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:border-transparent',
-              'dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100 dark:placeholder:text-slate-500',
+              'w-full pl-10 pr-4 py-2 rounded-lg border border-kresna-border bg-white text-sm text-charcoal',
+              'placeholder:text-kresna-gray focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:border-transparent',
+              'dark:border-kresna-border dark:bg-charcoal dark:text-kresna-light dark:placeholder:text-kresna-gray',
               'transition-colors duration-200'
             )}
           />
         </div>
       )}
-      <div className="overflow-x-auto rounded-xl border border-slate-200 dark:border-slate-700">
+      <div className="overflow-x-auto rounded-xl border border-kresna-border dark:border-kresna-border">
         <table className="w-full text-sm">
           <thead>
-            <tr className="border-b border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50">
+            <tr className="border-b border-kresna-border dark:border-kresna-border bg-kresna-light dark:bg-charcoal/50">
               {columns.map(col => (
                 <th
                   key={col.key}
                   onClick={col.sortable ? () => handleSort(col.key) : undefined}
                   className={cn(
-                    'text-left text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider px-4 py-3',
-                    col.sortable && 'cursor-pointer select-none hover:text-slate-700 dark:hover:text-slate-300',
+                    'text-left text-xs font-medium text-kresna-gray dark:text-kresna-gray uppercase tracking-wider px-4 py-3',
+                    col.sortable && 'cursor-pointer select-none hover:text-kresna-gray-dark dark:hover:text-kresna-gray',
                     col.className
                   )}
                 >
@@ -122,17 +122,17 @@ function DataTableInner<T>(
           <tbody>
             {isLoading ? (
               Array.from({ length: 5 }).map((_, i) => (
-                <tr key={i} className="border-b border-slate-100 dark:border-slate-800">
+                <tr key={i} className="border-b border-kresna-border dark:border-charcoal">
                   {columns.map(col => (
                     <td key={col.key} className="px-4 py-3">
-                      <div className="h-4 rounded bg-slate-100 dark:bg-slate-700 animate-pulse" />
+                      <div className="h-4 rounded bg-kresna-light dark:bg-kresna-gray-dark animate-pulse" />
                     </td>
                   ))}
                 </tr>
               ))
             ) : sortedData.length === 0 ? (
               <tr>
-                <td colSpan={columns.length} className="px-4 py-12 text-center text-slate-500 dark:text-slate-400">
+                <td colSpan={columns.length} className="px-4 py-12 text-center text-kresna-gray dark:text-kresna-gray">
                   {emptyMessage}
                 </td>
               </tr>
@@ -142,12 +142,12 @@ function DataTableInner<T>(
                   key={keyExtractor(item)}
                   onClick={onRowClick ? () => onRowClick(item) : undefined}
                   className={cn(
-                    'border-b border-slate-100 dark:border-slate-800 transition-colors',
-                    onRowClick && 'cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-800/50'
+                    'border-b border-kresna-border dark:border-charcoal transition-colors',
+                    onRowClick && 'cursor-pointer hover:bg-kresna-light dark:hover:bg-charcoal/50'
                   )}
                 >
                   {columns.map(col => (
-                    <td key={col.key} className={cn('px-4 py-3 text-slate-700 dark:text-slate-300', col.className)}>
+                    <td key={col.key} className={cn('px-4 py-3 text-kresna-gray-dark dark:text-kresna-gray', col.className)}>
                       {col.render ? col.render(item) : String((item as Record<string, unknown>)[col.key] ?? '')}
                     </td>
                   ))}
