@@ -75,7 +75,7 @@ export function MapPicker({ lat, lng, onLocationSelect, height = '400px' }: MapP
       {/* Inline map view */}
       <div className="relative">
         <div 
-          className="overflow-hidden rounded-lg border border-kresna-border" 
+          className="overflow-hidden rounded-2xl border border-kresna-border shadow-card" 
           style={{ height }}
         >
           <MapView />

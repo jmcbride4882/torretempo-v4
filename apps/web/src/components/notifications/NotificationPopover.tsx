@@ -118,10 +118,10 @@ export function NotificationPopover({
     <PopoverContent
       align="end"
       sideOffset={8}
-      className="w-[380px] p-0 overflow-hidden border-kresna-border bg-white shadow-2xl"
+      className="w-[380px] p-0 overflow-hidden rounded-2xl border border-kresna-border bg-white shadow-card"
     >
       {/* Header */}
-      <div className="flex items-center justify-between px-4 py-3 border-b border-kresna-border">
+      <div className="flex items-center justify-between px-4 py-4 border-b border-kresna-border">
         <div className="flex items-center gap-2">
           <h2 className="text-sm font-semibold text-charcoal">{t('notifications.title')}</h2>
           {unreadCount > 0 && (
@@ -199,11 +199,8 @@ export function NotificationPopover({
                 exit={{ opacity: 0 }}
                 className="flex flex-col items-center justify-center py-12 gap-3"
               >
-                <div className="relative">
-                  <div className="absolute inset-0 bg-primary-100 blur-xl rounded-full" />
-                  <div className="relative w-14 h-14 rounded-full bg-kresna-light border border-kresna-border flex items-center justify-center">
-                    <BellOff className="h-7 w-7 text-kresna-gray" />
-                  </div>
+                <div className="w-14 h-14 rounded-full bg-kresna-light border border-kresna-border flex items-center justify-center">
+                  <BellOff className="h-7 w-7 text-kresna-gray" />
                 </div>
                 <div className="text-center">
                   <p className="text-sm font-medium text-kresna-gray-dark">{t('notifications.allCaughtUp')}</p>
@@ -240,7 +237,7 @@ export function NotificationPopover({
           variant="ghost"
           onClick={handleViewAll}
           className={cn(
-            'w-full h-11 rounded-none text-sm text-kresna-gray hover:text-charcoal',
+            'w-full h-11 rounded-none text-sm text-primary-600 hover:text-primary-700',
             'flex items-center justify-center gap-2 group'
           )}
         >
@@ -249,8 +246,8 @@ export function NotificationPopover({
         </Button>
       </div>
 
-      {/* Decorative gradient */}
-      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-primary-500/50 to-transparent" />
+      {/* Subtle top accent */}
+      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-primary-200 to-transparent" />
     </PopoverContent>
   );
 }

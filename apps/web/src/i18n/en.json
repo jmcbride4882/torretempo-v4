@@ -308,7 +308,35 @@
     "welcome": "Welcome",
     "welcomeAboard": "Welcome aboard",
     "yourOrgs": "Your organizations",
-    "youreInvited": "You're invited"
+    "youreInvited": "You're invited",
+    "hub": {
+      "title": "Get Started",
+      "subtitle": "How would you like to join Torre Tempo?",
+      "createOrg": "Create your organization",
+      "createOrgDesc": "Set up your business and start managing your team",
+      "haveInvitation": "I have an invitation code",
+      "haveInvitationDesc": "Enter the code from your employer to join their organization",
+      "waitingInvitation": "Waiting for an invitation",
+      "waitingInvitationDesc": "Your employer will invite you via email. You'll be notified when it arrives.",
+      "enterCode": "Enter invitation code",
+      "codePlaceholder": "Paste your invitation code here",
+      "joinWithCode": "Join with code"
+    }
+  },
+  "profile": {
+    "title": "My Profile",
+    "subtitle": "Manage your account and view employment details",
+    "accountInfo": "Account Information",
+    "changeName": "Change name",
+    "nameUpdated": "Name updated successfully",
+    "employmentDetails": "Employment Details",
+    "noEmployeeProfile": "Your organization admin has not yet created your employee profile.",
+    "adminManaged": "Employment details are managed by your organization's admin.",
+    "changePassword": "Change Password",
+    "passwordSection": "Update your access password",
+    "editProfile": "Edit Profile",
+    "saveChanges": "Save changes",
+    "profileUpdated": "Profile updated successfully"
   },
   "landing": {
     "heroTitle": "Clock in, in 2 seconds",

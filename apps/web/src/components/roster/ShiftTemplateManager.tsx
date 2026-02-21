@@ -179,7 +179,7 @@ export function ShiftTemplateManager({ organizationSlug }: ShiftTemplateManagerP
           <h3 className="text-lg font-semibold text-charcoal">{t('templates.title')}</h3>
           <p className="text-sm text-kresna-gray">{t('templates.subtitle')}</p>
         </div>
-        <Button onClick={() => setShowCreateModal(true)} className="gap-2">
+        <Button onClick={() => setShowCreateModal(true)} variant="gradient" className="gap-2 rounded-xl">
           <Plus className="h-4 w-4" />
           {t('templates.newTemplate')}
         </Button>
@@ -187,15 +187,15 @@ export function ShiftTemplateManager({ organizationSlug }: ShiftTemplateManagerP
 
       {/* Templates Grid */}
       {templates.length === 0 ? (
-        <div className="rounded-xl border border-kresna-border bg-kresna-light p-12 text-center">
-          <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-kresna-light">
+        <div className="rounded-2xl border border-kresna-border bg-kresna-light p-12 text-center">
+          <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-white">
             <Clock className="h-8 w-8 text-kresna-gray" />
           </div>
           <h3 className="mb-2 text-lg font-semibold text-charcoal">{t('templates.noTemplatesTitle')}</h3>
           <p className="mb-6 text-sm text-kresna-gray">
             {t('templates.noTemplatesDescription')}
           </p>
-          <Button onClick={() => setShowCreateModal(true)} className="gap-2">
+          <Button onClick={() => setShowCreateModal(true)} variant="gradient" className="gap-2 rounded-xl">
             <Plus className="h-4 w-4" />
             {t('templates.createFirst')}
           </Button>
@@ -211,8 +211,8 @@ export function ShiftTemplateManager({ organizationSlug }: ShiftTemplateManagerP
                 exit={{ opacity: 0, scale: 0.95 }}
                 transition={{ delay: index * 0.05 }}
                 className={cn(
-                  'group relative overflow-hidden rounded-xl border bg-white p-4 shadow-sm transition-all hover:bg-kresna-light',
-                  'border-kresna-border hover:border-kresna-border'
+                  'group relative overflow-hidden rounded-2xl border border-kresna-border bg-white p-5 shadow-card transition-all',
+                  'hover:shadow-kresna hover:bg-kresna-light'
                 )}
               >
                 {/* Color indicator */}
@@ -248,7 +248,7 @@ export function ShiftTemplateManager({ organizationSlug }: ShiftTemplateManagerP
                         variant="ghost"
                         size="sm"
                         onClick={() => setDeletingTemplate(template)}
-                        className="h-8 w-8 p-0 text-red-400 hover:bg-red-500/10 hover:text-red-600"
+                        className="h-8 w-8 p-0 text-red-600 hover:bg-red-50 hover:text-red-600"
                       >
                         <Trash2 className="h-3.5 w-3.5" />
                       </Button>
@@ -307,7 +307,7 @@ export function ShiftTemplateManager({ organizationSlug }: ShiftTemplateManagerP
 
       {/* Delete Confirmation */}
       <Dialog open={!!deletingTemplate} onOpenChange={() => setDeletingTemplate(null)}>
-        <DialogContent className="border-kresna-border bg-white">
+        <DialogContent>
           <DialogHeader>
             <DialogTitle className="text-charcoal">{t('templates.deleteTitle')}</DialogTitle>
             <DialogDescription className="text-kresna-gray">
@@ -315,12 +315,13 @@ export function ShiftTemplateManager({ organizationSlug }: ShiftTemplateManagerP
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
-            <Button variant="ghost" onClick={() => setDeletingTemplate(null)}>
+            <Button variant="outline" onClick={() => setDeletingTemplate(null)} className="rounded-xl">
               {t('common.cancel')}
             </Button>
             <Button
               variant="destructive"
               onClick={() => deletingTemplate && handleDelete(deletingTemplate)}
+              className="rounded-xl"
             >
               {t('templates.deleteButton')}
             </Button>
@@ -443,7 +444,7 @@ function TemplateFormModal({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="border-kresna-border bg-white sm:max-w-[500px]">
+      <DialogContent className="sm:max-w-[500px]">
         <form onSubmit={handleSubmit}>
           <DialogHeader>
             <DialogTitle className="text-charcoal">
@@ -462,9 +463,9 @@ function TemplateFormModal({
               <motion.div
                 initial={{ opacity: 0, y: -10 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="flex items-start gap-2 rounded-lg border border-red-500/20 bg-red-500/10 p-3"
+                className="flex items-start gap-2 rounded-xl border border-red-200 bg-red-50 p-3"
               >
-                <AlertCircle className="h-4 w-4 shrink-0 text-red-400" />
+                <AlertCircle className="h-4 w-4 shrink-0 text-red-600" />
                 <p className="text-sm text-red-600">{error}</p>
               </motion.div>
             )}
@@ -479,7 +480,7 @@ function TemplateFormModal({
                 placeholder={t('templates.templateNamePlaceholder')}
                 value={formData.name}
                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                className="border-kresna-border bg-white text-charcoal placeholder:text-kresna-gray"
+                className="rounded-xl border-kresna-border bg-white text-charcoal placeholder:text-kresna-gray"
                 required
               />
             </div>
@@ -495,7 +496,7 @@ function TemplateFormModal({
                   type="time"
                   value={formData.start_time}
                   onChange={(e) => setFormData({ ...formData, start_time: e.target.value })}
-                  className="border-kresna-border bg-white text-charcoal"
+                  className="rounded-xl border-kresna-border bg-white text-charcoal"
                   required
                 />
               </div>
@@ -509,7 +510,7 @@ function TemplateFormModal({
                   type="time"
                   value={formData.end_time}
                   onChange={(e) => setFormData({ ...formData, end_time: e.target.value })}
-                  className="border-kresna-border bg-white text-charcoal"
+                  className="rounded-xl border-kresna-border bg-white text-charcoal"
                   required
                 />
               </div>
@@ -527,7 +528,7 @@ function TemplateFormModal({
                 max="120"
                 value={formData.break_minutes}
                 onChange={(e) => setFormData({ ...formData, break_minutes: parseInt(e.target.value) || 0 })}
-                className="border-kresna-border bg-white text-charcoal"
+                className="rounded-xl border-kresna-border bg-white text-charcoal"
               />
             </div>
 
@@ -541,10 +542,10 @@ function TemplateFormModal({
                 onValueChange={(value) => setFormData({ ...formData, location_id: value === 'none' ? null : value })}
                 disabled={isLoadingLocations}
               >
-                <SelectTrigger className="border-kresna-border bg-white text-charcoal">
+                <SelectTrigger className="rounded-xl border-kresna-border bg-white text-charcoal">
                   <SelectValue placeholder={isLoadingLocations ? t('common.loading') : t('templates.selectLocation')} />
                 </SelectTrigger>
-                <SelectContent className="border-kresna-border bg-white">
+                <SelectContent>
                   <SelectItem value="none">{t('templates.noDefaultLocation')}</SelectItem>
                   {locations.map((loc) => (
                     <SelectItem key={loc.id} value={loc.id}>
@@ -566,7 +567,7 @@ function TemplateFormModal({
                   type="color"
                   value={formData.color}
                   onChange={(e) => setFormData({ ...formData, color: e.target.value })}
-                  className="h-10 w-20 cursor-pointer border-kresna-border bg-white"
+                  className="h-10 w-20 cursor-pointer rounded-xl border-kresna-border bg-white"
                 />
                 <span className="text-sm text-kresna-gray">{formData.color}</span>
               </div>
@@ -574,10 +575,10 @@ function TemplateFormModal({
           </div>
 
           <DialogFooter>
-            <Button type="button" variant="ghost" onClick={() => onOpenChange(false)} disabled={isSubmitting}>
+            <Button type="button" variant="outline" onClick={() => onOpenChange(false)} disabled={isSubmitting} className="rounded-xl">
               {t('common.cancel')}
             </Button>
-            <Button type="submit" disabled={isSubmitting} className="gap-2">
+            <Button type="submit" variant="gradient" disabled={isSubmitting} className="gap-2 rounded-xl">
               {isSubmitting ? (
                 <>
                   <Loader2 className="h-4 w-4 animate-spin" />

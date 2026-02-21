@@ -45,7 +45,7 @@ export function OrganizationCard({ organization, onSelect, isLoading }: Organiza
 
   return (
     <div className="group">
-      <Card className="relative overflow-hidden border-kresna-border bg-white transition-all duration-300 hover:border-primary-300 hover:shadow-md">
+      <Card className="relative overflow-hidden rounded-2xl border-kresna-border bg-white shadow-card transition-all duration-300 hover:border-primary-300 hover:shadow-md">
         <div className="relative p-5">
           <div className="flex items-start justify-between gap-4">
             {/* Left section: Logo and info */}

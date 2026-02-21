@@ -273,7 +273,7 @@ export function CreateShiftModal({
       <DialogContent className="max-w-md">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2 text-xl text-charcoal">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary-50">
+            <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-primary-50">
               <Plus className="h-4 w-4 text-primary-600" />
             </div>
             {t('roster.createNewShift')}
@@ -295,7 +295,7 @@ export function CreateShiftModal({
                 value={formData.location_id}
                 onValueChange={(value) => setFormData({ ...formData, location_id: value })}
               >
-                <SelectTrigger id="location">
+                <SelectTrigger id="location" className="rounded-xl h-12">
                   <SelectValue placeholder={t('roster.selectLocation')} />
                 </SelectTrigger>
                 <SelectContent>
@@ -328,7 +328,7 @@ export function CreateShiftModal({
                 onValueChange={(value) => setFormData({ ...formData, user_id: value })}
                 disabled={isLoadingMembers}
               >
-                <SelectTrigger id="employee">
+                <SelectTrigger id="employee" className="rounded-xl h-12">
                   <SelectValue placeholder={isLoadingMembers ? t('roster.loadingEmployees') : t('roster.unassigned')} />
                 </SelectTrigger>
 
@@ -372,6 +372,7 @@ export function CreateShiftModal({
                 type="date"
                 value={formData.start_date}
                 onChange={(e) => setFormData({ ...formData, start_date: e.target.value })}
+                className="rounded-xl h-12"
                 required
               />
             </div>
@@ -388,6 +389,7 @@ export function CreateShiftModal({
                   type="time"
                   value={formData.start_time}
                   onChange={(e) => setFormData({ ...formData, start_time: e.target.value })}
+                  className="rounded-xl h-12"
                   required
                 />
               </div>
@@ -401,6 +403,7 @@ export function CreateShiftModal({
                   type="time"
                   value={formData.end_time}
                   onChange={(e) => setFormData({ ...formData, end_time: e.target.value })}
+                  className="rounded-xl h-12"
                   required
                 />
               </div>
@@ -408,7 +411,7 @@ export function CreateShiftModal({
 
             {/* Duration display */}
             {duration && (
-              <div className="rounded-lg border border-primary-200 bg-primary-50 px-3 py-2">
+              <div className="rounded-xl border border-primary-200 bg-primary-50 px-4 py-3">
                 <p className="text-xs text-primary-700">
                   <span className="font-medium">{t('clock.duration')}</span> {duration}
                   {formData.break_minutes > 0 && (
@@ -430,6 +433,7 @@ export function CreateShiftModal({
                 step="5"
                 value={formData.break_minutes}
                 onChange={(e) => setFormData({ ...formData, break_minutes: parseInt(e.target.value) || 0 })}
+                className="rounded-xl h-12"
               />
             </div>
 
@@ -442,7 +446,7 @@ export function CreateShiftModal({
                 id="notes"
                 value={formData.notes}
                 onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
-                className="w-full rounded-lg border border-kresna-border bg-white px-3 py-2 text-sm text-charcoal placeholder:text-kresna-gray focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+                className="w-full rounded-xl border border-kresna-border bg-white px-4 py-3 text-sm text-charcoal placeholder:text-kresna-gray focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
                 rows={3}
                 placeholder={t('common.addDetails')}
               />
@@ -450,7 +454,7 @@ export function CreateShiftModal({
 
             {/* Error message */}
             {error && (
-              <div className="flex items-start gap-2 rounded-lg border border-red-200 bg-red-50 p-3">
+              <div className="flex items-start gap-2 rounded-xl border border-red-200 bg-red-50 p-3">
                 <AlertCircle className="h-4 w-4 shrink-0 text-red-600" />
                 <p className="text-sm text-red-600">{error}</p>
               </div>
@@ -460,18 +464,19 @@ export function CreateShiftModal({
           <DialogFooter className="gap-2">
             <Button
               type="button"
-              variant="ghost"
+              variant="outline"
               onClick={() => onOpenChange(false)}
               disabled={isSubmitting}
-              className="rounded-lg border border-kresna-border bg-white text-kresna-gray-dark hover:bg-kresna-light"
+              className="rounded-xl"
             >
               {t('common.cancel')}
             </Button>
             <Button
               type="submit"
+              variant="gradient"
               disabled={isSubmitting || !formData.location_id}
               className={cn(
-                'gap-2 rounded-lg bg-primary-600 text-white hover:bg-primary-700',
+                'gap-2 rounded-xl',
                 isSubmitting && 'cursor-not-allowed opacity-50'
               )}
             >

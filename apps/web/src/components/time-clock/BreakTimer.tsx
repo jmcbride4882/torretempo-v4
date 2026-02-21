@@ -182,7 +182,7 @@ export function BreakTimer({
   }
 
   return (
-    <div className="bg-white border border-kresna-border rounded-xl shadow-sm p-4 space-y-4">
+    <div className="rounded-2xl border border-kresna-border bg-white p-6 shadow-card space-y-4">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
@@ -215,7 +215,7 @@ export function BreakTimer({
                 transition={{ duration: 2, repeat: Infinity }}
                 className={cn(
                   "text-5xl font-mono font-bold tracking-tight",
-                  isOverWarning ? "text-amber-400" : "text-emerald-400"
+                  isOverWarning ? "text-amber-600" : "text-emerald-600"
                 )}
               >
                 {formatBreakDuration(elapsedSeconds)}
@@ -240,10 +240,9 @@ export function BreakTimer({
             <Button
               onClick={handleEndBreak}
               disabled={isEnding}
-              className={cn(
-                "w-full h-14 text-lg font-semibold rounded-xl",
-                "bg-emerald-600 hover:bg-emerald-700"
-              )}
+              variant="success"
+              size="xl"
+              className="w-full"
             >
               {isEnding ? (
                 <span className="flex items-center gap-2">
@@ -273,7 +272,7 @@ export function BreakTimer({
               <button
                 onClick={() => setBreakType('unpaid')}
                 className={cn(
-                  "flex-1 py-2 px-3 rounded-lg text-sm font-medium transition-all",
+                  "flex-1 min-h-touch rounded-xl text-sm font-medium transition-all",
                   "border",
                   breakType === 'unpaid'
                     ? "bg-kresna-light border-kresna-border text-charcoal"
@@ -285,10 +284,10 @@ export function BreakTimer({
               <button
                 onClick={() => setBreakType('paid')}
                 className={cn(
-                  "flex-1 py-2 px-3 rounded-lg text-sm font-medium transition-all",
+                  "flex-1 min-h-touch rounded-xl text-sm font-medium transition-all",
                   "border",
                   breakType === 'paid'
-                    ? "bg-emerald-500/20 border-emerald-500/50 text-emerald-400"
+                    ? "bg-emerald-50 border-emerald-200 text-emerald-600"
                     : "bg-transparent border-kresna-border text-kresna-gray hover:text-kresna-gray-dark"
                 )}
               >
@@ -301,10 +300,8 @@ export function BreakTimer({
               onClick={handleStartBreak}
               disabled={isStarting}
               variant="outline"
-              className={cn(
-                "w-full h-12 text-base font-medium rounded-xl",
-                "border-kresna-border hover:bg-kresna-light"
-              )}
+              size="touch"
+              className="w-full"
             >
               {isStarting ? (
                 <span className="flex items-center gap-2">
@@ -329,10 +326,10 @@ export function BreakTimer({
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
-            className="flex items-center gap-2 p-3 rounded-lg bg-red-500/10 border border-red-500/20"
+            className="flex items-center gap-2 p-4 rounded-xl bg-red-50 border border-red-200"
           >
-            <AlertCircle className="h-4 w-4 text-red-400 flex-shrink-0" />
-            <p className="text-sm text-red-400">{error}</p>
+            <AlertCircle className="h-4 w-4 text-red-600 flex-shrink-0" />
+            <p className="text-sm text-red-600">{error}</p>
           </motion.div>
         )}
       </AnimatePresence>

@@ -48,9 +48,9 @@ function getHoursColor(hours: number): string {
 }
 
 function getHoursTextColor(hours: number): string {
-  if (hours < 32) return 'text-emerald-400';
-  if (hours < 38) return 'text-amber-400';
-  return 'text-red-400';
+  if (hours < 32) return 'text-emerald-600';
+  if (hours < 38) return 'text-amber-600';
+  return 'text-red-600';
 }
 
 function getInitials(name: string | null | undefined, email: string | null | undefined): string {
@@ -96,7 +96,7 @@ function DraggableEmployeeCard({ member, hours }: DraggableEmployeeCardProps) {
       className={cn(
         'cursor-grab rounded-xl border border-kresna-border bg-white p-3 transition-all',
         'hover:border-kresna-border hover:bg-kresna-light',
-        isDragging && 'cursor-grabbing opacity-50 scale-105 shadow-lg shadow-primary-500/5'
+        isDragging && 'cursor-grabbing opacity-50 scale-105 shadow-sm'
       )}
     >
       <div className="flex items-center gap-3">
@@ -271,7 +271,7 @@ export function EmployeeSidebar({ organizationSlug, weekStart, className }: Empl
           placeholder={t('roster.searchEmployees')}
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          className="border-kresna-border bg-white pl-9 text-sm text-charcoal placeholder:text-kresna-gray focus:border-primary-500"
+          className="rounded-xl border-kresna-border bg-white pl-9 text-sm text-charcoal placeholder:text-kresna-gray focus:border-primary-500"
         />
       </div>
 
@@ -284,11 +284,11 @@ export function EmployeeSidebar({ organizationSlug, weekStart, className }: Empl
             <EmployeeCardSkeleton />
           </>
         ) : error ? (
-          <div className="rounded-lg border border-red-500/20 bg-red-500/10 p-3 text-center">
+          <div className="rounded-xl border border-red-200 bg-red-50 p-3 text-center">
             <p className="text-sm text-red-600">{error}</p>
           </div>
         ) : filteredMembers.length === 0 ? (
-          <div className="rounded-lg border border-kresna-border bg-white p-6 text-center">
+          <div className="rounded-xl border border-kresna-border bg-white p-6 text-center">
             <User className="mx-auto h-8 w-8 text-kresna-gray" />
             <p className="mt-2 text-sm text-kresna-gray">
               {searchQuery ? t('roster.noEmployeesMatch') : t('roster.noEmployeesFound')}

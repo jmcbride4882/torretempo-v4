@@ -67,7 +67,7 @@ export function NotificationBell() {
           variant="ghost"
           size="icon"
           className={cn(
-            'relative group',
+            'relative group rounded-xl min-h-touch',
             isOpen && 'bg-kresna-light'
           )}
           aria-label={`Notifications${unreadCount > 0 ? ` (${unreadCount} unread)` : ''}`}

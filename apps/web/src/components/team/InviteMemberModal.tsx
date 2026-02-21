@@ -119,7 +119,7 @@ export function InviteMemberModal({ open, onOpenChange, onSuccess, organizationI
                   exit={{ scale: 0 }}
                   transition={{ type: 'spring', stiffness: 200 }}
                 >
-                  <CheckCircle2 className="h-8 w-8 text-emerald-500" />
+                  <CheckCircle2 className="h-8 w-8 text-emerald-600" />
                 </motion.div>
               ) : state === 'error' ? (
                 <motion.div
@@ -128,7 +128,7 @@ export function InviteMemberModal({ open, onOpenChange, onSuccess, organizationI
                   animate={{ scale: 1 }}
                   exit={{ scale: 0 }}
                 >
-                  <XCircle className="h-8 w-8 text-red-500" />
+                  <XCircle className="h-8 w-8 text-red-600" />
                 </motion.div>
               ) : (
                 <motion.div
@@ -137,7 +137,7 @@ export function InviteMemberModal({ open, onOpenChange, onSuccess, organizationI
                   animate={{ scale: 1 }}
                   exit={{ scale: 0 }}
                 >
-                  <UserPlus className="h-8 w-8 text-primary-500" />
+                  <UserPlus className="h-8 w-8 text-primary-600" />
                 </motion.div>
               )}
             </AnimatePresence>
@@ -197,7 +197,7 @@ export function InviteMemberModal({ open, onOpenChange, onSuccess, organizationI
                       setEmail(e.target.value);
                       if (state === 'error') resetState();
                     }}
-                    className={`pl-10 ${state === 'error' ? 'border-red-500/50 focus:border-red-500' : ''}`}
+                    className={`h-12 rounded-xl pl-10 ${state === 'error' ? 'border-red-200 focus:border-red-400' : ''}`}
                     disabled={state === 'loading'}
                     autoFocus
                     autoComplete="off"
@@ -211,7 +211,7 @@ export function InviteMemberModal({ open, onOpenChange, onSuccess, organizationI
                       initial={{ opacity: 0, y: -10, height: 0 }}
                       animate={{ opacity: 1, y: 0, height: 'auto' }}
                       exit={{ opacity: 0, y: -10, height: 0 }}
-                      className="flex items-center gap-2 text-sm text-red-500"
+                      className="flex items-center gap-2 text-sm text-red-600"
                     >
                       <XCircle className="h-3.5 w-3.5" />
                       {errorMessage}
@@ -231,7 +231,7 @@ export function InviteMemberModal({ open, onOpenChange, onSuccess, organizationI
                     value={role}
                     onChange={(e) => setRole(e.target.value as MemberRole)}
                     disabled={state === 'loading'}
-                    className="w-full rounded-xl border border-kresna-border bg-white px-10 py-2.5 text-charcoal transition-colors focus:border-primary-400 focus:outline-none focus:ring-2 focus:ring-primary-200 disabled:opacity-50"
+                    className="h-12 w-full rounded-xl border border-kresna-border bg-white px-10 text-charcoal transition-colors focus:border-primary-400 focus:outline-none focus:ring-2 focus:ring-primary-200 disabled:opacity-50"
                   >
                     <option value="member">{t('team.roleMember')}</option>
                     <option value="admin">{t('team.roleAdmin')}</option>
@@ -255,8 +255,9 @@ export function InviteMemberModal({ open, onOpenChange, onSuccess, organizationI
                 </Button>
                 <Button
                   type="submit"
+                  variant="gradient"
                   disabled={state === 'loading' || !email.trim()}
-                  className="flex-1 gap-2 bg-primary-600 hover:bg-primary-700"
+                  className="flex-1 gap-2 rounded-xl"
                 >
                   {state === 'loading' ? (
                     <>

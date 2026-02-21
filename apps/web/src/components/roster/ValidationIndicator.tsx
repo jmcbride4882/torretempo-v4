@@ -1,6 +1,6 @@
 /**
  * ValidationIndicator Component
- * 
+ *
  * Displays real-time validation feedback for roster shift assignments.
  * Shows green checkmark, yellow warning, or red X based on validation result.
  */
@@ -76,18 +76,18 @@ export function ValidationIndicator({
   if (hasViolations) {
     status = 'error';
     Icon = X;
-    bgColor = 'bg-red-500/20';
-    iconColor = 'text-red-400';
+    bgColor = 'bg-red-50';
+    iconColor = 'text-red-600';
   } else if (hasWarnings) {
     status = 'warning';
     Icon = AlertTriangle;
-    bgColor = 'bg-amber-500/20';
-    iconColor = 'text-amber-400';
+    bgColor = 'bg-amber-50';
+    iconColor = 'text-amber-600';
   } else {
     status = 'valid';
     Icon = Check;
-    bgColor = 'bg-emerald-500/20';
-    iconColor = 'text-emerald-400';
+    bgColor = 'bg-emerald-50';
+    iconColor = 'text-emerald-600';
   }
 
   const indicator = (
@@ -127,9 +127,9 @@ export function ValidationIndicator({
             {issues.map((issue, idx) => (
               <div key={idx} className="flex items-start gap-2">
                 {issue.severity === 'critical' || issue.severity === 'high' ? (
-                  <X className="h-3 w-3 shrink-0 mt-0.5 text-red-400" />
+                  <X className="h-3 w-3 shrink-0 mt-0.5 text-red-600" />
                 ) : (
-                  <AlertTriangle className="h-3 w-3 shrink-0 mt-0.5 text-amber-400" />
+                  <AlertTriangle className="h-3 w-3 shrink-0 mt-0.5 text-amber-600" />
                 )}
                 <div>
                   <p className="text-xs text-kresna-gray-dark">{issue.message}</p>
@@ -188,7 +188,7 @@ export function ValidationBadge({
     return (
       <span className={cn(
         'inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs',
-        'bg-red-500/20 text-red-400',
+        'bg-red-50 text-red-600',
         className
       )}>
         <X className="h-3 w-3" />
@@ -201,7 +201,7 @@ export function ValidationBadge({
     return (
       <span className={cn(
         'inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs',
-        'bg-amber-500/20 text-amber-400',
+        'bg-amber-50 text-amber-600',
         className
       )}>
         <AlertTriangle className="h-3 w-3" />
@@ -213,7 +213,7 @@ export function ValidationBadge({
   return (
     <span className={cn(
       'inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs',
-      'bg-emerald-500/20 text-emerald-400',
+      'bg-emerald-50 text-emerald-600',
       className
     )}>
       <Check className="h-3 w-3" />
@@ -245,18 +245,18 @@ export function getDropZoneClasses({
   }
 
   if (!result) {
-    return 'ring-2 ring-primary-500 ring-inset bg-primary-500/5';
+    return 'ring-2 ring-primary-500 ring-inset bg-primary-50/30';
   }
 
   if (result.violations.length > 0) {
-    return 'ring-2 ring-red-500 ring-inset bg-red-500/10 cursor-not-allowed';
+    return 'ring-2 ring-red-500 ring-inset bg-red-50 cursor-not-allowed';
   }
 
   if (result.warnings.length > 0) {
-    return 'ring-2 ring-amber-500 ring-inset bg-amber-500/5';
+    return 'ring-2 ring-amber-500 ring-inset bg-amber-50/50';
   }
 
-  return 'ring-2 ring-emerald-500 ring-inset bg-emerald-500/5';
+  return 'ring-2 ring-emerald-500 ring-inset bg-emerald-50/50';
 }
 
 export default ValidationIndicator;

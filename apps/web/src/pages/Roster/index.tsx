@@ -239,11 +239,11 @@ export default function RosterPage() {
       {/* Page header */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary-100">
+          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary-50">
             <Users className="h-5 w-5 text-primary-600" />
           </div>
           <div>
-            <h1 className="text-xl font-bold text-charcoal sm:text-2xl">
+            <h1 className="text-2xl font-bold tracking-tight text-charcoal">
               {t('roster.title')}
             </h1>
             <p className="text-sm text-kresna-gray">
@@ -259,16 +259,17 @@ export default function RosterPage() {
             size="sm"
             onClick={handleRefresh}
             disabled={isRefreshing}
-            className="gap-1.5 rounded-lg border border-kresna-border bg-white text-kresna-gray-dark hover:bg-kresna-light"
+            className="gap-1.5 rounded-xl border border-kresna-border bg-white text-kresna-gray-dark hover:bg-kresna-light"
           >
             <RefreshCw className={`h-4 w-4 ${isRefreshing ? 'animate-spin' : ''}`} />
             <span className="hidden sm:inline">{t('roster.refresh')}</span>
           </Button>
 
           <Button
+            variant="gradient"
             onClick={handleCreateShift}
             size="sm"
-            className="gap-1.5 rounded-lg bg-primary-600 text-white hover:bg-primary-700"
+            className="gap-1.5"
           >
             <Plus className="h-4 w-4" />
             <span className="hidden sm:inline">{t('roster.newShift')}</span>
@@ -277,7 +278,7 @@ export default function RosterPage() {
       </div>
 
       {/* Controls bar */}
-      <div className="rounded-xl border border-kresna-border bg-white p-4">
+      <div className="rounded-2xl border border-kresna-border bg-white p-5 shadow-card">
         <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
           {/* Week selector */}
           <WeekSelector
@@ -293,7 +294,7 @@ export default function RosterPage() {
               variant="ghost"
               size="sm"
               onClick={() => setShowFilters(!showFilters)}
-              className={`gap-1.5 rounded-lg border lg:hidden ${
+              className={`gap-1.5 rounded-xl border lg:hidden ${
                 showFilters || selectedLocationId
                   ? 'border-primary-300 bg-primary-50 text-primary-600'
                   : 'border-kresna-border bg-white text-kresna-gray-dark'
@@ -322,7 +323,7 @@ export default function RosterPage() {
                   variant="ghost"
                   size="sm"
                   onClick={() => setSelectedLocationId(null)}
-                  className="gap-1 rounded-lg text-kresna-gray hover:text-charcoal"
+                  className="gap-1 rounded-xl text-kresna-gray hover:text-charcoal"
                 >
                   <X className="h-3.5 w-3.5" />
                   {t('common.clear')}
@@ -349,7 +350,7 @@ export default function RosterPage() {
                   variant="ghost"
                   size="sm"
                   onClick={() => setSelectedLocationId(null)}
-                  className="gap-1 rounded-lg text-kresna-gray hover:text-charcoal"
+                  className="gap-1 rounded-xl text-kresna-gray hover:text-charcoal"
                 >
                   <X className="h-3.5 w-3.5" />
                   {t('roster.clearAll')}
@@ -361,7 +362,7 @@ export default function RosterPage() {
       </div>
 
       {/* Stats bar */}
-      <div className="flex items-center gap-6 text-sm">
+      <div className="flex flex-wrap items-center gap-6 rounded-2xl border border-kresna-border bg-white p-4 text-sm shadow-card">
         <div className="flex items-center gap-2">
           <div className="h-2 w-2 rounded-full bg-emerald-500" />
           <span className="text-kresna-gray">

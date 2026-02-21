@@ -308,7 +308,35 @@
     "welcome": "Bienvenido",
     "welcomeAboard": "Bienvenido a bordo",
     "yourOrgs": "Tus organizaciones",
-    "youreInvited": "Has sido invitado"
+    "youreInvited": "Has sido invitado",
+    "hub": {
+      "title": "Empezar",
+      "subtitle": "¿Como quieres unirte a Torre Tempo?",
+      "createOrg": "Crear tu organizacion",
+      "createOrgDesc": "Configura tu negocio y empieza a gestionar tu equipo",
+      "haveInvitation": "Tengo un codigo de invitacion",
+      "haveInvitationDesc": "Introduce el codigo de tu empleador para unirte a su organizacion",
+      "waitingInvitation": "Esperando una invitacion",
+      "waitingInvitationDesc": "Tu empleador te invitara por email. Te avisaremos cuando llegue.",
+      "enterCode": "Introduce el codigo de invitacion",
+      "codePlaceholder": "Pega tu codigo de invitacion aqui",
+      "joinWithCode": "Unirse con codigo"
+    }
+  },
+  "profile": {
+    "title": "Mi Perfil",
+    "subtitle": "Gestiona tu cuenta y consulta tus datos laborales",
+    "accountInfo": "Datos de Cuenta",
+    "changeName": "Cambiar nombre",
+    "nameUpdated": "Nombre actualizado correctamente",
+    "employmentDetails": "Datos Laborales",
+    "noEmployeeProfile": "El administrador de tu organizacion aun no ha creado tu perfil de empleado.",
+    "adminManaged": "Los datos laborales son gestionados por el administrador de tu organizacion.",
+    "changePassword": "Cambiar Contraseña",
+    "passwordSection": "Actualiza tu contraseña de acceso",
+    "editProfile": "Editar Perfil",
+    "saveChanges": "Guardar cambios",
+    "profileUpdated": "Perfil actualizado correctamente"
   },
   "landing": {
     "heroTitle": "Fichaje en 2 segundos",

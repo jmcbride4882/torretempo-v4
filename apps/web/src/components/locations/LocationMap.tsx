@@ -42,7 +42,7 @@ export function LocationMap({
   
   return (
     <div 
-      className="overflow-hidden rounded-lg border border-kresna-border" 
+      className="overflow-hidden rounded-2xl border border-kresna-border shadow-card" 
       style={{ height }}
     >
       <MapContainer
@@ -63,8 +63,8 @@ export function LocationMap({
             center={position} 
             radius={accuracy}
             pathOptions={{
-              color: '#3b82f6',
-              fillColor: '#3b82f6',
+              color: '#0e82f6',
+              fillColor: '#0e82f6',
               fillOpacity: 0.2,
               weight: 2,
             }}

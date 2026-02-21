@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 import { useAuth } from '@/hooks/useAuth';
 import { useOrganization } from '@/hooks/useOrganization';
 
-type RedirectState = 'loading' | 'to-org' | 'to-select' | 'to-create';
+type RedirectState = 'loading' | 'to-org' | 'to-select' | 'to-create' | 'to-hub';
 
 /**
  * Smart onboarding redirect component.
@@ -66,8 +66,8 @@ export function OnboardingRedirect() {
         const orgs = await listUserOrganizations();
         
         if (orgs.length === 0) {
-          // No orgs - go to create
-          setRedirectState('to-create');
+          // No orgs - go to onboarding hub
+          setRedirectState('to-hub');
         } else if (orgs.length === 1 && orgs[0]) {
           // Exactly one org - auto-select it and go
           const singleOrg = orgs[0];
@@ -118,8 +118,12 @@ export function OnboardingRedirect() {
     return <Navigate to="/onboarding/create" replace />;
   }
 
+  if (redirectState === 'to-hub') {
+    return <Navigate to="/onboarding" replace />;
+  }
+
   // Fallback - should not reach here
-  return <Navigate to="/onboarding/create" replace />;
+  return <Navigate to="/onboarding" replace />;
 }
 
 export default OnboardingRedirect;

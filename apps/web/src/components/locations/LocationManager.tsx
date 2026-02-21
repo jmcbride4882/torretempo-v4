@@ -16,7 +16,6 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
-import { cn } from '@/lib/utils';
 import { MapPicker } from './MapPicker';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
@@ -126,7 +125,7 @@ export function LocationManager({ organizationSlug }: LocationManagerProps) {
           <h3 className="text-lg font-semibold text-charcoal">{t('settings.locations.title')}</h3>
           <p className="text-sm text-kresna-gray">{t('settings.locations.subtitle')}</p>
         </div>
-        <Button onClick={() => setShowCreateModal(true)} className="gap-2">
+        <Button variant="gradient" onClick={() => setShowCreateModal(true)} className="gap-2">
           <Plus className="h-4 w-4" />
           {t('settings.locations.newLocation')}
         </Button>
@@ -134,7 +133,7 @@ export function LocationManager({ organizationSlug }: LocationManagerProps) {
 
       {/* Locations Grid */}
       {locations.length === 0 ? (
-        <div className="rounded-xl border border-kresna-border bg-kresna-light p-12 text-center">
+        <div className="rounded-2xl border border-kresna-border bg-white p-12 text-center shadow-card">
           <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-kresna-light">
             <MapPin className="h-8 w-8 text-kresna-gray" />
           </div>
@@ -142,7 +141,7 @@ export function LocationManager({ organizationSlug }: LocationManagerProps) {
           <p className="mb-6 text-sm text-kresna-gray">
             {t('settings.locations.noLocationsDescription')}
           </p>
-          <Button onClick={() => setShowCreateModal(true)} className="gap-2">
+          <Button variant="gradient" onClick={() => setShowCreateModal(true)} className="gap-2">
             <Plus className="h-4 w-4" />
             {t('settings.locations.createFirst')}
           </Button>
@@ -157,10 +156,7 @@ export function LocationManager({ organizationSlug }: LocationManagerProps) {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.95 }}
                 transition={{ delay: index * 0.05 }}
-                className={cn(
-                  'group relative overflow-hidden rounded-xl border bg-white p-4 transition-all hover:bg-kresna-light',
-                  'border-kresna-border hover:border-kresna-border'
-                )}
+                className="group relative overflow-hidden rounded-2xl border border-kresna-border bg-white p-5 shadow-card transition-all hover:shadow-kresna"
               >
                 <div className="space-y-3">
                   {/* Header */}
@@ -186,7 +182,7 @@ export function LocationManager({ organizationSlug }: LocationManagerProps) {
                         variant="ghost"
                         size="sm"
                         onClick={() => setDeletingLocation(location)}
-                        className="h-8 w-8 p-0 text-red-500 hover:bg-red-50 hover:text-red-600"
+                        className="h-8 w-8 p-0 text-red-600 hover:bg-red-50 hover:text-red-700"
                       >
                         <Trash2 className="h-3.5 w-3.5" />
                       </Button>
@@ -398,10 +394,10 @@ function LocationFormModal({
               <motion.div
                 initial={{ opacity: 0, y: -10 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="flex items-start gap-2 rounded-lg border border-red-500/20 bg-red-500/10 p-3"
+                className="flex items-start gap-2 rounded-xl border border-red-200 bg-red-50 p-3"
               >
-                <AlertCircle className="h-4 w-4 shrink-0 text-red-400" />
-                <p className="text-sm text-red-600">{error}</p>
+                <AlertCircle className="h-4 w-4 shrink-0 text-red-600" />
+                <p className="text-sm text-red-700">{error}</p>
               </motion.div>
             )}
 
@@ -514,7 +510,7 @@ function LocationFormModal({
               <Button type="button" variant="ghost" onClick={() => onOpenChange(false)} disabled={isSubmitting}>
                 {t('common.cancel')}
               </Button>
-              <Button type="submit" disabled={isSubmitting} className="gap-2">
+              <Button type="submit" variant="gradient" disabled={isSubmitting} className="gap-2">
                 {isSubmitting ? (
                   <>
                     <Loader2 className="h-4 w-4 animate-spin" />

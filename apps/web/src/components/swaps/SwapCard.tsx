@@ -191,13 +191,13 @@ export function SwapCard({
       exit={{ opacity: 0, y: -20 }}
       whileHover={{ y: -2 }}
       className={cn(
-        'group relative overflow-hidden rounded-2xl border border-kresna-border bg-white shadow-sm transition-all duration-300',
-        'hover:border-kresna-border hover:shadow-md',
+        'group relative overflow-hidden rounded-2xl border border-kresna-border bg-white shadow-card transition-all duration-300',
+        'hover:shadow-kresna',
         className
       )}
     >
-      {/* Gradient accent */}
-      <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-primary-500/50 to-transparent opacity-0 transition-opacity group-hover:opacity-100" />
+      {/* Subtle top accent */}
+      <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-primary-200 to-transparent opacity-0 transition-opacity group-hover:opacity-100" />
 
       <div className="p-4 sm:p-5">
         {/* Header: Status + Time */}
@@ -266,7 +266,7 @@ export function SwapCard({
 
         {/* Reason/Notes */}
         {swap.reason && (
-          <div className="mb-4 rounded-lg border border-kresna-border bg-kresna-light p-3">
+          <div className="mb-4 rounded-xl border border-kresna-border bg-kresna-light p-3">
             <div className="mb-1 flex items-center gap-1.5 text-kresna-gray">
               <MessageSquare className="h-3 w-3" />
               <span className="text-[10px] font-medium uppercase tracking-wider">
@@ -279,7 +279,7 @@ export function SwapCard({
 
         {/* Rejection reason if rejected */}
         {swap.status === 'rejected' && swap.rejection_reason && (
-          <div className="mb-4 rounded-lg border border-red-200 bg-red-50 p-3">
+          <div className="mb-4 rounded-xl border border-red-200 bg-red-50 p-3">
             <div className="mb-1 flex items-center gap-1.5 text-red-600">
               <X className="h-3 w-3" />
               <span className="text-[10px] font-medium uppercase tracking-wider">
@@ -302,7 +302,7 @@ export function SwapCard({
                     handleAction('accept', () => onPeerAction!(swap.id, 'accept'))
                   }
                   disabled={!!loadingAction}
-                  className="gap-1.5 rounded-lg bg-emerald-600 text-white hover:bg-emerald-500"
+                  className="min-h-touch gap-1.5 rounded-xl bg-emerald-50 text-emerald-600 border border-emerald-200 hover:bg-emerald-100"
                 >
                   {loadingAction === 'accept' ? (
                     <Loader2 className="h-3.5 w-3.5 animate-spin" />
@@ -318,7 +318,7 @@ export function SwapCard({
                     handleAction('reject', () => onPeerAction!(swap.id, 'reject'))
                   }
                   disabled={!!loadingAction}
-                  className="gap-1.5 rounded-lg border border-red-200 text-red-600 hover:bg-red-50"
+                  className="min-h-touch gap-1.5 rounded-xl bg-red-50 text-red-600 border border-red-200 hover:bg-red-100"
                 >
                   {loadingAction === 'reject' ? (
                     <Loader2 className="h-3.5 w-3.5 animate-spin" />
@@ -339,7 +339,7 @@ export function SwapCard({
                     handleAction('approve', () => onManagerAction!(swap.id, 'approve'))
                   }
                   disabled={!!loadingAction}
-                  className="gap-1.5 rounded-lg bg-primary-600 text-white hover:bg-primary-500"
+                  className="min-h-touch gap-1.5 rounded-xl bg-emerald-50 text-emerald-600 border border-emerald-200 hover:bg-emerald-100"
                 >
                   {loadingAction === 'approve' ? (
                     <Loader2 className="h-3.5 w-3.5 animate-spin" />
@@ -355,7 +355,7 @@ export function SwapCard({
                     handleAction('reject', () => onManagerAction!(swap.id, 'reject'))
                   }
                   disabled={!!loadingAction}
-                  className="gap-1.5 rounded-lg border border-red-200 text-red-600 hover:bg-red-50"
+                  className="min-h-touch gap-1.5 rounded-xl bg-red-50 text-red-600 border border-red-200 hover:bg-red-100"
                 >
                   {loadingAction === 'reject' ? (
                     <Loader2 className="h-3.5 w-3.5 animate-spin" />
@@ -373,7 +373,7 @@ export function SwapCard({
                 size="sm"
                 onClick={() => handleAction('claim', () => onClaim!(swap.id))}
                 disabled={!!loadingAction}
-                className="gap-1.5 rounded-lg bg-primary-600 text-white hover:bg-primary-500"
+                className="min-h-touch gap-1.5 rounded-xl bg-primary-50 text-primary-600 border border-primary-200 hover:bg-primary-100"
               >
                 {loadingAction === 'claim' ? (
                   <Loader2 className="h-3.5 w-3.5 animate-spin" />
@@ -391,7 +391,7 @@ export function SwapCard({
                 variant="ghost"
                 onClick={() => handleAction('cancel', () => onCancel!(swap.id))}
                 disabled={!!loadingAction}
-                className="ml-auto gap-1.5 rounded-lg text-kresna-gray hover:bg-kresna-light hover:text-charcoal"
+                className="ml-auto min-h-touch gap-1.5 rounded-xl text-kresna-gray hover:bg-kresna-light hover:text-charcoal"
               >
                 {loadingAction === 'cancel' ? (
                   <Loader2 className="h-3.5 w-3.5 animate-spin" />

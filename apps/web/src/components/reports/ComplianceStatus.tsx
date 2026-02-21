@@ -51,9 +51,9 @@ function CircularProgress({ score }: { score: number }) {
   const offset = circumference - (score / 100) * circumference;
 
   const getScoreColor = (s: number) => {
-    if (s >= 90) return 'text-emerald-400';
-    if (s >= 70) return 'text-amber-400';
-    return 'text-red-400';
+    if (s >= 90) return 'text-emerald-600';
+    if (s >= 70) return 'text-amber-600';
+    return 'text-red-600';
   };
 
   const getStrokeColor = (s: number) => {
@@ -111,9 +111,9 @@ function ViolationCard({ violation }: { violation: ComplianceViolation }) {
   const isCritical = violation.severity === 'critical';
 
   const statusConfig = {
-    pending: { icon: AlertCircle, labelKey: 'compliance.correctionStatuses.pending', className: 'text-amber-400' },
-    corrected: { icon: CheckCircle2, labelKey: 'compliance.correctionStatuses.corrected', className: 'text-emerald-400' },
-    acknowledged: { icon: Info, labelKey: 'compliance.correctionStatuses.acknowledged', className: 'text-primary-400' },
+    pending: { icon: AlertCircle, labelKey: 'compliance.correctionStatuses.pending', className: 'text-amber-600' },
+    corrected: { icon: CheckCircle2, labelKey: 'compliance.correctionStatuses.corrected', className: 'text-emerald-600' },
+    acknowledged: { icon: Info, labelKey: 'compliance.correctionStatuses.acknowledged', className: 'text-primary-600' },
   };
 
   const status = statusConfig[violation.correctionStatus];
@@ -125,10 +125,10 @@ function ViolationCard({ violation }: { violation: ComplianceViolation }) {
       animate={{ opacity: 1, x: 0 }}
       exit={{ opacity: 0, x: 20 }}
       className={cn(
-        'rounded-xl border p-4 transition-colors',
+        'rounded-2xl border p-4 transition-colors',
         isCritical
-          ? 'border-red-500/20 bg-red-500/5 hover:border-red-500/30'
-          : 'border-amber-500/20 bg-amber-500/5 hover:border-amber-500/30'
+          ? 'border-red-200 bg-red-50 hover:border-red-300'
+          : 'border-amber-200 bg-amber-50 hover:border-amber-300'
       )}
     >
       {/* Header */}
@@ -137,13 +137,13 @@ function ViolationCard({ violation }: { violation: ComplianceViolation }) {
           <div
             className={cn(
               'flex h-8 w-8 items-center justify-center rounded-lg',
-              isCritical ? 'bg-red-500/20' : 'bg-amber-500/20'
+              isCritical ? 'bg-red-100' : 'bg-amber-100'
             )}
           >
-            <Icon className={cn('h-4 w-4', isCritical ? 'text-red-400' : 'text-amber-400')} />
+            <Icon className={cn('h-4 w-4', isCritical ? 'text-red-600' : 'text-amber-600')} />
           </div>
           <div>
-            <p className={cn('text-sm font-medium', isCritical ? 'text-red-300' : 'text-amber-300')}>
+            <p className={cn('text-sm font-medium', isCritical ? 'text-red-700' : 'text-amber-700')}>
               {t(`compliance.violationTypes.${violation.violationType}`)}
             </p>
             <p className="text-[10px] text-kresna-gray">{formatDate(violation.affectedDate)}</p>
@@ -155,8 +155,8 @@ function ViolationCard({ violation }: { violation: ComplianceViolation }) {
           className={cn(
             'rounded-full px-2 py-0.5 text-[10px] font-medium uppercase tracking-wider',
             isCritical
-              ? 'bg-red-500/20 text-red-300'
-              : 'bg-amber-500/20 text-amber-300'
+              ? 'bg-red-100 text-red-700'
+              : 'bg-amber-100 text-amber-700'
           )}
         >
           {t(`compliance.severities.${violation.severity}`)}
@@ -178,7 +178,7 @@ function ViolationCard({ violation }: { violation: ComplianceViolation }) {
         </div>
         <div className="text-center">
           <p className="text-kresna-gray">{t('compliance.excess')}</p>
-          <p className={cn('font-medium', isCritical ? 'text-red-400' : 'text-amber-400')}>
+          <p className={cn('font-medium', isCritical ? 'text-red-600' : 'text-amber-600')}>
             +{violation.details.excess}h
           </p>
         </div>
@@ -236,8 +236,8 @@ export function ComplianceStatus({ violations, complianceScore, className }: Com
         animate={{ opacity: 1, y: 0 }}
         className={cn('text-center', className)}
       >
-        <div className="mx-auto mb-4 flex h-24 w-24 items-center justify-center rounded-2xl bg-gradient-to-br from-emerald-600/20 to-emerald-600/5">
-          <ShieldCheck className="h-12 w-12 text-emerald-400" />
+        <div className="mx-auto mb-4 flex h-24 w-24 items-center justify-center rounded-2xl bg-gradient-to-br from-emerald-100 to-emerald-50">
+          <ShieldCheck className="h-12 w-12 text-emerald-600" />
         </div>
         <h3 className="mb-1 text-xl font-bold text-charcoal">{t('compliance.perfectTitle')}</h3>
         <p className="text-sm text-kresna-gray">
@@ -263,10 +263,10 @@ export function ComplianceStatus({ violations, complianceScore, className }: Com
             <span
               className={cn(
                 complianceScore >= 90
-                  ? 'text-emerald-400'
+                  ? 'text-emerald-600'
                   : complianceScore >= 70
-                  ? 'text-amber-400'
-                  : 'text-red-400'
+                  ? 'text-amber-600'
+                  : 'text-red-600'
               )}
             >
               {complianceScore >= 90
@@ -279,19 +279,19 @@ export function ComplianceStatus({ violations, complianceScore, className }: Com
 
           {/* Summary stats */}
           <div className="grid grid-cols-2 gap-2">
-            <div className="rounded-lg border border-red-500/20 bg-red-500/10 p-2.5">
+            <div className="rounded-lg border border-red-200 bg-red-50 p-2.5">
               <div className="flex items-center gap-1.5">
-                <XCircle className="h-4 w-4 text-red-400" />
+                <XCircle className="h-4 w-4 text-red-600" />
                 <span className="text-xs text-kresna-gray">{t('compliance.criticalLabel')}</span>
               </div>
-              <p className="mt-1 text-lg font-bold text-red-300">{criticalCount}</p>
+              <p className="mt-1 text-lg font-bold text-red-700">{criticalCount}</p>
             </div>
-            <div className="rounded-lg border border-amber-500/20 bg-amber-500/10 p-2.5">
+            <div className="rounded-lg border border-amber-200 bg-amber-50 p-2.5">
               <div className="flex items-center gap-1.5">
-                <AlertTriangle className="h-4 w-4 text-amber-400" />
+                <AlertTriangle className="h-4 w-4 text-amber-600" />
                 <span className="text-xs text-kresna-gray">{t('compliance.warningsLabel')}</span>
               </div>
-              <p className="mt-1 text-lg font-bold text-amber-300">{warningCount}</p>
+              <p className="mt-1 text-lg font-bold text-amber-700">{warningCount}</p>
             </div>
           </div>
 

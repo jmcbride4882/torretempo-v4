@@ -10,11 +10,11 @@ export function LanguageSwitcher({ className }: LanguageSwitcherProps) {
   const currentLang = i18n.language?.startsWith('es') ? 'es' : 'en';
 
   return (
-    <div className={cn('flex items-center gap-1 rounded-lg bg-kresna-light p-0.5', className)}>
+    <div className={cn('flex items-center gap-1 rounded-full bg-kresna-light p-0.5', className)}>
       <button
         onClick={() => i18n.changeLanguage('es')}
         className={cn(
-          'rounded-md px-2.5 py-1 text-xs font-medium transition-colors',
+          'rounded-full px-3 py-1.5 text-xs font-medium transition-colors',
           currentLang === 'es'
             ? 'bg-white text-charcoal shadow-sm'
             : 'text-kresna-gray hover:text-kresna-gray-dark'
@@ -25,7 +25,7 @@ export function LanguageSwitcher({ className }: LanguageSwitcherProps) {
       <button
         onClick={() => i18n.changeLanguage('en')}
         className={cn(
-          'rounded-md px-2.5 py-1 text-xs font-medium transition-colors',
+          'rounded-full px-3 py-1.5 text-xs font-medium transition-colors',
           currentLang === 'en'
             ? 'bg-white text-charcoal shadow-sm'
             : 'text-kresna-gray hover:text-kresna-gray-dark'

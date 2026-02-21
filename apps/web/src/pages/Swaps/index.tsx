@@ -6,7 +6,6 @@ import {
   ArrowLeftRight,
   Plus,
   RefreshCw,
-  Filter,
   X,
   Calendar,
   Search,
@@ -56,7 +55,6 @@ export default function SwapsPage() {
   const [teamMembers, setTeamMembers] = useState<TeamMember[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isRefreshing, setIsRefreshing] = useState(false);
-  const [showFilters, setShowFilters] = useState(false);
   const [showCreateModal, setShowCreateModal] = useState(false);
 
   // Filters
@@ -280,25 +278,24 @@ export default function SwapsPage() {
       {/* Page header */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary-100">
+          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary-50">
             <ArrowLeftRight className="h-5 w-5 text-primary-600" />
           </div>
           <div>
-            <h1 className="text-xl font-bold text-charcoal sm:text-2xl">
+            <h1 className="text-2xl font-bold tracking-tight text-charcoal">
               {t('swaps.title')}
             </h1>
             <p className="text-sm text-kresna-gray">{t('swaps.subtitle')}</p>
           </div>
         </div>
 
-        {/* Actions */}
         <div className="flex items-center gap-2">
           <Button
             variant="ghost"
             size="sm"
             onClick={handleRefresh}
             disabled={isRefreshing}
-            className="gap-1.5 rounded-lg border border-kresna-border bg-white text-kresna-gray-dark hover:bg-kresna-light"
+            className="min-h-touch gap-1.5 rounded-full border border-kresna-border bg-white text-kresna-gray-dark transition-all duration-300 ease-kresna hover:bg-kresna-light"
           >
             <RefreshCw className={cn('h-4 w-4', isRefreshing && 'animate-spin')} />
             <span className="hidden sm:inline">{t('swaps.refresh')}</span>
@@ -307,7 +304,7 @@ export default function SwapsPage() {
           <Button
             onClick={() => setShowCreateModal(true)}
             size="sm"
-            className="gap-1.5 rounded-lg bg-primary-600 text-white hover:bg-primary-700"
+            className="min-h-touch gap-1.5 rounded-full bg-gradient-to-r from-primary-600 to-primary-500 text-white shadow-md transition-all duration-300 ease-kresna hover:from-primary-700 hover:to-primary-600 hover:shadow-lg"
           >
             <Plus className="h-4 w-4" />
             <span className="hidden sm:inline">{t('swaps.requestSwap')}</span>
@@ -315,8 +312,8 @@ export default function SwapsPage() {
         </div>
       </div>
 
-      {/* Tabs */}
-      <div className="rounded-xl border border-kresna-border bg-white p-1.5">
+      {/* Pill tabs */}
+      <div className="rounded-full bg-kresna-light p-1">
         <div className="flex gap-1">
           {tabs
             .filter((tab) => tab.id !== 'all' || isManager)
@@ -337,10 +334,10 @@ export default function SwapsPage() {
                   key={tab.id}
                   onClick={() => handleTabChange(tab.id)}
                   className={cn(
-                    'relative flex flex-1 items-center justify-center gap-2 rounded-lg px-4 py-2.5 text-sm font-medium transition-all',
+                    'relative flex flex-1 items-center justify-center gap-2 rounded-full px-4 py-2 text-sm font-medium transition-all duration-300 ease-kresna',
                     isActive
-                      ? 'bg-primary-50 text-primary-600 ring-1 ring-primary-200'
-                      : 'text-kresna-gray hover:bg-kresna-light hover:text-charcoal'
+                      ? 'bg-white text-charcoal font-semibold shadow-sm'
+                      : 'text-kresna-gray hover:text-charcoal'
                   )}
                 >
                   <Icon className="h-4 w-4" />
@@ -349,7 +346,7 @@ export default function SwapsPage() {
                     <span
                       className={cn(
                         'flex h-5 min-w-[20px] items-center justify-center rounded-full px-1.5 text-[10px] font-bold',
-                        isActive ? 'bg-primary-600 text-white' : 'bg-kresna-light text-kresna-gray-dark'
+                        isActive ? 'bg-primary-600 text-white' : 'bg-white text-kresna-gray-dark'
                       )}
                     >
                       {count}
@@ -361,130 +358,96 @@ export default function SwapsPage() {
         </div>
       </div>
 
+      {/* Stats bar */}
+      <div className="rounded-3xl border border-kresna-border bg-white p-4 shadow-card">
+        <div className="flex items-center justify-around gap-4 text-sm">
+          <div className="flex items-center gap-2">
+            <div className="h-2.5 w-2.5 rounded-full bg-amber-500" />
+            <span className="text-kresna-gray">
+              <span className="font-semibold text-charcoal">{pendingCount}</span>{' '}
+              {t('swaps.pending')}
+            </span>
+          </div>
+          <div className="h-4 w-px bg-kresna-border" />
+          <div className="flex items-center gap-2">
+            <div className="h-2.5 w-2.5 rounded-full bg-emerald-500" />
+            <span className="text-kresna-gray">
+              <span className="font-semibold text-charcoal">{approvedCount}</span>{' '}
+              {t('swaps.approved')}
+            </span>
+          </div>
+          <div className="h-4 w-px bg-kresna-border" />
+          <div className="flex items-center gap-2">
+            <div className="h-2.5 w-2.5 rounded-full bg-kresna-gray" />
+            <span className="text-kresna-gray">
+              <span className="font-semibold text-charcoal">{swaps.length}</span>{' '}
+              {t('swaps.total')}
+            </span>
+          </div>
+        </div>
+      </div>
+
       {/* Filters bar */}
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         {/* Search */}
         <div className="relative flex-1 sm:max-w-xs">
-          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-kresna-gray" />
+          <Search className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-kresna-gray" />
           <Input
             type="text"
             placeholder={t('swaps.searchPlaceholder')}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="rounded-xl border-kresna-border bg-white pl-9 text-charcoal placeholder:text-kresna-gray focus:border-primary-500"
+            className="h-12 rounded-xl border-kresna-border bg-white pl-11 text-charcoal placeholder:text-kresna-gray transition-all duration-300 ease-kresna focus:border-primary-500 focus:ring-2 focus:ring-primary-100"
           />
         </div>
 
-        {/* Filters */}
-        <div className="flex items-center gap-2">
-          {/* Mobile filter toggle */}
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => setShowFilters(!showFilters)}
-            className={cn(
-              'gap-1.5 rounded-lg border sm:hidden',
-              showFilters || statusFilter !== 'all'
-                ? 'border-primary-300 bg-primary-50 text-primary-600'
-                : 'border-kresna-border bg-white text-kresna-gray-dark'
-            )}
-          >
-            <Filter className="h-4 w-4" />
-            {t('common.filters')}
-          </Button>
-
-          {/* Desktop filters */}
-          <div className="hidden sm:flex sm:items-center sm:gap-2">
-            <Select
-              value={statusFilter}
-              onValueChange={(value) => setStatusFilter(value as SwapStatus | 'all')}
+        {/* Status pill scroll (mobile) */}
+        <div className="flex gap-2 overflow-x-auto pb-1 sm:hidden">
+          {statusOptions.map((option) => (
+            <button
+              key={option.value}
+              onClick={() => setStatusFilter(option.value)}
+              className={cn(
+                'min-h-touch whitespace-nowrap rounded-full px-3 py-1 text-xs font-semibold transition-all duration-300 ease-kresna',
+                statusFilter === option.value
+                  ? 'bg-primary-600 text-white shadow-sm'
+                  : 'border border-kresna-border bg-white text-kresna-gray hover:text-charcoal'
+              )}
             >
-              <SelectTrigger className="w-[160px] rounded-xl border-kresna-border bg-white text-charcoal">
-                <SelectValue placeholder={t('common.status')} />
-              </SelectTrigger>
-              <SelectContent className="rounded-xl border-kresna-border bg-white">
-                {statusOptions.map((option) => (
-                  <SelectItem key={option.value} value={option.value} className="text-kresna-gray-dark">
-                    {option.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-
-            {statusFilter !== 'all' && (
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => setStatusFilter('all')}
-                className="gap-1 rounded-lg text-kresna-gray hover:text-charcoal"
-              >
-                <X className="h-3.5 w-3.5" />
-                {t('common.clear')}
-              </Button>
-            )}
-          </div>
+              {option.label}
+            </button>
+          ))}
         </div>
-      </div>
 
-      {/* Mobile filters panel */}
-      {showFilters && (
-        <div className="rounded-xl border border-kresna-border bg-white p-4 sm:hidden">
-          <div className="space-y-3">
-            <div>
-              <label className="mb-1.5 block text-xs font-medium text-kresna-gray">
-                {t('common.status')}
-              </label>
-              <Select
-                value={statusFilter}
-                onValueChange={(value) => setStatusFilter(value as SwapStatus | 'all')}
-              >
-                <SelectTrigger className="w-full rounded-xl border-kresna-border bg-white text-charcoal">
-                  <SelectValue placeholder={t('common.status')} />
-                </SelectTrigger>
-                <SelectContent className="rounded-xl border-kresna-border bg-white">
-                  {statusOptions.map((option) => (
-                    <SelectItem key={option.value} value={option.value} className="text-kresna-gray-dark">
-                      {option.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
+        {/* Desktop filters */}
+        <div className="hidden sm:flex sm:items-center sm:gap-2">
+          <Select
+            value={statusFilter}
+            onValueChange={(value) => setStatusFilter(value as SwapStatus | 'all')}
+          >
+            <SelectTrigger className="w-[160px] rounded-xl border-kresna-border bg-white text-charcoal transition-all duration-300 ease-kresna">
+              <SelectValue placeholder={t('common.status')} />
+            </SelectTrigger>
+            <SelectContent className="rounded-xl border-kresna-border bg-white">
+              {statusOptions.map((option) => (
+                <SelectItem key={option.value} value={option.value} className="text-kresna-gray-dark">
+                  {option.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
 
-            {statusFilter !== 'all' && (
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => setStatusFilter('all')}
-                className="w-full gap-1 rounded-lg text-kresna-gray hover:text-charcoal"
-              >
-                <X className="h-3.5 w-3.5" />
-                {t('swaps.clearFilters')}
-              </Button>
-            )}
-          </div>
-        </div>
-      )}
-
-      {/* Stats bar */}
-      <div className="flex items-center gap-6 text-sm">
-        <div className="flex items-center gap-2">
-          <div className="h-2 w-2 rounded-full bg-amber-500" />
-          <span className="text-kresna-gray">
-            <span className="font-medium text-charcoal">{pendingCount}</span> {t('swaps.pending')}
-          </span>
-        </div>
-        <div className="flex items-center gap-2">
-          <div className="h-2 w-2 rounded-full bg-emerald-500" />
-          <span className="text-kresna-gray">
-            <span className="font-medium text-charcoal">{approvedCount}</span> {t('swaps.approved')}
-          </span>
-        </div>
-        <div className="flex items-center gap-2">
-          <div className="h-2 w-2 rounded-full bg-kresna-gray" />
-          <span className="text-kresna-gray">
-            <span className="font-medium text-charcoal">{swaps.length}</span> {t('swaps.total')}
-          </span>
+          {statusFilter !== 'all' && (
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setStatusFilter('all')}
+              className="gap-1 rounded-full text-kresna-gray transition-all duration-300 ease-kresna hover:text-charcoal"
+            >
+              <X className="h-3.5 w-3.5" />
+              {t('common.clear')}
+            </Button>
+          )}
         </div>
       </div>
 
@@ -576,18 +539,18 @@ function EmptyState({
 
   if (hasFilters) {
     return (
-      <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-kresna-border bg-kresna-light px-6 py-16 text-center">
-        <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-xl bg-kresna-light">
+      <div className="flex flex-col items-center justify-center rounded-3xl border border-dashed border-kresna-border bg-white px-6 py-16 text-center shadow-card">
+        <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-kresna-light">
           <Search className="h-7 w-7 text-kresna-gray" />
         </div>
         <h3 className="mb-1 text-lg font-semibold text-charcoal">{t('swaps.noMatching')}</h3>
-        <p className="mb-4 max-w-sm text-sm text-kresna-gray">
+        <p className="mb-6 max-w-sm text-sm text-kresna-gray">
           {t('swaps.adjustFilters')}
         </p>
         <Button
           variant="ghost"
           onClick={onClearFilters}
-          className="gap-2 rounded-lg border border-kresna-border text-kresna-gray-dark hover:bg-kresna-light"
+          className="min-h-touch gap-2 rounded-full border border-kresna-border text-kresna-gray-dark transition-all duration-300 ease-kresna hover:bg-kresna-light"
         >
           <X className="h-4 w-4" />
           {t('swaps.clearFilters')}
@@ -597,7 +560,7 @@ function EmptyState({
   }
 
   return (
-    <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-kresna-border bg-kresna-light px-6 py-16 text-center">
+    <div className="flex flex-col items-center justify-center rounded-3xl border border-dashed border-kresna-border bg-white px-6 py-16 text-center shadow-card">
       <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-primary-50">
         <Icon className="h-8 w-8 text-primary-600" />
       </div>
@@ -606,7 +569,7 @@ function EmptyState({
       {tab === 'my-requests' && (
         <Button
           onClick={onCreateSwap}
-          className="gap-2 rounded-lg bg-primary-600 text-white hover:bg-primary-700"
+          className="min-h-touch gap-2 rounded-full bg-gradient-to-r from-primary-600 to-primary-500 text-white shadow-md transition-all duration-300 ease-kresna hover:from-primary-700 hover:to-primary-600 hover:shadow-lg"
         >
           <Plus className="h-4 w-4" />
           {t('swaps.requestSwap')}

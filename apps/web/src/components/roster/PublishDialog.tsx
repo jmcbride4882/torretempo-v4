@@ -130,11 +130,11 @@ export function PublishDialog({
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent className="max-w-md border border-kresna-border bg-white rounded-xl shadow-sm">
+      <DialogContent className="max-w-md">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2 text-xl text-charcoal">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary-50">
-              <Send className="h-4 w-4 text-primary-500" />
+            <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-primary-50">
+              <Send className="h-4 w-4 text-primary-600" />
             </div>
             {t('roster.publishTitle')}
           </DialogTitle>
@@ -145,9 +145,9 @@ export function PublishDialog({
 
         <div className="space-y-4 py-4">
           {/* Week Range */}
-          <div className="flex items-center gap-3 rounded-lg border border-kresna-border bg-kresna-light p-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary-50">
-              <Calendar className="h-5 w-5 text-primary-500" />
+          <div className="flex items-center gap-3 rounded-xl border border-kresna-border bg-kresna-light p-4">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary-50">
+              <Calendar className="h-5 w-5 text-primary-600" />
             </div>
             <div>
               <p className="text-sm font-medium text-charcoal">
@@ -159,13 +159,13 @@ export function PublishDialog({
 
           {/* Stats */}
           <div className="grid grid-cols-2 gap-3">
-            <div className="rounded-lg border border-kresna-border bg-kresna-light p-3 text-center">
+            <div className="rounded-xl border border-kresna-border bg-kresna-light p-4 text-center">
               <p className="text-2xl font-bold text-charcoal">{draftShifts.length}</p>
               <p className="text-xs text-kresna-gray">
                 {t('roster.draftShiftCount', { count: draftShifts.length })}
               </p>
             </div>
-            <div className="rounded-lg border border-kresna-border bg-kresna-light p-3 text-center">
+            <div className="rounded-xl border border-kresna-border bg-kresna-light p-4 text-center">
               <div className="flex items-center justify-center gap-1">
                 <Users className="h-4 w-4 text-kresna-gray" />
                 <p className="text-2xl font-bold text-charcoal">{employeeCount}</p>
@@ -181,9 +181,9 @@ export function PublishDialog({
             <motion.div
               initial={{ opacity: 0, y: -5 }}
               animate={{ opacity: 1, y: 0 }}
-              className="flex items-start gap-2 rounded-lg border border-amber-500/20 bg-amber-500/10 p-3"
+              className="flex items-start gap-2 rounded-xl border border-amber-200 bg-amber-50 p-3"
             >
-              <AlertTriangle className="h-4 w-4 shrink-0 text-amber-400" />
+              <AlertTriangle className="h-4 w-4 shrink-0 text-amber-600" />
               <div>
                 <p className="text-sm font-medium text-amber-700">{t('roster.complianceWarnings')}</p>
                 <p className="text-xs text-amber-600">
@@ -198,7 +198,7 @@ export function PublishDialog({
             <motion.div
               initial={{ opacity: 0, y: -5 }}
               animate={{ opacity: 1, y: 0 }}
-              className="flex items-start gap-2 rounded-lg border border-kresna-border bg-kresna-light p-3"
+              className="flex items-start gap-2 rounded-xl border border-kresna-border bg-kresna-light p-3"
             >
               <AlertTriangle className="h-4 w-4 shrink-0 text-kresna-gray" />
               <div>
@@ -218,16 +218,16 @@ export function PublishDialog({
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -10 }}
                 className={cn(
-                  'flex items-start gap-2 rounded-lg border p-3',
+                  'flex items-start gap-2 rounded-xl border p-3',
                   publishResult.success
-                    ? 'border-emerald-500/20 bg-emerald-500/10'
-                    : 'border-red-500/20 bg-red-500/10'
+                    ? 'border-emerald-200 bg-emerald-50'
+                    : 'border-red-200 bg-red-50'
                 )}
               >
                 {publishResult.success ? (
-                  <Check className="h-4 w-4 shrink-0 text-emerald-400" />
+                  <Check className="h-4 w-4 shrink-0 text-emerald-600" />
                 ) : (
-                  <X className="h-4 w-4 shrink-0 text-red-400" />
+                  <X className="h-4 w-4 shrink-0 text-red-600" />
                 )}
                 <div>
                   <p
@@ -265,19 +265,20 @@ export function PublishDialog({
         <DialogFooter className="gap-2">
           <Button
             type="button"
-            variant="ghost"
+            variant="outline"
             onClick={handleClose}
             disabled={isPublishing}
-            className="rounded-lg border border-kresna-border bg-kresna-light text-kresna-gray-dark hover:bg-kresna-light"
+            className="rounded-xl"
           >
             {t('common.cancel')}
           </Button>
           <Button
             type="button"
+            variant="gradient"
             onClick={handlePublish}
             disabled={isPublishing || draftShifts.length === 0 || publishResult?.success}
             className={cn(
-              'gap-2 rounded-lg bg-primary-600 text-white hover:bg-primary-500',
+              'gap-2 rounded-xl',
               (isPublishing || publishResult?.success) && 'cursor-not-allowed opacity-50'
             )}
           >

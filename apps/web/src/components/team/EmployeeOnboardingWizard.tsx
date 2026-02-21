@@ -93,7 +93,7 @@ export function EmployeeOnboardingWizard({ organizationSlug, onComplete, onCance
   return (
     <div className="space-y-6">
       {/* Step indicator */}
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between rounded-2xl bg-white p-4 shadow-card">
         {STEPS.map((step, i) => {
           const Icon = step.icon;
           const isActive = i === currentStep;
@@ -169,7 +169,7 @@ export function EmployeeOnboardingWizard({ organizationSlug, onComplete, onCance
               <select
                 value={formData.contract_type}
                 onChange={e => updateField('contract_type', e.target.value)}
-                className="w-full h-10 rounded-md border border-kresna-border bg-white px-3 text-sm text-charcoal"
+                className="w-full h-12 rounded-xl border border-kresna-border bg-white px-3 text-sm text-charcoal"
               >
                 <option value="indefinido">{t('team.contractIndefinido')}</option>
                 <option value="temporal">{t('team.contractTemporal')}</option>
@@ -223,7 +223,7 @@ export function EmployeeOnboardingWizard({ organizationSlug, onComplete, onCance
               <select
                 value={formData.preferred_shift}
                 onChange={e => updateField('preferred_shift', e.target.value)}
-                className="w-full h-10 rounded-md border border-kresna-border bg-white px-3 text-sm text-charcoal"
+                className="w-full h-12 rounded-xl border border-kresna-border bg-white px-3 text-sm text-charcoal"
               >
                 <option value="">{t('common.noPreference')}</option>
                 <option value="morning">{t('team.shiftMorning')}</option>
@@ -247,12 +247,12 @@ export function EmployeeOnboardingWizard({ organizationSlug, onComplete, onCance
           {currentStep === 0 ? t('common.cancel') : t('common.back')}
         </Button>
         {currentStep < STEPS.length - 1 ? (
-          <Button onClick={handleNext} className="gap-2">
+          <Button variant="gradient" onClick={handleNext} className="gap-2">
             {t('common.next')}
             <ArrowRight className="h-4 w-4" />
           </Button>
         ) : (
-          <Button onClick={handleSubmit} disabled={isSubmitting} className="gap-2">
+          <Button variant="gradient" onClick={handleSubmit} disabled={isSubmitting} className="gap-2">
             {isSubmitting ? <Loader2 className="h-4 w-4 animate-spin" /> : <CheckCircle2 className="h-4 w-4" />}
             {isSubmitting ? t('common.saving') : t('team.createEmployee')}
           </Button>

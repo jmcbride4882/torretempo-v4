@@ -216,7 +216,7 @@ export function ReportFilters({
           className={cn(
             'gap-1.5 rounded-lg border',
             showMobileFilters || hasActiveFilters
-              ? 'border-primary-500/30 bg-primary-50 text-primary-600'
+              ? 'border-primary-200 bg-primary-50 text-primary-600'
               : 'border-kresna-border bg-white text-kresna-gray-dark'
           )}
         >
@@ -254,7 +254,7 @@ export function ReportFilters({
             exit={{ opacity: 0, height: 0 }}
             className="overflow-hidden sm:hidden"
           >
-            <div className="rounded-xl border border-kresna-border bg-white p-4 shadow-sm space-y-3">
+            <div className="rounded-2xl border border-kresna-border bg-white p-4 shadow-sm space-y-3">
               <FilterDropdowns />
             </div>
           </motion.div>

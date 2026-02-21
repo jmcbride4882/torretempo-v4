@@ -26,44 +26,44 @@ function getNotificationMeta(type: NotificationType) {
     case 'swap_requested':
       return {
         icon: ArrowLeftRight,
-        color: 'text-primary-400',
-        bgColor: 'bg-primary-500/20',
-        borderColor: 'border-primary-500/30',
+        color: 'text-primary-600',
+        bgColor: 'bg-primary-50',
+        borderColor: 'border-primary-200',
       };
     case 'swap_accepted':
       return {
         icon: CheckCircle2,
-        color: 'text-emerald-400',
-        bgColor: 'bg-emerald-500/20',
-        borderColor: 'border-emerald-500/30',
+        color: 'text-emerald-600',
+        bgColor: 'bg-emerald-50',
+        borderColor: 'border-emerald-200',
       };
     case 'swap_rejected':
       return {
         icon: XCircle,
-        color: 'text-red-400',
-        bgColor: 'bg-red-500/20',
-        borderColor: 'border-red-500/30',
+        color: 'text-red-600',
+        bgColor: 'bg-red-50',
+        borderColor: 'border-red-200',
       };
     case 'swap_manager_needed':
       return {
         icon: AlertCircle,
-        color: 'text-amber-400',
-        bgColor: 'bg-amber-500/20',
-        borderColor: 'border-amber-500/30',
+        color: 'text-amber-600',
+        bgColor: 'bg-amber-50',
+        borderColor: 'border-amber-200',
       };
     case 'swap_approved':
       return {
         icon: UserCheck,
-        color: 'text-emerald-400',
-        bgColor: 'bg-emerald-500/20',
-        borderColor: 'border-emerald-500/30',
+        color: 'text-emerald-600',
+        bgColor: 'bg-emerald-50',
+        borderColor: 'border-emerald-200',
       };
     case 'swap_completed':
       return {
         icon: PartyPopper,
-        color: 'text-primary-400',
-        bgColor: 'bg-primary-500/20',
-        borderColor: 'border-primary-500/30',
+        color: 'text-primary-600',
+        bgColor: 'bg-primary-50',
+        borderColor: 'border-primary-200',
       };
     default:
       return {
@@ -130,9 +130,9 @@ export function NotificationItem({
       transition={{ delay: index * 0.05, duration: 0.2 }}
       onClick={onClick}
       className={cn(
-        'group relative w-full flex items-start gap-3 p-3 rounded-lg text-left transition-all duration-200',
+        'group relative w-full flex items-start gap-3 p-3 rounded-xl text-left transition-colors duration-200',
         'hover:bg-kresna-light active:scale-[0.98]',
-        !notification.read && 'bg-primary-50/50'
+        !notification.read && 'bg-primary-50'
       )}
     >
       {/* Unread indicator */}
@@ -176,13 +176,6 @@ export function NotificationItem({
         </p>
       </div>
 
-      {/* Hover glow effect */}
-      <div
-        className={cn(
-          'absolute inset-0 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none',
-          'bg-gradient-to-r from-transparent via-white/[0.02] to-transparent'
-        )}
-      />
     </motion.button>
   );
 }

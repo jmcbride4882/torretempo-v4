@@ -114,7 +114,7 @@ export default function OpenShiftsPage() {
   if (isLoading) {
     return (
       <div className="flex min-h-[400px] items-center justify-center">
-        <div className="flex flex-col items-center gap-3">
+        <div className="flex flex-col items-center gap-4 rounded-3xl border border-kresna-border bg-white px-12 py-10 shadow-card">
           <RefreshCw className="h-8 w-8 animate-spin text-primary-600" />
           <p className="text-sm text-kresna-gray">{t('openShifts.loading')}</p>
         </div>
@@ -131,7 +131,7 @@ export default function OpenShiftsPage() {
             <Store className="h-5 w-5 text-emerald-600" />
           </div>
           <div>
-            <h1 className="text-xl font-bold text-charcoal sm:text-2xl">
+            <h1 className="text-2xl font-bold text-charcoal tracking-tight">
               {t('openShifts.title')}
             </h1>
             <p className="text-sm text-kresna-gray">
@@ -145,7 +145,7 @@ export default function OpenShiftsPage() {
           size="sm"
           onClick={() => fetchOpenShifts(true)}
           disabled={isRefreshing}
-          className="gap-1.5 rounded-lg border border-kresna-border bg-white text-kresna-gray-dark hover:bg-kresna-light"
+          className="gap-1.5 rounded-xl border border-kresna-border bg-white text-kresna-gray-dark hover:bg-kresna-light"
         >
           <RefreshCw className={`h-4 w-4 ${isRefreshing ? 'animate-spin' : ''}`} />
           {t('openShifts.refresh')}
@@ -153,11 +153,11 @@ export default function OpenShiftsPage() {
       </div>
 
       {/* Stats */}
-      <div className="rounded-xl border border-kresna-border bg-white p-4">
+      <div className="rounded-2xl border border-kresna-border bg-white p-5 shadow-card">
         <div className="flex items-center gap-2">
           <Store className="h-4 w-4 text-emerald-600" />
           <span className="text-sm text-kresna-gray">
-            <span className="font-medium text-charcoal">{openShifts.length}</span>{' '}
+            <span className="font-semibold text-charcoal">{openShifts.length}</span>{' '}
             {t('openShifts.available', { count: openShifts.length })}
           </span>
         </div>
@@ -165,15 +165,15 @@ export default function OpenShiftsPage() {
 
       {/* Shifts list */}
       {sortedDates.length > 0 ? (
-        <div className="space-y-6">
+        <div className="space-y-8">
           {sortedDates.map((dateKey) => {
             const date = new Date(dateKey);
             const shifts = shiftsByDate[dateKey] ?? [];
 
             return (
-              <div key={dateKey} className="space-y-3">
+              <div key={dateKey} className="space-y-4">
                 {/* Date header */}
-                <div className="flex items-center gap-2 text-sm">
+                <div className="flex items-center gap-2 border-b border-kresna-border pb-3 text-sm">
                   <Calendar className="h-4 w-4 text-kresna-gray" />
                   <h3 className="font-semibold text-charcoal">
                     {date.toLocaleDateString(i18n.language === 'es' ? 'es-ES' : 'en-US', {
@@ -189,13 +189,13 @@ export default function OpenShiftsPage() {
                 </div>
 
                 {/* Shifts grid */}
-                <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                   {shifts.map((shift) => (
                     <div
                       key={shift.id}
-                      className="overflow-hidden rounded-lg border border-kresna-border bg-white"
+                      className="overflow-hidden rounded-2xl border border-kresna-border bg-white shadow-card hover:shadow-kresna transition-all"
                     >
-                      <div className="p-4">
+                      <div className="p-5">
                         <div className="space-y-3">
                           {/* Time */}
                           <div className="flex items-center gap-2 text-primary-600">
@@ -216,14 +216,16 @@ export default function OpenShiftsPage() {
                           {/* Location */}
                           {shift.location && (
                             <div className="flex items-center gap-2 text-kresna-gray">
-                              <MapPin className="h-4 w-4" />
-                              <span className="text-sm">{shift.location.name}</span>
+                              <MapPin className="h-4 w-4 shrink-0" />
+                              <span className="rounded-lg bg-kresna-light px-2 py-1 text-sm">
+                                {shift.location.name}
+                              </span>
                             </div>
                           )}
 
                           {/* Duration */}
                           <div className="flex items-center gap-2">
-                            <div className="rounded-md bg-kresna-light px-2 py-1 text-xs font-medium text-kresna-gray-dark">
+                            <div className="rounded-full bg-kresna-light px-2.5 py-1 text-xs font-medium text-kresna-gray-dark">
                               {(() => {
                                 const start = new Date(shift.start_time);
                                 const end = new Date(shift.end_time);
@@ -250,11 +252,11 @@ export default function OpenShiftsPage() {
                       </div>
 
                       {/* Claim button */}
-                      <div className="border-t border-kresna-border bg-kresna-light p-3">
+                      <div className="rounded-b-2xl border-t border-kresna-border bg-kresna-light p-3">
                         <Button
                           onClick={() => handleClaimShift(shift.id)}
                           disabled={claimingShiftId === shift.id}
-                          className="w-full gap-2 rounded-lg bg-emerald-600 text-white hover:bg-emerald-500"
+                          className="w-full gap-2 rounded-xl bg-emerald-600 text-white hover:bg-emerald-500"
                         >
                           {claimingShiftId === shift.id ? (
                             <>
@@ -277,9 +279,9 @@ export default function OpenShiftsPage() {
           })}
         </div>
       ) : (
-        <div className="flex flex-col items-center justify-center rounded-xl border border-kresna-border bg-white py-16 text-center">
-          <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-kresna-light">
-            <Store className="h-8 w-8 text-kresna-gray" />
+        <div className="flex flex-col items-center justify-center rounded-3xl border border-dashed border-kresna-border bg-kresna-light py-20 text-center">
+          <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-emerald-50">
+            <Store className="h-8 w-8 text-emerald-600" />
           </div>
           <h3 className="mt-4 text-lg font-semibold text-charcoal">
             {t('openShifts.noShifts')}

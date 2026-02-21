@@ -5,8 +5,6 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { ClipboardCheck, Plus, Check, X, Clock, ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Badge } from '@/components/ui/badge';
-import { Card } from '@/components/ui/card';
 import {
   Dialog,
   DialogContent,
@@ -63,10 +61,10 @@ async function rejectCorrection(slug: string, id: string, reason: string) {
   return res.json();
 }
 
-const statusVariant: Record<string, 'warning' | 'success' | 'destructive' | 'secondary'> = {
-  pending: 'warning',
-  approved: 'success',
-  rejected: 'destructive',
+const statusStyles: Record<string, string> = {
+  pending: 'bg-amber-50 text-amber-700 border-amber-200',
+  approved: 'bg-emerald-50 text-emerald-700 border-emerald-200',
+  rejected: 'bg-red-50 text-red-700 border-red-200',
 };
 
 export default function CorrectionsPage() {
@@ -120,25 +118,32 @@ export default function CorrectionsPage() {
   ] as const;
 
   return (
-    <div>
-      <div className="page-header">
-        <div>
-          <h1 className="page-title">{t('corrections.title')}</h1>
+    <div className="mx-auto max-w-5xl space-y-6">
+      {/* Page header */}
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex items-center gap-3">
+          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary-50">
+            <ClipboardCheck className="h-5 w-5 text-primary-600" />
+          </div>
+          <div>
+            <h1 className="text-2xl font-bold text-charcoal tracking-tight">{t('corrections.title')}</h1>
+            <p className="text-sm text-kresna-gray">{t('corrections.title')}</p>
+          </div>
         </div>
-        <Button onClick={() => setCreateOpen(true)} size="sm">
-          <Plus className="h-4 w-4 mr-2" />
+        <Button onClick={() => setCreateOpen(true)} variant="gradient" size="sm" className="gap-1.5">
+          <Plus className="h-4 w-4" />
           {t('corrections.requestCorrection')}
         </Button>
       </div>
 
-      {/* Tabs */}
-      <div className="flex gap-1 mb-6 bg-kresna-light rounded-lg p-1 w-fit">
+      {/* Pill tabs */}
+      <div className="flex gap-1 rounded-full bg-kresna-light p-1 w-fit">
         {tabs.map((item) => (
           <button
             key={item.key}
             onClick={() => setTab(item.key)}
             className={cn(
-              'px-4 py-2 text-sm font-medium rounded-md transition-colors',
+              'px-5 py-2 text-sm font-medium rounded-full transition-all min-h-touch',
               tab === item.key
                 ? 'bg-white text-charcoal shadow-sm'
                 : 'text-kresna-gray hover:text-kresna-gray-dark'
@@ -152,40 +157,64 @@ export default function CorrectionsPage() {
       {/* Corrections list */}
       {isLoading ? (
         <div className="space-y-3">
-          {[1, 2, 3].map((i) => <div key={i} className="skeleton h-24 rounded-xl" />)}
+          {[1, 2, 3].map((i) => (
+            <div key={i} className="h-28 rounded-2xl bg-kresna-light border border-kresna-border animate-pulse" />
+          ))}
         </div>
       ) : correctionsList.length === 0 ? (
-        <div className="empty-state">
-          <div className="empty-state-icon">
-            <ClipboardCheck className="h-8 w-8 text-kresna-gray" />
+        <div className="flex flex-col items-center justify-center rounded-3xl border border-dashed border-kresna-border bg-kresna-light px-6 py-20 text-center">
+          <div className="h-16 w-16 rounded-2xl bg-primary-50 flex items-center justify-center mb-4">
+            <ClipboardCheck className="h-8 w-8 text-primary-600" />
           </div>
-          <p className="text-kresna-gray">{t('corrections.noCorrections')}</p>
+          <p className="text-lg font-semibold text-charcoal mb-1">{t('corrections.noCorrections')}</p>
+          <Button variant="gradient" onClick={() => setCreateOpen(true)} className="gap-1.5 mt-6">
+            <Plus className="h-4 w-4" />
+            {t('corrections.requestCorrection')}
+          </Button>
         </div>
       ) : (
         <div className="space-y-3">
           {correctionsList.map((req: any) => (
-            <Card key={req.id} className="p-4">
-              <div className="flex items-start justify-between">
-                <div className="space-y-2">
+            <div
+              key={req.id}
+              className="rounded-2xl border border-kresna-border bg-white p-5 shadow-card hover:shadow-kresna transition-all"
+            >
+              <div className="flex items-start justify-between gap-4">
+                <div className="space-y-3">
                   <div className="flex items-center gap-2">
-                    <Badge variant={statusVariant[req.status] || 'secondary'}>
+                    <span className={cn(
+                      'inline-flex items-center rounded-full px-2.5 py-1 text-xs font-semibold border',
+                      statusStyles[req.status] || statusStyles.pending
+                    )}>
                       {t(`common.${req.status}` as any) || req.status}
-                    </Badge>
+                    </span>
                     <span className="text-xs text-kresna-gray">
-                      {new Date(req.createdAt || req.requestedAt).toLocaleDateString('es-ES')}
+                      {new Date(req.createdAt || req.requestedAt).toLocaleDateString('es-ES', {
+                        day: 'numeric',
+                        month: 'short',
+                        year: 'numeric',
+                      })}
                     </span>
                   </div>
 
-                  {/* Original vs Requested */}
-                  <div className="flex items-center gap-3 text-sm">
-                    <div className="flex items-center gap-1.5 text-kresna-gray">
-                      <Clock className="h-3.5 w-3.5" />
-                      <span>{req.originalClockIn ? new Date(req.originalClockIn).toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' }) : '-'}</span>
+                  {/* Original → Requested time display */}
+                  <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-2 rounded-xl bg-kresna-light px-3 py-2 border border-kresna-border">
+                      <Clock className="h-4 w-4 text-kresna-gray" />
+                      <span className="text-sm font-medium text-kresna-gray-dark">
+                        {req.originalClockIn
+                          ? new Date(req.originalClockIn).toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' })
+                          : '-'}
+                      </span>
                     </div>
-                    <ArrowRight className="h-3.5 w-3.5 text-kresna-border" />
-                    <div className="flex items-center gap-1.5 text-primary-600 font-medium">
-                      <Clock className="h-3.5 w-3.5" />
-                      <span>{req.requestedClockIn ? new Date(req.requestedClockIn).toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' }) : '-'}</span>
+                    <ArrowRight className="h-4 w-4 text-kresna-border shrink-0" />
+                    <div className="flex items-center gap-2 rounded-xl bg-primary-50 px-3 py-2 border border-primary-200">
+                      <Clock className="h-4 w-4 text-primary-600" />
+                      <span className="text-sm font-semibold text-primary-700">
+                        {req.requestedClockIn
+                          ? new Date(req.requestedClockIn).toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' })
+                          : '-'}
+                      </span>
                     </div>
                   </div>
 
@@ -195,27 +224,23 @@ export default function CorrectionsPage() {
                 </div>
 
                 {tab === 'pending' && req.status === 'pending' && (
-                  <div className="flex gap-2">
-                    <Button
-                      size="sm"
-                      variant="outline"
+                  <div className="flex gap-2 shrink-0">
+                    <button
                       onClick={() => approveMutation.mutate(req.id)}
-                      className="text-emerald-600 border-emerald-200 hover:bg-emerald-50"
+                      className="h-10 w-10 flex items-center justify-center rounded-xl bg-emerald-50 text-emerald-600 hover:bg-emerald-100 border border-emerald-200 transition-colors"
                     >
                       <Check className="h-4 w-4" />
-                    </Button>
-                    <Button
-                      size="sm"
-                      variant="outline"
+                    </button>
+                    <button
                       onClick={() => rejectMutation.mutate({ id: req.id, reason: t('common.rejected') })}
-                      className="text-red-600 border-red-200 hover:bg-red-50"
+                      className="h-10 w-10 flex items-center justify-center rounded-xl bg-red-50 text-red-600 hover:bg-red-100 border border-red-200 transition-colors"
                     >
                       <X className="h-4 w-4" />
-                    </Button>
+                    </button>
                   </div>
                 )}
               </div>
-            </Card>
+            </div>
           ))}
         </div>
       )}
@@ -224,13 +249,15 @@ export default function CorrectionsPage() {
       <Dialog open={createOpen} onOpenChange={setCreateOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>{t('corrections.requestCorrection')}</DialogTitle>
+            <DialogTitle className="text-xl">{t('corrections.requestCorrection')}</DialogTitle>
           </DialogHeader>
           <div className="space-y-4 py-4">
             <div>
-              <label className="text-sm font-medium text-kresna-gray-dark mb-1.5 block">{t('corrections.correctionType')}</label>
+              <label className="text-sm font-medium text-kresna-gray-dark mb-2 block">
+                {t('corrections.correctionType')}
+              </label>
               <Select value={correctionType} onValueChange={setCorrectionType}>
-                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectTrigger className="rounded-xl h-12"><SelectValue /></SelectTrigger>
                 <SelectContent>
                   <SelectItem value="changeClockIn">{t('corrections.types.changeClockIn')}</SelectItem>
                   <SelectItem value="changeClockOut">{t('corrections.types.changeClockOut')}</SelectItem>
@@ -240,25 +267,37 @@ export default function CorrectionsPage() {
               </Select>
             </div>
             <div>
-              <label className="text-sm font-medium text-kresna-gray-dark mb-1.5 block">{t('corrections.requested')}</label>
-              <Input type="datetime-local" value={requestedTime} onChange={(e) => setRequestedTime(e.target.value)} />
+              <label className="text-sm font-medium text-kresna-gray-dark mb-2 block">
+                {t('corrections.requested')}
+              </label>
+              <Input
+                type="datetime-local"
+                value={requestedTime}
+                onChange={(e) => setRequestedTime(e.target.value)}
+                className="rounded-xl h-12"
+              />
             </div>
             <div>
-              <label className="text-sm font-medium text-kresna-gray-dark mb-1.5 block">
+              <label className="text-sm font-medium text-kresna-gray-dark mb-2 block">
                 {t('corrections.reason')} <span className="text-red-500">*</span>
               </label>
               <Input
                 value={reason}
                 onChange={(e) => setReason(e.target.value)}
                 placeholder={t('corrections.reasonRequired')}
+                className="rounded-xl h-12"
               />
             </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setCreateOpen(false)}>{t('common.cancel')}</Button>
+            <Button variant="outline" onClick={() => setCreateOpen(false)} className="rounded-xl">
+              {t('common.cancel')}
+            </Button>
             <Button
+              variant="gradient"
               onClick={() => createMutation.mutate({ correctionType, requestedTime, reason })}
               disabled={!reason || !requestedTime}
+              className="rounded-xl"
             >
               {t('common.submit')}
             </Button>

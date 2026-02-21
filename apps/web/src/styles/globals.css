@@ -62,38 +62,60 @@
 }
 
 @layer components {
+  /* ---- Kresna Typography ---- */
+  .kresna-heading {
+    @apply font-semibold tracking-tighter;
+    line-height: 1.1;
+  }
+
+  .kresna-section {
+    @apply py-20 sm:py-24 lg:py-30 px-4 sm:px-6 lg:px-8;
+  }
+
+  .kresna-container {
+    @apply mx-auto max-w-kresna;
+  }
+
+  /* ---- Page Structure ---- */
   .page-header {
-    @apply flex items-center justify-between gap-4 mb-6;
+    @apply flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8;
   }
 
   .page-title {
-    @apply text-2xl font-semibold text-charcoal tracking-tight;
+    @apply text-heading-2 text-charcoal;
   }
 
   .page-subtitle {
-    @apply text-sm text-kresna-gray-dark mt-0.5;
+    @apply text-body-sm text-kresna-gray mt-1;
   }
 
   .section-title {
-    @apply text-lg font-semibold text-charcoal flex items-center gap-2 mb-4;
+    @apply text-heading-4 text-charcoal flex items-center gap-2 mb-6;
   }
 
+  /* ---- Cards ---- */
   .card {
     @apply bg-white border border-kresna-border rounded-3xl shadow-card;
   }
 
   .card-hover {
-    @apply card transition-all duration-200 hover:shadow-card-hover hover:-translate-y-0.5 cursor-pointer;
+    @apply card transition-all duration-300 ease-kresna hover:shadow-card-hover hover:-translate-y-1 cursor-pointer;
+  }
+
+  .card-interactive {
+    @apply card transition-all duration-300 ease-kresna;
+    @apply hover:shadow-kresna hover:-translate-y-1 hover:border-kresna-gray-medium cursor-pointer;
   }
 
   .stat-card {
-    @apply card p-5 flex flex-col gap-3;
+    @apply card p-6 sm:p-8 flex flex-col gap-4;
   }
 
   .card-glass {
-    @apply backdrop-blur-xl bg-white/80 border border-kresna-border rounded-3xl shadow-card;
+    @apply backdrop-blur-glass bg-white/80 border border-white/20 rounded-3xl shadow-card;
   }
 
+  /* ---- Badges ---- */
   .badge-success {
     @apply inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2.5 py-1 text-xs font-medium text-emerald-700 border border-emerald-200;
   }
@@ -114,42 +136,105 @@
     @apply inline-flex items-center gap-1 rounded-full bg-kresna-light px-2.5 py-1 text-xs font-medium text-kresna-gray-dark border border-kresna-border;
   }
 
+  .badge-live {
+    @apply inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-600 border border-emerald-200;
+  }
+
+  .badge-live::before {
+    content: '';
+    @apply h-2 w-2 rounded-full bg-emerald-500 animate-pulse;
+  }
+
+  /* ---- Data Tables (dense for HR persona) ---- */
   .data-table {
-    @apply w-full text-sm;
+    @apply w-full text-body-sm;
   }
 
   .data-table thead {
-    @apply border-b border-kresna-border;
+    @apply border-b-2 border-kresna-border sticky top-0 bg-white z-10;
   }
 
   .data-table th {
-    @apply text-left text-xs font-medium text-kresna-gray uppercase tracking-wider px-4 py-3;
+    @apply text-left text-caption font-semibold text-kresna-gray uppercase tracking-wider px-4 py-3 select-none;
+    @apply cursor-pointer hover:text-charcoal transition-colors;
+  }
+
+  .data-table th[data-sorted] {
+    @apply text-charcoal;
   }
 
   .data-table td {
-    @apply px-4 py-3 text-kresna-gray-dark;
+    @apply px-4 py-3.5 text-kresna-gray-dark;
   }
 
   .data-table tbody tr {
-    @apply border-b border-kresna-light transition-colors hover:bg-kresna-light;
+    @apply border-b border-kresna-light transition-colors hover:bg-primary-50/30;
   }
 
+  .data-table tbody tr[data-selected] {
+    @apply bg-primary-50/50;
+  }
+
+  /* ---- Empty States ---- */
   .empty-state {
-    @apply flex flex-col items-center justify-center py-16 text-center;
+    @apply flex flex-col items-center justify-center py-24 text-center;
   }
 
   .empty-state-icon {
-    @apply h-16 w-16 rounded-3xl bg-primary-50 flex items-center justify-center mb-4;
+    @apply h-20 w-20 rounded-3xl bg-primary-50 flex items-center justify-center mb-6;
   }
 
+  /* ---- Gradients & Effects ---- */
   .gradient-text {
     @apply bg-clip-text text-transparent bg-gradient-to-r from-primary-500 to-primary-600;
   }
 
   .btn-gradient {
-    @apply bg-gradient-to-r from-primary-500 to-primary-600 text-white font-medium rounded-3xl px-6 py-2.5;
-    @apply hover:from-primary-600 hover:to-primary-700 transition-all duration-200;
-    @apply shadow-sm hover:shadow-glow;
+    @apply bg-gradient-to-r from-primary-500 to-primary-600 text-white font-semibold rounded-3xl px-8 py-3;
+    @apply hover:from-primary-600 hover:to-primary-700 transition-all duration-300 ease-kresna;
+    @apply shadow-kresna-btn hover:shadow-glow active:scale-[0.97];
+  }
+
+  /* ---- Clock-in Mega Button (arch doc: 80px, can't miss it) ---- */
+  .btn-clock-in {
+    @apply w-full min-h-touch-xl rounded-3xl font-bold text-xl text-white;
+    @apply bg-emerald-500 hover:bg-emerald-600 active:scale-[0.97];
+    @apply shadow-glow-green hover:shadow-glow-green-lg;
+    @apply transition-all duration-300 ease-kresna;
+    @apply flex items-center justify-center gap-3;
+  }
+
+  .btn-clock-in.pulsing {
+    @apply animate-pulse-green;
+  }
+
+  /* ---- Traffic Light Compliance (arch doc: 🟢🟡🔴) ---- */
+  .compliance-green { @apply bg-emerald-500; }
+  .compliance-yellow { @apply bg-amber-400; }
+  .compliance-red { @apply bg-red-500; }
+
+  /* ---- Live Status Dot (arch doc: green dots = clocked in) ---- */
+  .status-dot {
+    @apply h-2.5 w-2.5 rounded-full flex-shrink-0;
+  }
+  .status-dot-live {
+    @apply relative;
+  }
+  .status-dot-live::after {
+    content: '';
+    @apply absolute inset-0 rounded-full animate-ping opacity-75;
+    background: inherit;
+  }
+
+  /* ---- Trend Badges (arch doc: trend arrows ↑↓) ---- */
+  .trend-up {
+    @apply inline-flex items-center gap-0.5 text-xs font-semibold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full;
+  }
+  .trend-down {
+    @apply inline-flex items-center gap-0.5 text-xs font-semibold text-red-600 bg-red-50 px-2 py-0.5 rounded-full;
+  }
+  .trend-flat {
+    @apply inline-flex items-center gap-0.5 text-xs font-semibold text-kresna-gray bg-kresna-light px-2 py-0.5 rounded-full;
   }
 }
 
@@ -207,6 +292,46 @@
   }
 
   .glass {
-    @apply backdrop-blur-xl bg-white/80 border border-kresna-border;
+    @apply backdrop-blur-glass bg-white/80 border border-white/20;
+  }
+
+  /* Kresna frosted glass overlay (arch doc: glassmorphism) */
+  .glass-surface {
+    @apply backdrop-blur-glass bg-white/70 border border-white/30 shadow-kresna;
+  }
+
+  /* Tabular numbers for time displays (arch doc: live timer) */
+  .tabular-nums {
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* Mono-digit display for clocks (arch doc: huge mono font) */
+  .clock-display {
+    @apply font-mono tabular-nums font-bold tracking-tighter;
+  }
+}
+
+/* ---- Print Styles (arch doc: inspector needs printable reports) ---- */
+@media print {
+  .no-print { display: none !important; }
+
+  body {
+    color: #000;
+    background: #fff;
+  }
+
+  .card, .stat-card {
+    box-shadow: none;
+    border: 1px solid #ddd;
+    break-inside: avoid;
+  }
+
+  .data-table th {
+    background: #f5f5f5;
+    font-weight: bold;
+  }
+
+  .data-table td {
+    border-bottom: 1px solid #eee;
   }
 }

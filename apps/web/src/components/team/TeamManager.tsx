@@ -104,8 +104,9 @@ export function TeamManager({ organizationSlug }: TeamManagerProps) {
           </p>
         </div>
         <Button
+          variant="gradient"
           onClick={() => setIsInviteModalOpen(true)}
-          className="gap-2 bg-primary-600 hover:bg-primary-700"
+          className="gap-2"
         >
           <UserPlus className="h-4 w-4" />
           {t('team.inviteMember')}
@@ -114,7 +115,7 @@ export function TeamManager({ organizationSlug }: TeamManagerProps) {
 
       {/* Members List */}
       {members.length === 0 ? (
-        <div className="rounded-xl border border-kresna-border bg-kresna-light p-12 text-center">
+        <div className="rounded-2xl border border-kresna-border bg-white p-12 text-center shadow-card">
           <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-kresna-light">
             <Users className="h-8 w-8 text-kresna-gray" />
           </div>
@@ -136,10 +137,7 @@ export function TeamManager({ organizationSlug }: TeamManagerProps) {
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, scale: 0.95 }}
                   transition={{ delay: index * 0.05 }}
-                  className={cn(
-                    'group relative overflow-hidden rounded-xl border bg-white p-4 transition-all hover:bg-kresna-light',
-                    'border-kresna-border hover:border-kresna-border'
-                  )}
+                  className="group relative overflow-hidden rounded-2xl border border-kresna-border bg-white p-5 shadow-card transition-all hover:shadow-kresna"
                 >
                   <div className="flex items-center gap-4">
                     {/* Avatar */}
@@ -160,8 +158,8 @@ export function TeamManager({ organizationSlug }: TeamManagerProps) {
                       <div className="absolute -bottom-1 -right-1 rounded-full bg-white p-1">
                         <RoleIcon className={cn(
                           'h-4 w-4',
-                          member.role === 'owner' && 'text-amber-500',
-                          member.role === 'admin' && 'text-primary-500',
+                          member.role === 'owner' && 'text-amber-600',
+                          member.role === 'admin' && 'text-primary-600',
                           member.role === 'member' && 'text-kresna-gray'
                         )} />
                       </div>
@@ -196,8 +194,8 @@ export function TeamManager({ organizationSlug }: TeamManagerProps) {
       )}
 
       {/* Info note */}
-      <div className="flex items-start gap-3 rounded-lg border border-primary-200 bg-primary-50 p-4">
-        <AlertCircle className="h-5 w-5 shrink-0 text-primary-500 mt-0.5" />
+      <div className="flex items-start gap-3 rounded-xl border border-primary-200 bg-primary-50 p-4">
+        <AlertCircle className="h-5 w-5 shrink-0 text-primary-600 mt-0.5" />
         <div className="text-sm text-primary-700">
           <p className="font-medium mb-1">{t('team.inviteInfoTitle')}</p>
           <p className="text-primary-600">

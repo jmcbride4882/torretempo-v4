@@ -61,22 +61,22 @@ function getDateKey(date: Date): string {
 // Group shifts by day
 function groupShiftsByDay(shifts: Shift[], weekDays: WeekDay[]): Map<string, Shift[]> {
   const grouped = new Map<string, Shift[]>();
-  
+
   weekDays.forEach((day) => {
     const dateKey = getDateKey(day.date);
     grouped.set(dateKey, []);
   });
-  
+
   shifts.forEach((shift) => {
     const shiftDate = new Date(shift.start_time);
     const dateKey = getDateKey(shiftDate);
-    
+
     const dayShifts = grouped.get(dateKey);
     if (dayShifts) {
       dayShifts.push(shift);
     }
   });
-  
+
   return grouped;
 }
 
@@ -84,17 +84,17 @@ function groupShiftsByDay(shifts: Shift[], weekDays: WeekDay[]): Map<string, Shi
 function calculateShiftPosition(shift: Shift): { top: number; height: number } {
   const startDate = new Date(shift.start_time);
   const endDate = new Date(shift.end_time);
-  
+
   const startHour = startDate.getHours() + startDate.getMinutes() / 60;
   const endHour = endDate.getHours() + endDate.getMinutes() / 60;
-  
+
   // Grid starts at 6 AM
   const gridStartHour = 6;
   const pixelsPerHour = 60; // 60px per hour
-  
+
   const top = Math.max(0, (startHour - gridStartHour) * pixelsPerHour);
   const height = Math.max(30, (endHour - startHour) * pixelsPerHour); // Minimum 30px height
-  
+
   return { top, height };
 }
 
@@ -121,19 +121,19 @@ function MobileShiftList({ shifts, weekDays, onShiftClick }: {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: index * 0.05 }}
             className={cn(
-              'rounded-xl border border-kresna-border bg-white p-4',
-              day.isToday && 'border-primary-500/30 bg-primary-500/5'
+              'rounded-2xl border border-kresna-border bg-white p-4 shadow-card',
+              day.isToday && 'border-primary-200 bg-primary-50/30'
             )}
           >
             {/* Day header */}
             <div className="mb-3 flex items-center gap-3">
               <div className={cn(
-                'flex h-10 w-10 flex-col items-center justify-center rounded-lg',
+                'flex h-10 w-10 flex-col items-center justify-center rounded-xl',
                 day.isToday
                   ? 'bg-primary-500 text-white'
                   : day.isWeekend
                     ? 'bg-kresna-light text-kresna-gray'
-                    : 'bg-kresna-light/50 text-kresna-gray-dark'
+                    : 'bg-kresna-light text-kresna-gray-dark'
               )}>
                 <span className="text-[10px] font-medium uppercase leading-none">{day.dayName}</span>
                 <span className="text-lg font-bold leading-tight">{day.dayNumber}</span>
@@ -163,7 +163,7 @@ function MobileShiftList({ shifts, weekDays, onShiftClick }: {
                 ))}
               </div>
             ) : (
-              <div className="rounded-lg border border-dashed border-kresna-border bg-kresna-light/50 py-6 text-center">
+              <div className="rounded-xl border border-dashed border-kresna-border bg-kresna-light/50 py-6 text-center">
                 <p className="text-sm text-kresna-gray">{t('roster.noShiftsScheduled')}</p>
               </div>
             )}
@@ -175,11 +175,11 @@ function MobileShiftList({ shifts, weekDays, onShiftClick }: {
 }
 
 // Draggable shift wrapper
-function DraggableShift({ 
-  shift, 
-  children 
-}: { 
-  shift: Shift; 
+function DraggableShift({
+  shift,
+  children
+}: {
+  shift: Shift;
   children: React.ReactNode;
 }) {
   const { attributes, listeners, setNodeRef, isDragging } = useDraggable({
@@ -219,7 +219,7 @@ function DroppableDay({
       ref={setNodeRef}
       className={cn(
         className,
-        isOver && 'ring-2 ring-primary-500 ring-inset'
+        isOver && 'ring-2 ring-primary-500 ring-inset bg-primary-50/30'
       )}
     >
       {children}
@@ -232,35 +232,35 @@ export function RosterGrid({ shifts, currentDate, isLoading, onShiftClick, onShi
   const weekDays = useMemo(() => generateWeekDays(currentDate, t), [currentDate, t]);
   const shiftsByDay = useMemo(() => groupShiftsByDay(shifts, weekDays), [shifts, weekDays]);
   const [activeShift, setActiveShift] = useState<Shift | null>(null);
-  
+
   const handleDragStart = (event: DragStartEvent) => {
     const shiftData = event.active.data.current?.shift as Shift | undefined;
     if (shiftData) {
       setActiveShift(shiftData);
     }
   };
-  
+
   const handleDragEnd = async (event: DragEndEvent) => {
     const { active, over } = event;
     setActiveShift(null);
-    
+
     if (!over || !onShiftDrop) return;
-    
+
     const shiftId = active.id as string;
     const targetDateKey = over.id as string;
-    
+
     // Find the target date from weekDays
     const targetDay = weekDays.find((d) => getDateKey(d.date) === targetDateKey);
     if (!targetDay) return;
-    
+
     // Get the shift data
     const shiftData = active.data.current?.shift as Shift | undefined;
     if (!shiftData) return;
-    
+
     // Call the drop handler
     await onShiftDrop(shiftId, targetDay.date);
   };
-  
+
   if (isLoading) {
     return (
       <div className="flex min-h-[400px] items-center justify-center">
@@ -275,7 +275,7 @@ export function RosterGrid({ shifts, currentDate, isLoading, onShiftClick, onShi
       </div>
     );
   }
-  
+
   return (
     <DndContext onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
       {/* Mobile view */}
@@ -284,7 +284,7 @@ export function RosterGrid({ shifts, currentDate, isLoading, onShiftClick, onShi
         weekDays={weekDays}
         onShiftClick={onShiftClick}
       />
-      
+
       {/* Drag overlay */}
       <DragOverlay>
         {activeShift && (
@@ -293,17 +293,17 @@ export function RosterGrid({ shifts, currentDate, isLoading, onShiftClick, onShi
           </div>
         )}
       </DragOverlay>
-      
+
       {/* Desktop grid view */}
       <div className="hidden lg:block">
-        <div className="overflow-hidden rounded-xl border border-kresna-border bg-white">
+        <div className="overflow-hidden rounded-2xl border border-kresna-border bg-white shadow-card">
           {/* Header row with day names */}
           <div className="grid grid-cols-[80px_repeat(7,1fr)] border-b border-kresna-border">
             {/* Empty corner cell */}
             <div className="border-r border-kresna-border bg-kresna-light p-3">
               <span className="text-xs font-medium uppercase text-kresna-gray">{t('roster.timeHeader')}</span>
             </div>
-            
+
             {/* Day headers */}
             {weekDays.map((day, index) => (
               <motion.div
@@ -313,22 +313,22 @@ export function RosterGrid({ shifts, currentDate, isLoading, onShiftClick, onShi
                 transition={{ delay: index * 0.03 }}
                 className={cn(
                   'flex flex-col items-center justify-center border-r border-kresna-border p-3 last:border-r-0',
-                  day.isToday && 'bg-primary-500/5',
+                  day.isToday && 'bg-primary-50/30',
                   day.isWeekend && !day.isToday && 'bg-kresna-light/50'
                 )}
               >
                 <span className={cn(
                   'text-xs font-medium uppercase',
-                  day.isToday ? 'text-primary-500' : day.isWeekend ? 'text-kresna-gray' : 'text-kresna-gray'
+                  day.isToday ? 'text-primary-600' : 'text-kresna-gray'
                 )}>
                   {day.dayName}
                 </span>
                 <span className={cn(
                   'mt-0.5 flex h-8 w-8 items-center justify-center rounded-full text-lg font-bold',
-                  day.isToday 
-                    ? 'bg-primary-500 text-white' 
-                    : day.isWeekend 
-                      ? 'text-kresna-gray' 
+                  day.isToday
+                    ? 'bg-primary-500 text-white'
+                    : day.isWeekend
+                      ? 'text-kresna-gray'
                       : 'text-charcoal'
                 )}>
                   {day.dayNumber}
@@ -336,11 +336,11 @@ export function RosterGrid({ shifts, currentDate, isLoading, onShiftClick, onShi
               </motion.div>
             ))}
           </div>
-          
+
           {/* Grid body */}
           <div className="relative grid grid-cols-[80px_repeat(7,1fr)]">
             {/* Time column */}
-            <div className="border-r border-kresna-border bg-kresna-light/50">
+            <div className="border-r border-kresna-border bg-kresna-light">
               {TIME_SLOTS.map((slot) => (
                 <div
                   key={slot.hour}
@@ -352,19 +352,19 @@ export function RosterGrid({ shifts, currentDate, isLoading, onShiftClick, onShi
                 </div>
               ))}
             </div>
-            
+
             {/* Day columns with shifts */}
             {weekDays.map((day) => {
               const dateKey = getDateKey(day.date);
               const dayShifts = shiftsByDay.get(dateKey) || [];
-              
+
               return (
                 <DroppableDay
                   key={dateKey}
                   day={day}
                   className={cn(
                     'relative border-r border-kresna-border last:border-r-0',
-                    day.isToday && 'bg-primary-500/[0.02]',
+                    day.isToday && 'bg-primary-50/20',
                     day.isWeekend && !day.isToday && 'bg-kresna-light/30'
                   )}
                 >
@@ -375,13 +375,13 @@ export function RosterGrid({ shifts, currentDate, isLoading, onShiftClick, onShi
                       className="h-[60px] border-b border-kresna-border last:border-b-0"
                     />
                   ))}
-                  
+
                   {/* Shifts overlay */}
                   <div className="absolute inset-0 p-1">
                     <AnimatePresence mode="popLayout">
                       {dayShifts.map((shift, shiftIndex) => {
                         const { top, height } = calculateShiftPosition(shift);
-                        
+
                         return (
                           <DraggableShift key={shift.id} shift={shift}>
                             <motion.div
@@ -410,13 +410,13 @@ export function RosterGrid({ shifts, currentDate, isLoading, onShiftClick, onShi
                       })}
                     </AnimatePresence>
                   </div>
-                  
+
                   {/* Today indicator line */}
                   {day.isToday && (
                     <motion.div
                       initial={{ scaleX: 0 }}
                       animate={{ scaleX: 1 }}
-                      className="absolute left-0 right-0 h-0.5 bg-primary-500 shadow-lg shadow-primary-500/50"
+                      className="absolute left-0 right-0 h-0.5 bg-primary-500 shadow-sm"
                       style={{
                         top: `${Math.max(0, (new Date().getHours() + new Date().getMinutes() / 60 - 6) * 60)}px`,
                       }}
@@ -429,7 +429,7 @@ export function RosterGrid({ shifts, currentDate, isLoading, onShiftClick, onShi
             })}
           </div>
         </div>
-        
+
         {/* Empty state */}
         {shifts.length === 0 && (
           <motion.div

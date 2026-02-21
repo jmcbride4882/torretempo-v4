@@ -300,7 +300,7 @@ export function ClockOutSheet({ isOpen, onClose, organizationSlug, activeEntry }
 
         {/* Duration Summary Card */}
         {activeEntry && (
-          <div className="bg-white border border-kresna-border shadow-sm rounded-xl p-4 space-y-4">
+          <div className="rounded-2xl bg-kresna-light border border-kresna-border p-5 space-y-4">
             <div className="flex items-center gap-2 pb-2 border-b border-kresna-border">
               <Timer className="h-4 w-4 text-emerald-600" />
               <span className="text-sm font-medium text-kresna-gray-dark">{t('clock.durationSummary')}</span>
@@ -346,14 +346,14 @@ export function ClockOutSheet({ isOpen, onClose, organizationSlug, activeEntry }
             </div>
 
             {/* Net Work Time - Highlighted */}
-            <div className="flex items-center justify-between pt-2 border-t border-kresna-border">
+            <div className="flex items-center justify-between bg-primary-50 border border-primary-200 rounded-xl p-4">
               <div className="flex items-center gap-2">
-                <div className="h-8 w-8 rounded-full bg-emerald-50 flex items-center justify-center">
-                  <Briefcase className="h-4 w-4 text-emerald-600" />
+                <div className="h-8 w-8 rounded-full bg-primary-100 flex items-center justify-center">
+                  <Briefcase className="h-4 w-4 text-primary-600" />
                 </div>
                 <span className="text-sm font-medium text-charcoal">{t('clock.netWorkTime')}</span>
               </div>
-              <span className="text-lg font-bold text-emerald-600 font-mono">
+              <span className="text-2xl font-bold text-primary-600 font-mono">
                 {formatDuration(netWorkMinutes, t).text}
               </span>
             </div>
@@ -379,7 +379,7 @@ export function ClockOutSheet({ isOpen, onClose, organizationSlug, activeEntry }
             </Button>
           </div>
 
-          <div className="bg-white border border-kresna-border shadow-sm rounded-xl overflow-hidden">
+          <div className="rounded-2xl border border-kresna-border bg-white shadow-card overflow-hidden">
             {breaksLoading ? (
               <div className="flex items-center justify-center py-6">
                 <Loader2 className="h-5 w-5 text-kresna-gray animate-spin" />
@@ -461,7 +461,7 @@ export function ClockOutSheet({ isOpen, onClose, organizationSlug, activeEntry }
         </div>
 
         {/* Location */}
-        <div className="flex items-center justify-between bg-white border border-kresna-border shadow-sm rounded-xl p-3">
+        <div className="flex items-center justify-between rounded-xl bg-kresna-light border border-kresna-border p-4">
           <div className="flex items-center gap-2">
             <MapPin className="h-4 w-4 text-kresna-gray" />
             <span className="text-sm text-kresna-gray">{t('clock.location')}</span>
@@ -511,7 +511,7 @@ export function ClockOutSheet({ isOpen, onClose, organizationSlug, activeEntry }
               "w-full px-3 py-2 rounded-xl resize-none",
               "bg-kresna-light border border-kresna-border",
               "text-charcoal placeholder:text-kresna-gray",
-              "focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-300",
+              "focus:outline-none focus:ring-2 focus:ring-primary-200 focus:border-primary-500",
               "text-sm"
             )}
           />
@@ -544,11 +544,9 @@ export function ClockOutSheet({ isOpen, onClose, organizationSlug, activeEntry }
             <Button
               onClick={handleClockOut}
               disabled={!canClockOut || !position}
-              className={cn(
-                "h-14 text-lg font-semibold rounded-xl",
-                "bg-amber-600 hover:bg-amber-700",
-                "disabled:bg-kresna-border disabled:text-kresna-gray"
-              )}
+              variant="destructive"
+              size="xl"
+              className="w-full"
             >
               {submitting ? (
                 <span className="flex items-center gap-2">

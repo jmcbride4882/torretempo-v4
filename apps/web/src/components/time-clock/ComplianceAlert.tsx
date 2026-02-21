@@ -71,31 +71,31 @@ export interface ComplianceAlertProps {
 const SEVERITY_CONFIG = {
   low: {
     icon: Info,
-    color: 'text-primary-400',
-    bg: 'bg-primary-500/10',
-    border: 'border-primary-500/20',
-    badge: 'bg-primary-500/20 text-primary-400',
+    color: 'text-primary-700',
+    bg: 'bg-primary-50',
+    border: 'border-primary-200',
+    badge: 'bg-primary-50 text-primary-700',
   },
   medium: {
     icon: AlertCircle,
-    color: 'text-yellow-400',
-    bg: 'bg-yellow-500/10',
-    border: 'border-yellow-500/20',
-    badge: 'bg-yellow-500/20 text-yellow-400',
+    color: 'text-amber-700',
+    bg: 'bg-amber-50',
+    border: 'border-amber-200',
+    badge: 'bg-amber-50 text-amber-700',
   },
   high: {
     icon: AlertTriangle,
-    color: 'text-orange-400',
-    bg: 'bg-orange-500/10',
-    border: 'border-orange-500/20',
-    badge: 'bg-orange-500/20 text-orange-400',
+    color: 'text-red-700',
+    bg: 'bg-red-50',
+    border: 'border-red-200',
+    badge: 'bg-red-50 text-red-700',
   },
   critical: {
     icon: XCircle,
-    color: 'text-red-400',
-    bg: 'bg-red-500/10',
-    border: 'border-red-500/20',
-    badge: 'bg-red-500/20 text-red-400',
+    color: 'text-red-700',
+    bg: 'bg-red-50',
+    border: 'border-red-200',
+    badge: 'bg-red-100 text-red-700',
   },
 };
 
@@ -179,11 +179,11 @@ export function ComplianceAlert({
   if (isBlocking && criticalViolations.length > 0) {
     return (
       <Dialog open={isOpen} onOpenChange={onClose}>
-        <DialogContent className="sm:max-w-lg bg-white border-kresna-border">
+        <DialogContent className="sm:max-w-lg rounded-2xl border border-kresna-border bg-white shadow-card">
           <DialogHeader>
             <div className="flex items-center gap-3">
-              <div className="h-10 w-10 rounded-full bg-red-500/20 flex items-center justify-center">
-                <ShieldAlert className="h-5 w-5 text-red-400" />
+              <div className="h-10 w-10 rounded-full bg-red-50 flex items-center justify-center">
+                <ShieldAlert className="h-5 w-5 text-red-600" />
               </div>
               <div>
                 <DialogTitle className="text-charcoal">
@@ -205,7 +205,7 @@ export function ComplianceAlert({
           {summary && (
             <div className="flex items-center justify-between text-xs text-kresna-gray py-2 border-t border-kresna-border">
               <span>{t('compliance.checksPerformed', { count: summary.checks })}</span>
-              <span className="text-red-400">{t('compliance.violationsFound', { count: summary.violations })}</span>
+              <span className="text-red-600">{t('compliance.violationsFound', { count: summary.violations })}</span>
             </div>
           )}
 
@@ -232,10 +232,10 @@ export function ComplianceAlert({
                   placeholder={t('compliance.overridePlaceholder')}
                   rows={2}
                   className={cn(
-                    "w-full px-3 py-2 rounded-lg resize-none",
+                    "w-full px-3 py-2 rounded-xl resize-none",
                     "bg-kresna-light border border-kresna-border",
                     "text-charcoal placeholder:text-kresna-gray",
-                    "focus:outline-none focus:ring-2 focus:ring-amber-500/50",
+                    "focus:outline-none focus:ring-2 focus:ring-primary-200 focus:border-primary-500",
                     "text-sm"
                   )}
                 />
@@ -250,7 +250,8 @@ export function ComplianceAlert({
                   <Button
                     onClick={handleOverride}
                     disabled={!overrideReason.trim()}
-                    className="flex-1 bg-amber-600 hover:bg-amber-700"
+                    variant="gradient"
+                    className="flex-1"
                   >
                     {t('compliance.confirmOverride')}
                   </Button>
@@ -285,14 +286,14 @@ export function ComplianceAlert({
             transition={SPRING_CONFIG}
             className={cn(
               "fixed top-4 left-4 right-4 z-50",
-              "bg-yellow-50 border border-yellow-200",
-              "rounded-xl p-4 shadow-lg"
+              "bg-amber-50 border border-amber-200",
+              "rounded-2xl p-5 shadow-card"
             )}
           >
             <div className="flex items-start gap-3">
-              <AlertTriangle className="h-5 w-5 text-yellow-400 flex-shrink-0 mt-0.5" />
+              <AlertTriangle className="h-5 w-5 text-amber-600 flex-shrink-0 mt-0.5" />
               <div className="flex-1">
-                <p className="text-sm font-medium text-yellow-700">
+                <p className="text-sm font-medium text-amber-700">
                   {t('compliance.warningTitle')}
                 </p>
                 <p className="text-xs text-kresna-gray-dark mt-1">
@@ -329,11 +330,11 @@ export function ComplianceAlert({
           className={cn(
             "fixed top-4 left-4 right-4 z-50",
             "bg-emerald-50 border border-emerald-200",
-            "rounded-xl p-4 shadow-lg"
+            "rounded-2xl p-5 shadow-card"
           )}
         >
           <div className="flex items-center gap-3">
-            <CheckCircle2 className="h-5 w-5 text-emerald-400" />
+            <CheckCircle2 className="h-5 w-5 text-emerald-600" />
             <div className="flex-1">
               <p className="text-sm font-medium text-emerald-700">
                 {t('compliance.allChecksPassed')}

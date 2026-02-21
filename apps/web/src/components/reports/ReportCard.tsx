@@ -63,22 +63,22 @@ function StatusBadge({ status }: { status: ReportStatus }) {
     generating: {
       icon: Loader2,
       labelKey: 'reports.statuses.generating',
-      className: 'bg-amber-500/20 text-amber-300 border-amber-500/30',
+      className: 'bg-amber-50 text-amber-700 border-amber-200',
     },
     ready: {
       icon: CheckCircle2,
       labelKey: 'reports.statuses.ready',
-      className: 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30',
+      className: 'bg-emerald-50 text-emerald-700 border-emerald-200',
     },
     delivered: {
       icon: CheckCircle2,
       labelKey: 'reports.statuses.delivered',
-      className: 'bg-primary-500/20 text-primary-300 border-primary-500/30',
+      className: 'bg-primary-50 text-primary-700 border-primary-200',
     },
     failed: {
       icon: AlertCircle,
       labelKey: 'reports.statuses.failed',
-      className: 'bg-red-500/20 text-red-300 border-red-500/30',
+      className: 'bg-red-50 text-red-700 border-red-200',
     },
   };
 
@@ -123,8 +123,8 @@ export function ReportCard({ report, onClick, onDownload, className }: ReportCar
       whileTap={{ scale: 0.98 }}
       onClick={() => onClick(report.id)}
       className={cn(
-        'group relative cursor-pointer overflow-hidden rounded-2xl border border-kresna-border bg-white shadow-sm transition-all duration-300',
-        'hover:border-kresna-border hover:bg-kresna-light/50 hover:shadow-md hover:shadow-kresna-border/50',
+        'group relative cursor-pointer overflow-hidden rounded-2xl border border-kresna-border bg-white shadow-card transition-all duration-300',
+        'hover:shadow-kresna',
         className
       )}
     >
@@ -132,14 +132,14 @@ export function ReportCard({ report, onClick, onDownload, className }: ReportCar
       <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-primary-500/50 to-transparent opacity-0 transition-opacity group-hover:opacity-100" />
 
       {/* Decorative orb */}
-      <div className="absolute -right-8 -top-8 h-32 w-32 rounded-full bg-gradient-to-br from-primary-600/10 to-primary-600/10 blur-2xl transition-opacity group-hover:opacity-75" />
+      <div className="absolute -right-8 -top-8 h-32 w-32 rounded-full bg-gradient-to-br from-primary-50 to-primary-100 blur-2xl transition-opacity group-hover:opacity-75" />
 
       <div className="relative p-5">
         {/* Header: Month/Year + Status */}
         <div className="mb-4 flex items-start justify-between gap-3">
           <div className="flex items-center gap-3">
-            <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br from-primary-600/20 to-primary-600/20 shadow-lg shadow-primary-500/10">
-              <FileText className="h-5 w-5 text-primary-400" />
+            <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br from-primary-50 to-primary-100 ring-1 ring-primary-200">
+              <FileText className="h-5 w-5 text-primary-600" />
             </div>
             <div>
               <h3 className="font-semibold text-charcoal">{monthName}</h3>
@@ -172,9 +172,9 @@ export function ReportCard({ report, onClick, onDownload, className }: ReportCar
 
         {/* Overtime badge */}
         {hasOvertime && (
-          <div className="mb-4 flex items-center gap-2 rounded-lg border border-amber-500/20 bg-amber-500/10 px-3 py-2">
-            <TrendingUp className="h-4 w-4 text-amber-400" />
-            <span className="text-sm font-medium text-amber-300">
+          <div className="mb-4 flex items-center gap-2 rounded-xl border border-amber-200 bg-amber-50 px-3 py-2">
+            <TrendingUp className="h-4 w-4 text-amber-600" />
+            <span className="text-sm font-medium text-amber-700">
               {t('reports.overtimeAmount', { hours: formatHours(report.overtimeHours) })}
             </span>
           </div>
@@ -195,7 +195,7 @@ export function ReportCard({ report, onClick, onDownload, className }: ReportCar
           <Button
             size="sm"
             variant="ghost"
-            className="flex-1 gap-1.5 rounded-lg text-kresna-gray-dark hover:bg-kresna-light hover:text-charcoal"
+            className="flex-1 gap-1.5 rounded-xl text-kresna-gray-dark hover:bg-kresna-light hover:text-charcoal"
             onClick={() => onClick(report.id)}
           >
             {t('reports.viewDetails')}
@@ -204,8 +204,9 @@ export function ReportCard({ report, onClick, onDownload, className }: ReportCar
           {report.status === 'ready' && report.pdfUrl && onDownload && (
             <Button
               size="sm"
+              variant="gradient"
               onClick={handleDownload}
-              className="gap-1.5 rounded-lg bg-primary-600 text-white hover:bg-primary-500"
+              className="gap-1.5 rounded-xl"
             >
               <Download className="h-3.5 w-3.5" />
               PDF

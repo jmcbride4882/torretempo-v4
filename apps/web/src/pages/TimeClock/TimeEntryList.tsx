@@ -16,7 +16,6 @@ import {
   Square,
   ChevronDown,
   RefreshCw,
-  Filter,
   Calendar,
   Timer,
   Smartphone,
@@ -206,108 +205,152 @@ function ActiveEntryCard({
   }, [entry.clock_in]);
 
   const { hours, mins } = formatLiveDuration(durationMinutes);
+  const progressPercent = Math.min(100, Math.round((durationMinutes / 480) * 100));
 
   return (
-    <div className="rounded-2xl border border-emerald-200 bg-emerald-50 p-5 shadow-sm">
-      <div className="flex items-start justify-between gap-4">
-        <div className="flex-1 space-y-3">
-          <div className="flex items-center gap-2">
-            <div className="relative">
-              <div className="h-2.5 w-2.5 rounded-full bg-emerald-500" />
-              <div className="absolute inset-0 rounded-full bg-emerald-500 animate-ping opacity-30" />
-            </div>
-            <span className="text-sm font-medium text-emerald-700">{t('clock.activeShift')}</span>
-          </div>
-
-          <div className="flex items-baseline gap-1">
-            <span className="text-4xl font-bold tabular-nums text-charcoal">{hours}</span>
-            <span className="text-lg text-kresna-gray">{t('clock.hours')}</span>
-            <span className="text-4xl font-bold tabular-nums text-charcoal ml-2">{mins}</span>
-            <span className="text-lg text-kresna-gray">{t('clock.minutes')}</span>
-          </div>
-
-          <div className="flex items-center gap-4 text-sm text-kresna-gray">
-            <div className="flex items-center gap-1.5">
-              <Clock className="h-3.5 w-3.5" />
-              <span>{t('clock.startedAt')} {formatTime(entry.clock_in)}</span>
-            </div>
-            {entry.clock_in_location && (
-              <div className="flex items-center gap-1.5">
-                <MapPin className="h-3.5 w-3.5" />
-                <span>
-                  {entry.clock_in_location.lat.toFixed(4)}, {entry.clock_in_location.lng.toFixed(4)}
-                </span>
-              </div>
-            )}
-          </div>
-
-          {activeBreak && (
-            <div className="flex items-center gap-2 pt-2">
-              <Coffee className="h-4 w-4 text-amber-600" />
-              <span className="text-sm text-amber-600">
-                {t('clock.onBreak', { type: activeBreak.break_type })}
-              </span>
-            </div>
-          )}
+    <div className="rounded-3xl border border-emerald-200 bg-emerald-50 p-6 shadow-card">
+      {/* Live status header */}
+      <div className="flex items-center gap-2.5 mb-5">
+        <div className="relative">
+          <div className="h-3 w-3 rounded-full bg-emerald-500" />
+          <div className="absolute inset-0 rounded-full bg-emerald-500 animate-ping opacity-30" />
         </div>
-
-        <div className="flex flex-col gap-2">
-          {activeBreak ? (
-            <Button
-              onClick={onEndBreak}
-              disabled={breakLoading}
-              size="sm"
-              className="gap-1.5 bg-amber-600 hover:bg-amber-700"
-            >
-              {breakLoading ? (
-                <RefreshCw className="h-4 w-4 animate-spin" />
-              ) : (
-                <Coffee className="h-4 w-4" />
-              )}
-              {t('clock.endBreak')}
-            </Button>
-          ) : (
-            <Button
-              onClick={onStartBreak}
-              disabled={breakLoading}
-              size="sm"
-              variant="outline"
-              className="gap-1.5"
-            >
-              {breakLoading ? (
-                <RefreshCw className="h-4 w-4 animate-spin" />
-              ) : (
-                <Coffee className="h-4 w-4" />
-              )}
-              {t('clock.startBreak')}
-            </Button>
-          )}
-
-          <Button
-            onClick={onClockOut}
-            size="sm"
-            className="gap-1.5 bg-red-600 hover:bg-red-700"
-          >
-            <Square className="h-4 w-4" />
-            {t('clock.clockOut')}
-          </Button>
-        </div>
+        <span className="text-sm font-semibold text-emerald-700 uppercase tracking-wider">
+          {t('clock.activeShift')}
+        </span>
       </div>
 
-      {entry.linked_shift_id && (
-        <div className="mt-4 pt-4 border-t border-emerald-200">
-          <div className="flex items-center justify-between text-xs text-kresna-gray mb-2">
-            <span>{t('clock.shiftProgress')}</span>
-            <span>{Math.min(100, Math.round((durationMinutes / 480) * 100))}%</span>
+      {/* Huge live timer */}
+      <div className="flex items-baseline justify-center gap-2 mb-6">
+        <span className="text-5xl sm:text-6xl font-bold tabular-nums tracking-tighter text-charcoal">
+          {String(hours).padStart(2, '0')}
+        </span>
+        <span className="text-2xl sm:text-3xl font-medium text-kresna-gray-dark animate-pulse">:</span>
+        <span className="text-5xl sm:text-6xl font-bold tabular-nums tracking-tighter text-charcoal">
+          {String(mins).padStart(2, '0')}
+        </span>
+      </div>
+
+      {/* Clock-in metadata */}
+      <div className="flex items-center justify-center gap-5 text-sm text-kresna-gray mb-6">
+        <div className="flex items-center gap-1.5">
+          <Clock className="h-4 w-4" />
+          <span>{t('clock.startedAt')} {formatTime(entry.clock_in)}</span>
+        </div>
+        {entry.clock_in_location && (
+          <div className="flex items-center gap-1.5">
+            <MapPin className="h-4 w-4" />
+            <span>
+              {entry.clock_in_location.lat.toFixed(4)}, {entry.clock_in_location.lng.toFixed(4)}
+            </span>
           </div>
-          <div className="h-1.5 rounded-full bg-emerald-100 overflow-hidden">
+        )}
+      </div>
+
+      {/* Active break notice */}
+      {activeBreak && (
+        <div className="flex items-center justify-center gap-2 mb-6 py-2.5 px-4 rounded-2xl bg-amber-100/60 border border-amber-200">
+          <Coffee className="h-4 w-4 text-amber-600" />
+          <span className="text-sm font-medium text-amber-700">
+            {t('clock.onBreak', { type: activeBreak.break_type })}
+          </span>
+        </div>
+      )}
+
+      {/* Break and Clock-out action buttons - large touch-friendly */}
+      <div className="grid grid-cols-2 gap-3">
+        {activeBreak ? (
+          <Button
+            onClick={onEndBreak}
+            disabled={breakLoading}
+            size="touch-lg"
+            className="gap-2 bg-amber-500 text-white hover:bg-amber-600 rounded-2xl shadow-sm"
+          >
+            {breakLoading ? (
+              <RefreshCw className="h-5 w-5 animate-spin" />
+            ) : (
+              <Coffee className="h-5 w-5" />
+            )}
+            {t('clock.endBreak')}
+          </Button>
+        ) : (
+          <Button
+            onClick={onStartBreak}
+            disabled={breakLoading}
+            size="touch-lg"
+            variant="outline"
+            className="gap-2 rounded-2xl border-emerald-300 bg-white hover:bg-emerald-50"
+          >
+            {breakLoading ? (
+              <RefreshCw className="h-5 w-5 animate-spin" />
+            ) : (
+              <Coffee className="h-5 w-5" />
+            )}
+            {t('clock.startBreak')}
+          </Button>
+        )}
+
+        <Button
+          onClick={onClockOut}
+          size="touch-lg"
+          variant="destructive"
+          className="gap-2 rounded-2xl"
+        >
+          <Square className="h-5 w-5" />
+          {t('clock.clockOut')}
+        </Button>
+      </div>
+
+      {/* Shift progress bar */}
+      {entry.linked_shift_id && (
+        <div className="mt-5 pt-5 border-t border-emerald-200">
+          <div className="flex items-center justify-between text-xs text-kresna-gray mb-2.5">
+            <span>{t('clock.shiftProgress')}</span>
+            <span className="font-semibold text-emerald-700">{progressPercent}%</span>
+          </div>
+          <div className="h-3 rounded-full bg-emerald-100 overflow-hidden">
             <div
-              className="h-full rounded-full bg-emerald-500 transition-all duration-1000"
-              style={{ width: `${Math.min(100, (durationMinutes / 480) * 100)}%` }}
+              className="h-full rounded-full bg-gradient-to-r from-emerald-400 to-emerald-500 transition-all duration-1000"
+              style={{ width: `${progressPercent}%` }}
             />
           </div>
         </div>
       )}
+    </div>
+  );
+}
+
+function ClockInHero({ onClockIn }: { onClockIn: () => void }) {
+  const { t } = useTranslation();
+
+  return (
+    <div className="flex flex-col items-center justify-center py-12 sm:py-16">
+      {/* Pulsing ring behind the button */}
+      <div className="relative mb-6">
+        <div className="absolute inset-0 w-32 h-32 sm:w-40 sm:h-40 rounded-full bg-emerald-400/20 animate-ping" />
+        <div className="absolute inset-0 w-32 h-32 sm:w-40 sm:h-40 rounded-full bg-emerald-400/10 animate-pulse" />
+        <button
+          onClick={onClockIn}
+          className={cn(
+            'relative w-32 h-32 sm:w-40 sm:h-40 rounded-full',
+            'bg-gradient-to-br from-emerald-500 to-emerald-600',
+            'shadow-glow-green-lg hover:shadow-glow-green',
+            'flex items-center justify-center',
+            'transition-all duration-300 ease-kresna',
+            'active:scale-[0.95] hover:from-emerald-400 hover:to-emerald-500'
+          )}
+          aria-label={t('clock.clockIn')}
+        >
+          <Play className="h-12 w-12 sm:h-14 sm:w-14 text-white ml-1.5" />
+        </button>
+      </div>
+
+      <h2 className="text-xl sm:text-2xl font-bold text-charcoal mb-1">
+        {t('clock.clockIn')}
+      </h2>
+      <p className="text-sm text-kresna-gray">
+        {t('clock.subtitle')}
+      </p>
     </div>
   );
 }
@@ -342,62 +385,57 @@ function FilterBar({
     { id: 'disputed', label: t('clock.disputed') },
   ];
 
+  function handleDateChange(id: DateFilter): void {
+    onDateFilterChange(id);
+    onApply();
+  }
+
+  function handleStatusChange(id: StatusFilter): void {
+    onStatusFilterChange(id);
+    onApply();
+  }
+
   return (
-    <div className="rounded-xl border border-kresna-border bg-white p-4 space-y-4">
-      <div className="space-y-2">
-        <label className="text-xs font-medium text-kresna-gray uppercase tracking-wider">
-          {t('clock.dateRange')}
-        </label>
-        <div className="flex flex-wrap gap-2">
-          {dateFilters.map((filter) => (
-            <button
-              key={filter.id}
-              onClick={() => onDateFilterChange(filter.id)}
-              disabled={filter.id === 'custom'}
-              className={cn(
-                'px-3 py-1.5 rounded-lg text-sm font-medium transition-all',
-                dateFilter === filter.id
-                  ? 'bg-primary-50 text-primary-700 ring-1 ring-primary-200'
-                  : 'bg-kresna-light text-kresna-gray-dark hover:bg-kresna-border hover:text-charcoal',
-                filter.id === 'custom' && 'opacity-50 cursor-not-allowed'
-              )}
-            >
-              {filter.label}
-            </button>
-          ))}
-        </div>
-      </div>
+    <div className="space-y-3">
+      <p className="text-sm font-medium text-kresna-gray uppercase tracking-wider">
+        {t('clock.dateRange')}
+      </p>
+      <div className="overflow-x-auto flex gap-2 pb-2 scrollbar-hide">
+        {dateFilters.map((filter) => (
+          <button
+            key={filter.id}
+            onClick={() => handleDateChange(filter.id)}
+            disabled={filter.id === 'custom' || loading}
+            className={cn(
+              'rounded-full px-4 py-2 text-sm font-medium whitespace-nowrap transition-all duration-300 ease-kresna',
+              dateFilter === filter.id
+                ? 'bg-primary-50 text-primary-700 ring-1 ring-primary-200'
+                : 'bg-kresna-light text-kresna-gray-dark hover:bg-kresna-border hover:text-charcoal',
+              filter.id === 'custom' && 'opacity-50 cursor-not-allowed'
+            )}
+          >
+            {filter.label}
+          </button>
+        ))}
 
-      <div className="space-y-2">
-        <label className="text-xs font-medium text-kresna-gray uppercase tracking-wider">
-          {t('clock.status')}
-        </label>
-        <div className="flex flex-wrap gap-2">
-          {statusFilters.map((filter) => (
-            <button
-              key={filter.id}
-              onClick={() => onStatusFilterChange(filter.id)}
-              className={cn(
-                'px-3 py-1.5 rounded-lg text-sm font-medium transition-all',
-                statusFilter === filter.id
-                  ? 'bg-primary-50 text-primary-700 ring-1 ring-primary-200'
-                  : 'bg-kresna-light text-kresna-gray-dark hover:bg-kresna-border hover:text-charcoal'
-              )}
-            >
-              {filter.label}
-            </button>
-          ))}
-        </div>
-      </div>
+        <div className="w-px bg-kresna-border flex-shrink-0 self-stretch my-1" />
 
-      <Button onClick={onApply} disabled={loading} size="sm" className="w-full sm:w-auto">
-        {loading ? (
-          <RefreshCw className="h-4 w-4 animate-spin mr-2" />
-        ) : (
-          <Filter className="h-4 w-4 mr-2" />
-        )}
-        {t('clock.applyFilters')}
-      </Button>
+        {statusFilters.map((filter) => (
+          <button
+            key={filter.id}
+            onClick={() => handleStatusChange(filter.id)}
+            disabled={loading}
+            className={cn(
+              'rounded-full px-4 py-2 text-sm font-medium whitespace-nowrap transition-all duration-300 ease-kresna',
+              statusFilter === filter.id
+                ? 'bg-primary-50 text-primary-700 ring-1 ring-primary-200'
+                : 'bg-kresna-light text-kresna-gray-dark hover:bg-kresna-border hover:text-charcoal'
+            )}
+          >
+            {filter.label}
+          </button>
+        ))}
+      </div>
     </div>
   );
 }
@@ -428,20 +466,25 @@ function EntryCard({
   const status = statusConfig[entry.status] || statusConfig.completed;
 
   return (
-    <div className="rounded-xl border border-kresna-border bg-white overflow-hidden">
+    <div
+      className={cn(
+        'rounded-2xl border border-kresna-border bg-white shadow-card overflow-hidden',
+        'hover:shadow-kresna hover:-translate-y-0.5 transition-all duration-300 ease-kresna'
+      )}
+    >
       <button
         onClick={onToggle}
-        className="w-full p-4 flex items-center justify-between gap-4 text-left hover:bg-kresna-light transition-colors"
+        className="w-full p-4 sm:p-5 flex items-center justify-between gap-4 text-left"
       >
         <div className="flex items-center gap-4 flex-1 min-w-0">
           <div className="flex-1 min-w-0">
-            <div className="flex items-center gap-2 text-charcoal font-medium">
+            <div className="flex items-center gap-2 text-lg font-semibold text-charcoal">
               <span>{formatTime(entry.clock_in)}</span>
-              <span className="text-kresna-gray">→</span>
+              <span className="text-kresna-gray-medium font-normal">&rarr;</span>
               <span>{entry.clock_out ? formatTime(entry.clock_out) : '...'}</span>
             </div>
-            <div className="flex items-center gap-3 mt-1">
-              <Badge variant="secondary" className="text-xs gap-1">
+            <div className="flex items-center gap-3 mt-1.5">
+              <Badge variant="secondary" className="text-xs gap-1 rounded-full">
                 <Timer className="h-3 w-3" />
                 {formatDuration(duration, t)}
               </Badge>
@@ -452,7 +495,7 @@ function EntryCard({
             </div>
           </div>
 
-          <Badge variant="outline" className={cn('text-xs border', status.color)}>
+          <Badge variant="outline" className={cn('text-xs border rounded-full', status.color)}>
             {entry.status === 'completed' && entry.is_verified ? (
               <CheckCircle className="h-3 w-3 mr-1" />
             ) : entry.status === 'disputed' ? (
@@ -462,14 +505,19 @@ function EntryCard({
           </Badge>
         </div>
 
-        <ChevronDown className={cn('h-5 w-5 text-kresna-gray transition-transform', isExpanded && 'rotate-180')} />
+        <ChevronDown
+          className={cn(
+            'h-5 w-5 text-kresna-gray transition-transform duration-300 ease-kresna',
+            isExpanded && 'rotate-180'
+          )}
+        />
       </button>
 
       {isExpanded && (
-        <div className="px-4 pb-4 pt-0 border-t border-kresna-border space-y-4">
+        <div className="px-4 sm:px-5 pb-5 pt-0 border-t border-kresna-border space-y-4">
           {entry.break_minutes > 0 && (
             <div className="pt-4">
-              <div className="flex items-center gap-2 text-sm text-kresna-gray mb-2">
+              <div className="flex items-center gap-2 text-sm text-kresna-gray">
                 <Coffee className="h-4 w-4" />
                 <span>{t('clock.breaks')}: {formatDuration(entry.break_minutes, t)}</span>
               </div>
@@ -483,7 +531,9 @@ function EntryCard({
           )}
 
           <div className="pt-2 space-y-2">
-            <p className="text-xs text-kresna-gray uppercase tracking-wider">{t('clock.locations')}</p>
+            <p className="text-xs text-kresna-gray uppercase tracking-wider font-medium">
+              {t('clock.locations')}
+            </p>
             <div className="grid grid-cols-2 gap-4 text-xs">
               <div>
                 <span className="text-kresna-gray">{t('clock.clockIn')}:</span>
@@ -542,19 +592,27 @@ function SummaryStats({ entries }: { entries: TimeEntry[] }) {
   }, [entries]);
 
   return (
-    <div className="rounded-xl border border-kresna-border bg-white p-4 sticky bottom-0 pb-safe">
-      <div className="grid grid-cols-3 gap-4">
-        <div className="text-center">
-          <p className="text-2xl font-bold text-charcoal">{stats.weekHours}</p>
-          <p className="text-xs text-kresna-gray mt-0.5">{t('clock.thisWeek')}</p>
-        </div>
-        <div className="text-center border-x border-kresna-border">
-          <p className="text-2xl font-bold text-charcoal">{stats.avgPerDay}</p>
-          <p className="text-xs text-kresna-gray mt-0.5">{t('clock.avgPerDay')}</p>
-        </div>
-        <div className="text-center">
-          <p className="text-2xl font-bold text-charcoal">{stats.breakPercentage}%</p>
-          <p className="text-xs text-kresna-gray mt-0.5">{t('clock.breakTime')}</p>
+    <div className="sticky bottom-0 z-10">
+      <div className="rounded-2xl border border-kresna-border backdrop-blur-sm bg-white/90 p-5 shadow-kresna pb-safe">
+        <div className="grid grid-cols-3 gap-4">
+          <div className="text-center">
+            <p className="text-3xl font-bold text-charcoal tabular-nums">{stats.weekHours}</p>
+            <p className="text-xs text-kresna-gray mt-1 font-medium uppercase tracking-wider">
+              {t('clock.thisWeek')}
+            </p>
+          </div>
+          <div className="text-center border-x border-kresna-border">
+            <p className="text-3xl font-bold text-charcoal tabular-nums">{stats.avgPerDay}</p>
+            <p className="text-xs text-kresna-gray mt-1 font-medium uppercase tracking-wider">
+              {t('clock.avgPerDay')}
+            </p>
+          </div>
+          <div className="text-center">
+            <p className="text-3xl font-bold text-charcoal tabular-nums">{stats.breakPercentage}%</p>
+            <p className="text-xs text-kresna-gray mt-1 font-medium uppercase tracking-wider">
+              {t('clock.breakTime')}
+            </p>
+          </div>
         </div>
       </div>
     </div>
@@ -565,16 +623,21 @@ function EmptyState({ onClockIn }: { onClockIn: () => void }) {
   const { t } = useTranslation();
 
   return (
-    <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-kresna-border bg-kresna-light px-6 py-16 text-center">
-      <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-primary-50">
-        <Clock className="h-8 w-8 text-primary-600" />
+    <div className="flex flex-col items-center justify-center rounded-3xl border border-dashed border-kresna-border bg-kresna-light px-6 py-20 text-center">
+      <div className="mb-6 flex h-20 w-20 items-center justify-center rounded-3xl bg-primary-50">
+        <Clock className="h-10 w-10 text-primary-600" />
       </div>
-      <h3 className="mb-1 text-lg font-semibold text-charcoal">{t('clock.noEntries')}</h3>
-      <p className="mb-6 max-w-sm text-sm text-kresna-gray">
+      <h3 className="mb-2 text-xl font-semibold text-charcoal">{t('clock.noEntries')}</h3>
+      <p className="mb-8 max-w-sm text-sm text-kresna-gray leading-relaxed">
         {t('clock.noEntriesDesc')}
       </p>
-      <Button onClick={onClockIn} className="gap-2 bg-emerald-600 hover:bg-emerald-500">
-        <Play className="h-4 w-4" />
+      <Button
+        onClick={onClockIn}
+        variant="success"
+        size="touch-lg"
+        className="gap-2.5"
+      >
+        <Play className="h-5 w-5" />
         {t('clock.clockIn')}
       </Button>
     </div>
@@ -583,13 +646,13 @@ function EmptyState({ onClockIn }: { onClockIn: () => void }) {
 
 function EntrySkeleton() {
   return (
-    <div className="rounded-xl border border-kresna-border bg-white p-4 animate-pulse">
+    <div className="rounded-2xl border border-kresna-border bg-white p-5 animate-pulse shadow-card">
       <div className="flex items-center justify-between gap-4">
-        <div className="flex-1 space-y-2">
-          <div className="h-5 bg-kresna-border rounded w-32" />
-          <div className="h-4 bg-kresna-light rounded w-24" />
+        <div className="flex-1 space-y-3">
+          <div className="h-5 skeleton w-36" />
+          <div className="h-4 skeleton w-28" />
         </div>
-        <div className="h-6 bg-kresna-light rounded w-20" />
+        <div className="h-6 skeleton w-20 rounded-full" />
       </div>
     </div>
   );
@@ -757,7 +820,7 @@ export default function TimeEntryList() {
       {/* Page header */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary-50">
+          <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-primary-50">
             <Clock className="h-5 w-5 text-primary-600" />
           </div>
           <div>
@@ -766,33 +829,20 @@ export default function TimeEntryList() {
           </div>
         </div>
 
-        <div className="flex items-center gap-2">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => fetchEntries(true)}
-            disabled={refreshing}
-            className="gap-1.5"
-          >
-            <RefreshCw className={cn('h-4 w-4', refreshing && 'animate-spin')} />
-            <span className="hidden sm:inline">{t('common.refresh')}</span>
-          </Button>
-
-          {!activeEntry && (
-            <Button
-              onClick={() => setShowClockIn(true)}
-              size="sm"
-              className="gap-1.5 bg-emerald-600 text-white hover:bg-emerald-500"
-            >
-              <Play className="h-4 w-4" />
-              <span className="hidden sm:inline">{t('clock.clockIn')}</span>
-            </Button>
-          )}
-        </div>
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => fetchEntries(true)}
+          disabled={refreshing}
+          className="gap-1.5 self-start sm:self-auto"
+        >
+          <RefreshCw className={cn('h-4 w-4', refreshing && 'animate-spin')} />
+          <span className="hidden sm:inline">{t('common.refresh')}</span>
+        </Button>
       </div>
 
-      {/* Active entry card */}
-      {activeEntry && (
+      {/* Active entry OR giant clock-in hero */}
+      {activeEntry ? (
         <ActiveEntryCard
           entry={activeEntry}
           activeBreak={activeBreak}
@@ -801,9 +851,11 @@ export default function TimeEntryList() {
           onEndBreak={handleEndBreak}
           breakLoading={breakLoading}
         />
+      ) : (
+        <ClockInHero onClockIn={() => setShowClockIn(true)} />
       )}
 
-      {/* Filter bar */}
+      {/* Filter pills - auto-applying */}
       <FilterBar
         dateFilter={dateFilter}
         statusFilter={statusFilter}
@@ -815,9 +867,9 @@ export default function TimeEntryList() {
 
       {/* Error message */}
       {error && (
-        <div className="flex items-center gap-2 p-4 rounded-xl bg-red-50 border border-red-200">
+        <div className="flex items-center gap-3 p-4 rounded-2xl bg-red-50 border border-red-200">
           <AlertCircle className="h-5 w-5 text-red-600 flex-shrink-0" />
-          <p className="text-sm text-red-700">{error}</p>
+          <p className="text-sm text-red-700 flex-1">{error}</p>
           <Button
             variant="ghost"
             size="sm"
@@ -825,7 +877,7 @@ export default function TimeEntryList() {
               setError(null);
               fetchEntries();
             }}
-            className="ml-auto text-red-600 hover:text-red-700"
+            className="text-red-600 hover:text-red-700 hover:bg-red-100 flex-shrink-0"
           >
             {t('common.retry')}
           </Button>
@@ -834,7 +886,7 @@ export default function TimeEntryList() {
 
       {/* Entry list */}
       {loading ? (
-        <div className="space-y-4">
+        <div className="space-y-3">
           {[...Array(5)].map((_, i) => (
             <EntrySkeleton key={i} />
           ))}
@@ -842,16 +894,18 @@ export default function TimeEntryList() {
       ) : entries.length === 0 ? (
         <EmptyState onClockIn={() => setShowClockIn(true)} />
       ) : (
-        <div className="space-y-6">
+        <div className="space-y-8">
           {groupedEntries.map((group) => (
             <div key={group.date} className="space-y-3">
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2.5">
                 <Calendar className="h-4 w-4 text-kresna-gray" />
-                <h3 className="text-sm font-medium text-kresna-gray">{group.label}</h3>
+                <h3 className="text-sm font-medium text-kresna-gray uppercase tracking-wider">
+                  {group.label}
+                </h3>
                 <div className="flex-1 h-px bg-kresna-border" />
               </div>
 
-              <div className="space-y-2">
+              <div className="space-y-2.5">
                 {group.entries.map((entry) => (
                   <EntryCard
                     key={entry.id}
@@ -866,7 +920,7 @@ export default function TimeEntryList() {
         </div>
       )}
 
-      {/* Summary stats */}
+      {/* Sticky week stats footer */}
       {entries.length > 0 && <SummaryStats entries={entries} />}
 
       {/* Sheets */}

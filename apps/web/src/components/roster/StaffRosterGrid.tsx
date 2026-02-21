@@ -142,7 +142,7 @@ function DroppableCell({
       className={cn(
         'relative min-h-[80px] border-r border-b border-kresna-border p-2 last:border-r-0',
         className,
-        isOver && 'bg-primary-500/10 ring-2 ring-primary-500 ring-inset'
+        isOver && 'bg-primary-50 ring-2 ring-primary-500 ring-inset'
       )}
     >
       {children}
@@ -240,7 +240,7 @@ export function StaffRosterGrid({ shifts, staff, currentDate, isLoading, onShift
 
       {/* Desktop grid view */}
       <div className="overflow-x-auto">
-        <div className="inline-block min-w-full overflow-hidden rounded-xl border border-kresna-border bg-white">
+        <div className="inline-block min-w-full overflow-hidden rounded-2xl border border-kresna-border bg-white shadow-card">
           {/* Header row with day names */}
           <div className="grid grid-cols-[200px_repeat(7,minmax(120px,1fr))] border-b border-kresna-border">
             {/* Staff column header */}
@@ -263,7 +263,7 @@ export function StaffRosterGrid({ shifts, staff, currentDate, isLoading, onShift
               >
                 <span className={cn(
                   'text-xs font-medium uppercase',
-                  day.isToday ? 'text-primary-600' : day.isWeekend ? 'text-kresna-gray' : 'text-kresna-gray'
+                  day.isToday ? 'text-primary-600' : 'text-kresna-gray'
                 )}>
                   {day.dayName}
                 </span>
@@ -292,8 +292,8 @@ export function StaffRosterGrid({ shifts, staff, currentDate, isLoading, onShift
               >
                 {/* Staff name cell */}
                 <div className={cn(
-                  'flex items-center gap-3 border-r border-b border-kresna-border bg-kresna-light p-3',
-                  member.id === 'unassigned' && 'bg-amber-50'
+                  'flex items-center gap-3 border-r border-b border-kresna-border p-3',
+                  member.id === 'unassigned' ? 'bg-amber-50' : 'bg-kresna-light'
                 )}>
                   <div className={cn(
                     'flex h-8 w-8 items-center justify-center rounded-full text-sm font-bold',

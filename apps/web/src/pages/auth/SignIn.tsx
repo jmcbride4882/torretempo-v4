@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useLocation, Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
-import { Mail, Lock, ArrowRight, Clock, Shield, FileText } from 'lucide-react';
+import { Mail, Lock, ArrowRight, Clock, ShieldCheck } from 'lucide-react';
 import { authClient } from '@/lib/auth-client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -18,14 +18,25 @@ export default function SignIn() {
 
   const from = (location.state as { from?: { pathname: string } })?.from?.pathname || '/dashboard';
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    // Read directly from DOM to handle browser autofill (which may not trigger onChange)
+    const form = e.currentTarget;
+    const formEmail = (form.elements.namedItem('email') as HTMLInputElement)?.value || email;
+    const formPassword = (form.elements.namedItem('password') as HTMLInputElement)?.value || password;
+
+    if (!formEmail.trim() || !formPassword.trim()) {
+      toast.error(t('errors.signInFailed'));
+      return;
+    }
+
     setIsLoading(true);
 
     try {
       const result = await authClient.signIn.email({
-        email,
-        password,
+        email: formEmail,
+        password: formPassword,
       });
 
       if (result.error) {
@@ -45,52 +56,89 @@ export default function SignIn() {
 
   return (
     <div className="flex min-h-screen">
-      {/* Left brand panel - hidden on mobile */}
-      <div className="hidden lg:flex lg:w-1/2 bg-primary-50 p-12 flex-col justify-between relative overflow-hidden">
-        {/* Subtle decorative elements */}
-        <div className="absolute top-0 right-0 w-96 h-96 bg-primary-100 rounded-full blur-[120px] opacity-50" />
+      {/* Left panel — gradient bg with device mockup */}
+      <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-b from-primary-600 to-primary-500 p-12 flex-col items-center justify-center relative overflow-hidden">
+        {/* Decorative orbs */}
+        <div className="absolute top-0 right-0 w-[500px] h-[500px] rounded-full bg-white/5 blur-[100px]" />
+        <div className="absolute bottom-0 left-0 w-[400px] h-[400px] rounded-full bg-white/5 blur-[80px]" />
 
-        <div className="relative z-10">
-          <div className="flex items-center gap-3 mb-8">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary-500">
-              <Clock className="h-5 w-5 text-white" />
+        {/* Phone frame */}
+        <div className="relative z-10 mx-auto w-[300px]">
+          <div className="rounded-[40px] border-[8px] border-charcoal bg-white shadow-kresna-lg overflow-hidden">
+            {/* Status bar */}
+            <div className="flex items-center justify-between px-6 py-2 bg-white">
+              <span className="text-[10px] font-semibold text-charcoal">9:41</span>
+              <div className="flex items-center gap-1">
+                <div className="h-2.5 w-2.5 rounded-full bg-kresna-gray-medium" />
+                <div className="h-2.5 w-2.5 rounded-full bg-kresna-gray-medium" />
+                <div className="h-2.5 w-4 rounded-sm bg-kresna-gray-medium" />
+              </div>
             </div>
-            <span className="text-xl font-bold text-charcoal">Torre Tempo</span>
+
+            {/* App content mockup — dashboard view */}
+            <div className="px-5 pb-6">
+              {/* Header */}
+              <div className="flex items-center justify-between py-3 mb-4">
+                <div>
+                  <p className="text-[10px] text-kresna-gray">Buenos dias</p>
+                  <p className="text-sm font-bold text-charcoal">Maria Garcia</p>
+                </div>
+                <div className="h-8 w-8 rounded-full bg-gradient-primary flex items-center justify-center">
+                  <span className="text-xs font-bold text-white">M</span>
+                </div>
+              </div>
+
+              {/* Clock-in button */}
+              <div className="flex flex-col items-center py-6">
+                <div className="relative">
+                  <div className="absolute inset-0 rounded-full bg-primary-500 animate-pulse opacity-20 scale-125" />
+                  <div className="relative flex h-24 w-24 items-center justify-center rounded-full bg-gradient-primary shadow-glow">
+                    <Clock className="h-10 w-10 text-white" />
+                  </div>
+                </div>
+                <p className="mt-4 text-xs font-semibold text-charcoal">Fichar entrada</p>
+                <p className="text-[10px] text-kresna-gray mt-0.5">Turno: 08:00 - 16:00</p>
+              </div>
+
+              {/* Quick stats */}
+              <div className="grid grid-cols-3 gap-2 mt-2">
+                {[
+                  { label: 'Hoy', value: '0h 0m' },
+                  { label: 'Semana', value: '24h 30m' },
+                  { label: 'Horas extra', value: '0h' },
+                ].map((stat) => (
+                  <div key={stat.label} className="rounded-2xl bg-kresna-light p-2.5 text-center">
+                    <p className="text-[9px] text-kresna-gray uppercase tracking-wider">{stat.label}</p>
+                    <p className="text-xs font-bold text-charcoal mt-0.5">{stat.value}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
           </div>
-          <h2 className="text-3xl font-bold text-charcoal mb-4">{t('auth.heroTitle')}</h2>
-          <p className="text-kresna-gray-dark text-lg">{t('auth.heroSubtitle')}</p>
+
+          {/* Floating cards around phone */}
+          <div className="absolute -right-14 top-20 rounded-2xl bg-white border border-kresna-border shadow-kresna px-4 py-3 animate-float">
+            <div className="flex items-center gap-2">
+              <div className="h-2 w-2 rounded-full bg-green-500 animate-pulse" />
+              <span className="text-xs font-medium text-charcoal">12 fichados</span>
+            </div>
+          </div>
+
+          <div className="absolute -left-10 bottom-32 rounded-2xl bg-white border border-kresna-border shadow-kresna px-4 py-3 animate-float [animation-delay:1s]">
+            <div className="flex items-center gap-2">
+              <ShieldCheck className="h-4 w-4 text-green-500" />
+              <span className="text-xs font-medium text-charcoal">ITSS OK</span>
+            </div>
+          </div>
         </div>
-
-        <div className="relative z-10 space-y-4">
-          <div className="flex items-center gap-3 text-kresna-gray-dark">
-            <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-white border border-kresna-border">
-              <Shield className="h-4 w-4 text-primary-500" />
-            </div>
-            <span className="text-sm">{t('auth.featureLegalCompliance')}</span>
-          </div>
-          <div className="flex items-center gap-3 text-kresna-gray-dark">
-            <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-white border border-kresna-border">
-              <Clock className="h-4 w-4 text-primary-500" />
-            </div>
-            <span className="text-sm">{t('auth.featureFastClockIn')}</span>
-          </div>
-          <div className="flex items-center gap-3 text-kresna-gray-dark">
-            <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-white border border-kresna-border">
-              <FileText className="h-4 w-4 text-accent-500" />
-            </div>
-            <span className="text-sm">{t('auth.featurePayrollExport')}</span>
-          </div>
-        </div>
-
-        <p className="relative z-10 text-xs text-kresna-gray">{t('auth.usedByCompanies')}</p>
       </div>
 
       {/* Right form panel */}
-      <div className="flex w-full lg:w-1/2 flex-col items-center justify-center bg-white px-4">
-        <div className="w-full max-w-sm">
-          {/* Logo - visible on mobile only */}
+      <div className="flex w-full lg:w-1/2 flex-col items-center justify-center bg-kresna-light px-4 py-8">
+        <div className="w-full max-w-md">
+          {/* Logo — visible on mobile only */}
           <div className="mb-10 flex flex-col items-center gap-3 lg:hidden">
-            <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-primary-500">
+            <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-primary shadow-kresna-btn">
               <Clock className="h-7 w-7 text-white" />
             </div>
             <div className="text-center">
@@ -99,26 +147,28 @@ export default function SignIn() {
             </div>
           </div>
 
-          {/* Card */}
-          <div className="rounded-3xl border border-kresna-border bg-white p-6 shadow-card space-y-6">
+          {/* Form card — frosted glass on mobile, solid on desktop */}
+          <div className="rounded-[32px] border border-kresna-border bg-white/90 backdrop-blur-sm lg:bg-white p-8 shadow-kresna space-y-5">
             <div className="text-center">
-              <h2 className="text-lg font-semibold text-charcoal">{t('auth.welcomeBack')}</h2>
-              <p className="text-sm text-kresna-gray-dark mt-1">{t('auth.signInContinue')}</p>
+              <h2 className="text-xl font-semibold text-charcoal">{t('auth.welcomeBack')}</h2>
+              <p className="text-sm text-kresna-gray-dark mt-1.5">{t('auth.signInContinue')}</p>
             </div>
 
-            <form onSubmit={handleSubmit} className="space-y-4">
+            <form onSubmit={handleSubmit} className="space-y-5">
               <div className="space-y-2">
-                <Label htmlFor="email">{t('common.email')}</Label>
+                <Label htmlFor="email" className="text-sm font-medium">
+                  {t('common.email')}
+                </Label>
                 <div className="relative">
-                  <Mail className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-kresna-gray" />
+                  <Mail className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-kresna-gray" />
                   <Input
                     id="email"
+                    name="email"
                     type="email"
                     placeholder={t('auth.emailPlaceholder')}
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="pl-10"
-                    required
+                    className="pl-11 min-h-touch text-base"
                     autoComplete="email"
                   />
                 </div>
@@ -126,24 +176,26 @@ export default function SignIn() {
 
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
-                  <Label htmlFor="password">{t('auth.password')}</Label>
+                  <Label htmlFor="password" className="text-sm font-medium">
+                    {t('auth.password')}
+                  </Label>
                   <Link
                     to="/auth/reset-password"
-                    className="text-xs text-primary-500 hover:text-primary-600 transition-colors"
+                    className="text-xs text-primary-500 hover:text-primary-600 hover:underline transition-colors"
                   >
                     {t('auth.forgotPassword')}
                   </Link>
                 </div>
                 <div className="relative">
-                  <Lock className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-kresna-gray" />
+                  <Lock className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-kresna-gray" />
                   <Input
                     id="password"
+                    name="password"
                     type="password"
                     placeholder="••••••••"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="pl-10"
-                    required
+                    className="pl-11 min-h-touch text-base"
                     autoComplete="current-password"
                   />
                 </div>
@@ -151,29 +203,29 @@ export default function SignIn() {
 
               <Button
                 type="submit"
-                className="w-full h-12 min-h-touch"
-                disabled={isLoading}
+                variant="gradient"
+                size="touch"
+                className="w-full"
+                loading={isLoading}
+                rightIcon={!isLoading ? <ArrowRight className="h-4 w-4" /> : undefined}
               >
-                {isLoading ? (
-                  <div className="h-4 w-4 animate-spin rounded-full border-2 border-white/20 border-t-white" />
-                ) : (
-                  <>
-                    {t('auth.signIn')}
-                    <ArrowRight className="ml-2 h-4 w-4" />
-                  </>
-                )}
+                {t('auth.signIn')}
               </Button>
             </form>
           </div>
 
           <p className="mt-6 text-center text-sm text-kresna-gray-dark">
             {t('auth.noAccount')}{' '}
-            <Link to="/auth/signup" className="font-medium text-primary-500 hover:text-primary-600 transition-colors">
+            <Link
+              to="/auth/signup"
+              className="font-medium text-primary-500 hover:text-primary-600 hover:underline transition-colors"
+            >
               {t('auth.signUp')}
             </Link>
           </p>
 
-          <div className="mt-6 flex justify-center">
+          {/* Language switcher — bottom-right */}
+          <div className="mt-6 flex justify-end">
             <LanguageSwitcher />
           </div>
         </div>

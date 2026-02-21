@@ -2,11 +2,9 @@ import { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { CalendarOff, Plus, Check, X } from 'lucide-react';
+import { CalendarOff, Plus, Check, X, Calendar } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Badge } from '@/components/ui/badge';
-import { Card } from '@/components/ui/card';
 import {
   Dialog,
   DialogContent,
@@ -63,11 +61,11 @@ async function rejectLeave(slug: string, id: string, reason: string) {
   return res.json();
 }
 
-const statusVariant: Record<string, 'warning' | 'success' | 'destructive' | 'secondary'> = {
-  pending: 'warning',
-  approved: 'success',
-  rejected: 'destructive',
-  cancelled: 'secondary',
+const statusStyles: Record<string, string> = {
+  pending: 'bg-amber-50 text-amber-700 border-amber-200',
+  approved: 'bg-emerald-50 text-emerald-700 border-emerald-200',
+  rejected: 'bg-red-50 text-red-700 border-red-200',
+  cancelled: 'bg-kresna-light text-kresna-gray-dark border-kresna-border',
 };
 
 export default function LeavePage() {
@@ -123,41 +121,50 @@ export default function LeavePage() {
   ] as const;
 
   return (
-    <div>
-      <div className="page-header">
-        <div>
-          <h1 className="page-title">{t('leave.title')}</h1>
+    <div className="mx-auto max-w-5xl space-y-6">
+      {/* Page header */}
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex items-center gap-3">
+          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary-50">
+            <Calendar className="h-5 w-5 text-primary-600" />
+          </div>
+          <div>
+            <h1 className="text-2xl font-bold text-charcoal tracking-tight">{t('leave.title')}</h1>
+            <p className="text-sm text-kresna-gray">{t('leave.title')}</p>
+          </div>
         </div>
-        <Button onClick={() => setCreateOpen(true)} size="sm">
-          <Plus className="h-4 w-4 mr-2" />
+        <Button onClick={() => setCreateOpen(true)} variant="gradient" size="sm" className="gap-1.5">
+          <Plus className="h-4 w-4" />
           {t('leave.requestLeave')}
         </Button>
       </div>
 
-      {/* Leave balance */}
-      <Card className="p-4 mb-6">
+      {/* Leave balance card */}
+      <div className="rounded-3xl border border-kresna-border bg-white p-6 shadow-card">
         <div className="flex items-center justify-between">
           <div>
             <p className="text-sm text-kresna-gray">{t('team.vacationDays')}</p>
-            <p className="text-2xl font-bold text-charcoal">18 <span className="text-sm font-normal text-kresna-gray">/ 22 {t('common.days')}</span></p>
+            <p className="text-3xl font-bold text-charcoal tracking-tight mt-1">
+              18 <span className="text-base font-normal text-kresna-gray">/ 22 {t('common.days')}</span>
+            </p>
           </div>
-          <div className="w-32">
-            <div className="h-2 rounded-full bg-kresna-light overflow-hidden">
+          <div className="w-40">
+            <div className="h-3 rounded-full bg-kresna-light overflow-hidden">
               <div className="h-full rounded-full bg-primary-500" style={{ width: '82%' }} />
             </div>
-            <p className="text-xs text-kresna-gray mt-1 text-right">18 {t('team.available').toLowerCase()}</p>
+            <p className="text-xs text-kresna-gray mt-1.5 text-right">18 {t('team.available').toLowerCase()}</p>
           </div>
         </div>
-      </Card>
+      </div>
 
-      {/* Tabs */}
-      <div className="flex gap-1 mb-6 bg-kresna-light rounded-lg p-1 w-fit">
+      {/* Pill tabs */}
+      <div className="flex gap-1 rounded-full bg-kresna-light p-1 w-fit">
         {tabs.map((item) => (
           <button
             key={item.key}
             onClick={() => setTab(item.key)}
             className={cn(
-              'px-4 py-2 text-sm font-medium rounded-md transition-colors',
+              'px-5 py-2 text-sm font-medium rounded-full transition-all min-h-touch',
               tab === item.key
                 ? 'bg-white text-charcoal shadow-sm'
                 : 'text-kresna-gray hover:text-kresna-gray-dark'
@@ -171,56 +178,66 @@ export default function LeavePage() {
       {/* Requests list */}
       {isLoading ? (
         <div className="space-y-3">
-          {[1, 2, 3].map((i) => <div key={i} className="skeleton h-20 rounded-xl" />)}
+          {[1, 2, 3].map((i) => (
+            <div key={i} className="h-24 rounded-2xl bg-kresna-light border border-kresna-border animate-pulse" />
+          ))}
         </div>
       ) : requests.length === 0 ? (
-        <div className="empty-state">
-          <div className="empty-state-icon">
-            <CalendarOff className="h-8 w-8 text-kresna-gray" />
+        <div className="flex flex-col items-center justify-center rounded-3xl border border-dashed border-kresna-border bg-kresna-light px-6 py-20 text-center">
+          <div className="h-16 w-16 rounded-2xl bg-primary-50 flex items-center justify-center mb-4">
+            <CalendarOff className="h-8 w-8 text-primary-600" />
           </div>
-          <p className="text-kresna-gray">{t('leave.noLeave')}</p>
+          <p className="text-lg font-semibold text-charcoal mb-1">{t('leave.noLeave')}</p>
+          <Button variant="gradient" onClick={() => setCreateOpen(true)} className="gap-1.5 mt-6">
+            <Plus className="h-4 w-4" />
+            {t('leave.requestLeave')}
+          </Button>
         </div>
       ) : (
         <div className="space-y-3">
           {requests.map((req: any) => (
-            <Card key={req.id} className="p-4">
-              <div className="flex items-start justify-between">
-                <div>
-                  <div className="flex items-center gap-2 mb-1">
-                    <Badge variant={statusVariant[req.status] || 'secondary'}>
+            <div
+              key={req.id}
+              className="rounded-2xl border border-kresna-border bg-white p-5 shadow-card hover:shadow-kresna transition-all"
+            >
+              <div className="flex items-start justify-between gap-4">
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2">
+                    <span className={cn(
+                      'inline-flex items-center rounded-full px-2.5 py-1 text-xs font-semibold border',
+                      statusStyles[req.status] || statusStyles.cancelled
+                    )}>
                       {t(`common.${req.status}` as any) || req.status}
-                    </Badge>
-                    <Badge variant="ghost">
+                    </span>
+                    <span className="inline-flex items-center rounded-full bg-kresna-light px-2.5 py-1 text-xs font-medium text-kresna-gray-dark border border-kresna-border">
                       {t(`leave.types.${req.leaveType}` as any) || req.leaveType}
-                    </Badge>
+                    </span>
                   </div>
-                  <p className="text-sm text-charcoal font-medium">
-                    {new Date(req.startDate).toLocaleDateString('es-ES')} - {new Date(req.endDate).toLocaleDateString('es-ES')}
+                  <p className="text-sm text-charcoal font-semibold">
+                    {new Date(req.startDate).toLocaleDateString('es-ES', { day: 'numeric', month: 'short' })}
+                    {' — '}
+                    {new Date(req.endDate).toLocaleDateString('es-ES', { day: 'numeric', month: 'short', year: 'numeric' })}
                   </p>
-                  {req.reason && <p className="text-sm text-kresna-gray mt-1">{req.reason}</p>}
+                  {req.reason && <p className="text-sm text-kresna-gray">{req.reason}</p>}
                 </div>
                 {tab === 'team' && req.status === 'pending' && (
-                  <div className="flex gap-2">
-                    <Button
-                      size="sm"
-                      variant="outline"
+                  <div className="flex gap-2 shrink-0">
+                    <button
                       onClick={() => approveMutation.mutate(req.id)}
-                      className="text-emerald-600 border-emerald-200 hover:bg-emerald-50"
+                      className="h-10 w-10 flex items-center justify-center rounded-xl bg-emerald-50 text-emerald-600 hover:bg-emerald-100 border border-emerald-200 transition-colors"
                     >
                       <Check className="h-4 w-4" />
-                    </Button>
-                    <Button
-                      size="sm"
-                      variant="outline"
+                    </button>
+                    <button
                       onClick={() => rejectMutation.mutate({ id: req.id, reason: t('common.rejected') })}
-                      className="text-red-600 border-red-200 hover:bg-red-50"
+                      className="h-10 w-10 flex items-center justify-center rounded-xl bg-red-50 text-red-600 hover:bg-red-100 border border-red-200 transition-colors"
                     >
                       <X className="h-4 w-4" />
-                    </Button>
+                    </button>
                   </div>
                 )}
               </div>
-            </Card>
+            </div>
           ))}
         </div>
       )}
@@ -229,13 +246,13 @@ export default function LeavePage() {
       <Dialog open={createOpen} onOpenChange={setCreateOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>{t('leave.requestLeave')}</DialogTitle>
+            <DialogTitle className="text-xl">{t('leave.requestLeave')}</DialogTitle>
           </DialogHeader>
           <div className="space-y-4 py-4">
             <div>
-              <label className="text-sm font-medium text-kresna-gray-dark mb-1.5 block">{t('leave.leaveType')}</label>
+              <label className="text-sm font-medium text-kresna-gray-dark mb-2 block">{t('leave.leaveType')}</label>
               <Select value={leaveType} onValueChange={setLeaveType}>
-                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectTrigger className="rounded-xl h-12"><SelectValue /></SelectTrigger>
                 <SelectContent>
                   <SelectItem value="vacation">{t('leave.types.vacation')}</SelectItem>
                   <SelectItem value="sick">{t('leave.types.sick')}</SelectItem>
@@ -246,24 +263,33 @@ export default function LeavePage() {
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="text-sm font-medium text-kresna-gray-dark mb-1.5 block">{t('common.startDate')}</label>
-                <Input type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)} />
+                <label className="text-sm font-medium text-kresna-gray-dark mb-2 block">{t('common.startDate')}</label>
+                <Input type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)} className="rounded-xl h-12" />
               </div>
               <div>
-                <label className="text-sm font-medium text-kresna-gray-dark mb-1.5 block">{t('common.endDate')}</label>
-                <Input type="date" value={endDate} onChange={(e) => setEndDate(e.target.value)} />
+                <label className="text-sm font-medium text-kresna-gray-dark mb-2 block">{t('common.endDate')}</label>
+                <Input type="date" value={endDate} onChange={(e) => setEndDate(e.target.value)} className="rounded-xl h-12" />
               </div>
             </div>
             <div>
-              <label className="text-sm font-medium text-kresna-gray-dark mb-1.5 block">{t('leave.reason')}</label>
-              <Input value={reason} onChange={(e) => setReason(e.target.value)} placeholder={t('common.optional')} />
+              <label className="text-sm font-medium text-kresna-gray-dark mb-2 block">{t('leave.reason')}</label>
+              <Input
+                value={reason}
+                onChange={(e) => setReason(e.target.value)}
+                placeholder={t('common.optional')}
+                className="rounded-xl h-12"
+              />
             </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setCreateOpen(false)}>{t('common.cancel')}</Button>
+            <Button variant="outline" onClick={() => setCreateOpen(false)} className="rounded-xl">
+              {t('common.cancel')}
+            </Button>
             <Button
+              variant="gradient"
               onClick={() => createMutation.mutate({ leaveType, startDate, endDate, reason })}
               disabled={!startDate || !endDate}
+              className="rounded-xl"
             >
               {t('common.submit')}
             </Button>

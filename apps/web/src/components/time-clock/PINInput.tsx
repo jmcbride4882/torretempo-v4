@@ -119,14 +119,14 @@ export function PINInput({
             onFocus={(e) => e.target.select()}
             disabled={disabled}
             className={cn(
-              'w-14 h-16 text-center text-2xl font-bold rounded-xl',
+              'h-14 w-14 text-center text-2xl font-bold rounded-xl',
               'bg-kresna-light border-2 transition-all duration-200',
-              'focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-white',
+              'focus:outline-none focus:ring-2 focus:ring-primary-200 focus:border-primary-500',
               error
-                ? 'border-red-300 text-red-600 focus:border-red-500 focus:ring-red-500/50'
-                : 'border-kresna-border text-charcoal focus:border-emerald-500 focus:ring-emerald-500/50',
+                ? 'border-red-200 bg-red-50 text-red-600 focus:border-red-500 focus:ring-red-200'
+                : 'border-kresna-border text-charcoal',
               disabled && 'opacity-50 cursor-not-allowed',
-              digit !== ' ' && !error && 'border-emerald-400'
+              digit !== ' ' && !error && 'bg-primary-50 border-primary-200'
             )}
             aria-label={`PIN digit ${index + 1}`}
           />

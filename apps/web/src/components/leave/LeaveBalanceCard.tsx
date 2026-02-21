@@ -15,7 +15,7 @@ export function LeaveBalanceCard({ vacationTotal, vacationUsed, sickDaysUsed, cl
   const vacationPercent = vacationTotal > 0 ? (vacationUsed / vacationTotal) * 100 : 0;
 
   return (
-    <div className={cn('rounded-2xl border border-kresna-border bg-white p-5 space-y-4', className)}>
+    <div className={cn('rounded-2xl border border-kresna-border bg-white p-5 space-y-4 shadow-card', className)}>
       <h3 className="text-sm font-medium text-kresna-gray-dark">{t('leave.balance')}</h3>
 
       {/* Vacation */}
@@ -29,7 +29,7 @@ export function LeaveBalanceCard({ vacationTotal, vacationUsed, sickDaysUsed, cl
             {vacationRemaining} {t('leave.daysRemaining')}
           </span>
         </div>
-        <div className="h-2 rounded-full bg-kresna-light overflow-hidden">
+        <div className="h-2.5 rounded-full bg-kresna-light overflow-hidden">
           <div
             className={cn(
               'h-full rounded-full transition-all duration-500',

@@ -80,18 +80,18 @@ function TableRow({
           <div
             className={cn(
               'flex h-8 w-8 items-center justify-center rounded-lg',
-              variant === 'highlight' && 'bg-amber-500/20',
-              variant === 'deduction' && 'bg-red-500/20',
-              variant === 'total' && 'bg-primary-500/20',
+              variant === 'highlight' && 'bg-amber-100',
+              variant === 'deduction' && 'bg-red-100',
+              variant === 'total' && 'bg-primary-100',
               variant === 'default' && 'bg-kresna-light'
             )}
           >
             <Icon
               className={cn(
                 'h-4 w-4',
-                variant === 'highlight' && 'text-amber-400',
-                variant === 'deduction' && 'text-red-400',
-                variant === 'total' && 'text-primary-400',
+                variant === 'highlight' && 'text-amber-600',
+                variant === 'deduction' && 'text-red-600',
+                variant === 'total' && 'text-primary-600',
                 variant === 'default' && 'text-kresna-gray'
               )}
             />
@@ -115,8 +115,8 @@ function TableRow({
         <span
           className={cn(
             'min-w-[100px] font-mono',
-            variant === 'deduction' && 'text-red-400',
-            variant === 'total' && 'text-emerald-400'
+            variant === 'deduction' && 'text-red-600',
+            variant === 'total' && 'text-emerald-600'
           )}
         >
           {variant === 'deduction' && amount > 0 ? '-' : ''}
@@ -148,10 +148,10 @@ export function PayrollBreakdown({ report, className }: PayrollBreakdownProps) {
       className={cn('space-y-6', className)}
     >
       {/* Employee info header */}
-      <div className="rounded-xl border border-kresna-border bg-white p-4 shadow-sm">
+      <div className="rounded-2xl border border-kresna-border bg-white p-4 shadow-card">
         <div className="flex items-center gap-3">
-          <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-primary-600/20 to-primary-600/20">
-            <span className="text-lg font-bold text-primary-400">
+          <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-primary-100 to-primary-50">
+            <span className="text-lg font-bold text-primary-600">
               {employee.name.charAt(0).toUpperCase()}
             </span>
           </div>
@@ -164,7 +164,7 @@ export function PayrollBreakdown({ report, className }: PayrollBreakdownProps) {
       </div>
 
       {/* Earnings section */}
-      <div className="rounded-xl border border-kresna-border bg-white p-4 shadow-sm">
+      <div className="rounded-2xl border border-kresna-border bg-white p-4 shadow-card">
         <SectionHeader title={t('reports.earnings')} icon={DollarSign} />
 
         <div className="space-y-1">
@@ -197,7 +197,7 @@ export function PayrollBreakdown({ report, className }: PayrollBreakdownProps) {
       </div>
 
       {/* Deductions section */}
-      <div className="rounded-xl border border-kresna-border bg-white p-4 shadow-sm">
+      <div className="rounded-2xl border border-kresna-border bg-white p-4 shadow-card">
         <SectionHeader title={t('reports.deductions')} icon={Minus} />
 
         <div className="space-y-1">
@@ -239,12 +239,12 @@ export function PayrollBreakdown({ report, className }: PayrollBreakdownProps) {
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ delay: 0.2 }}
-        className="rounded-xl border border-emerald-200 bg-gradient-to-br from-emerald-50 to-emerald-50/50 p-5 shadow-sm"
+        className="rounded-2xl border border-emerald-200 bg-gradient-to-br from-emerald-50 to-emerald-50/50 p-5 shadow-card"
       >
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-emerald-500/20">
-              <Calculator className="h-6 w-6 text-emerald-400" />
+            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-emerald-100">
+              <Calculator className="h-6 w-6 text-emerald-600" />
             </div>
             <div>
               <p className="text-sm font-medium text-kresna-gray-dark">{t('reports.netPay')}</p>

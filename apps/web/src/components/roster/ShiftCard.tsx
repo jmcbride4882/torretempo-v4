@@ -18,7 +18,6 @@ const statusConfig: Record<ShiftStatus, {
   bg: string;
   text: string;
   border: string;
-  glow: string;
   labelKey: string;
 }> = {
   draft: {
@@ -26,7 +25,6 @@ const statusConfig: Record<ShiftStatus, {
     bg: 'bg-amber-50',
     text: 'text-amber-700',
     border: 'border-amber-200',
-    glow: '',
     labelKey: 'roster.draft',
   },
   published: {
@@ -34,7 +32,6 @@ const statusConfig: Record<ShiftStatus, {
     bg: 'bg-sky-50',
     text: 'text-sky-700',
     border: 'border-sky-200',
-    glow: '',
     labelKey: 'roster.published',
   },
   acknowledged: {
@@ -42,7 +39,6 @@ const statusConfig: Record<ShiftStatus, {
     bg: 'bg-emerald-50',
     text: 'text-emerald-700',
     border: 'border-emerald-200',
-    glow: '',
     labelKey: 'roster.acknowledged',
   },
   completed: {
@@ -50,7 +46,6 @@ const statusConfig: Record<ShiftStatus, {
     bg: 'bg-primary-50',
     text: 'text-primary-700',
     border: 'border-primary-200',
-    glow: '',
     labelKey: 'roster.completed',
   },
   cancelled: {
@@ -58,7 +53,6 @@ const statusConfig: Record<ShiftStatus, {
     bg: 'bg-red-50',
     text: 'text-red-700',
     border: 'border-red-200',
-    glow: '',
     labelKey: 'roster.cancelled',
   },
 };
@@ -105,31 +99,23 @@ export function ShiftCard({ shift, style, onClick, compact = false }: ShiftCardP
       style={style}
       onClick={onClick}
       className={cn(
-        'group relative cursor-pointer overflow-hidden rounded-lg border transition-all duration-200',
-        'hover:shadow-md',
+        'group relative cursor-pointer overflow-hidden rounded-xl border border-kresna-border bg-white shadow-sm transition-all duration-200',
+        'hover:shadow-card hover:bg-kresna-light',
         hasErrors
-          ? 'border-red-500 bg-red-500/10 shadow-red-500/20'
+          ? 'border-red-200 bg-red-50'
           : hasViolations
-            ? 'border-amber-500/50 bg-amber-500/5 shadow-amber-500/10'
-            : `${config.bg} ${config.border} ${config.glow}`,
-        compact ? 'p-1.5' : 'p-2.5'
+            ? 'border-amber-200 bg-amber-50/50'
+            : `${config.bg} ${config.border}`,
+        compact ? 'rounded-lg p-1.5' : 'p-2.5'
       )}
     >
       {/* Custom color accent bar */}
       {hasCustomColor && (
         <div
-          className="absolute left-0 top-0 h-full w-1 rounded-l-lg"
+          className="absolute left-0 top-0 h-full w-1 rounded-l-xl"
           style={{ backgroundColor: shift.color! }}
         />
       )}
-
-      {/* Glow effect on hover */}
-      <div
-        className={cn(
-          'absolute inset-0 opacity-0 transition-opacity group-hover:opacity-100',
-          'bg-gradient-to-br from-white/5 to-transparent'
-        )}
-      />
 
       {/* Content */}
       <div className={cn('relative', hasCustomColor && 'pl-2')}>
@@ -189,7 +175,7 @@ export function ShiftCard({ shift, style, onClick, compact = false }: ShiftCardP
               {hasViolations && (
                 <div className={cn(
                   'flex h-5 w-5 items-center justify-center rounded-full',
-                  hasErrors ? 'bg-red-500/20 text-red-400' : 'bg-amber-500/20 text-amber-400'
+                  hasErrors ? 'bg-red-50 text-red-600' : 'bg-amber-50 text-amber-600'
                 )}>
                   <AlertTriangle className="h-3 w-3" />
                 </div>
@@ -205,23 +191,18 @@ export function ShiftCard({ shift, style, onClick, compact = false }: ShiftCardP
         )}
       </div>
 
-      {/* Hover overlay with more details */}
-      <motion.div
-        initial={{ opacity: 0, y: 10 }}
-        whileHover={{ opacity: 1, y: 0 }}
-        className={cn(
-          'pointer-events-none absolute -bottom-1 left-0 right-0 rounded-b-lg',
-          'bg-gradient-to-t from-black/60 via-black/30 to-transparent p-2 pt-6',
-          'opacity-0 transition-opacity group-hover:opacity-100',
-          compact && 'hidden'
-        )}
-      >
-        {shift.notes && (
+      {/* Notes preview on hover */}
+      {!compact && shift.notes && (
+        <div className={cn(
+          'pointer-events-none absolute -bottom-1 left-0 right-0 rounded-b-xl',
+          'bg-kresna-light/90 p-2 pt-3',
+          'opacity-0 transition-opacity group-hover:opacity-100'
+        )}>
           <p className="line-clamp-2 text-[10px] italic text-kresna-gray">
             "{shift.notes}"
           </p>
-        )}
-      </motion.div>
+        </div>
+      )}
     </motion.div>
   );
 
@@ -240,7 +221,7 @@ export function ShiftCard({ shift, style, onClick, compact = false }: ShiftCardP
                 <div key={idx} className="flex items-start gap-2">
                   <AlertTriangle className={cn(
                     'h-3 w-3 shrink-0 mt-0.5',
-                    violation.severity === 'error' ? 'text-red-400' : 'text-amber-400'
+                    violation.severity === 'error' ? 'text-red-600' : 'text-amber-600'
                   )} />
                   <p className="text-xs text-kresna-gray-dark">{violation.message}</p>
                 </div>

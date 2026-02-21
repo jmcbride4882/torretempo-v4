@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import {
   Clock,
   Shield,
@@ -28,6 +28,8 @@ import {
   QrCode,
   Globe,
   Play,
+  Star,
+  Sparkles,
   type LucideIcon,
 } from 'lucide-react';
 
@@ -35,18 +37,51 @@ import { Button } from '@/components/ui/button';
 import { LanguageSwitcher } from '@/components/common/LanguageSwitcher';
 import { cn } from '@/lib/utils';
 
+/* ══════════════════════════════════════════════════════════════════════════════
+   Torre Tempo Landing Page — Kresna Redesign
+
+   Design system: Kresna Framer AI template
+   - 56-64px hero headings, -0.04em tracking
+   - 80px section padding, 24-32px card padding
+   - Multi-layer shadows, frosted glass, 24px radius
+   - Stagger children animations, cubic-bezier(.44,0,.56,1)
+   - Dark footer, device mockup in hero, annual/monthly pricing toggle
+   ══════════════════════════════════════════════════════════════════════════════ */
+
 // ============================================================================
 // ANIMATION VARIANTS
 // ============================================================================
 
 const fadeInUp = {
-  hidden: { opacity: 0, y: 24 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: 'easeOut' } },
+  hidden: { opacity: 0, y: 30 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.6, ease: [0.44, 0, 0.56, 1] },
+  },
+};
+
+const fadeInRight = {
+  hidden: { opacity: 0, x: 30 },
+  visible: {
+    opacity: 1,
+    x: 0,
+    transition: { duration: 0.6, ease: [0.44, 0, 0.56, 1] },
+  },
 };
 
 const staggerContainer = {
   hidden: {},
-  visible: { transition: { staggerChildren: 0.1 } },
+  visible: { transition: { staggerChildren: 0.12, delayChildren: 0.1 } },
+};
+
+const scaleIn = {
+  hidden: { opacity: 0, scale: 0.9 },
+  visible: {
+    opacity: 1,
+    scale: 1,
+    transition: { duration: 0.5, ease: [0.44, 0, 0.56, 1] },
+  },
 };
 
 // ============================================================================
@@ -75,7 +110,7 @@ interface PricingPlan {
 }
 
 // ============================================================================
-// DATA
+// DATA HOOKS (unchanged logic, same i18n keys)
 // ============================================================================
 
 function usePersonaFlows(): PersonaFlow[] {
@@ -207,7 +242,102 @@ function usePricingPlans(): PricingPlan[] {
 }
 
 // ============================================================================
-// NAVBAR
+// SECTION WRAPPER — Consistent Kresna spacing
+// ============================================================================
+
+function Section({
+  children,
+  id,
+  className,
+  dark,
+}: {
+  children: React.ReactNode;
+  id?: string;
+  className?: string;
+  dark?: boolean;
+}) {
+  return (
+    <section
+      id={id}
+      className={cn(
+        'relative py-20 sm:py-28 lg:py-32',
+        dark ? 'bg-charcoal text-white' : '',
+        className
+      )}
+    >
+      <div className="mx-auto max-w-kresna px-5 sm:px-8 lg:px-10">
+        {children}
+      </div>
+    </section>
+  );
+}
+
+// ============================================================================
+// SECTION HEADER — Reusable heading block
+// ============================================================================
+
+function SectionHeader({
+  badge,
+  badgeIcon,
+  title,
+  subtitle,
+  dark,
+}: {
+  badge?: string;
+  badgeIcon?: React.ReactNode;
+  title: string;
+  subtitle?: string;
+  dark?: boolean;
+}) {
+  return (
+    <motion.div
+      className="text-center mb-16 lg:mb-20"
+      initial="hidden"
+      whileInView="visible"
+      viewport={{ once: true, margin: '-100px' }}
+      variants={staggerContainer}
+    >
+      {badge && (
+        <motion.div variants={fadeInUp} className="mb-5">
+          <span
+            className={cn(
+              'inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-sm font-medium',
+              dark
+                ? 'bg-white/10 text-white/80 border border-white/10'
+                : 'bg-primary-50 text-primary-600 border border-primary-100'
+            )}
+          >
+            {badgeIcon}
+            {badge}
+          </span>
+        </motion.div>
+      )}
+      <motion.h2
+        variants={fadeInUp}
+        className={cn(
+          'text-3xl sm:text-4xl lg:text-display font-bold tracking-display leading-tight',
+          dark ? 'text-white' : 'text-charcoal'
+        )}
+      >
+        {title}
+      </motion.h2>
+      {subtitle && (
+        <motion.p
+          variants={fadeInUp}
+          className={cn(
+            'mt-5 text-lg sm:text-xl max-w-2xl mx-auto leading-relaxed',
+            dark ? 'text-white/60' : 'text-kresna-gray-dark'
+          )}
+        >
+          {subtitle}
+        </motion.p>
+      )}
+    </motion.div>
+  );
+}
+
+// ============================================================================
+// NAVBAR — Sticky white, logo left, nav center, CTA right
 // ============================================================================
 
 function Navbar(): JSX.Element {
@@ -233,90 +363,107 @@ function Navbar(): JSX.Element {
   return (
     <nav
       className={cn(
-        'fixed top-0 left-0 right-0 z-50 transition-all duration-300',
+        'fixed top-0 left-0 right-0 z-50 transition-all duration-300 ease-kresna',
         scrolled
-          ? 'bg-white/90 backdrop-blur-xl shadow-sm border-b border-kresna-border'
+          ? 'bg-white/85 backdrop-blur-xl shadow-kresna border-b border-kresna-border/50'
           : 'bg-white'
       )}
     >
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="flex h-16 items-center justify-between">
-          <Link to="/" className="flex items-center gap-2.5">
-            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary-500">
+      <div className="mx-auto max-w-kresna px-5 sm:px-8 lg:px-10">
+        <div className="flex h-[72px] items-center justify-between">
+          {/* Logo — left */}
+          <Link to="/" className="flex items-center gap-3 group">
+            <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-gradient-primary shadow-kresna-btn transition-transform duration-300 group-hover:scale-105">
               <Clock className="h-5 w-5 text-white" />
             </div>
             <div className="flex flex-col">
               <span className="text-lg font-bold leading-none tracking-tight text-charcoal">
                 Torre Tempo
               </span>
-              <span className="text-[10px] leading-none text-kresna-gray">
+              <span className="text-[10px] leading-none text-kresna-gray mt-0.5">
                 {t('landing.brandSubtitle')}
               </span>
             </div>
           </Link>
 
-          <div className="hidden md:flex items-center gap-8">
+          {/* Nav links — center (desktop) */}
+          <div className="hidden lg:flex items-center gap-1">
             {NAV_LINKS.map((link) => (
               <a
                 key={link.href}
                 href={link.href}
-                className="text-sm text-kresna-gray-dark hover:text-charcoal transition-colors duration-200"
+                className="px-4 py-2 text-sm font-medium text-kresna-gray-dark hover:text-charcoal rounded-xl hover:bg-kresna-light transition-all duration-200"
               >
                 {link.label}
               </a>
             ))}
           </div>
 
-          <div className="hidden md:flex items-center gap-3">
+          {/* Right side — CTA + lang */}
+          <div className="hidden lg:flex items-center gap-3">
             <LanguageSwitcher />
-            <Button variant="ghost" asChild>
+            <Button variant="ghost" asChild className="text-kresna-gray-dark hover:text-charcoal">
               <Link to="/auth/signin">{t('auth.signIn')}</Link>
             </Button>
-            <Button asChild>
-              <Link to="/auth/signup">{t('landing.cta.startFree')}</Link>
+            <Button asChild className="shadow-kresna-btn">
+              <Link to="/auth/signup">
+                {t('landing.cta.startFree')}
+                <ArrowRight className="ml-1.5 h-4 w-4" />
+              </Link>
             </Button>
           </div>
 
+          {/* Mobile menu toggle */}
           <button
             onClick={() => setIsOpen(!isOpen)}
-            className="md:hidden p-2 text-kresna-gray-dark hover:text-charcoal transition-colors"
+            className="lg:hidden flex h-11 w-11 items-center justify-center rounded-2xl text-kresna-gray-dark hover:text-charcoal hover:bg-kresna-light transition-colors min-h-touch"
             aria-label={t('landing.nav.menu')}
           >
-            {isOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+            {isOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
           </button>
         </div>
       </div>
 
-      {isOpen && (
-        <div className="md:hidden border-t border-kresna-border bg-white">
-          <div className="px-4 py-4 space-y-1">
-            {NAV_LINKS.map((link) => (
-              <a
-                key={link.href}
-                href={link.href}
-                onClick={() => setIsOpen(false)}
-                className="block py-2.5 px-3 rounded-xl text-kresna-gray-dark hover:text-charcoal hover:bg-kresna-light transition-colors"
-              >
-                {link.label}
-              </a>
-            ))}
-            <div className="pt-4 flex flex-col gap-2 border-t border-kresna-border">
-              <Button variant="outline" asChild className="w-full">
-                <Link to="/auth/signin">{t('auth.signIn')}</Link>
-              </Button>
-              <Button asChild className="w-full">
-                <Link to="/auth/signup">{t('landing.cta.startFree')}</Link>
-              </Button>
+      {/* Mobile slide-down */}
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: 'auto' }}
+            exit={{ opacity: 0, height: 0 }}
+            transition={{ duration: 0.3, ease: [0.44, 0, 0.56, 1] }}
+            className="lg:hidden border-t border-kresna-border bg-white overflow-hidden"
+          >
+            <div className="px-5 py-5 space-y-1">
+              {NAV_LINKS.map((link) => (
+                <a
+                  key={link.href}
+                  href={link.href}
+                  onClick={() => setIsOpen(false)}
+                  className="block py-3 px-4 rounded-2xl text-body-sm font-medium text-kresna-gray-dark hover:text-charcoal hover:bg-kresna-light transition-colors min-h-touch"
+                >
+                  {link.label}
+                </a>
+              ))}
+              <div className="pt-5 flex flex-col gap-3 border-t border-kresna-border mt-2">
+                <LanguageSwitcher />
+                <Button variant="outline" size="touch" asChild className="w-full">
+                  <Link to="/auth/signin">{t('auth.signIn')}</Link>
+                </Button>
+                <Button size="touch" asChild className="w-full shadow-kresna-btn">
+                  <Link to="/auth/signup">{t('landing.cta.startFree')}</Link>
+                </Button>
+              </div>
             </div>
-          </div>
-        </div>
-      )}
+          </motion.div>
+        )}
+      </AnimatePresence>
     </nav>
   );
 }
 
 // ============================================================================
-// HERO
+// HERO — Split layout: text left, device mockup right
 // ============================================================================
 
 function HeroSection(): JSX.Element {
@@ -329,104 +476,222 @@ function HeroSection(): JSX.Element {
   ];
 
   return (
-    <section className="relative min-h-screen flex items-center justify-center pt-16 bg-white overflow-hidden">
-      {/* Subtle decorative gradient */}
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[800px] rounded-full bg-primary-50 blur-[160px] opacity-60" />
+    <section className="relative min-h-screen flex items-center pt-[72px] bg-white overflow-hidden">
+      {/* Decorative gradient orbs */}
+      <div className="absolute top-20 right-0 w-[600px] h-[600px] rounded-full bg-primary-50 blur-[200px] opacity-50" />
+      <div className="absolute bottom-0 left-0 w-[400px] h-[400px] rounded-full bg-primary-100 blur-[160px] opacity-30" />
 
-      <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-20">
+      <div className="relative z-10 mx-auto max-w-kresna px-5 sm:px-8 lg:px-10 py-16 lg:py-24">
+        <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+          {/* Left — Copy */}
+          <motion.div
+            initial="hidden"
+            animate="visible"
+            variants={staggerContainer}
+          >
+            {/* Badge */}
+            <motion.div variants={fadeInUp}>
+              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary-50 border border-primary-100 mb-8">
+                <Sparkles className="h-4 w-4 text-primary-500" />
+                <span className="text-sm text-primary-600 font-medium">
+                  14 {t('landing.hero.trialBadge', { defaultValue: 'dias de prueba gratis' })}
+                </span>
+              </div>
+            </motion.div>
+
+            {/* Headline — Kresna 56-64px */}
+            <motion.h1
+              variants={fadeInUp}
+              className="text-4xl sm:text-5xl lg:text-[56px] xl:text-display font-bold leading-[1.08] tracking-display"
+            >
+              <span className="text-charcoal">{t('landing.hero.title1')}</span>{' '}
+              <span className="bg-gradient-primary bg-clip-text text-transparent">
+                {t('landing.hero.title2')}
+              </span>
+            </motion.h1>
+
+            <motion.p
+              variants={fadeInUp}
+              className="mt-6 text-lg sm:text-xl text-kresna-gray-dark leading-relaxed max-w-lg"
+            >
+              {t('landing.hero.subtitle')}
+            </motion.p>
+
+            {/* CTA Buttons */}
+            <motion.div
+              variants={fadeInUp}
+              className="mt-10 flex flex-col sm:flex-row items-start gap-4"
+            >
+              <Button
+                asChild
+                size="touch-lg"
+                variant="gradient"
+                className="w-full sm:w-auto shadow-kresna-btn text-base"
+              >
+                <Link to="/auth/signup">
+                  {t('landing.cta.startFree')}
+                  <ArrowRight className="ml-2 h-5 w-5" />
+                </Link>
+              </Button>
+              <Button
+                variant="outline"
+                size="touch"
+                asChild
+                className="w-full sm:w-auto"
+              >
+                <a href="#como-funciona">
+                  <Play className="mr-2 h-4 w-4" />
+                  {t('landing.cta.seeDemo')}
+                </a>
+              </Button>
+            </motion.div>
+
+            {/* Trust signals */}
+            <motion.div variants={fadeInUp} className="mt-8 flex items-center gap-4 flex-wrap">
+              <div className="flex -space-x-2">
+                {[1, 2, 3, 4, 5].map((i) => (
+                  <div
+                    key={i}
+                    className="h-8 w-8 rounded-full bg-gradient-to-br from-primary-100 to-primary-200 border-2 border-white flex items-center justify-center"
+                  >
+                    <span className="text-[10px] font-bold text-primary-600">
+                      {String.fromCharCode(64 + i)}
+                    </span>
+                  </div>
+                ))}
+              </div>
+              <div className="flex flex-col">
+                <div className="flex items-center gap-0.5">
+                  {[1, 2, 3, 4, 5].map((i) => (
+                    <Star key={i} className="h-3.5 w-3.5 fill-amber-400 text-amber-400" />
+                  ))}
+                </div>
+                <span className="text-xs text-kresna-gray mt-0.5">
+                  {t('landing.hero.trustSignals')}
+                </span>
+              </div>
+            </motion.div>
+          </motion.div>
+
+          {/* Right — Device mockup frame */}
+          <motion.div
+            initial="hidden"
+            animate="visible"
+            variants={fadeInRight}
+            className="relative hidden lg:block"
+          >
+            {/* Phone frame */}
+            <div className="relative mx-auto w-[320px]">
+              <div className="rounded-[40px] border-[8px] border-charcoal bg-white shadow-kresna-lg overflow-hidden">
+                {/* Status bar */}
+                <div className="flex items-center justify-between px-6 py-2 bg-white">
+                  <span className="text-[10px] font-semibold text-charcoal">9:41</span>
+                  <div className="flex items-center gap-1">
+                    <div className="h-2.5 w-2.5 rounded-full bg-kresna-gray-medium" />
+                    <div className="h-2.5 w-2.5 rounded-full bg-kresna-gray-medium" />
+                    <div className="h-2.5 w-4 rounded-sm bg-kresna-gray-medium" />
+                  </div>
+                </div>
+
+                {/* App content mockup */}
+                <div className="px-5 pb-6">
+                  {/* Header */}
+                  <div className="flex items-center justify-between py-3 mb-4">
+                    <div>
+                      <p className="text-[10px] text-kresna-gray">Buenos dias</p>
+                      <p className="text-sm font-bold text-charcoal">Maria Garcia</p>
+                    </div>
+                    <div className="h-8 w-8 rounded-full bg-gradient-primary flex items-center justify-center">
+                      <span className="text-xs font-bold text-white">M</span>
+                    </div>
+                  </div>
+
+                  {/* Giant clock-in button */}
+                  <div className="flex flex-col items-center py-6">
+                    <div className="relative">
+                      <div className="absolute inset-0 rounded-full bg-primary-500 animate-pulse opacity-20 scale-125" />
+                      <div className="relative flex h-24 w-24 items-center justify-center rounded-full bg-gradient-primary shadow-glow">
+                        <Clock className="h-10 w-10 text-white" />
+                      </div>
+                    </div>
+                    <p className="mt-4 text-xs font-semibold text-charcoal">Fichar entrada</p>
+                    <p className="text-[10px] text-kresna-gray mt-0.5">Turno: 08:00 - 16:00</p>
+                  </div>
+
+                  {/* Quick stats */}
+                  <div className="grid grid-cols-3 gap-2 mt-2">
+                    {[
+                      { label: 'Hoy', value: '0h 0m' },
+                      { label: 'Semana', value: '24h 30m' },
+                      { label: 'Horas extra', value: '0h' },
+                    ].map((stat) => (
+                      <div key={stat.label} className="rounded-2xl bg-kresna-light p-2.5 text-center">
+                        <p className="text-[9px] text-kresna-gray uppercase tracking-wider">{stat.label}</p>
+                        <p className="text-xs font-bold text-charcoal mt-0.5">{stat.value}</p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              {/* Floating cards around phone */}
+              <motion.div
+                initial={{ opacity: 0, x: 20, y: -10 }}
+                animate={{ opacity: 1, x: 0, y: 0 }}
+                transition={{ delay: 0.8, duration: 0.5 }}
+                className="absolute -right-16 top-20 rounded-2xl bg-white border border-kresna-border shadow-kresna px-4 py-3"
+              >
+                <div className="flex items-center gap-2">
+                  <div className="h-2 w-2 rounded-full bg-green-500 animate-pulse" />
+                  <span className="text-xs font-medium text-charcoal">12 fichados</span>
+                </div>
+              </motion.div>
+
+              <motion.div
+                initial={{ opacity: 0, x: -20, y: 10 }}
+                animate={{ opacity: 1, x: 0, y: 0 }}
+                transition={{ delay: 1.0, duration: 0.5 }}
+                className="absolute -left-12 bottom-32 rounded-2xl bg-white border border-kresna-border shadow-kresna px-4 py-3"
+              >
+                <div className="flex items-center gap-2">
+                  <ShieldCheck className="h-4 w-4 text-green-500" />
+                  <span className="text-xs font-medium text-charcoal">ITSS OK</span>
+                </div>
+              </motion.div>
+            </div>
+          </motion.div>
+        </div>
+
+        {/* Speed Metric Cards — full width below hero */}
         <motion.div
-          className="text-center max-w-4xl mx-auto"
           initial="hidden"
           animate="visible"
           variants={staggerContainer}
+          className="mt-16 lg:mt-24 grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-5"
         >
-          {/* Badge */}
-          <motion.div variants={fadeInUp}>
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary-50 border border-primary-100 mb-8">
-              <Zap className="h-4 w-4 text-primary-500" />
-              <span className="text-sm text-primary-600 font-medium">
-                14 {t('landing.hero.trialBadge', { defaultValue: 'dias de prueba gratis' })}
-              </span>
-            </div>
-          </motion.div>
-
-          {/* Headline */}
-          <motion.h1
-            variants={fadeInUp}
-            className="text-4xl sm:text-5xl lg:text-7xl font-bold leading-[1.1] tracking-tight"
-          >
-            <span className="text-charcoal">{t('landing.hero.title1')}</span>{' '}
-            <span className="text-primary-500">
-              {t('landing.hero.title2')}
-            </span>
-          </motion.h1>
-
-          <motion.p
-            variants={fadeInUp}
-            className="mt-6 text-lg sm:text-xl text-kresna-gray-dark max-w-2xl mx-auto leading-relaxed"
-          >
-            {t('landing.hero.subtitle')}
-          </motion.p>
-
-          {/* CTA Buttons */}
-          <motion.div
-            variants={fadeInUp}
-            className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4"
-          >
-            <Button
-              asChild
-              size="xl"
-              className="w-full sm:w-auto"
+          {SPEED_METRICS.map((metric) => (
+            <motion.div
+              key={metric.label}
+              variants={fadeInUp}
+              className="rounded-3xl border border-kresna-border bg-white p-6 sm:p-7 text-center shadow-card hover:shadow-kresna transition-shadow duration-300"
             >
-              <Link to="/auth/signup">
-                {t('landing.cta.startFree')}
-                <ArrowRight className="ml-2 h-5 w-5" />
-              </Link>
-            </Button>
-            <Button
-              variant="outline"
-              size="lg"
-              asChild
-              className="w-full sm:w-auto"
-            >
-              <a href="#como-funciona">
-                <Play className="mr-2 h-4 w-4" />
-                {t('landing.cta.seeDemo')}
-              </a>
-            </Button>
-          </motion.div>
-
-          {/* Speed Metric Cards */}
-          <motion.div
-            variants={fadeInUp}
-            className="mt-16 grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-3xl mx-auto"
-          >
-            {SPEED_METRICS.map((metric) => (
-              <div
-                key={metric.label}
-                className="rounded-3xl border border-kresna-border bg-white p-5 text-center shadow-card"
-              >
-                <div className="flex items-center justify-center gap-2 mb-3">
+              <div className="flex items-center justify-center gap-2.5 mb-4">
+                <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary-50 border border-primary-100">
                   <metric.icon className="h-4 w-4 text-primary-500" />
-                  <span className="text-xs font-medium text-kresna-gray uppercase tracking-wider">
-                    {metric.label}
-                  </span>
                 </div>
-                <div className="flex items-center justify-center gap-3">
-                  <span className="text-sm text-kresna-gray line-through">{metric.before}</span>
-                  <ArrowRight className="h-3.5 w-3.5 text-kresna-border" />
-                  <span className="text-2xl font-bold text-primary-500">
-                    {metric.after}
-                  </span>
-                </div>
+                <span className="text-xs font-semibold text-kresna-gray uppercase tracking-wider">
+                  {metric.label}
+                </span>
               </div>
-            ))}
-          </motion.div>
-
-          {/* Trust signals */}
-          <motion.p variants={fadeInUp} className="mt-10 text-sm text-kresna-gray">
-            {t('landing.hero.trustSignals')}
-          </motion.p>
+              <div className="flex items-center justify-center gap-4">
+                <span className="text-base text-kresna-gray line-through">{metric.before}</span>
+                <ArrowRight className="h-4 w-4 text-kresna-border" />
+                <span className="text-3xl font-bold bg-gradient-primary bg-clip-text text-transparent">
+                  {metric.after}
+                </span>
+              </div>
+            </motion.div>
+          ))}
         </motion.div>
       </div>
     </section>
@@ -434,7 +699,7 @@ function HeroSection(): JSX.Element {
 }
 
 // ============================================================================
-// PERSONA FLOWS
+// PERSONA FLOWS — Tab switcher with animated workflow cards
 // ============================================================================
 
 function PersonaFlowsSection(): JSX.Element {
@@ -443,128 +708,134 @@ function PersonaFlowsSection(): JSX.Element {
   const [activeIndex, setActiveIndex] = useState(0);
   const activeFlow = personaFlows[activeIndex]!;
 
-  const personaColors: Record<string, { ring: string; bg: string; text: string; icon: string }> = {
-    maria: { ring: 'ring-emerald-400', bg: 'bg-emerald-50', text: 'text-emerald-600', icon: 'bg-emerald-50 border-emerald-200' },
-    carlos: { ring: 'ring-primary-400', bg: 'bg-primary-50', text: 'text-primary-600', icon: 'bg-primary-50 border-primary-200' },
-    laura: { ring: 'ring-rose-400', bg: 'bg-rose-50', text: 'text-rose-600', icon: 'bg-rose-50 border-rose-200' },
-    carmen: { ring: 'ring-amber-400', bg: 'bg-amber-50', text: 'text-amber-600', icon: 'bg-amber-50 border-amber-200' },
+  const personaColors: Record<string, { ring: string; bg: string; text: string; iconBg: string; stepBg: string; gradient: string }> = {
+    maria: { ring: 'ring-emerald-400', bg: 'bg-emerald-50', text: 'text-emerald-600', iconBg: 'bg-emerald-50', stepBg: 'bg-emerald-50/50', gradient: 'from-emerald-500 to-emerald-400' },
+    carlos: { ring: 'ring-primary-400', bg: 'bg-primary-50', text: 'text-primary-600', iconBg: 'bg-primary-50', stepBg: 'bg-primary-50/50', gradient: 'from-primary-500 to-primary-400' },
+    laura: { ring: 'ring-rose-400', bg: 'bg-rose-50', text: 'text-rose-600', iconBg: 'bg-rose-50', stepBg: 'bg-rose-50/50', gradient: 'from-rose-500 to-rose-400' },
+    carmen: { ring: 'ring-amber-400', bg: 'bg-amber-50', text: 'text-amber-600', iconBg: 'bg-amber-50', stepBg: 'bg-amber-50/50', gradient: 'from-amber-500 to-amber-400' },
   };
 
   const colors = personaColors[activeFlow.id]!;
 
   return (
-    <section id="como-funciona" className="relative py-24 sm:py-32 bg-kresna-light">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        {/* Section header */}
-        <motion.div
-          className="text-center mb-16"
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: '-80px' }}
-          variants={staggerContainer}
-        >
-          <motion.span
-            variants={fadeInUp}
-            className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary-50 text-primary-600 text-sm font-medium mb-4"
-          >
-            <Zap className="h-3.5 w-3.5" />
-            {t('landing.nav.howItWorks')}
-          </motion.span>
-          <motion.h2
-            variants={fadeInUp}
-            className="text-3xl sm:text-4xl lg:text-5xl font-bold text-charcoal mb-4 tracking-tight"
-          >
-            {t('landing.personas.title')}
-          </motion.h2>
-          <motion.p variants={fadeInUp} className="text-lg text-kresna-gray-dark max-w-2xl mx-auto">
-            {t('landing.personas.subtitle')}
-          </motion.p>
-        </motion.div>
+    <Section id="como-funciona" className="bg-kresna-light">
+      <SectionHeader
+        badge={t('landing.nav.howItWorks')}
+        badgeIcon={<Zap className="h-3.5 w-3.5" />}
+        title={t('landing.personas.title')}
+        subtitle={t('landing.personas.subtitle')}
+      />
 
-        {/* Persona Tabs */}
-        <div className="flex flex-wrap justify-center gap-2 sm:gap-3 mb-12">
-          {personaFlows.map((flow, index) => {
-            const isActive = index === activeIndex;
-            const tabColors = personaColors[flow.id]!;
-            return (
-              <button
-                key={flow.id}
-                onClick={() => setActiveIndex(index)}
-                className={cn(
-                  'flex items-center gap-2 px-4 sm:px-5 py-2.5 rounded-2xl text-sm font-medium transition-all duration-200',
-                  isActive
-                    ? cn('ring-2 bg-white shadow-card text-charcoal', tabColors.ring, tabColors.bg)
-                    : 'text-kresna-gray-dark hover:text-charcoal hover:bg-white/60'
-                )}
-              >
+      {/* Persona Tabs — pill style */}
+      <div className="flex flex-wrap justify-center gap-2 sm:gap-3 mb-12 lg:mb-16">
+        {personaFlows.map((flow, index) => {
+          const isActive = index === activeIndex;
+          const tabColors = personaColors[flow.id]!;
+          return (
+            <button
+              key={flow.id}
+              onClick={() => setActiveIndex(index)}
+              className={cn(
+                'flex items-center gap-2.5 px-5 py-3 rounded-2xl text-sm font-medium transition-all duration-300 ease-kresna min-h-touch',
+                isActive
+                  ? cn('ring-2 bg-white shadow-kresna text-charcoal', tabColors.ring)
+                  : 'text-kresna-gray-dark hover:text-charcoal hover:bg-white/80 hover:shadow-card'
+              )}
+            >
+              <div className={cn(
+                'flex h-8 w-8 items-center justify-center rounded-xl transition-colors',
+                isActive ? tabColors.iconBg : 'bg-kresna-light'
+              )}>
                 <flow.icon className={cn('h-4 w-4', isActive ? tabColors.text : 'text-kresna-gray')} />
-                <span>{flow.persona}</span>
-                <span className="hidden sm:inline text-xs text-kresna-gray">{flow.role}</span>
-              </button>
-            );
-          })}
-        </div>
+              </div>
+              <div className="text-left">
+                <span className="block">{flow.persona}</span>
+                <span className="block text-[10px] text-kresna-gray font-normal">{flow.role}</span>
+              </div>
+            </button>
+          );
+        })}
+      </div>
 
-        {/* Active Flow Content */}
+      {/* Active Flow Content — Two column: info left, steps right */}
+      <AnimatePresence mode="wait">
         <motion.div
           key={activeFlow.id}
-          initial={{ opacity: 0, y: 12 }}
+          initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.3 }}
-          className="rounded-3xl border border-kresna-border bg-white p-6 sm:p-8 lg:p-10 shadow-card"
+          exit={{ opacity: 0, y: -16 }}
+          transition={{ duration: 0.35, ease: [0.44, 0, 0.56, 1] }}
+          className="rounded-3xl border border-kresna-border bg-white shadow-kresna overflow-hidden"
         >
-          {/* Flow header */}
-          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 mb-8 pb-6 border-b border-kresna-border">
-            <div className={cn('flex h-14 w-14 items-center justify-center rounded-2xl border', colors.icon)}>
-              <activeFlow.icon className={cn('h-7 w-7', colors.text)} />
-            </div>
-            <div>
-              <div className="flex items-center gap-3">
-                <h3 className="text-xl font-bold text-charcoal">{activeFlow.persona}</h3>
-                <span className="text-xs px-2 py-0.5 rounded-full bg-kresna-light text-kresna-gray-dark">
-                  {activeFlow.role}
-                </span>
+          <div className="grid lg:grid-cols-5">
+            {/* Left — persona info panel */}
+            <div className={cn('lg:col-span-2 p-8 lg:p-10', colors.stepBg)}>
+              <div className={cn('flex h-16 w-16 items-center justify-center rounded-3xl bg-gradient-to-br shadow-lg mb-6', colors.gradient)}>
+                <activeFlow.icon className="h-8 w-8 text-white" />
               </div>
-              <p className="text-kresna-gray-dark mt-1">{activeFlow.tagline}</p>
+              <h3 className="text-2xl font-bold text-charcoal mb-2">{activeFlow.persona}</h3>
+              <span className="inline-flex px-3 py-1 rounded-full bg-white/80 text-xs font-medium text-kresna-gray-dark mb-4">
+                {activeFlow.role}
+              </span>
+              <p className="text-kresna-gray-dark leading-relaxed">{activeFlow.tagline}</p>
+              <div className="mt-8">
+                <Button asChild size="touch" variant="gradient" className="w-full lg:w-auto shadow-kresna-btn">
+                  <Link to="/auth/signup">
+                    {t('landing.cta.startFree')}
+                    <ArrowRight className="ml-2 h-4 w-4" />
+                  </Link>
+                </Button>
+              </div>
             </div>
-          </div>
 
-          {/* Steps */}
-          <div className="grid gap-4 sm:gap-5">
-            {activeFlow.steps.map((step, stepIndex) => (
-              <div key={step.title} className="flex items-start gap-4 group">
-                <div className="flex flex-col items-center">
-                  <div className={cn(
-                    'flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border transition-colors duration-200',
-                    colors.icon,
-                    'group-hover:shadow-sm'
-                  )}>
-                    <step.icon className={cn('h-4 w-4', colors.text)} />
-                  </div>
-                  {stepIndex < activeFlow.steps.length - 1 && (
-                    <div className="w-px h-4 sm:h-5 bg-kresna-border mt-1" />
-                  )}
-                </div>
-                <div className="pb-2">
-                  <p className="text-sm font-semibold text-charcoal">
-                    <span className={cn('mr-2 text-xs font-mono', colors.text)}>
-                      {String(stepIndex + 1).padStart(2, '0')}
-                    </span>
-                    {step.title}
-                  </p>
-                  <p className="text-sm text-kresna-gray-dark mt-0.5 leading-relaxed">{step.detail}</p>
-                </div>
+            {/* Right — steps */}
+            <div className="lg:col-span-3 p-8 lg:p-10">
+              <p className="text-xs font-semibold uppercase tracking-wider text-kresna-gray mb-6">
+                {t('landing.nav.howItWorks')}
+              </p>
+              <div className="space-y-1">
+                {activeFlow.steps.map((step, stepIndex) => (
+                  <motion.div
+                    key={step.title}
+                    initial={{ opacity: 0, x: 12 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: stepIndex * 0.08, duration: 0.3 }}
+                    className="group flex items-start gap-4 rounded-2xl p-4 hover:bg-kresna-light/50 transition-colors"
+                  >
+                    <div className="flex flex-col items-center">
+                      <div className={cn(
+                        'flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl border transition-all duration-200',
+                        colors.iconBg,
+                        'border-transparent group-hover:shadow-sm'
+                      )}>
+                        <step.icon className={cn('h-5 w-5', colors.text)} />
+                      </div>
+                      {stepIndex < activeFlow.steps.length - 1 && (
+                        <div className="w-px h-5 bg-kresna-border mt-1.5" />
+                      )}
+                    </div>
+                    <div className="pt-1">
+                      <div className="flex items-center gap-2">
+                        <span className={cn('text-[10px] font-mono font-bold', colors.text)}>
+                          {String(stepIndex + 1).padStart(2, '0')}
+                        </span>
+                        <p className="text-sm font-semibold text-charcoal">{step.title}</p>
+                      </div>
+                      <p className="text-sm text-kresna-gray-dark mt-1 leading-relaxed">{step.detail}</p>
+                    </div>
+                  </motion.div>
+                ))}
               </div>
-            ))}
+            </div>
           </div>
         </motion.div>
-      </div>
-    </section>
+      </AnimatePresence>
+    </Section>
   );
 }
 
 // ============================================================================
-// FEATURES
+// FEATURES — 2 large + 4 small bento grid with hover lift
 // ============================================================================
 
 function FeaturesSection(): JSX.Element {
@@ -580,182 +851,224 @@ function FeaturesSection(): JSX.Element {
   ];
 
   return (
-    <section id="funciones" className="relative py-24 sm:py-32 bg-white">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <motion.div
-          className="text-center mb-16"
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: '-80px' }}
-          variants={staggerContainer}
-        >
-          <motion.span
-            variants={fadeInUp}
-            className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary-50 text-primary-600 text-sm font-medium mb-4"
-          >
-            <Zap className="h-3.5 w-3.5" />
-            {t('landing.nav.features')}
-          </motion.span>
-          <motion.h2
-            variants={fadeInUp}
-            className="text-3xl sm:text-4xl lg:text-5xl font-bold text-charcoal mb-4 tracking-tight"
-          >
-            {t('landing.features.title')}
-          </motion.h2>
-          <motion.p variants={fadeInUp} className="text-lg text-kresna-gray-dark max-w-2xl mx-auto">
-            {t('landing.features.subtitle')}
-          </motion.p>
-        </motion.div>
+    <Section id="funciones" className="bg-white">
+      <SectionHeader
+        badge={t('landing.nav.features')}
+        badgeIcon={<Sparkles className="h-3.5 w-3.5" />}
+        title={t('landing.features.title')}
+        subtitle={t('landing.features.subtitle')}
+      />
 
-        <motion.div
-          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-5"
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: '-40px' }}
-          variants={staggerContainer}
-        >
-          {FEATURES.map((feature) => (
-            <motion.div
-              key={feature.title}
-              variants={fadeInUp}
-              className={cn(
-                'group rounded-3xl border border-kresna-border bg-white p-6 shadow-card transition-all duration-300 hover:shadow-kresna hover:border-primary-200',
-                feature.span === 'large' ? 'lg:col-span-2' : 'lg:col-span-1'
-              )}
-            >
-              <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-primary-50 border border-primary-100 mb-4 transition-shadow duration-300">
-                <feature.icon className="h-5 w-5 text-primary-500" />
-              </div>
-              <h3 className="text-lg font-semibold text-charcoal mb-2">{feature.title}</h3>
-              <p className="text-sm text-kresna-gray-dark leading-relaxed mb-4">{feature.description}</p>
-              <div className="flex flex-wrap gap-1.5">
-                {feature.tags.map((tag) => (
-                  <span key={tag} className="text-xs px-2 py-0.5 rounded-lg bg-kresna-light text-kresna-gray-dark border border-kresna-border">
-                    {tag}
-                  </span>
-                ))}
-              </div>
-            </motion.div>
-          ))}
-        </motion.div>
-      </div>
-    </section>
+      {/* Bento Grid: 2 large top row, 4 small bottom row */}
+      <motion.div
+        className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 lg:gap-6"
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, margin: '-60px' }}
+        variants={staggerContainer}
+      >
+        {FEATURES.map((feature) => (
+          <motion.div
+            key={feature.title}
+            variants={fadeInUp}
+            className={cn(
+              'group rounded-3xl border border-kresna-border bg-white transition-all duration-300 ease-kresna',
+              'hover:shadow-kresna hover:-translate-y-1 hover:border-primary-200',
+              feature.span === 'large' ? 'lg:col-span-2 p-8 lg:p-10' : 'lg:col-span-1 p-6 lg:p-8'
+            )}
+          >
+            <div className={cn(
+              'flex items-center justify-center rounded-2xl bg-primary-50 border border-primary-100 mb-5 transition-all duration-300 group-hover:shadow-md group-hover:scale-105',
+              feature.span === 'large' ? 'h-14 w-14' : 'h-12 w-12'
+            )}>
+              <feature.icon className={cn('text-primary-500', feature.span === 'large' ? 'h-7 w-7' : 'h-5 w-5')} />
+            </div>
+            <h3 className={cn(
+              'font-bold text-charcoal mb-3',
+              feature.span === 'large' ? 'text-xl lg:text-2xl' : 'text-lg'
+            )}>
+              {feature.title}
+            </h3>
+            <p className="text-sm text-kresna-gray-dark leading-relaxed mb-5">
+              {feature.description}
+            </p>
+            <div className="flex flex-wrap gap-2">
+              {feature.tags.map((tag) => (
+                <span
+                  key={tag}
+                  className="text-xs px-2.5 py-1 rounded-xl bg-kresna-light text-kresna-gray-dark border border-kresna-border font-medium"
+                >
+                  {tag}
+                </span>
+              ))}
+            </div>
+          </motion.div>
+        ))}
+      </motion.div>
+    </Section>
   );
 }
 
 // ============================================================================
-// PRICING
+// PRICING — 3-column, center elevated, annual/monthly toggle
 // ============================================================================
 
 function PricingSection(): JSX.Element {
   const { t } = useTranslation();
   const plans = usePricingPlans();
+  const [annual, setAnnual] = useState(false);
 
   return (
-    <section id="precios" className="relative py-24 sm:py-32 bg-kresna-light">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <motion.div
-          className="text-center mb-16"
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: '-80px' }}
-          variants={staggerContainer}
-        >
-          <motion.div variants={fadeInUp}>
-            <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary-50 text-primary-600 text-sm font-medium mb-4">
-              {t('landing.pricing.badge')}
-            </span>
-          </motion.div>
-          <motion.h2
-            variants={fadeInUp}
-            className="text-3xl sm:text-4xl lg:text-5xl font-bold text-charcoal mb-4 tracking-tight"
-          >
-            {t('landing.pricing.title')}
-          </motion.h2>
-          <motion.p variants={fadeInUp} className="text-lg text-kresna-gray-dark max-w-2xl mx-auto">
-            {t('landing.pricing.subtitle')}
-          </motion.p>
-          <motion.div variants={fadeInUp} className="mt-4">
-            <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-accent-50 border border-accent-200 text-accent-700 text-sm font-medium">
-              <Zap className="h-3.5 w-3.5" />
-              14 {t('landing.pricing.trialDays', { defaultValue: 'dias de prueba gratis en todos los planes' })}
-            </span>
-          </motion.div>
-        </motion.div>
+    <Section id="precios" className="bg-kresna-light">
+      <SectionHeader
+        badge={t('landing.pricing.badge')}
+        title={t('landing.pricing.title')}
+        subtitle={t('landing.pricing.subtitle')}
+      />
 
-        {/* Cards */}
-        <motion.div
-          className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5 lg:gap-6 max-w-5xl mx-auto"
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: '-40px' }}
-          variants={staggerContainer}
+      {/* Annual/Monthly toggle */}
+      <motion.div
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true }}
+        variants={fadeInUp}
+        className="flex items-center justify-center gap-4 mb-14"
+      >
+        <span className={cn('text-sm font-medium transition-colors', !annual ? 'text-charcoal' : 'text-kresna-gray')}>
+          {t('landing.pricing.monthly', { defaultValue: 'Mensual' })}
+        </span>
+        <button
+          onClick={() => setAnnual(!annual)}
+          className={cn(
+            'relative h-7 w-12 rounded-full transition-colors duration-300',
+            annual ? 'bg-primary-500' : 'bg-kresna-border'
+          )}
         >
-          {plans.map((plan) => (
+          <div
+            className={cn(
+              'absolute top-0.5 h-6 w-6 rounded-full bg-white shadow-sm transition-transform duration-300',
+              annual ? 'translate-x-[22px]' : 'translate-x-0.5'
+            )}
+          />
+        </button>
+        <span className={cn('text-sm font-medium transition-colors', annual ? 'text-charcoal' : 'text-kresna-gray')}>
+          {t('landing.pricing.annual', { defaultValue: 'Anual' })}
+        </span>
+        {annual && (
+          <span className="text-xs px-2.5 py-1 rounded-full bg-green-50 text-green-600 border border-green-100 font-semibold">
+            -20%
+          </span>
+        )}
+      </motion.div>
+
+      {/* Trial badge */}
+      <motion.div
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true }}
+        variants={fadeInUp}
+        className="text-center mb-12"
+      >
+        <span className="inline-flex items-center gap-2 px-5 py-2 rounded-full bg-accent-50 border border-accent-200 text-accent-700 text-sm font-semibold">
+          <Zap className="h-4 w-4" />
+          14 {t('landing.pricing.trialDays', { defaultValue: 'dias de prueba gratis en todos los planes' })}
+        </span>
+      </motion.div>
+
+      {/* Pricing Cards */}
+      <motion.div
+        className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8 max-w-5xl mx-auto items-start"
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, margin: '-40px' }}
+        variants={staggerContainer}
+      >
+        {plans.map((plan) => {
+          const monthlyPrice = parseInt(plan.price, 10);
+          const displayPrice = annual ? Math.round(monthlyPrice * 0.8) : monthlyPrice;
+
+          return (
             <motion.div
               key={plan.code}
-              variants={fadeInUp}
+              variants={scaleIn}
               className={cn(
-                'relative rounded-3xl p-6 lg:p-7 transition-all duration-300',
+                'relative rounded-3xl p-7 lg:p-9 transition-all duration-300 ease-kresna',
                 plan.highlighted
-                  ? 'bg-white border-2 border-primary-500 shadow-kresna-lg scale-[1.02] lg:scale-105'
+                  ? 'bg-white border-2 border-primary-500 shadow-kresna-lg lg:scale-105 lg:-my-4'
                   : 'border border-kresna-border bg-white shadow-card hover:shadow-kresna'
               )}
             >
               {plan.highlighted && (
-                <div className="absolute -top-3.5 left-1/2 -translate-x-1/2">
-                  <span className="px-4 py-1 rounded-full bg-primary-500 text-white text-xs font-semibold shadow-md">
+                <div className="absolute -top-4 left-1/2 -translate-x-1/2">
+                  <span className="px-5 py-1.5 rounded-full bg-gradient-primary text-white text-xs font-bold shadow-kresna-btn">
                     {t('billing.recommended')}
                   </span>
                 </div>
               )}
 
-              <div className="mb-6">
-                <h3 className="text-lg font-semibold text-charcoal mb-1">{plan.name}</h3>
-                <p className="text-sm text-kresna-gray-dark mb-4">{plan.description}</p>
-                <div className="flex items-baseline gap-1">
-                  <span className="text-4xl font-bold text-charcoal">&euro;{plan.price}</span>
-                  <span className="text-kresna-gray text-sm">{plan.period}</span>
-                </div>
-                <p className="text-xs text-primary-500 font-medium mt-2">{plan.employees}</p>
+              <div className="mb-8">
+                <h3 className="text-xl font-bold text-charcoal mb-2">{plan.name}</h3>
+                <p className="text-sm text-kresna-gray-dark leading-relaxed">{plan.description}</p>
               </div>
 
-              <ul className="space-y-3 mb-8">
+              <div className="mb-8">
+                <div className="flex items-baseline gap-1.5">
+                  <span className="text-5xl font-bold text-charcoal tracking-tight">&euro;{displayPrice}</span>
+                  <span className="text-kresna-gray text-sm">{plan.period}</span>
+                </div>
+                {annual && (
+                  <p className="text-xs text-kresna-gray line-through mt-1">&euro;{monthlyPrice}{plan.period}</p>
+                )}
+                <p className="text-sm text-primary-500 font-semibold mt-3">{plan.employees}</p>
+              </div>
+
+              <ul className="space-y-3.5 mb-10">
                 {plan.features.map((feature) => (
-                  <li key={feature} className="flex items-start gap-2.5">
-                    <Check className={cn(
-                      'h-4 w-4 shrink-0 mt-0.5',
-                      plan.highlighted ? 'text-primary-500' : 'text-kresna-gray-medium'
-                    )} />
+                  <li key={feature} className="flex items-start gap-3">
+                    <div className={cn(
+                      'flex h-5 w-5 shrink-0 items-center justify-center rounded-full mt-0.5',
+                      plan.highlighted ? 'bg-primary-50' : 'bg-kresna-light'
+                    )}>
+                      <Check className={cn(
+                        'h-3 w-3',
+                        plan.highlighted ? 'text-primary-500' : 'text-kresna-gray-medium'
+                      )} />
+                    </div>
                     <span className="text-sm text-kresna-gray-dark">{feature}</span>
                   </li>
                 ))}
               </ul>
 
               {plan.highlighted ? (
-                <Button asChild className="w-full">
+                <Button asChild size="touch" variant="gradient" className="w-full shadow-kresna-btn">
                   <Link to="/auth/signup">{plan.cta}</Link>
                 </Button>
               ) : (
-                <Button asChild variant="outline" className="w-full">
+                <Button asChild size="touch" variant="outline" className="w-full">
                   <Link to="/auth/signup">{plan.cta}</Link>
                 </Button>
               )}
             </motion.div>
-          ))}
-        </motion.div>
+          );
+        })}
+      </motion.div>
 
-        <p className="mt-10 text-center text-sm text-kresna-gray flex items-center justify-center gap-2">
-          <Shield className="h-4 w-4 text-primary-500" />
-          {t('landing.pricing.trialNote')}
-        </p>
-      </div>
-    </section>
+      <motion.p
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true }}
+        variants={fadeInUp}
+        className="mt-12 text-center text-sm text-kresna-gray flex items-center justify-center gap-2"
+      >
+        <Shield className="h-4 w-4 text-primary-500" />
+        {t('landing.pricing.trialNote')}
+      </motion.p>
+    </Section>
   );
 }
 
 // ============================================================================
-// FAQ
+// FAQ — Smooth accordion with AnimatePresence
 // ============================================================================
 
 function FAQSection(): JSX.Element {
@@ -766,28 +1079,12 @@ function FAQSection(): JSX.Element {
   const items = Array.isArray(faqData) ? faqData : [];
 
   return (
-    <section id="faq" className="relative py-24 sm:py-32 bg-white">
-      <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
-        <motion.div
-          className="text-center mb-12"
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: '-80px' }}
-          variants={staggerContainer}
-        >
-          <motion.span
-            variants={fadeInUp}
-            className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary-50 text-primary-600 text-sm font-medium mb-4"
-          >
-            {t('landing.nav.faq')}
-          </motion.span>
-          <motion.h2
-            variants={fadeInUp}
-            className="text-3xl sm:text-4xl lg:text-5xl font-bold text-charcoal mb-4 tracking-tight"
-          >
-            {t('landing.faq.title')}
-          </motion.h2>
-        </motion.div>
+    <Section id="faq" className="bg-white">
+      <div className="max-w-3xl mx-auto">
+        <SectionHeader
+          badge={t('landing.nav.faq')}
+          title={t('landing.faq.title')}
+        />
 
         <motion.div
           className="space-y-3"
@@ -796,95 +1093,137 @@ function FAQSection(): JSX.Element {
           viewport={{ once: true, margin: '-40px' }}
           variants={staggerContainer}
         >
-          {items.map((item, index) => (
-            <motion.div
-              key={item.q}
-              variants={fadeInUp}
-              className="rounded-2xl border border-kresna-border bg-white overflow-hidden shadow-card"
-            >
-              <button
-                onClick={() => setOpenIndex(openIndex === index ? null : index)}
-                className="w-full flex items-center justify-between p-5 sm:p-6 text-left group"
+          {items.map((item, index) => {
+            const isOpen = openIndex === index;
+            return (
+              <motion.div
+                key={item.q}
+                variants={fadeInUp}
+                className={cn(
+                  'rounded-3xl border bg-white overflow-hidden transition-all duration-300',
+                  isOpen
+                    ? 'border-primary-200 shadow-kresna'
+                    : 'border-kresna-border shadow-card hover:shadow-kresna hover:border-kresna-gray-medium'
+                )}
               >
-                <span className="font-medium text-charcoal pr-4 group-hover:text-primary-500 transition-colors">
-                  {item.q}
-                </span>
-                <ChevronDown
-                  className={cn(
-                    'h-5 w-5 text-kresna-gray shrink-0 transition-transform duration-300',
-                    openIndex === index && 'rotate-180 text-primary-500'
-                  )}
-                />
-              </button>
-              {openIndex === index && (
-                <motion.div
-                  initial={{ opacity: 0, height: 0 }}
-                  animate={{ opacity: 1, height: 'auto' }}
-                  transition={{ duration: 0.2 }}
-                  className="px-5 sm:px-6 pb-5 sm:pb-6 text-sm text-kresna-gray-dark leading-relaxed"
+                <button
+                  onClick={() => setOpenIndex(isOpen ? null : index)}
+                  className="w-full flex items-center justify-between p-6 sm:p-7 text-left group min-h-touch"
                 >
-                  {item.a}
-                </motion.div>
-              )}
-            </motion.div>
-          ))}
+                  <span className={cn(
+                    'font-semibold pr-4 transition-colors duration-200 text-base',
+                    isOpen ? 'text-primary-600' : 'text-charcoal group-hover:text-primary-500'
+                  )}>
+                    {item.q}
+                  </span>
+                  <div className={cn(
+                    'flex h-8 w-8 shrink-0 items-center justify-center rounded-xl transition-all duration-300',
+                    isOpen ? 'bg-primary-50 rotate-180' : 'bg-kresna-light'
+                  )}>
+                    <ChevronDown className={cn(
+                      'h-4 w-4 transition-colors',
+                      isOpen ? 'text-primary-500' : 'text-kresna-gray'
+                    )} />
+                  </div>
+                </button>
+                <AnimatePresence>
+                  {isOpen && (
+                    <motion.div
+                      initial={{ opacity: 0, height: 0 }}
+                      animate={{ opacity: 1, height: 'auto' }}
+                      exit={{ opacity: 0, height: 0 }}
+                      transition={{ duration: 0.3, ease: [0.44, 0, 0.56, 1] }}
+                    >
+                      <div className="px-6 sm:px-7 pb-6 sm:pb-7 text-sm text-kresna-gray-dark leading-relaxed">
+                        {item.a}
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </motion.div>
+            );
+          })}
         </motion.div>
 
-        <div className="mt-10 text-center">
-          <p className="text-kresna-gray mb-4 text-sm">{t('landing.faq.moreQuestions')}</p>
-          <Button variant="outline" asChild>
+        <motion.div
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true }}
+          variants={fadeInUp}
+          className="mt-12 text-center"
+        >
+          <p className="text-kresna-gray mb-5 text-sm">{t('landing.faq.moreQuestions')}</p>
+          <Button variant="outline" size="touch" asChild className="shadow-card">
             <a href="mailto:soporte@lsltgroup.es">{t('landing.faq.contactSupport')}</a>
           </Button>
-        </div>
+        </motion.div>
       </div>
-    </section>
+    </Section>
   );
 }
 
 // ============================================================================
-// FINAL CTA
+// FINAL CTA — Bold gradient section
 // ============================================================================
 
 function CTASection(): JSX.Element {
   const { t } = useTranslation();
 
   return (
-    <section className="relative py-24 sm:py-32 bg-primary-50 overflow-hidden">
-      {/* Subtle decorative gradient */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] rounded-full bg-primary-100 blur-[120px] opacity-50" />
+    <section className="relative py-24 sm:py-32 bg-gradient-to-br from-primary-600 via-primary-500 to-primary-400 overflow-hidden">
+      {/* Decorative elements */}
+      <div className="absolute top-0 right-0 w-[500px] h-[500px] rounded-full bg-white/5 blur-[100px]" />
+      <div className="absolute bottom-0 left-0 w-[400px] h-[400px] rounded-full bg-white/5 blur-[80px]" />
 
       <motion.div
-        className="relative z-10 mx-auto max-w-3xl px-4 sm:px-6 lg:px-8 text-center"
+        className="relative z-10 mx-auto max-w-kresna px-5 sm:px-8 lg:px-10 text-center"
         initial="hidden"
         whileInView="visible"
         viewport={{ once: true, margin: '-80px' }}
         variants={staggerContainer}
       >
+        <motion.div variants={fadeInUp} className="mb-6">
+          <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/15 text-white/90 text-sm font-medium border border-white/10">
+            <Sparkles className="h-3.5 w-3.5" />
+            {t('landing.hero.badge', { defaultValue: 'Cumplimiento garantizado con la ley laboral espanola' })}
+          </span>
+        </motion.div>
+
         <motion.h2
           variants={fadeInUp}
-          className="text-3xl sm:text-4xl lg:text-5xl font-bold text-charcoal mb-6 tracking-tight"
+          className="text-3xl sm:text-4xl lg:text-display font-bold text-white tracking-display leading-tight mb-6"
         >
           {t('landing.cta.readyTitle')}
         </motion.h2>
         <motion.p
           variants={fadeInUp}
-          className="text-lg text-kresna-gray-dark mb-10 max-w-xl mx-auto"
+          className="text-lg sm:text-xl text-white/70 mb-12 max-w-xl mx-auto leading-relaxed"
         >
           {t('landing.cta.readySubtitle')}
         </motion.p>
-        <motion.div variants={fadeInUp}>
+        <motion.div variants={fadeInUp} className="flex flex-col sm:flex-row items-center justify-center gap-4">
           <Button
             asChild
-            size="xl"
-            className="w-full sm:w-auto"
+            size="touch-lg"
+            className="w-full sm:w-auto bg-white text-primary-600 hover:bg-white/90 font-bold text-base shadow-kresna-lg"
           >
             <Link to="/auth/signup">
               {t('landing.cta.startNow')}
               <ArrowRight className="ml-2 h-5 w-5" />
             </Link>
           </Button>
+          <Button
+            variant="outline"
+            size="touch"
+            asChild
+            className="w-full sm:w-auto border-white/30 text-white hover:bg-white/10"
+          >
+            <a href="#precios">
+              {t('landing.nav.pricing')}
+            </a>
+          </Button>
         </motion.div>
-        <motion.p variants={fadeInUp} className="mt-6 text-sm text-kresna-gray">
+        <motion.p variants={fadeInUp} className="mt-8 text-sm text-white/50">
           {t('landing.hero.trustSignals')}
         </motion.p>
       </motion.div>
@@ -893,7 +1232,7 @@ function CTASection(): JSX.Element {
 }
 
 // ============================================================================
-// FOOTER
+// FOOTER — Dark background with grid columns
 // ============================================================================
 
 function Footer(): JSX.Element {
@@ -928,28 +1267,28 @@ function Footer(): JSX.Element {
   ];
 
   return (
-    <footer className="border-t border-kresna-border bg-white">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-16">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-8 lg:gap-12">
-          {/* Brand column */}
-          <div className="col-span-2 md:col-span-1">
-            <Link to="/" className="flex items-center gap-2.5 mb-4">
-              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary-500">
+    <footer className="bg-charcoal text-white">
+      <div className="mx-auto max-w-kresna px-5 sm:px-8 lg:px-10 py-16 lg:py-20">
+        <div className="grid grid-cols-2 md:grid-cols-5 gap-8 lg:gap-12">
+          {/* Brand column — spans 2 */}
+          <div className="col-span-2">
+            <Link to="/" className="flex items-center gap-3 mb-6 group">
+              <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-primary shadow-kresna-btn transition-transform duration-300 group-hover:scale-105">
                 <Clock className="h-5 w-5 text-white" />
               </div>
               <div className="flex flex-col">
-                <span className="text-lg font-bold text-charcoal leading-none tracking-tight">
+                <span className="text-lg font-bold text-white leading-none tracking-tight">
                   Torre Tempo
                 </span>
-                <span className="text-[10px] text-kresna-gray leading-none">
+                <span className="text-[10px] text-white/40 leading-none mt-0.5">
                   {t('landing.brandSubtitle')}
                 </span>
               </div>
             </Link>
-            <p className="text-sm text-kresna-gray-dark mb-4 leading-relaxed">
+            <p className="text-sm text-white/50 mb-6 leading-relaxed max-w-xs">
               {t('landing.footer.tagline')}
             </p>
-            <div className="flex items-center gap-1.5 text-xs text-kresna-gray">
+            <div className="flex items-center gap-2 text-xs text-white/30">
               <Globe className="h-3.5 w-3.5" />
               <span>{t('landing.footer.madeIn')}</span>
             </div>
@@ -958,16 +1297,24 @@ function Footer(): JSX.Element {
           {/* Link columns */}
           {footerColumns.map((column) => (
             <div key={column.title}>
-              <h4 className="font-semibold text-charcoal text-sm mb-4">{column.title}</h4>
-              <ul className="space-y-2.5">
+              <h4 className="font-semibold text-white/80 text-sm mb-5 uppercase tracking-wider">
+                {column.title}
+              </h4>
+              <ul className="space-y-3">
                 {column.links.map((link) => (
                   <li key={link.label}>
                     {link.href.startsWith('mailto:') || link.href.startsWith('#') ? (
-                      <a href={link.href} className="text-sm text-kresna-gray-dark hover:text-charcoal transition-colors duration-200">
+                      <a
+                        href={link.href}
+                        className="text-sm text-white/40 hover:text-white transition-colors duration-200"
+                      >
                         {link.label}
                       </a>
                     ) : (
-                      <Link to={link.href} className="text-sm text-kresna-gray-dark hover:text-charcoal transition-colors duration-200">
+                      <Link
+                        to={link.href}
+                        className="text-sm text-white/40 hover:text-white transition-colors duration-200"
+                      >
                         {link.label}
                       </Link>
                     )}
@@ -979,16 +1326,16 @@ function Footer(): JSX.Element {
         </div>
 
         {/* Bottom bar */}
-        <div className="mt-12 pt-8 border-t border-kresna-border flex flex-col sm:flex-row items-center justify-between gap-4">
-          <p className="text-xs text-kresna-gray">
+        <div className="mt-16 pt-8 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-4">
+          <p className="text-xs text-white/30">
             &copy; {new Date().getFullYear()} {t('landing.footer.copyright')}
           </p>
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-5">
             <LanguageSwitcher />
-            <Link to="/auth/signin" className="text-xs text-kresna-gray-dark hover:text-charcoal transition-colors">
+            <Link to="/auth/signin" className="text-xs text-white/40 hover:text-white transition-colors">
               {t('auth.signIn')}
             </Link>
-            <Link to="/auth/signup" className="text-xs text-kresna-gray-dark hover:text-charcoal transition-colors">
+            <Link to="/auth/signup" className="text-xs text-white/40 hover:text-white transition-colors">
               {t('auth.signUp')}
             </Link>
           </div>
@@ -1004,7 +1351,7 @@ function Footer(): JSX.Element {
 
 export default function Landing(): JSX.Element {
   return (
-    <div className="min-h-screen bg-white text-charcoal">
+    <div className="min-h-screen bg-white text-charcoal antialiased">
       <Navbar />
       <main>
         <HeroSection />

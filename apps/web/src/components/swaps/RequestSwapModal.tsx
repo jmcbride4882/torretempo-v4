@@ -231,9 +231,9 @@ export function RequestSwapModal({
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
               transition={{ type: 'spring', stiffness: 200, delay: 0.1 }}
-              className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-emerald-500/20"
+              className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-emerald-50 border border-emerald-200"
             >
-              <CheckCircle2 className="h-8 w-8 text-emerald-400" />
+              <CheckCircle2 className="h-8 w-8 text-emerald-600" />
             </motion.div>
             <h3 className="mb-2 text-lg font-semibold text-charcoal">{t('swaps.success.title')}</h3>
             <p className="text-sm text-kresna-gray">{t('swaps.success.message')}</p>
@@ -245,7 +245,7 @@ export function RequestSwapModal({
               <div className="space-y-2">
                 <Label htmlFor="offered-shift" className="flex items-center gap-2 text-sm text-kresna-gray-dark">
                   <Calendar className="h-3.5 w-3.5 text-kresna-gray" />
-                  {t('swaps.labels.shiftOffering')} <span className="text-red-400">*</span>
+                  {t('swaps.labels.shiftOffering')} <span className="text-red-500">*</span>
                 </Label>
                 <Select
                   value={formData.offered_shift_id}
@@ -365,7 +365,7 @@ export function RequestSwapModal({
                   id="reason"
                   value={formData.reason}
                   onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setFormData({ ...formData, reason: e.target.value })}
-                  className="w-full min-h-[80px] rounded-lg border border-kresna-border bg-white px-3 py-2 text-sm text-charcoal placeholder:text-kresna-gray focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500 resize-none"
+                  className="w-full min-h-[80px] rounded-xl border border-kresna-border bg-white px-3 py-2 text-sm text-charcoal placeholder:text-kresna-gray focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500 resize-none"
                   placeholder={t('swaps.labels.reasonPlaceholder')}
                   maxLength={500}
                 />
@@ -381,7 +381,7 @@ export function RequestSwapModal({
                 <motion.div
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
-                  className="rounded-xl border border-primary-500/20 bg-primary-500/5 p-4"
+                  className="rounded-xl border border-primary-200 bg-primary-50 p-4"
                 >
                   <p className="mb-3 text-xs font-medium text-primary-600">{t('swaps.labels.preview')}</p>
                   <div className="flex flex-col gap-3 sm:flex-row sm:items-stretch">
@@ -392,7 +392,7 @@ export function RequestSwapModal({
                     {selectedDesiredShift ? (
                       <ShiftPreview shift={selectedDesiredShift} label={t('swaps.labels.requesting')} />
                     ) : (
-                      <div className="flex-1 rounded-xl border border-dashed border-primary-500/30 bg-primary-500/5 p-4">
+                      <div className="flex-1 rounded-xl border border-dashed border-primary-200 bg-primary-50 p-4">
                         <p className="mb-2 text-[10px] font-medium uppercase tracking-wider text-kresna-gray">
                           {t('swaps.labels.requesting')}
                         </p>
@@ -411,9 +411,9 @@ export function RequestSwapModal({
                 <motion.div
                   initial={{ opacity: 0, y: -10 }}
                   animate={{ opacity: 1, y: 0 }}
-                  className="flex items-start gap-2 rounded-lg border border-red-500/20 bg-red-500/10 p-3"
+                  className="flex items-start gap-2 rounded-xl border border-red-200 bg-red-50 p-3"
                 >
-                  <AlertCircle className="h-4 w-4 shrink-0 text-red-400" />
+                  <AlertCircle className="h-4 w-4 shrink-0 text-red-600" />
                   <p className="text-sm text-red-600">{error}</p>
                 </motion.div>
               )}
@@ -425,7 +425,7 @@ export function RequestSwapModal({
                 variant="ghost"
                 onClick={() => onOpenChange(false)}
                 disabled={isSubmitting}
-                className="rounded-lg border border-kresna-border bg-kresna-light text-kresna-gray-dark hover:bg-kresna-light"
+                className="rounded-xl border border-kresna-border bg-kresna-light text-kresna-gray-dark hover:bg-kresna-light"
               >
                 {t('common.cancel')}
               </Button>
@@ -433,7 +433,7 @@ export function RequestSwapModal({
                 type="submit"
                 disabled={isSubmitting || !formData.offered_shift_id}
                 className={cn(
-                  'gap-2 rounded-lg bg-primary-600 text-white hover:bg-primary-500',
+                  'gap-2 rounded-xl bg-primary-600 text-white hover:bg-primary-500',
                   isSubmitting && 'cursor-not-allowed opacity-50'
                 )}
               >

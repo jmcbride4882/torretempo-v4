@@ -306,7 +306,7 @@ export function ClockInSheet({ isOpen, onClose, organizationSlug, shiftId }: Clo
         </div>
 
         {/* Location Section */}
-        <div className="bg-white border border-kresna-border shadow-sm rounded-xl p-4 space-y-3">
+        <div className="rounded-2xl border border-kresna-border bg-white p-5 shadow-card space-y-3">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <MapPin className="h-4 w-4 text-kresna-gray" />
@@ -339,7 +339,7 @@ export function ClockInSheet({ isOpen, onClose, organizationSlug, shiftId }: Clo
 
           {/* Location Status Content */}
           {isPermissionDenied ? (
-            <div className="flex items-start gap-3 p-3 rounded-lg bg-red-50 border border-red-200">
+            <div className="flex items-start gap-3 p-4 rounded-xl bg-red-50 border border-red-200">
               <AlertCircle className="h-5 w-5 text-red-600 flex-shrink-0 mt-0.5" />
               <div>
                 <p className="text-sm font-medium text-red-600">
@@ -396,7 +396,7 @@ export function ClockInSheet({ isOpen, onClose, organizationSlug, shiftId }: Clo
               </div>
             </div>
           ) : geoError ? (
-            <div className="flex items-center gap-3 p-3 rounded-lg bg-red-50 border border-red-200">
+            <div className="flex items-center gap-3 p-4 rounded-xl bg-red-50 border border-red-200">
               <AlertCircle className="h-5 w-5 text-red-600" />
               <p className="text-sm text-red-600">{geoError.message}</p>
             </div>
@@ -405,7 +405,7 @@ export function ClockInSheet({ isOpen, onClose, organizationSlug, shiftId }: Clo
 
         {/* NFC Status Section (shown when NFC method is selected) */}
         {selectedMethod === 'nfc' && (
-          <div className="bg-white border border-kresna-border shadow-sm rounded-xl p-4 space-y-3">
+          <div className="rounded-2xl border border-kresna-border bg-white p-5 shadow-card space-y-3">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <Wifi className="h-4 w-4 text-kresna-gray" />
@@ -425,7 +425,7 @@ export function ClockInSheet({ isOpen, onClose, organizationSlug, shiftId }: Clo
             </div>
 
             {nfcError ? (
-              <div className="flex items-start gap-3 p-3 rounded-lg bg-red-50 border border-red-200">
+              <div className="flex items-start gap-3 p-4 rounded-xl bg-red-50 border border-red-200">
                 <AlertCircle className="h-5 w-5 text-red-600 flex-shrink-0 mt-0.5" />
                 <div>
                   <p className="text-sm font-medium text-red-600">{t('clock.nfcError')}</p>
@@ -453,7 +453,7 @@ export function ClockInSheet({ isOpen, onClose, organizationSlug, shiftId }: Clo
                 )}
               </div>
             ) : !nfcSupported ? (
-              <div className="flex items-start gap-3 p-3 rounded-lg bg-amber-50 border border-amber-200">
+              <div className="flex items-start gap-3 p-4 rounded-xl bg-amber-50 border border-amber-200">
                 <AlertTriangle className="h-5 w-5 text-amber-600 flex-shrink-0 mt-0.5" />
                 <div>
                   <p className="text-sm font-medium text-amber-600">{t('clock.nfcNotSupported')}</p>
@@ -468,7 +468,7 @@ export function ClockInSheet({ isOpen, onClose, organizationSlug, shiftId }: Clo
 
         {/* QR Scanner Section (shown when QR method is selected) */}
         {selectedMethod === 'qr' && (
-          <div className="bg-white border border-kresna-border shadow-sm rounded-xl p-4 space-y-3">
+          <div className="rounded-2xl border border-kresna-border bg-white p-5 shadow-card space-y-3">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <QrCode className="h-4 w-4 text-kresna-gray" />
@@ -488,7 +488,7 @@ export function ClockInSheet({ isOpen, onClose, organizationSlug, shiftId }: Clo
             </div>
 
             {qrError ? (
-              <div className="flex items-start gap-3 p-3 rounded-lg bg-red-50 border border-red-200">
+              <div className="flex items-start gap-3 p-4 rounded-xl bg-red-50 border border-red-200">
                 <AlertCircle className="h-5 w-5 text-red-600 flex-shrink-0 mt-0.5" />
                 <div>
                   <p className="text-sm font-medium text-red-600">{t('clock.qrScannerError')}</p>
@@ -500,7 +500,7 @@ export function ClockInSheet({ isOpen, onClose, organizationSlug, shiftId }: Clo
                 {/* Camera preview container */}
                 <div
                   id="qr-reader-preview"
-                  className="w-full aspect-square rounded-lg overflow-hidden bg-black"
+                  className="w-full aspect-square rounded-xl overflow-hidden bg-black"
                 />
                 <p className="text-sm text-center text-kresna-gray">
                   {t('clock.pointCameraAtQR')}
@@ -518,7 +518,7 @@ export function ClockInSheet({ isOpen, onClose, organizationSlug, shiftId }: Clo
                 </div>
               </div>
             ) : !qrSupported ? (
-              <div className="flex items-start gap-3 p-3 rounded-lg bg-amber-50 border border-amber-200">
+              <div className="flex items-start gap-3 p-4 rounded-xl bg-amber-50 border border-amber-200">
                 <AlertTriangle className="h-5 w-5 text-amber-600 flex-shrink-0 mt-0.5" />
                 <div>
                   <p className="text-sm font-medium text-amber-600">{t('clock.cameraNotAvailable')}</p>
@@ -533,7 +533,7 @@ export function ClockInSheet({ isOpen, onClose, organizationSlug, shiftId }: Clo
 
         {/* PIN Input Section (shown when PIN method is selected) */}
         {selectedMethod === 'pin' && (
-          <div className="bg-white border border-kresna-border shadow-sm rounded-xl p-4 space-y-4">
+          <div className="rounded-2xl border border-kresna-border bg-white p-5 shadow-card space-y-4">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <Hash className="h-4 w-4 text-kresna-gray" />
@@ -582,8 +582,8 @@ export function ClockInSheet({ isOpen, onClose, organizationSlug, shiftId }: Clo
                   }}
                   disabled={isDisabled}
                   className={cn(
-                    "flex flex-col items-center justify-center gap-1 py-3 px-2 rounded-xl",
-                    "min-h-[56px] transition-all duration-200",
+                    "flex flex-col items-center justify-center gap-1 p-4 rounded-2xl",
+                    "min-h-touch transition-all duration-200",
                     "border",
                     isSelected && method.available
                       ? "bg-emerald-50 border-emerald-200 text-emerald-600"
@@ -617,7 +617,7 @@ export function ClockInSheet({ isOpen, onClose, organizationSlug, shiftId }: Clo
               "w-full px-3 py-2 rounded-xl resize-none",
               "bg-kresna-light border border-kresna-border",
               "text-charcoal placeholder:text-kresna-gray",
-              "focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-300",
+              "focus:outline-none focus:ring-2 focus:ring-primary-200 focus:border-primary-500",
               "text-sm"
             )}
           />
@@ -650,11 +650,8 @@ export function ClockInSheet({ isOpen, onClose, organizationSlug, shiftId }: Clo
             <Button
               onClick={handleClockIn}
               disabled={!canClockIn}
-              className={cn(
-                "h-14 text-lg font-semibold rounded-xl",
-                "bg-emerald-600 hover:bg-emerald-700",
-                "disabled:bg-kresna-border disabled:text-kresna-gray"
-              )}
+              variant="gradient"
+              className="h-20 w-full rounded-2xl text-lg font-bold"
             >
               {submitting ? (
                 <span className="flex items-center gap-2">

@@ -37,7 +37,7 @@ export function LocationFilter({
           className={cn(
             'h-9 gap-2 rounded-lg border px-3 text-sm font-medium transition-all',
             selectedLocationId
-              ? 'border-primary-500/30 bg-primary-50 text-primary-600 hover:bg-primary-100'
+              ? 'border-primary-200 bg-primary-50 text-primary-600 hover:bg-primary-100'
               : 'border-kresna-border bg-white text-kresna-gray-dark hover:bg-kresna-light hover:text-charcoal'
           )}
         >

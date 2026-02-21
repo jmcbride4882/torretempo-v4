@@ -180,7 +180,7 @@ export function JoinOrganizationModal({ open, onOpenChange, onSuccess }: JoinOrg
                       setInvitationCode(e.target.value);
                       if (state === 'error') resetState();
                     }}
-                    className={`pl-10 ${state === 'error' ? 'border-red-500/50 focus:border-red-500' : ''}`}
+                    className={`pl-10 ${state === 'error' ? 'border-red-300 focus:border-red-500' : ''}`}
                     disabled={state === 'loading'}
                     autoFocus
                     autoComplete="off"
@@ -213,12 +213,13 @@ export function JoinOrganizationModal({ open, onOpenChange, onSuccess }: JoinOrg
                   variant="outline"
                   onClick={handleClose}
                   disabled={state === 'loading'}
-                  className="flex-1 border-kresna-border bg-kresna-light hover:bg-kresna-light"
+                  className="flex-1 border-kresna-border bg-kresna-light hover:bg-white"
                 >
                   Cancel
                 </Button>
                 <Button
                   type="submit"
+                  variant="gradient"
                   disabled={state === 'loading' || !invitationCode.trim()}
                   className="flex-1 gap-2"
                 >

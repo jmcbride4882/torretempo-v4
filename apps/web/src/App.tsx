@@ -22,6 +22,7 @@ import VerifyEmail from '@/pages/auth/VerifyEmail';
 import CreateTenant from '@/pages/onboarding/CreateTenant';
 import SelectOrganization from '@/pages/onboarding/SelectOrganization';
 import AcceptInvitation from '@/pages/onboarding/AcceptInvitation';
+import OnboardingHub from '@/pages/onboarding/OnboardingHub';
 
 // Tenant pages
 import AppShell from '@/components/layout/AppShell';
@@ -48,6 +49,7 @@ function App() {
         {/* Protected routes */}
         <Route element={<ProtectedRoute />}>
           {/* Onboarding */}
+          <Route path="/onboarding" element={<OnboardingHub />} />
           <Route path="/onboarding/select" element={<SelectOrganization />} />
           <Route path="/onboarding/create" element={<CreateTenant />} />
 

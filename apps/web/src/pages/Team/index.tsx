@@ -2,11 +2,10 @@ import { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useQuery } from '@tanstack/react-query';
-import { Users, UserPlus, Search, Mail, Shield } from 'lucide-react';
+import { Users, UserPlus, Search, Mail, Shield, LayoutGrid, List } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
-import { Card } from '@/components/ui/card';
 import {
   Dialog,
   DialogContent,
@@ -30,12 +29,26 @@ async function fetchEmployees(slug: string) {
   return res.json();
 }
 
-const roleVariant: Record<string, 'default' | 'secondary' | 'success' | 'warning'> = {
-  owner: 'warning',
-  tenantAdmin: 'default',
-  manager: 'success',
-  employee: 'secondary',
+const roleColor: Record<string, string> = {
+  owner: 'bg-amber-100 text-amber-700 border-amber-200',
+  tenantAdmin: 'bg-primary-100 text-primary-700 border-primary-200',
+  manager: 'bg-emerald-100 text-emerald-700 border-emerald-200',
+  employee: 'bg-kresna-light text-kresna-gray-dark border-kresna-border',
 };
+
+const avatarColors = [
+  'bg-primary-500',
+  'bg-emerald-500',
+  'bg-amber-500',
+  'bg-rose-500',
+  'bg-violet-500',
+  'bg-cyan-500',
+];
+
+function getAvatarColor(name: string): string {
+  const index = (name || '').charCodeAt(0) % avatarColors.length;
+  return avatarColors[index] || avatarColors[0]!;
+}
 
 export default function TeamPage() {
   const { slug } = useParams<{ slug: string }>();
@@ -45,6 +58,7 @@ export default function TeamPage() {
   const [search, setSearch] = useState('');
   const [inviteOpen, setInviteOpen] = useState(false);
   const [inviteEmail, setInviteEmail] = useState('');
+  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
 
   const membersQuery = useQuery({
     queryKey: ['members', slug],
@@ -72,167 +86,283 @@ export default function TeamPage() {
   );
 
   return (
-    <div>
-      <div className="page-header">
-        <div>
-          <h1 className="page-title">{t('team.title')}</h1>
-          <p className="page-subtitle">{t('team.memberCount', { count: members.length })}</p>
+    <div className="mx-auto max-w-7xl space-y-6">
+      {/* Page header */}
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex items-center gap-3">
+          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary-50">
+            <Users className="h-5 w-5 text-primary-600" />
+          </div>
+          <div>
+            <h1 className="text-2xl font-bold text-charcoal tracking-tight">{t('team.title')}</h1>
+            <p className="text-sm text-kresna-gray">{t('team.memberCount', { count: members.length })}</p>
+          </div>
         </div>
-        <div className="flex gap-2">
-          <Button onClick={() => setInviteOpen(true)} size="sm">
-            <UserPlus className="h-4 w-4 mr-2" />
-            {t('team.inviteMember')}
-          </Button>
-        </div>
+        <Button
+          onClick={() => setInviteOpen(true)}
+          variant="gradient"
+          size="sm"
+          className="gap-1.5"
+        >
+          <UserPlus className="h-4 w-4" />
+          {t('team.inviteMember')}
+        </Button>
       </div>
 
-      {/* Tabs */}
-      <div className="flex gap-1 mb-6 bg-kresna-light rounded-lg p-1 w-fit">
-        {tabs.map((item) => (
-          <button
-            key={item.key}
-            onClick={() => setTab(item.key)}
-            className={cn(
-              'px-4 py-2 text-sm font-medium rounded-md transition-colors',
-              tab === item.key
-                ? 'bg-white text-charcoal shadow-sm'
-                : 'text-kresna-gray hover:text-kresna-gray-dark'
-            )}
-          >
-            {item.label}
-          </button>
-        ))}
-      </div>
+      {/* Controls row: Tabs + View toggle + Search */}
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        {/* Pill tabs */}
+        <div className="flex gap-1 rounded-full bg-kresna-light p-1">
+          {tabs.map((item) => (
+            <button
+              key={item.key}
+              onClick={() => setTab(item.key)}
+              className={cn(
+                'px-5 py-2 text-sm font-medium rounded-full transition-all min-h-touch',
+                tab === item.key
+                  ? 'bg-white text-charcoal shadow-sm'
+                  : 'text-kresna-gray hover:text-kresna-gray-dark'
+              )}
+            >
+              {item.label}
+            </button>
+          ))}
+        </div>
 
-      {/* Search */}
-      <div className="relative mb-6 max-w-sm">
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-kresna-gray" />
-        <Input
-          placeholder={t('common.search')}
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          className="pl-10"
-        />
+        <div className="flex items-center gap-3">
+          {/* View toggle (members tab only) */}
+          {tab === 'members' && (
+            <div className="flex gap-1 rounded-lg border border-kresna-border bg-white p-0.5">
+              <button
+                onClick={() => setViewMode('grid')}
+                className={cn(
+                  'h-8 w-8 flex items-center justify-center rounded-md transition-colors',
+                  viewMode === 'grid' ? 'bg-primary-50 text-primary-600' : 'text-kresna-gray hover:text-charcoal'
+                )}
+              >
+                <LayoutGrid className="h-4 w-4" />
+              </button>
+              <button
+                onClick={() => setViewMode('list')}
+                className={cn(
+                  'h-8 w-8 flex items-center justify-center rounded-md transition-colors',
+                  viewMode === 'list' ? 'bg-primary-50 text-primary-600' : 'text-kresna-gray hover:text-charcoal'
+                )}
+              >
+                <List className="h-4 w-4" />
+              </button>
+            </div>
+          )}
+
+          {/* Search */}
+          <div className="relative w-full sm:w-64">
+            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-kresna-gray" />
+            <Input
+              placeholder={t('common.search')}
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="pl-10 rounded-xl h-10"
+            />
+          </div>
+        </div>
       </div>
 
       {/* Members tab */}
       {tab === 'members' && (
-        <div className="space-y-2">
+        <>
           {membersQuery.isLoading ? (
-            <div className="space-y-3">
-              {[1, 2, 3].map((i) => (
-                <div key={i} className="skeleton h-16 rounded-xl" />
+            <div className={cn(
+              'gap-4',
+              viewMode === 'grid' ? 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3' : 'space-y-2'
+            )}>
+              {[1, 2, 3, 4, 5, 6].map((i) => (
+                <div key={i} className="h-24 rounded-2xl bg-kresna-light border border-kresna-border animate-pulse" />
               ))}
             </div>
           ) : members.length === 0 ? (
-            <div className="empty-state">
-              <div className="empty-state-icon">
-                <Users className="h-8 w-8 text-kresna-gray" />
+            <div className="flex flex-col items-center justify-center rounded-3xl border border-dashed border-kresna-border bg-kresna-light px-6 py-20 text-center">
+              <div className="h-16 w-16 rounded-2xl bg-primary-50 flex items-center justify-center mb-4">
+                <Users className="h-8 w-8 text-primary-600" />
               </div>
-              <p className="text-kresna-gray">{t('team.noMembers')}</p>
+              <p className="text-lg font-semibold text-charcoal mb-1">{t('team.noMembers')}</p>
+              <Button variant="gradient" onClick={() => setInviteOpen(true)} className="gap-1.5 mt-6">
+                <UserPlus className="h-4 w-4" />
+                {t('team.inviteMember')}
+              </Button>
+            </div>
+          ) : viewMode === 'grid' ? (
+            /* Grid view — Card-based */
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              {members.map((member: any) => {
+                const name = member.user?.name || member.name || '?';
+                return (
+                  <div
+                    key={member.id}
+                    onClick={() => navigate(`/t/${slug}/team/${member.userId || member.id}`)}
+                    className="group rounded-2xl border border-kresna-border bg-white p-5 shadow-card cursor-pointer hover:shadow-kresna hover:-translate-y-0.5 transition-all duration-300"
+                  >
+                    <div className="flex items-center gap-4">
+                      <div className={cn(
+                        'flex h-12 w-12 items-center justify-center rounded-full text-white font-semibold text-lg shrink-0',
+                        getAvatarColor(name)
+                      )}>
+                        {name.charAt(0).toUpperCase()}
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <p className="font-semibold text-charcoal truncate group-hover:text-primary-600 transition-colors">
+                          {name}
+                        </p>
+                        <p className="text-sm text-kresna-gray truncate">
+                          {member.user?.email || member.email}
+                        </p>
+                      </div>
+                    </div>
+                    <div className="mt-4 flex items-center justify-between">
+                      <span className={cn(
+                        'inline-flex items-center rounded-full px-2.5 py-1 text-xs font-semibold border',
+                        roleColor[member.role] || roleColor.employee
+                      )}>
+                        {t(`team.roles.${member.role}` as any) || member.role}
+                      </span>
+                    </div>
+                  </div>
+                );
+              })}
             </div>
           ) : (
-            members.map((member: any) => (
-              <Card
-                key={member.id}
-                className="flex items-center gap-4 p-4 cursor-pointer hover:shadow-md transition-shadow"
-                onClick={() => navigate(`/t/${slug}/team/${member.userId || member.id}`)}
-              >
-                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary-100 text-primary-700 font-semibold text-sm">
-                  {(member.user?.name || member.name || '?').charAt(0).toUpperCase()}
-                </div>
-                <div className="flex-1 min-w-0">
-                  <p className="font-medium text-charcoal truncate">{member.user?.name || member.name}</p>
-                  <p className="text-sm text-kresna-gray truncate">{member.user?.email || member.email}</p>
-                </div>
-                <Badge variant={roleVariant[member.role] || 'secondary'}>
-                  {t(`team.roles.${member.role}` as any) || member.role}
-                </Badge>
-              </Card>
-            ))
+            /* List view */
+            <div className="space-y-2">
+              {members.map((member: any) => {
+                const name = member.user?.name || member.name || '?';
+                return (
+                  <div
+                    key={member.id}
+                    onClick={() => navigate(`/t/${slug}/team/${member.userId || member.id}`)}
+                    className="flex items-center gap-4 rounded-2xl border border-kresna-border bg-white p-4 shadow-card cursor-pointer hover:shadow-kresna hover:-translate-y-0.5 transition-all duration-300"
+                  >
+                    <div className={cn(
+                      'flex h-10 w-10 items-center justify-center rounded-full text-white font-semibold text-sm shrink-0',
+                      getAvatarColor(name)
+                    )}>
+                      {name.charAt(0).toUpperCase()}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="font-medium text-charcoal truncate">{name}</p>
+                      <p className="text-sm text-kresna-gray truncate">{member.user?.email || member.email}</p>
+                    </div>
+                    <span className={cn(
+                      'inline-flex items-center rounded-full px-2.5 py-1 text-xs font-semibold border shrink-0',
+                      roleColor[member.role] || roleColor.employee
+                    )}>
+                      {t(`team.roles.${member.role}` as any) || member.role}
+                    </span>
+                  </div>
+                );
+              })}
+            </div>
           )}
-        </div>
+        </>
       )}
 
       {/* Profiles tab */}
       {tab === 'profiles' && (
-        <div className="space-y-2">
+        <>
           {employeesQuery.isLoading ? (
             <div className="space-y-3">
               {[1, 2, 3].map((i) => (
-                <div key={i} className="skeleton h-16 rounded-xl" />
+                <div key={i} className="h-16 rounded-2xl bg-kresna-light border border-kresna-border animate-pulse" />
               ))}
             </div>
           ) : employees.length === 0 ? (
-            <div className="empty-state">
-              <div className="empty-state-icon">
-                <Shield className="h-8 w-8 text-kresna-gray" />
+            <div className="flex flex-col items-center justify-center rounded-3xl border border-dashed border-kresna-border bg-kresna-light px-6 py-20 text-center">
+              <div className="h-16 w-16 rounded-2xl bg-primary-50 flex items-center justify-center mb-4">
+                <Shield className="h-8 w-8 text-primary-600" />
               </div>
-              <p className="text-kresna-gray">{t('team.noProfiles')}</p>
+              <p className="text-lg font-semibold text-charcoal mb-1">{t('team.noProfiles')}</p>
             </div>
           ) : (
-            <div className="overflow-x-auto">
-              <table className="data-table">
-                <thead>
-                  <tr>
-                    <th>{t('common.name')}</th>
-                    <th>{t('team.dni')}</th>
-                    <th>{t('team.jobTitle')}</th>
-                    <th>{t('team.contractType')}</th>
-                    <th>{t('team.hoursPerWeek')}</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {employees.map((emp: any) => (
-                    <tr
-                      key={emp.id}
-                      className="cursor-pointer"
-                      onClick={() => navigate(`/t/${slug}/team/${emp.userId || emp.id}`)}
-                    >
-                      <td className="font-medium text-charcoal">{emp.name || emp.userId}</td>
-                      <td>{'****' + (emp.dni || '').slice(-5)}</td>
-                      <td>{emp.jobTitle || '-'}</td>
-                      <td>
-                        <Badge variant="secondary">
-                          {t(`team.contractTypes.${emp.contractType}` as any) || emp.contractType}
-                        </Badge>
-                      </td>
-                      <td>{emp.hoursPerWeek || 40}h</td>
+            <div className="rounded-3xl border border-kresna-border bg-white shadow-card overflow-hidden">
+              <div className="overflow-x-auto">
+                <table className="w-full">
+                  <thead>
+                    <tr className="border-b border-kresna-border bg-kresna-light/50">
+                      <th className="px-6 py-4 text-left text-xs font-semibold text-kresna-gray uppercase tracking-wider">
+                        {t('common.name')}
+                      </th>
+                      <th className="px-6 py-4 text-left text-xs font-semibold text-kresna-gray uppercase tracking-wider">
+                        {t('team.dni')}
+                      </th>
+                      <th className="px-6 py-4 text-left text-xs font-semibold text-kresna-gray uppercase tracking-wider">
+                        {t('team.jobTitle')}
+                      </th>
+                      <th className="px-6 py-4 text-left text-xs font-semibold text-kresna-gray uppercase tracking-wider">
+                        {t('team.contractType')}
+                      </th>
+                      <th className="px-6 py-4 text-left text-xs font-semibold text-kresna-gray uppercase tracking-wider">
+                        {t('team.hoursPerWeek')}
+                      </th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
+                  </thead>
+                  <tbody className="divide-y divide-kresna-border">
+                    {employees.map((emp: any) => (
+                      <tr
+                        key={emp.id}
+                        className="cursor-pointer hover:bg-kresna-light/40 transition-colors"
+                        onClick={() => navigate(`/t/${slug}/team/${emp.userId || emp.id}`)}
+                      >
+                        <td className="px-6 py-4">
+                          <p className="font-medium text-charcoal">{emp.name || emp.userId}</p>
+                        </td>
+                        <td className="px-6 py-4 text-sm text-kresna-gray font-mono">
+                          {'****' + (emp.dni || '').slice(-5)}
+                        </td>
+                        <td className="px-6 py-4 text-sm text-kresna-gray-dark">{emp.jobTitle || '-'}</td>
+                        <td className="px-6 py-4">
+                          <Badge variant="secondary" className="rounded-full">
+                            {t(`team.contractTypes.${emp.contractType}` as any) || emp.contractType}
+                          </Badge>
+                        </td>
+                        <td className="px-6 py-4 text-sm text-kresna-gray-dark font-medium">
+                          {emp.hoursPerWeek || 40}h
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
             </div>
           )}
-        </div>
+        </>
       )}
 
       {/* Invite dialog */}
       <Dialog open={inviteOpen} onOpenChange={setInviteOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>{t('team.inviteMember')}</DialogTitle>
+            <DialogTitle className="text-xl">{t('team.inviteMember')}</DialogTitle>
           </DialogHeader>
           <div className="space-y-4 py-4">
             <div>
-              <label className="text-sm font-medium text-kresna-gray-dark mb-1.5 block">{t('team.inviteEmail')}</label>
+              <label className="text-sm font-medium text-kresna-gray-dark mb-2 block">
+                {t('team.inviteEmail')}
+              </label>
               <div className="relative">
-                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-kresna-gray" />
+                <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-kresna-gray" />
                 <Input
                   type="email"
                   placeholder={t('team.emailPlaceholder')}
                   value={inviteEmail}
                   onChange={(e) => setInviteEmail(e.target.value)}
-                  className="pl-10"
+                  className="pl-10 rounded-xl h-12"
                 />
               </div>
             </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setInviteOpen(false)}>
+            <Button variant="outline" onClick={() => setInviteOpen(false)} className="rounded-xl">
               {t('common.cancel')}
             </Button>
-            <Button onClick={() => setInviteOpen(false)}>
+            <Button variant="gradient" onClick={() => setInviteOpen(false)} className="rounded-xl">
               {t('common.invite')}
             </Button>
           </DialogFooter>

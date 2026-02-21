@@ -36,6 +36,14 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 
+/* ──────────────────────────────────────────────────────────────
+   Kresna AdminLayout — Redesigned
+   - Filled active nav backgrounds (not left-border)
+   - Dense professional aesthetic
+   - Kresna shadows + transitions
+   - Section labels with proper spacing
+   ────────────────────────────────────────────────────────────── */
+
 // Admin page imports
 import TenantsPage from './TenantsPage';
 import UsersPage from './UsersPage';
@@ -51,8 +59,6 @@ import SessionsPage from './SessionsPage';
 import SettingsPage from './SettingsPage';
 import PlansPage from './PlansPage';
 import BillingPage from './BillingPage';
-
-// --- Grouped navigation model ---
 
 interface NavItem {
   icon: LucideIcon;
@@ -107,15 +113,12 @@ const adminNavSections: NavSection[] = [
   },
 ];
 
-// Flat list for mobile bottom tabs (first 4 items across all sections)
 const mobileBottomItems: NavItem[] = [
   { icon: Building2, labelKey: 'admin.nav.tenants', path: 'tenants' },
   { icon: Users, labelKey: 'admin.nav.users', path: 'users' },
   { icon: Server, labelKey: 'admin.nav.system', path: 'system' },
   { icon: FileText, labelKey: 'admin.nav.audit', path: 'audit' },
 ];
-
-// --- Shared sidebar nav rendering ---
 
 interface SidebarNavProps {
   onNavigate?: () => void;
@@ -125,13 +128,13 @@ function SidebarNav({ onNavigate }: SidebarNavProps) {
   const { t } = useTranslation();
 
   return (
-    <nav className="flex-1 overflow-y-auto px-3 py-4">
+    <nav className="flex-1 overflow-y-auto py-4 scrollbar-thin">
       {adminNavSections.map((section) => (
-        <div key={section.titleKey} className="mb-5">
-          <h3 className="mb-1.5 px-3 text-xs font-semibold uppercase tracking-wider text-kresna-gray">
+        <div key={section.titleKey} className="mb-4">
+          <h3 className="mb-2 px-5 text-caption font-semibold uppercase tracking-widest text-kresna-gray">
             {t(section.titleKey)}
           </h3>
-          <div className="space-y-0.5">
+          <div className="space-y-1 px-2">
             {section.items.map((item) => (
               <NavLink
                 key={item.path}
@@ -139,10 +142,10 @@ function SidebarNav({ onNavigate }: SidebarNavProps) {
                 onClick={onNavigate}
                 className={({ isActive }) =>
                   cn(
-                    'group flex items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium transition-colors',
+                    'group flex items-center gap-3 rounded-2xl px-4 py-2.5 text-body-sm font-medium transition-all duration-200',
                     isActive
-                      ? 'bg-primary-50 text-primary-600 border-l-2 border-primary-500'
-                      : 'border-l-2 border-transparent text-kresna-gray-dark hover:bg-kresna-light hover:text-charcoal'
+                      ? 'bg-primary-500 text-white shadow-kresna-btn'
+                      : 'text-kresna-gray-dark hover:bg-kresna-light hover:text-charcoal'
                   )
                 }
               >
@@ -150,10 +153,8 @@ function SidebarNav({ onNavigate }: SidebarNavProps) {
                   <>
                     <item.icon
                       className={cn(
-                        'h-5 w-5 shrink-0 transition-colors',
-                        isActive
-                          ? 'text-primary-500'
-                          : 'text-kresna-gray group-hover:text-kresna-gray-dark'
+                        'h-[18px] w-[18px] shrink-0 transition-colors',
+                        isActive ? 'text-white' : 'text-kresna-gray group-hover:text-kresna-gray-dark'
                       )}
                     />
                     <span className="flex-1 truncate">{t(item.labelKey)}</span>
@@ -166,13 +167,13 @@ function SidebarNav({ onNavigate }: SidebarNavProps) {
       ))}
 
       {/* Back to app link */}
-      <div className="mt-2 border-t border-kresna-border pt-3">
+      <div className="mt-2 border-t border-kresna-border mx-3 pt-3">
         <NavLink
           to="/"
           onClick={onNavigate}
-          className="group flex items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium text-kresna-gray-dark transition-colors hover:bg-kresna-light hover:text-charcoal"
+          className="group flex items-center gap-3 rounded-2xl px-4 py-2.5 text-body-sm font-medium text-kresna-gray-dark transition-all duration-200 hover:bg-kresna-light hover:text-charcoal mx-[-4px]"
         >
-          <Clock className="h-5 w-5 shrink-0 text-kresna-gray group-hover:text-kresna-gray-dark" />
+          <Clock className="h-[18px] w-[18px] shrink-0 text-kresna-gray group-hover:text-kresna-gray-dark" />
           <span className="flex-1">{t('admin.backToApp')}</span>
           <ChevronRight className="h-4 w-4 text-kresna-gray" />
         </NavLink>
@@ -181,32 +182,30 @@ function SidebarNav({ onNavigate }: SidebarNavProps) {
   );
 }
 
-// --- Sidebar user card ---
-
 function SidebarUserCard() {
   const { user, signOut } = useAuth();
   const { t } = useTranslation();
 
   return (
     <div className="border-t border-kresna-border p-3">
-      <div className="flex items-center gap-3 rounded-xl bg-kresna-light p-3">
-        <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-primary-500 text-sm font-medium text-white">
+      <div className="flex items-center gap-3 rounded-2xl bg-kresna-light p-3">
+        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-gradient-primary text-sm font-bold text-white">
           {user?.name?.charAt(0).toUpperCase() || 'A'}
         </div>
         <div className="flex-1 overflow-hidden">
           <div className="flex items-center gap-2">
-            <p className="truncate text-sm font-medium text-charcoal">
+            <p className="truncate text-body-sm font-medium text-charcoal">
               {user?.name || 'Admin'}
             </p>
-            <span className="shrink-0 rounded-full bg-primary-50 px-1.5 py-0.5 text-[10px] font-semibold uppercase text-primary-600">
+            <span className="shrink-0 rounded-full bg-primary-50 px-2 py-0.5 text-[10px] font-bold uppercase text-primary-600">
               {t('admin.adminBadge')}
             </span>
           </div>
-          <p className="truncate text-xs text-kresna-gray">{user?.email}</p>
+          <p className="truncate text-caption text-kresna-gray">{user?.email}</p>
         </div>
         <button
           onClick={signOut}
-          className="shrink-0 rounded-lg p-2 text-kresna-gray transition-colors hover:bg-kresna-border/50 hover:text-kresna-gray-dark"
+          className="shrink-0 rounded-xl p-2 text-kresna-gray transition-colors hover:bg-kresna-border/50 hover:text-red-500"
           title={t('admin.signOut')}
         >
           <LogOut className="h-4 w-4" />
@@ -216,25 +215,21 @@ function SidebarUserCard() {
   );
 }
 
-// --- Sidebar logo ---
-
 function SidebarLogo() {
   const { t } = useTranslation();
 
   return (
     <div className="flex h-16 items-center gap-3 border-b border-kresna-border px-4">
-      <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary-500">
+      <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-gradient-primary shadow-kresna-btn flex-shrink-0">
         <Shield className="h-5 w-5 text-white" />
       </div>
       <div className="flex flex-col">
-        <span className="text-sm font-semibold text-charcoal">Torre Tempo</span>
-        <span className="text-xs text-primary-500">{t('admin.panel')}</span>
+        <span className="text-body-sm font-semibold text-charcoal">Torre Tempo</span>
+        <span className="text-caption font-medium text-primary-500">{t('admin.panel')}</span>
       </div>
     </div>
   );
 }
-
-// --- Desktop sidebar ---
 
 function AdminSidebar() {
   return (
@@ -245,8 +240,6 @@ function AdminSidebar() {
     </aside>
   );
 }
-
-// --- Main layout ---
 
 export default function AdminLayout() {
   const { user, signOut } = useAuth();
@@ -266,27 +259,24 @@ export default function AdminLayout() {
       {/* Mobile navigation drawer */}
       {isMobileMenuOpen && (
         <>
-          {/* Backdrop */}
           <div
             onClick={closeMobileMenu}
-            className="fixed inset-0 z-50 bg-black/40 lg:hidden"
+            className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm lg:hidden animate-fade-in"
           />
-          {/* Drawer */}
-          <aside className="fixed left-0 top-0 z-50 flex h-screen w-64 flex-col bg-white border-r border-kresna-border shadow-kresna-lg lg:hidden">
-            {/* Logo and close button */}
+          <aside className="fixed left-0 top-0 z-50 flex h-screen w-64 flex-col bg-white border-r border-kresna-border shadow-kresna-lg lg:hidden animate-slide-up">
             <div className="flex h-16 items-center justify-between border-b border-kresna-border px-4">
               <div className="flex items-center gap-3">
-                <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary-500">
+                <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-gradient-primary shadow-sm">
                   <Shield className="h-5 w-5 text-white" />
                 </div>
                 <div className="flex flex-col">
-                  <span className="text-sm font-semibold text-charcoal">Torre Tempo</span>
-                  <span className="text-xs text-primary-500">{t('admin.panel')}</span>
+                  <span className="text-body-sm font-semibold text-charcoal">Torre Tempo</span>
+                  <span className="text-caption font-medium text-primary-500">{t('admin.panel')}</span>
                 </div>
               </div>
               <button
                 onClick={closeMobileMenu}
-                className="rounded-lg p-2 text-kresna-gray hover:bg-kresna-light hover:text-kresna-gray-dark"
+                className="rounded-xl p-2 text-kresna-gray hover:bg-kresna-light hover:text-kresna-gray-dark transition-colors"
               >
                 <X className="h-5 w-5" />
               </button>
@@ -301,21 +291,21 @@ export default function AdminLayout() {
       {/* Main content area */}
       <div className="pb-16 lg:pb-0 lg:pl-64">
         {/* Header */}
-        <header className="sticky top-0 z-30 h-16 border-b border-kresna-border bg-white">
-          <div className="flex h-full items-center justify-between px-4 lg:px-6">
+        <header className="sticky top-0 z-30 h-16 glass border-b border-kresna-border/50">
+          <div className="flex h-full items-center justify-between px-4 lg:px-8">
             {/* Mobile: Menu button and Logo */}
             <div className="flex items-center gap-3 lg:hidden">
               <button
                 onClick={() => setIsMobileMenuOpen(true)}
-                className="rounded-lg p-2 text-kresna-gray-dark hover:bg-kresna-light hover:text-charcoal"
+                className="rounded-2xl p-2 text-kresna-gray-dark hover:bg-kresna-light hover:text-charcoal transition-colors"
               >
                 <Menu className="h-5 w-5" />
               </button>
               <div className="flex items-center gap-2">
-                <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-primary-500">
+                <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-gradient-primary shadow-sm">
                   <Shield className="h-4 w-4 text-white" />
                 </div>
-                <span className="font-semibold text-charcoal">
+                <span className="font-semibold text-charcoal text-body-sm">
                   {t('admin.adminBadge')}
                 </span>
               </div>
@@ -323,7 +313,7 @@ export default function AdminLayout() {
 
             {/* Desktop: Admin badge */}
             <div className="hidden items-center gap-3 lg:flex">
-              <span className="rounded-full bg-primary-50 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-primary-600">
+              <span className="rounded-full bg-primary-50 px-3 py-1.5 text-caption font-bold uppercase tracking-wider text-primary-600">
                 {t('admin.panel')}
               </span>
             </div>
@@ -332,11 +322,11 @@ export default function AdminLayout() {
             <div className="flex items-center gap-2">
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" className="gap-2 px-2">
-                    <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary-500 text-sm font-medium text-white">
+                  <Button variant="ghost" className="gap-2 px-2 rounded-2xl">
+                    <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-primary text-sm font-bold text-white">
                       {user?.name?.charAt(0).toUpperCase() || 'A'}
                     </div>
-                    <span className="hidden text-sm font-medium text-charcoal md:inline">
+                    <span className="hidden text-body-sm font-medium text-charcoal md:inline">
                       {user?.name?.split(' ')[0]}
                     </span>
                   </Button>
@@ -346,11 +336,11 @@ export default function AdminLayout() {
                     <div className="flex flex-col">
                       <div className="flex items-center gap-2">
                         <span className="text-charcoal">{user?.name}</span>
-                        <span className="rounded-full bg-primary-50 px-1.5 py-0.5 text-[10px] font-semibold uppercase text-primary-600">
+                        <span className="rounded-full bg-primary-50 px-2 py-0.5 text-[10px] font-bold uppercase text-primary-600">
                           {t('admin.adminBadge')}
                         </span>
                       </div>
-                      <span className="text-xs font-normal text-kresna-gray">
+                      <span className="text-caption font-normal text-kresna-gray">
                         {user?.email}
                       </span>
                     </div>
@@ -373,7 +363,7 @@ export default function AdminLayout() {
         </header>
 
         {/* Page content */}
-        <main className="min-h-[calc(100vh-4rem)] p-4 lg:p-6">
+        <main className="min-h-[calc(100vh-4rem)] p-4 sm:p-6 lg:p-8">
           <Routes>
             <Route path="tenants" element={<TenantsPage />} />
             <Route path="users" element={<UsersPage />} />
@@ -394,21 +384,21 @@ export default function AdminLayout() {
         </main>
 
         {/* Mobile bottom navigation */}
-        <nav className="fixed bottom-0 left-0 right-0 z-30 border-t border-kresna-border bg-white lg:hidden">
-          <div className="grid grid-cols-4 gap-1 p-2">
+        <nav className="fixed bottom-0 left-0 right-0 z-30 glass border-t border-kresna-border/50 lg:hidden">
+          <div className="grid grid-cols-4 gap-1 p-2 pb-safe">
             {mobileBottomItems.map((item) => {
               const isActive = location.pathname === `/admin/${item.path}`;
               return (
                 <NavLink
                   key={item.path}
                   to={`/admin/${item.path}`}
-                  className="group relative flex flex-col items-center gap-1 rounded-xl px-3 py-2 transition-colors"
+                  className="group relative flex flex-col items-center gap-1.5 rounded-2xl px-3 py-2 transition-all duration-200 active:scale-[0.95]"
                 >
                   <div
                     className={cn(
-                      'flex h-10 w-10 items-center justify-center rounded-xl transition-colors',
+                      'flex h-10 w-10 items-center justify-center rounded-2xl transition-all duration-200',
                       isActive
-                        ? 'bg-primary-50 text-primary-500'
+                        ? 'bg-primary-500 text-white shadow-kresna-btn'
                         : 'text-kresna-gray group-hover:bg-kresna-light group-hover:text-kresna-gray-dark'
                     )}
                   >
@@ -417,16 +407,11 @@ export default function AdminLayout() {
                   <span
                     className={cn(
                       'text-[10px] font-medium transition-colors',
-                      isActive
-                        ? 'text-primary-500'
-                        : 'text-kresna-gray group-hover:text-kresna-gray-dark'
+                      isActive ? 'text-primary-600' : 'text-kresna-gray group-hover:text-kresna-gray-dark'
                     )}
                   >
                     {t(item.labelKey)}
                   </span>
-                  {isActive && (
-                    <div className="absolute -top-0.5 left-1/2 h-0.5 w-8 -translate-x-1/2 rounded-full bg-primary-500" />
-                  )}
                 </NavLink>
               );
             })}

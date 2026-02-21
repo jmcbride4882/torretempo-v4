@@ -230,7 +230,7 @@ export function CorrectionRequestSheet({
         {/* Header */}
         <div className="text-center">
           <div className="flex items-center justify-center gap-2 mb-2">
-            <Edit3 className="h-5 w-5 text-primary-400" />
+            <Edit3 className="h-5 w-5 text-primary-600" />
             <h2 className="text-xl font-semibold text-charcoal">{t('corrections.requestCorrectionTitle')}</h2>
           </div>
           <p className="text-sm text-kresna-gray">
@@ -252,9 +252,9 @@ export function CorrectionRequestSheet({
                 initial={{ scale: 0 }}
                 animate={{ scale: 1 }}
                 transition={{ ...SPRING_CONFIG, delay: 0.1 }}
-                className="h-16 w-16 rounded-full bg-emerald-500/20 flex items-center justify-center"
+                className="h-16 w-16 rounded-full bg-emerald-50 flex items-center justify-center"
               >
-                <CheckCircle2 className="h-8 w-8 text-emerald-400" />
+                <CheckCircle2 className="h-8 w-8 text-emerald-600" />
               </motion.div>
               <p className="text-lg font-semibold text-charcoal">{t('corrections.requestSubmitted')}</p>
               <p className="text-sm text-kresna-gray">
@@ -268,7 +268,7 @@ export function CorrectionRequestSheet({
         {!success && (
           <>
             {/* Current Times (Read-only) */}
-            <div className="bg-white border border-kresna-border rounded-xl p-4 space-y-3">
+            <div className="rounded-xl bg-kresna-light border border-kresna-border p-4 space-y-3">
               <Label className="text-kresna-gray text-xs uppercase tracking-wide">
                 {t('corrections.originalTimes')}
               </Label>
@@ -305,7 +305,7 @@ export function CorrectionRequestSheet({
                   {clockInDiff && (
                     <span className={cn(
                       "text-xs font-mono",
-                      clockInDiff.startsWith('+') ? "text-emerald-400" : "text-amber-400"
+                      clockInDiff.startsWith('+') ? "text-emerald-600" : "text-red-600"
                     )}>
                       {clockInDiff}
                     </span>
@@ -330,7 +330,7 @@ export function CorrectionRequestSheet({
                     {clockOutDiff && (
                       <span className={cn(
                         "text-xs font-mono",
-                        clockOutDiff.startsWith('+') ? "text-emerald-400" : "text-amber-400"
+                        clockOutDiff.startsWith('+') ? "text-emerald-600" : "text-red-600"
                       )}>
                         {clockOutDiff}
                       </span>
@@ -351,11 +351,11 @@ export function CorrectionRequestSheet({
             <div className="space-y-2">
               <div className="flex items-center justify-between">
                 <Label htmlFor="reason" className="text-kresna-gray-dark">
-                  {t('corrections.reason')} <span className="text-red-400">*</span>
+                  {t('corrections.reason')} <span className="text-red-600">*</span>
                 </Label>
                 <span className={cn(
                   "text-xs",
-                  reason.length > MAX_REASON_LENGTH ? "text-red-400" : "text-kresna-gray"
+                  reason.length > MAX_REASON_LENGTH ? "text-red-600" : "text-kresna-gray"
                 )}>
                   {reason.length}/{MAX_REASON_LENGTH}
                 </span>
@@ -370,7 +370,7 @@ export function CorrectionRequestSheet({
                   "w-full px-3 py-2 rounded-xl resize-none",
                   "bg-kresna-light border border-kresna-border",
                   "text-charcoal placeholder:text-kresna-gray",
-                  "focus:outline-none focus:ring-2 focus:ring-primary-500/50",
+                  "focus:outline-none focus:ring-2 focus:ring-primary-200 focus:border-primary-500",
                   "text-sm"
                 )}
               />
@@ -379,9 +379,9 @@ export function CorrectionRequestSheet({
             {/* Validation Warning */}
             {requestedClockIn && requestedClockOut && 
              !isSameDay(requestedClockIn, requestedClockOut) && (
-              <div className="flex items-center gap-2 p-3 rounded-xl bg-amber-500/10 border border-amber-500/20">
-                <AlertCircle className="h-4 w-4 text-amber-400 flex-shrink-0" />
-                <p className="text-sm text-amber-400">
+              <div className="flex items-center gap-2 p-4 rounded-xl bg-amber-50 border border-amber-200">
+                <AlertCircle className="h-4 w-4 text-amber-700 flex-shrink-0" />
+                <p className="text-sm text-amber-700">
                   {t('corrections.sameDayWarning')}
                 </p>
               </div>
@@ -394,10 +394,10 @@ export function CorrectionRequestSheet({
                   initial={{ opacity: 0, y: -10 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -10 }}
-                  className="flex items-center gap-2 p-3 rounded-xl bg-red-500/10 border border-red-500/20"
+                  className="flex items-center gap-2 p-4 rounded-xl bg-red-50 border border-red-200"
                 >
-                  <AlertCircle className="h-4 w-4 text-red-400 flex-shrink-0" />
-                  <p className="text-sm text-red-400">{error}</p>
+                  <AlertCircle className="h-4 w-4 text-red-600 flex-shrink-0" />
+                  <p className="text-sm text-red-600">{error}</p>
                 </motion.div>
               )}
             </AnimatePresence>
@@ -407,11 +407,9 @@ export function CorrectionRequestSheet({
               <Button
                 onClick={handleSubmit}
                 disabled={!isValid || submitting}
-                className={cn(
-                  "h-14 text-lg font-semibold rounded-xl",
-                  "bg-primary-600 hover:bg-primary-700",
-                  "disabled:bg-kresna-border disabled:text-kresna-gray"
-                )}
+                variant="gradient"
+                size="xl"
+                className="w-full"
               >
                 {submitting ? (
                   <span className="flex items-center gap-2">

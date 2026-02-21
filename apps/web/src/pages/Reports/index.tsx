@@ -1,6 +1,6 @@
 /**
  * Reports Index Page
- * Lists all reports with filters, light theme styling, and mobile-first design
+ * Lists all reports with filters, Kresna design system styling, and mobile-first design
  */
 
 import { useState, useEffect, useCallback, useMemo } from 'react';
@@ -134,7 +134,7 @@ export default function ReportsPage() {
   const readyCount = reports.filter((r) => r.status === 'ready').length;
 
   return (
-    <div className="space-y-6">
+    <div className="mx-auto max-w-5xl space-y-6">
       {/* Page header */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center gap-3">
@@ -142,18 +142,18 @@ export default function ReportsPage() {
             <FileText className="h-5 w-5 text-primary-600" />
           </div>
           <div>
-            <h1 className="text-xl font-bold text-charcoal sm:text-2xl">{t('reports.title')}</h1>
+            <h1 className="text-2xl font-bold text-charcoal tracking-tight">{t('reports.title')}</h1>
             <p className="text-sm text-kresna-gray">{t('reports.subtitle')}</p>
           </div>
         </div>
 
         <div className="flex items-center gap-2">
           <Button
-            variant="ghost"
+            variant="outline"
             size="sm"
             onClick={handleRefresh}
             disabled={isRefreshing}
-            className="gap-1.5 rounded-lg border border-kresna-border bg-white text-kresna-gray-dark hover:bg-kresna-light"
+            className="gap-1.5 rounded-xl"
           >
             <RefreshCw className={cn('h-4 w-4', isRefreshing && 'animate-spin')} />
             <span className="hidden sm:inline">{t('reports.refresh')}</span>
@@ -161,8 +161,9 @@ export default function ReportsPage() {
 
           <Button
             onClick={handleGenerateReport}
+            variant="gradient"
             size="sm"
-            className="gap-1.5 rounded-lg bg-primary-500 text-white hover:bg-primary-600"
+            className="gap-1.5"
           >
             <Plus className="h-4 w-4" />
             <span className="hidden sm:inline">{t('reports.generate')}</span>
@@ -170,55 +171,58 @@ export default function ReportsPage() {
         </div>
       </div>
 
-      {/* Filters */}
-      <ReportFilters
-        currentFilters={filters}
-        onFilterChange={handleFilterChange}
-        teamMembers={teamMembers}
-        isManager={isManager}
-      />
-
-      {/* Search bar */}
-      <div className="relative max-w-md">
-        <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-kresna-gray" />
-        <Input
-          type="text"
-          placeholder={t('reports.searchPlaceholder')}
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          className="rounded-lg border-kresna-border bg-white pl-9 text-charcoal placeholder:text-kresna-gray focus:border-primary-500"
-        />
-      </div>
-
-      {/* Stats bar */}
-      <div className="flex flex-wrap items-center gap-4 text-sm sm:gap-6">
-        <div className="flex items-center gap-2">
-          <div className="h-2 w-2 rounded-full bg-primary-500" />
-          <span className="text-kresna-gray">
-            <span className="font-medium text-charcoal">{reports.length}</span> {t('reports.reports')}
-          </span>
-        </div>
-        <div className="flex items-center gap-2">
-          <div className="h-2 w-2 rounded-full bg-emerald-500" />
-          <span className="text-kresna-gray">
-            <span className="font-medium text-charcoal">{readyCount}</span> {t('reports.ready')}
-          </span>
-        </div>
-        <div className="flex items-center gap-2">
-          <Clock className="h-3.5 w-3.5 text-kresna-gray" />
-          <span className="text-kresna-gray">
-            <span className="font-medium text-charcoal">{totalHours.toFixed(0)}h</span> {t('reports.total')}
-          </span>
-        </div>
-        {totalOvertime > 0 && (
-          <div className="flex items-center gap-2">
-            <TrendingUp className="h-3.5 w-3.5 text-amber-500" />
-            <span className="text-kresna-gray">
-              <span className="font-medium text-amber-600">{totalOvertime.toFixed(0)}h</span>{' '}
-              {t('reports.overtime').toLowerCase()}
+      {/* Stats summary card */}
+      <div className="rounded-2xl border border-kresna-border bg-white p-5 shadow-card">
+        <div className="flex flex-wrap items-center gap-6">
+          <div className="flex items-center gap-2.5">
+            <div className="h-2.5 w-2.5 rounded-full bg-primary-500" />
+            <span className="text-sm text-kresna-gray">
+              <span className="font-semibold text-charcoal">{reports.length}</span> {t('reports.reports')}
             </span>
           </div>
-        )}
+          <div className="flex items-center gap-2.5">
+            <div className="h-2.5 w-2.5 rounded-full bg-emerald-500" />
+            <span className="text-sm text-kresna-gray">
+              <span className="font-semibold text-charcoal">{readyCount}</span> {t('reports.ready')}
+            </span>
+          </div>
+          <div className="flex items-center gap-2.5">
+            <Clock className="h-4 w-4 text-kresna-gray" />
+            <span className="text-sm text-kresna-gray">
+              <span className="font-semibold text-charcoal">{totalHours.toFixed(0)}h</span> {t('reports.total')}
+            </span>
+          </div>
+          {totalOvertime > 0 && (
+            <div className="flex items-center gap-2.5">
+              <TrendingUp className="h-4 w-4 text-amber-500" />
+              <span className="text-sm text-kresna-gray">
+                <span className="font-semibold text-amber-600">{totalOvertime.toFixed(0)}h</span>{' '}
+                {t('reports.overtime').toLowerCase()}
+              </span>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Filters + Search row */}
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <ReportFilters
+          currentFilters={filters}
+          onFilterChange={handleFilterChange}
+          teamMembers={teamMembers}
+          isManager={isManager}
+        />
+
+        <div className="relative w-full sm:w-64">
+          <Search className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-kresna-gray" />
+          <Input
+            type="text"
+            placeholder={t('reports.searchPlaceholder')}
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="pl-10 rounded-xl h-10"
+          />
+        </div>
       </div>
 
       {/* Reports grid */}
@@ -264,18 +268,18 @@ function EmptyState({ hasFilters, onClearFilters, onGenerateReport }: EmptyState
 
   if (hasFilters) {
     return (
-      <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-kresna-border bg-kresna-light px-6 py-16 text-center">
-        <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-xl bg-white shadow-sm">
-          <Search className="h-7 w-7 text-kresna-gray" />
+      <div className="flex flex-col items-center justify-center rounded-3xl border border-dashed border-kresna-border bg-kresna-light px-6 py-20 text-center">
+        <div className="h-16 w-16 rounded-2xl bg-white flex items-center justify-center mb-4 shadow-card">
+          <Search className="h-8 w-8 text-kresna-gray" />
         </div>
-        <h3 className="mb-1 text-lg font-semibold text-charcoal">{t('reports.noMatching')}</h3>
-        <p className="mb-4 max-w-sm text-sm text-kresna-gray">
+        <p className="text-lg font-semibold text-charcoal mb-1">{t('reports.noMatching')}</p>
+        <p className="max-w-sm text-sm text-kresna-gray mb-6">
           {t('reports.adjustFilters')}
         </p>
         <Button
-          variant="ghost"
+          variant="outline"
           onClick={onClearFilters}
-          className="gap-2 rounded-lg border border-kresna-border text-kresna-gray-dark hover:bg-kresna-light"
+          className="gap-2 rounded-xl"
         >
           {t('reports.clearFilters')}
         </Button>
@@ -284,17 +288,18 @@ function EmptyState({ hasFilters, onClearFilters, onGenerateReport }: EmptyState
   }
 
   return (
-    <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-kresna-border bg-kresna-light px-6 py-16 text-center">
-      <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-primary-50">
+    <div className="flex flex-col items-center justify-center rounded-3xl border border-dashed border-kresna-border bg-kresna-light px-6 py-20 text-center">
+      <div className="h-16 w-16 rounded-2xl bg-primary-50 flex items-center justify-center mb-4">
         <FileText className="h-8 w-8 text-primary-600" />
       </div>
-      <h3 className="mb-1 text-lg font-semibold text-charcoal">{t('reports.noReports')}</h3>
-      <p className="mb-6 max-w-sm text-sm text-kresna-gray">
+      <p className="text-lg font-semibold text-charcoal mb-1">{t('reports.noReports')}</p>
+      <p className="max-w-sm text-sm text-kresna-gray mb-6">
         {t('reports.noReportsDesc')}
       </p>
       <Button
         onClick={onGenerateReport}
-        className="gap-2 rounded-lg bg-primary-500 text-white hover:bg-primary-600"
+        variant="gradient"
+        className="gap-1.5"
       >
         <Plus className="h-4 w-4" />
         {t('reports.generate')}

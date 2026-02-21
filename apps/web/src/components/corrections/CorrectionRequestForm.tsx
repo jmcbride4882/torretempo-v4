@@ -83,7 +83,7 @@ export function CorrectionRequestForm({ entries, organizationSlug, onSubmit, onC
         <select
           value={selectedEntryId}
           onChange={e => setSelectedEntryId(e.target.value)}
-          className="w-full h-10 rounded-md border border-kresna-border bg-white px-3 text-sm text-charcoal"
+          className="h-12 w-full rounded-xl border border-kresna-border bg-white px-3 text-sm text-charcoal transition-colors focus:border-primary-400 focus:outline-none focus:ring-2 focus:ring-primary-200"
           required
         >
           <option value="">{t('corrections.chooseEntry')}</option>
@@ -106,7 +106,7 @@ export function CorrectionRequestForm({ entries, organizationSlug, onSubmit, onC
               type="button"
               onClick={() => setCorrectionType(type)}
               className={cn(
-                'rounded-xl border px-3 py-2 text-xs font-medium transition-all',
+                'min-h-touch rounded-xl border px-3 py-2 text-xs font-medium transition-all',
                 correctionType === type
                   ? 'bg-primary-50 border-primary-200 text-primary-700'
                   : 'bg-kresna-light border-kresna-border text-kresna-gray-dark hover:bg-kresna-light'
@@ -138,7 +138,7 @@ export function CorrectionRequestForm({ entries, organizationSlug, onSubmit, onC
           placeholder={t('corrections.reasonPlaceholder')}
           rows={3}
           required
-          className="w-full rounded-lg border border-kresna-border bg-white px-3 py-2 text-sm text-charcoal placeholder:text-kresna-gray focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500 resize-none"
+          className="w-full rounded-xl border border-kresna-border bg-white px-3 py-2 text-sm text-charcoal placeholder:text-kresna-gray focus:border-primary-400 focus:outline-none focus:ring-2 focus:ring-primary-200 resize-none"
         />
       </div>
 
@@ -152,8 +152,8 @@ export function CorrectionRequestForm({ entries, organizationSlug, onSubmit, onC
 
       {/* Actions */}
       <div className="flex justify-end gap-3 pt-4 border-t border-kresna-border">
-        <Button type="button" variant="outline" onClick={onCancel}>{t('common.cancel')}</Button>
-        <Button type="submit" disabled={isSubmitting || !selectedEntryId || !reason.trim()}>
+        <Button type="button" variant="outline" onClick={onCancel} className="rounded-xl">{t('common.cancel')}</Button>
+        <Button type="submit" variant="gradient" disabled={isSubmitting || !selectedEntryId || !reason.trim()} className="rounded-xl">
           {isSubmitting ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
           {isSubmitting ? t('common.submitting') : t('corrections.submitRequest')}
         </Button>

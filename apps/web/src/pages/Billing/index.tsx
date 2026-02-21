@@ -168,7 +168,7 @@ function TrialBanner({ daysRemaining, onChoosePlan }: TrialBannerProps) {
   const days = daysRemaining ?? 0;
 
   return (
-    <div className="rounded-xl bg-gradient-to-r from-primary-600 to-primary-500 p-6 text-white shadow-lg">
+    <div className="rounded-2xl bg-gradient-to-r from-primary-600 to-primary-500 p-6 text-white shadow-kresna-lg">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center gap-3">
           <div className="flex h-10 w-10 items-center justify-center rounded-full bg-white/20">
@@ -185,7 +185,7 @@ function TrialBanner({ daysRemaining, onChoosePlan }: TrialBannerProps) {
         </div>
         <Button
           onClick={onChoosePlan}
-          className="bg-white text-primary-700 hover:bg-primary-50 shadow-sm"
+          className="rounded-xl bg-white text-primary-700 hover:bg-primary-50 shadow-sm"
         >
           <Sparkles className="mr-2 h-4 w-4" />
           {t('billing.choosePlan')}
@@ -216,22 +216,22 @@ function PlanCard({ plan, isCurrent, isUpgrade, isLoading, onSelect }: PlanCardP
   }
 
   return (
-    <Card
+    <div
       className={cn(
-        'relative flex flex-col border-kresna-border bg-white shadow-sm transition-shadow hover:shadow-md',
-        plan.recommended && 'border-primary-300 shadow-primary-100/50 ring-2 ring-primary-500',
+        'relative flex flex-col rounded-2xl border border-kresna-border bg-white shadow-card transition-all duration-300 ease-kresna hover:shadow-kresna',
+        plan.recommended && 'ring-2 ring-primary-500 shadow-kresna',
         isCurrent && !plan.recommended && 'border-primary-200 ring-1 ring-primary-300'
       )}
     >
       {plan.recommended && (
         <div className="absolute -top-3 left-1/2 -translate-x-1/2">
-          <Badge className="bg-primary-600 text-white hover:bg-primary-700 shadow-sm">
+          <Badge className="rounded-full bg-primary-600 text-white hover:bg-primary-700 shadow-kresna-btn">
             {t('billing.recommended')}
           </Badge>
         </div>
       )}
 
-      <CardContent className="flex flex-1 flex-col p-6 pt-8">
+      <div className="flex flex-1 flex-col p-6 pt-8">
         <h3 className="text-lg font-semibold text-charcoal">{plan.name}</h3>
 
         <div className="mt-4 flex items-baseline gap-1">
@@ -260,10 +260,10 @@ function PlanCard({ plan, isCurrent, isUpgrade, isLoading, onSelect }: PlanCardP
 
         <Button
           className={cn(
-            'mt-6 w-full',
-            plan.recommended && !isCurrent && 'bg-primary-600 hover:bg-primary-700',
+            'mt-6 w-full rounded-xl',
+            plan.recommended && !isCurrent && 'shadow-kresna-btn',
           )}
-          variant={isCurrent ? 'outline' : 'default'}
+          variant={isCurrent ? 'outline' : plan.recommended ? 'gradient' : 'default'}
           disabled={isCurrent || isLoading}
           onClick={() => onSelect(plan.code)}
         >
@@ -271,8 +271,8 @@ function PlanCard({ plan, isCurrent, isUpgrade, isLoading, onSelect }: PlanCardP
           {!isCurrent && isUpgrade && <ArrowUpRight className="mr-2 h-4 w-4" />}
           {buttonLabel}
         </Button>
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   );
 }
 
@@ -446,7 +446,7 @@ export default function BillingPage() {
           <CreditCard className="h-6 w-6 text-primary-600" />
         </div>
         <div>
-          <h1 className="text-2xl font-bold text-charcoal">
+          <h1 className="text-2xl font-bold text-charcoal tracking-tight">
             {t('billing.title')}
           </h1>
           <p className="text-sm text-kresna-gray">
@@ -464,7 +464,7 @@ export default function BillingPage() {
       )}
 
       {/* Current Plan Card */}
-      <Card className="border-kresna-border bg-white shadow-sm">
+      <Card>
         <CardHeader className="pb-4">
           <CardTitle className="flex items-center gap-2 text-base font-semibold text-charcoal">
             <CreditCard className="h-4 w-4 text-primary-500" />
@@ -491,7 +491,7 @@ export default function BillingPage() {
 
           {/* Trial end notice */}
           {subscription.isTrialing && subscription.daysRemaining !== null && (
-            <div className="flex items-center gap-2 rounded-lg bg-amber-50 px-4 py-3 text-sm text-amber-800">
+            <div className="flex items-center gap-2 rounded-xl bg-amber-50 px-4 py-3 text-sm text-amber-800">
               <Clock className="h-4 w-4 flex-shrink-0" />
               {t('billing.trialEndsOn', { date: `${subscription.daysRemaining} ${t('billing.daysRemaining')}` })}
             </div>
@@ -510,7 +510,7 @@ export default function BillingPage() {
                   : t('billing.employeesUnlimited', { used: employeesUsed })}
               </span>
             </div>
-            <div className="h-2.5 overflow-hidden rounded-full bg-kresna-light">
+            <div className="h-3 overflow-hidden rounded-full bg-kresna-light">
               <div
                 className={cn('h-full rounded-full transition-all duration-500', getUsageBarColor(usagePercent))}
                 style={{ width: `${usagePercent}%` }}
@@ -525,7 +525,7 @@ export default function BillingPage() {
 
           {/* Next billing date */}
           {plan?.billing_period && isActive && (
-            <div className="flex items-center justify-between rounded-lg bg-kresna-light px-4 py-3 text-sm">
+            <div className="flex items-center justify-between rounded-xl bg-kresna-light px-4 py-3 text-sm">
               <span className="text-kresna-gray">{t('billing.nextBilling')}</span>
               <span className="font-medium text-charcoal">--</span>
             </div>
@@ -535,7 +535,7 @@ export default function BillingPage() {
 
       {/* Plan Comparison Grid */}
       <div id="plan-comparison">
-        <h2 className="mb-1 text-lg font-semibold text-charcoal">
+        <h2 className="mb-1 text-lg font-semibold text-charcoal tracking-tight">
           {t('billing.choosePlan')}
         </h2>
         <p className="mb-6 text-sm text-kresna-gray">
@@ -564,13 +564,13 @@ export default function BillingPage() {
       </div>
 
       {/* Payment History */}
-      <Card className="border-kresna-border bg-white shadow-sm">
-        <CardHeader>
-          <CardTitle className="text-base font-semibold text-charcoal">
+      <div className="overflow-hidden rounded-3xl border border-kresna-border bg-white shadow-card">
+        <div className="p-6 sm:p-8">
+          <h3 className="text-base font-semibold text-charcoal">
             {t('billing.billingHistory')}
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
+          </h3>
+        </div>
+        <div className="px-6 pb-6 sm:px-8 sm:pb-8">
           {invoices.length > 0 ? (
             <table className="w-full">
               <thead>
@@ -589,10 +589,10 @@ export default function BillingPage() {
             </table>
           ) : (
             <div className="flex flex-col items-center justify-center py-10 text-center">
-              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-kresna-light">
-                <CreditCard className="h-5 w-5 text-kresna-gray" />
+              <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-kresna-light">
+                <CreditCard className="h-7 w-7 text-kresna-gray" />
               </div>
-              <p className="mt-3 text-sm font-medium text-kresna-gray">
+              <p className="mt-4 text-sm font-medium text-kresna-gray">
                 {t('billing.noInvoices')}
               </p>
               <p className="mt-1 text-xs text-kresna-gray">
@@ -600,13 +600,13 @@ export default function BillingPage() {
               </p>
             </div>
           )}
-        </CardContent>
-      </Card>
+        </div>
+      </div>
 
       {/* Cancel Subscription - Danger Zone */}
       {isActive && (
-        <Card className="border-red-200 bg-white shadow-sm">
-          <CardContent className="flex flex-col gap-4 p-6 sm:flex-row sm:items-center sm:justify-between">
+        <div className="rounded-2xl border border-red-200 bg-white p-6 shadow-card">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div>
               <p className="font-semibold text-charcoal">
                 {t('billing.cancelSubscription')}
@@ -617,14 +617,14 @@ export default function BillingPage() {
             </div>
             <Button
               variant="destructive"
-              className="shrink-0"
+              className="shrink-0 rounded-xl"
               onClick={() => setCancelOpen(true)}
             >
               <X className="mr-2 h-4 w-4" />
               {t('billing.cancelSubscription')}
             </Button>
-          </CardContent>
-        </Card>
+          </div>
+        </div>
       )}
 
       {/* Cancel Confirmation Dialog */}

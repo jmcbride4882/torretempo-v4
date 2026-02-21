@@ -54,14 +54,14 @@ export function LeaveCalendar({ leaves, month, className }: LeaveCalendarProps) 
 
   if (employees.length === 0) {
     return (
-      <div className={cn('rounded-2xl border border-kresna-border bg-white p-8 text-center', className)}>
+      <div className={cn('rounded-2xl border border-kresna-border bg-white p-8 text-center shadow-card', className)}>
         <p className="text-sm text-kresna-gray">{t('leave.noTeamLeave')}</p>
       </div>
     );
   }
 
   return (
-    <div className={cn('rounded-2xl border border-kresna-border bg-white overflow-x-auto', className)}>
+    <div className={cn('rounded-2xl border border-kresna-border bg-white overflow-x-auto shadow-card', className)}>
       <table className="w-full text-xs">
         <thead>
           <tr className="border-b border-kresna-border bg-kresna-light">

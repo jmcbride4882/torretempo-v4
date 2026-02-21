@@ -151,6 +151,35 @@ router.get('/', requireRole(['manager', 'tenantAdmin', 'owner']), async (req: Re
   }
 });
 
+// GET /api/v1/org/:slug/employees/me - Get current user's own employee profile
+router.get('/me', async (req: Request, res: Response) => {
+  try {
+    const organizationId = req.organizationId!;
+    const userId = req.session!.user.id;
+
+    const profileResult = await db
+      .select()
+      .from(employee_profiles)
+      .where(
+        and(
+          eq(employee_profiles.user_id, userId),
+          eq(employee_profiles.organization_id, organizationId)
+        )
+      )
+      .limit(1);
+
+    if (profileResult.length === 0) {
+      return res.status(404).json({ message: 'Employee profile not found' });
+    }
+
+    const decrypted = decryptPIIFields(profileResult[0]);
+    res.json({ employee: decrypted });
+  } catch (error) {
+    logger.error('Error fetching own employee profile:', error);
+    res.status(500).json({ message: 'Failed to fetch employee profile' });
+  }
+});
+
 // GET /api/v1/org/:slug/employees/:id - Get single employee profile (self or manager+)
 router.get('/:id', async (req: Request, res: Response) => {
   try {
