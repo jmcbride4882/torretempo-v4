@@ -143,7 +143,7 @@ export default function OnboardingHub() {
             className="flex items-center gap-2 text-sm text-kresna-gray transition-colors hover:text-charcoal"
           >
             <LogOut className="h-4 w-4" />
-            {t('common.signOut')}
+            {t('nav.signOut')}
           </button>
         </div>
 

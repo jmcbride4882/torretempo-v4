@@ -81,8 +81,11 @@ export default function TeamPage() {
     (m: any) => !search || m.user?.name?.toLowerCase().includes(search.toLowerCase()) || m.user?.email?.toLowerCase().includes(search.toLowerCase())
   );
 
-  const employees = (employeesQuery.data || []).filter(
-    (e: any) => !search || e.name?.toLowerCase().includes(search.toLowerCase()) || e.jobTitle?.toLowerCase().includes(search.toLowerCase())
+  const employees = (employeesQuery.data?.employees || []).filter(
+    (e: any) => {
+      const name = [e.first_name, e.last_name].filter(Boolean).join(' ');
+      return !search || name.toLowerCase().includes(search.toLowerCase()) || e.job_title?.toLowerCase().includes(search.toLowerCase());
+    }
   );
 
   return (
@@ -304,29 +307,32 @@ export default function TeamPage() {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-kresna-border">
-                    {employees.map((emp: any) => (
-                      <tr
-                        key={emp.id}
-                        className="cursor-pointer hover:bg-kresna-light/40 transition-colors"
-                        onClick={() => navigate(`/t/${slug}/team/${emp.userId || emp.id}`)}
-                      >
-                        <td className="px-6 py-4">
-                          <p className="font-medium text-charcoal">{emp.name || emp.userId}</p>
-                        </td>
-                        <td className="px-6 py-4 text-sm text-kresna-gray font-mono">
-                          {'****' + (emp.dni || '').slice(-5)}
-                        </td>
-                        <td className="px-6 py-4 text-sm text-kresna-gray-dark">{emp.jobTitle || '-'}</td>
-                        <td className="px-6 py-4">
-                          <Badge variant="secondary" className="rounded-full">
-                            {t(`team.contractTypes.${emp.contractType}` as any) || emp.contractType}
-                          </Badge>
-                        </td>
-                        <td className="px-6 py-4 text-sm text-kresna-gray-dark font-medium">
-                          {emp.hoursPerWeek || 40}h
-                        </td>
-                      </tr>
-                    ))}
+                    {employees.map((emp: any) => {
+                      const empName = [emp.first_name, emp.last_name].filter(Boolean).join(' ') || emp.user_id;
+                      return (
+                        <tr
+                          key={emp.id}
+                          className="cursor-pointer hover:bg-kresna-light/40 transition-colors"
+                          onClick={() => navigate(`/t/${slug}/team/${emp.user_id || emp.id}`)}
+                        >
+                          <td className="px-6 py-4">
+                            <p className="font-medium text-charcoal">{empName}</p>
+                          </td>
+                          <td className="px-6 py-4 text-sm text-kresna-gray font-mono">
+                            {'****' + (emp.dni_nie || '').slice(-5)}
+                          </td>
+                          <td className="px-6 py-4 text-sm text-kresna-gray-dark">{emp.job_title || '-'}</td>
+                          <td className="px-6 py-4">
+                            <Badge variant="secondary" className="rounded-full">
+                              {t(`team.contractTypes.${emp.employment_type}` as any) || emp.employment_type || '-'}
+                            </Badge>
+                          </td>
+                          <td className="px-6 py-4 text-sm text-kresna-gray-dark font-medium">
+                            {emp.working_hours_per_week || 40}h
+                          </td>
+                        </tr>
+                      );
+                    })}
                   </tbody>
                 </table>
               </div>

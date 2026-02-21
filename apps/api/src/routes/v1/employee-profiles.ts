@@ -4,112 +4,94 @@ import { db } from '../../db/index.js';
 import { employee_profiles, member } from '../../db/schema.js';
 import { requireRole } from '../../middleware/requireRole.js';
 import { logAudit } from '../../services/audit.service.js';
-import { encryption } from '../../lib/encryption.js';
 import logger from '../../lib/logger.js';
-
-// Types for JSONB structures
-interface EmployeeAddress {
-  street: string;
-  city: string;
-  postal_code: string;
-  province?: string;
-  country: string;
-}
-
-interface EmergencyContact {
-  name: string;
-  relationship: string;
-  phone_number: string;
-  email?: string;
-}
 
 const router = Router();
 
 /**
- * Helper: Encrypt PII fields before database insert/update
+ * Helper: Transform DB row into API response format
+ * Maps production DB columns to the API response shape expected by the frontend
  */
-function encryptPIIFields(data: any): any {
-  const encrypted: any = { ...data };
+function transformProfile(profile: any): any {
+  const result: any = { ...profile };
 
-  // Encrypt required fields
-  if (data.dni_nie) {
-    encrypted.dni_nie_encrypted = encryption.encrypt(data.dni_nie);
-    delete encrypted.dni_nie;
-  }
-  if (data.social_security_number) {
-    encrypted.social_security_number_encrypted = encryption.encrypt(data.social_security_number);
-    delete encrypted.social_security_number;
-  }
-
-  // Encrypt optional fields
-  if (data.tax_id) {
-    encrypted.tax_id_encrypted = encryption.encrypt(data.tax_id);
-    delete encrypted.tax_id;
-  }
-  if (data.phone_number) {
-    encrypted.phone_number_encrypted = encryption.encrypt(data.phone_number);
-    delete encrypted.phone_number;
-  }
-  if (data.address) {
-    encrypted.address_encrypted = encryption.encryptJSON(data.address);
-    delete encrypted.address;
-  }
-  if (data.emergency_contact) {
-    encrypted.emergency_contact_encrypted = encryption.encryptJSON(data.emergency_contact);
-    delete encrypted.emergency_contact;
-  }
-  if (data.work_permit_number) {
-    encrypted.work_permit_number_encrypted = encryption.encrypt(data.work_permit_number);
-    delete encrypted.work_permit_number;
+  // Parse address JSON if it's a string
+  if (typeof result.address === 'string') {
+    try {
+      result.address = JSON.parse(result.address);
+    } catch {
+      result.address = null;
+    }
   }
 
-  return encrypted;
+  // Map emergency contact fields to nested object
+  if (result.emergency_contact_name || result.emergency_contact_phone) {
+    result.emergency_contact = {
+      name: result.emergency_contact_name || '',
+      relationship: '',
+      phone_number: result.emergency_contact_phone || '',
+    };
+  } else {
+    result.emergency_contact = null;
+  }
+  delete result.emergency_contact_name;
+  delete result.emergency_contact_phone;
+
+  // Map phone field to phone_number for API consistency
+  result.phone_number = result.phone || null;
+  delete result.phone;
+
+  // Map is_active to data_processing_consent for backwards compat
+  result.data_processing_consent = result.is_active ?? false;
+
+  // Provide defaults for fields the frontend expects
+  result.working_hours_per_week = 40;
+  result.vacation_days_accrued = '22';
+  result.vacation_days_used = '0';
+
+  return result;
 }
 
 /**
- * Helper: Decrypt PII fields after database select
+ * Helper: Transform API input data into DB columns
  */
-function decryptPIIFields(profile: any): any {
-  const decrypted: any = { ...profile };
+function transformForDB(data: any): any {
+  const dbData: any = {};
 
-  try {
-    // Decrypt required fields
-    if (profile.dni_nie_encrypted) {
-      decrypted.dni_nie = encryption.decrypt(profile.dni_nie_encrypted);
-      delete decrypted.dni_nie_encrypted;
-    }
-    if (profile.social_security_number_encrypted) {
-      decrypted.social_security_number = encryption.decrypt(profile.social_security_number_encrypted);
-      delete decrypted.social_security_number_encrypted;
-    }
+  // Direct mappings
+  if (data.dni_nie !== undefined) dbData.dni_nie = data.dni_nie;
+  if (data.social_security_number !== undefined) dbData.social_security_number = data.social_security_number;
+  if (data.job_title !== undefined) dbData.job_title = data.job_title;
+  if (data.employment_type !== undefined) dbData.employment_type = data.employment_type;
+  if (data.department !== undefined) dbData.department = data.department;
+  if (data.tax_id !== undefined) dbData.tax_id = data.tax_id;
+  if (data.notes !== undefined) dbData.notes = data.notes;
 
-    // Decrypt optional fields
-    if (profile.tax_id_encrypted) {
-      decrypted.tax_id = encryption.decrypt(profile.tax_id_encrypted);
-      delete decrypted.tax_id_encrypted;
-    }
-    if (profile.phone_number_encrypted) {
-      decrypted.phone_number = encryption.decrypt(profile.phone_number_encrypted);
-      delete decrypted.phone_number_encrypted;
-    }
-    if (profile.address_encrypted) {
-      decrypted.address = encryption.decryptJSON<EmployeeAddress>(profile.address_encrypted);
-      delete decrypted.address_encrypted;
-    }
-    if (profile.emergency_contact_encrypted) {
-      decrypted.emergency_contact = encryption.decryptJSON<EmergencyContact>(profile.emergency_contact_encrypted);
-      delete decrypted.emergency_contact_encrypted;
-    }
-    if (profile.work_permit_number_encrypted) {
-      decrypted.work_permit_number = encryption.decrypt(profile.work_permit_number_encrypted);
-      delete decrypted.work_permit_number_encrypted;
-    }
-  } catch (error) {
-    logger.error('Error decrypting PII fields:', error);
-    throw new Error('Failed to decrypt sensitive data');
+  // phone_number → phone
+  if (data.phone_number !== undefined) dbData.phone = data.phone_number;
+
+  // address object → JSON string
+  if (data.address !== undefined) {
+    dbData.address = typeof data.address === 'string' ? data.address : JSON.stringify(data.address);
   }
 
-  return decrypted;
+  // emergency_contact object → separate fields
+  if (data.emergency_contact !== undefined) {
+    if (data.emergency_contact) {
+      dbData.emergency_contact_name = data.emergency_contact.name || '';
+      dbData.emergency_contact_phone = data.emergency_contact.phone_number || '';
+    } else {
+      dbData.emergency_contact_name = null;
+      dbData.emergency_contact_phone = null;
+    }
+  }
+
+  // Date fields
+  if (data.date_of_birth) dbData.date_of_birth = new Date(data.date_of_birth);
+  if (data.contract_start_date) dbData.contract_start_date = new Date(data.contract_start_date);
+  if (data.contract_end_date) dbData.contract_end_date = new Date(data.contract_end_date);
+
+  return dbData;
 }
 
 /**
@@ -141,10 +123,8 @@ router.get('/', requireRole(['manager', 'tenantAdmin', 'owner']), async (req: Re
       .where(eq(employee_profiles.organization_id, organizationId))
       .orderBy(employee_profiles.created_at);
 
-    // Decrypt all profiles
-    const decryptedProfiles = profiles.map(decryptPIIFields);
-
-    res.json({ employees: decryptedProfiles, count: decryptedProfiles.length });
+    const transformed = profiles.map(transformProfile);
+    res.json({ employees: transformed, count: transformed.length });
   } catch (error) {
     logger.error('Error fetching employee profiles:', error);
     res.status(500).json({ message: 'Failed to fetch employee profiles' });
@@ -172,8 +152,7 @@ router.get('/me', async (req: Request, res: Response) => {
       return res.status(404).json({ message: 'Employee profile not found' });
     }
 
-    const decrypted = decryptPIIFields(profileResult[0]);
-    res.json({ employee: decrypted });
+    res.json({ employee: transformProfile(profileResult[0]) });
   } catch (error) {
     logger.error('Error fetching own employee profile:', error);
     res.status(500).json({ message: 'Failed to fetch employee profile' });
@@ -181,23 +160,41 @@ router.get('/me', async (req: Request, res: Response) => {
 });
 
 // GET /api/v1/org/:slug/employees/:id - Get single employee profile (self or manager+)
+// Accepts either a profile UUID or a user_id (Better Auth text ID)
 router.get('/:id', async (req: Request, res: Response) => {
   try {
     const organizationId = req.organizationId!;
     const userId = req.session!.user.id;
-    const profileId = req.params.id as string;
+    const lookupId = req.params.id as string;
 
-    // Fetch the profile
-    const profileResult = await db
-      .select()
-      .from(employee_profiles)
-      .where(
-        and(
-          eq(employee_profiles.id, profileId),
-          eq(employee_profiles.organization_id, organizationId)
+    // Detect if lookupId is a UUID (employee_profiles.id) or a text ID (user_id)
+    const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(lookupId);
+
+    let profileResult;
+    if (isUuid) {
+      profileResult = await db
+        .select()
+        .from(employee_profiles)
+        .where(
+          and(
+            eq(employee_profiles.id, lookupId),
+            eq(employee_profiles.organization_id, organizationId)
+          )
         )
-      )
-      .limit(1);
+        .limit(1);
+    } else {
+      // Lookup by user_id (Better Auth text ID)
+      profileResult = await db
+        .select()
+        .from(employee_profiles)
+        .where(
+          and(
+            eq(employee_profiles.user_id, lookupId),
+            eq(employee_profiles.organization_id, organizationId)
+          )
+        )
+        .limit(1);
+    }
 
     if (profileResult.length === 0) {
       return res.status(404).json({ message: 'Employee profile not found' });
@@ -214,9 +211,7 @@ router.get('/:id', async (req: Request, res: Response) => {
       return res.status(403).json({ message: 'Insufficient permissions to view this profile' });
     }
 
-    // Decrypt and return
-    const decrypted = decryptPIIFields(profile);
-    res.json({ employee: decrypted });
+    res.json({ employee: transformProfile(profile) });
   } catch (error) {
     logger.error('Error fetching employee profile:', error);
     res.status(500).json({ message: 'Failed to fetch employee profile' });
@@ -228,45 +223,13 @@ router.post('/', requireRole(['tenantAdmin', 'owner']), async (req: Request, res
   try {
     const organizationId = req.organizationId!;
     const actorId = req.session!.user.id;
-    const {
-      user_id,
-      dni_nie,
-      social_security_number,
-      date_of_birth,
-      job_title,
-      employment_type,
-      contract_start_date,
-      working_hours_per_week,
-      data_processing_consent,
-    } = req.body;
+    const { user_id } = req.body;
 
-    // Validate required fields
     if (!user_id) {
       return res.status(400).json({ message: 'user_id is required' });
     }
-    if (!dni_nie) {
-      return res.status(400).json({ message: 'dni_nie is required' });
-    }
-    if (!social_security_number) {
-      return res.status(400).json({ message: 'social_security_number is required' });
-    }
-    if (!date_of_birth) {
-      return res.status(400).json({ message: 'date_of_birth is required' });
-    }
-    if (!job_title) {
-      return res.status(400).json({ message: 'job_title is required' });
-    }
-    if (!employment_type) {
-      return res.status(400).json({ message: 'employment_type is required' });
-    }
-    if (!contract_start_date) {
-      return res.status(400).json({ message: 'contract_start_date is required' });
-    }
-    if (!working_hours_per_week) {
-      return res.status(400).json({ message: 'working_hours_per_week is required' });
-    }
 
-    // Verify user exists and is a member of this organization
+    // Verify user is a member of this organization
     const memberResult = await db
       .select()
       .from(member)
@@ -282,7 +245,7 @@ router.post('/', requireRole(['tenantAdmin', 'owner']), async (req: Request, res
       return res.status(400).json({ message: 'User is not a member of this organization' });
     }
 
-    // Check if profile already exists for this user
+    // Check if profile already exists
     const existingProfile = await db
       .select()
       .from(employee_profiles)
@@ -298,39 +261,29 @@ router.post('/', requireRole(['tenantAdmin', 'owner']), async (req: Request, res
       return res.status(400).json({ message: 'Employee profile already exists for this user' });
     }
 
-    // Encrypt PII fields
-    const encryptedData = encryptPIIFields(req.body);
+    // Transform input to DB columns
+    const dbData = transformForDB(req.body);
 
-    // Create employee profile
     const newProfile = await db
       .insert(employee_profiles)
       .values({
         user_id: user_id as string,
         organization_id: organizationId,
-        ...encryptedData,
-        date_of_birth: new Date(date_of_birth as string),
-        contract_start_date: new Date(contract_start_date as string),
-        contract_end_date: req.body.contract_end_date ? new Date(req.body.contract_end_date as string) : null,
-        health_safety_training_date: req.body.health_safety_training_date ? new Date(req.body.health_safety_training_date as string) : null,
-        work_permit_expiry: req.body.work_permit_expiry ? new Date(req.body.work_permit_expiry as string) : null,
-        gdpr_consent_date: data_processing_consent ? new Date() : null,
-        data_processing_consent: data_processing_consent || false,
+        ...dbData,
       })
       .returning();
 
-    // Log audit (DO NOT log decrypted PII)
+    // Log audit
     await logAudit({
       orgId: organizationId,
       actorId,
       action: 'employee_profile.create',
       entityType: 'employee_profiles',
       entityId: newProfile[0]!.id,
-      newData: { id: newProfile[0]!.id, user_id: newProfile[0]!.user_id, job_title },
+      newData: { id: newProfile[0]!.id, user_id: newProfile[0]!.user_id, job_title: newProfile[0]!.job_title },
     });
 
-    // Decrypt before returning
-    const decrypted = decryptPIIFields(newProfile[0]);
-    res.status(201).json({ employee: decrypted });
+    res.status(201).json({ employee: transformProfile(newProfile[0]) });
   } catch (error) {
     logger.error('Error creating employee profile:', error);
     res.status(500).json({ message: 'Failed to create employee profile' });
@@ -338,12 +291,13 @@ router.post('/', requireRole(['tenantAdmin', 'owner']), async (req: Request, res
 });
 
 // PATCH /api/v1/org/:slug/employees/:id - Update employee profile (tenantAdmin+ only)
+// Accepts either a profile UUID or a user_id (Better Auth text ID)
 router.patch('/:id', requireRole(['tenantAdmin', 'owner']), async (req: Request, res: Response) => {
   try {
     const organizationId = req.organizationId!;
     const actorId = req.session!.user.id;
-    const profileId = req.params.id as string;
-    const updates = req.body;
+    const lookupId = req.params.id as string;
+    const updates = { ...req.body };
 
     // Remove fields that shouldn't be updated directly
     delete updates.id;
@@ -351,46 +305,46 @@ router.patch('/:id', requireRole(['tenantAdmin', 'owner']), async (req: Request,
     delete updates.organization_id;
     delete updates.created_at;
 
-    // Fetch existing profile
-    const existingResult = await db
-      .select()
-      .from(employee_profiles)
-      .where(
-        and(
-          eq(employee_profiles.id, profileId),
-          eq(employee_profiles.organization_id, organizationId)
+    // Detect if lookupId is a UUID (employee_profiles.id) or a text ID (user_id)
+    const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(lookupId);
+
+    let existingResult;
+    if (isUuid) {
+      existingResult = await db
+        .select()
+        .from(employee_profiles)
+        .where(
+          and(
+            eq(employee_profiles.id, lookupId),
+            eq(employee_profiles.organization_id, organizationId)
+          )
         )
-      )
-      .limit(1);
+        .limit(1);
+    } else {
+      existingResult = await db
+        .select()
+        .from(employee_profiles)
+        .where(
+          and(
+            eq(employee_profiles.user_id, lookupId),
+            eq(employee_profiles.organization_id, organizationId)
+          )
+        )
+        .limit(1);
+    }
 
     if (existingResult.length === 0) {
       return res.status(404).json({ message: 'Employee profile not found' });
     }
 
-    // Encrypt PII fields if present in updates
-    const encryptedUpdates = encryptPIIFields(updates);
-
-    // Convert date strings to Date objects
-    if (updates.date_of_birth) {
-      encryptedUpdates.date_of_birth = new Date(updates.date_of_birth as string);
-    }
-    if (updates.contract_start_date) {
-      encryptedUpdates.contract_start_date = new Date(updates.contract_start_date as string);
-    }
-    if (updates.contract_end_date) {
-      encryptedUpdates.contract_end_date = new Date(updates.contract_end_date as string);
-    }
-    if (updates.health_safety_training_date) {
-      encryptedUpdates.health_safety_training_date = new Date(updates.health_safety_training_date as string);
-    }
-    if (updates.work_permit_expiry) {
-      encryptedUpdates.work_permit_expiry = new Date(updates.work_permit_expiry as string);
-    }
+    // Transform input to DB columns
+    const dbUpdates = transformForDB(updates);
+    const profileId = existingResult[0]!.id;
 
     // Update profile
     const updatedProfile = await db
       .update(employee_profiles)
-      .set({ ...encryptedUpdates, updated_at: new Date() })
+      .set({ ...dbUpdates, updated_at: new Date() })
       .where(
         and(
           eq(employee_profiles.id, profileId),
@@ -399,7 +353,7 @@ router.patch('/:id', requireRole(['tenantAdmin', 'owner']), async (req: Request,
       )
       .returning();
 
-    // Log audit (DO NOT log decrypted PII)
+    // Log audit
     await logAudit({
       orgId: organizationId,
       actorId,
@@ -410,9 +364,7 @@ router.patch('/:id', requireRole(['tenantAdmin', 'owner']), async (req: Request,
       newData: { id: updatedProfile[0]!.id, user_id: updatedProfile[0]!.user_id },
     });
 
-    // Decrypt before returning
-    const decrypted = decryptPIIFields(updatedProfile[0]);
-    res.json({ employee: decrypted });
+    res.json({ employee: transformProfile(updatedProfile[0]) });
   } catch (error) {
     logger.error('Error updating employee profile:', error);
     res.status(500).json({ message: 'Failed to update employee profile' });
@@ -420,29 +372,46 @@ router.patch('/:id', requireRole(['tenantAdmin', 'owner']), async (req: Request,
 });
 
 // DELETE /api/v1/org/:slug/employees/:id - Delete employee profile (tenantAdmin+ only)
+// Accepts either a profile UUID or a user_id (Better Auth text ID)
 router.delete('/:id', requireRole(['tenantAdmin', 'owner']), async (req: Request, res: Response) => {
   try {
     const organizationId = req.organizationId!;
     const actorId = req.session!.user.id;
-    const profileId = req.params.id as string;
+    const lookupId = req.params.id as string;
 
-    // Fetch existing profile
-    const existingResult = await db
-      .select()
-      .from(employee_profiles)
-      .where(
-        and(
-          eq(employee_profiles.id, profileId),
-          eq(employee_profiles.organization_id, organizationId)
+    const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(lookupId);
+
+    let existingResult;
+    if (isUuid) {
+      existingResult = await db
+        .select()
+        .from(employee_profiles)
+        .where(
+          and(
+            eq(employee_profiles.id, lookupId),
+            eq(employee_profiles.organization_id, organizationId)
+          )
         )
-      )
-      .limit(1);
+        .limit(1);
+    } else {
+      existingResult = await db
+        .select()
+        .from(employee_profiles)
+        .where(
+          and(
+            eq(employee_profiles.user_id, lookupId),
+            eq(employee_profiles.organization_id, organizationId)
+          )
+        )
+        .limit(1);
+    }
 
     if (existingResult.length === 0) {
       return res.status(404).json({ message: 'Employee profile not found' });
     }
 
-    // Delete profile
+    const profileId = existingResult[0]!.id;
+
     await db
       .delete(employee_profiles)
       .where(
@@ -452,7 +421,7 @@ router.delete('/:id', requireRole(['tenantAdmin', 'owner']), async (req: Request
         )
       );
 
-    // Log audit (DO NOT log decrypted PII)
+    // Log audit
     await logAudit({
       orgId: organizationId,
       actorId,

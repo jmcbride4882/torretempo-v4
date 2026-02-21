@@ -664,40 +664,34 @@ export const employee_profiles = pgTable(
       .notNull()
       .references(() => organization.id, { onDelete: 'cascade' }),
 
-    // Personal Information (ENCRYPTED - stored as Base64 strings)
-    dni_nie_encrypted: text('dni_nie_encrypted').notNull(),
-    social_security_number_encrypted: text('social_security_number_encrypted').notNull(),
-    date_of_birth: timestamp('date_of_birth', { withTimezone: true }).notNull(),
-    nationality: varchar('nationality', { length: 3 }), // ISO 3166-1 alpha-3
-    tax_id_encrypted: text('tax_id_encrypted'),
-    phone_number_encrypted: text('phone_number_encrypted'),
-    address_encrypted: text('address_encrypted'), // JSONB stored as encrypted text
-    emergency_contact_encrypted: text('emergency_contact_encrypted'), // JSONB stored as encrypted text
+    // Personal Information
+    first_name: varchar('first_name', { length: 100 }),
+    last_name: varchar('last_name', { length: 100 }),
+    dni_nie: text('dni_nie'),
+    social_security_number: text('social_security_number'),
+    phone: text('phone'),
+    address: text('address'), // JSON string: { street, city, postal_code, country }
+    date_of_birth: timestamp('date_of_birth', { withTimezone: true }),
 
     // Employment Information
-    employee_number: varchar('employee_number', { length: 50 }),
-    job_title: varchar('job_title', { length: 100 }).notNull(),
-    department: varchar('department', { length: 100 }),
-    employment_type: varchar('employment_type', { length: 50 }).notNull(), // indefinido, temporal, practicas, formacion
-    contract_start_date: timestamp('contract_start_date', { withTimezone: true }).notNull(),
+    employment_type: varchar('employment_type', { length: 50 }), // indefinido, temporal, practicas, formacion
+    contract_start_date: timestamp('contract_start_date', { withTimezone: true }),
     contract_end_date: timestamp('contract_end_date', { withTimezone: true }),
-    base_salary_cents: integer('base_salary_cents'),
-    working_hours_per_week: numeric('working_hours_per_week', { precision: 4, scale: 2 }).notNull(),
-    work_location_id: uuid('work_location_id').references(() => locations.id, { onDelete: 'set null' }),
+    job_title: varchar('job_title', { length: 100 }),
+    department: varchar('department', { length: 100 }),
+    hourly_rate: numeric('hourly_rate', { precision: 10, scale: 2 }),
+    monthly_salary: numeric('monthly_salary', { precision: 10, scale: 2 }),
+    iban: text('iban'),
+    tax_id: text('tax_id'),
 
-    // Leave Balance
-    vacation_days_accrued: numeric('vacation_days_accrued', { precision: 4, scale: 1 }).default('0'),
-    vacation_days_used: numeric('vacation_days_used', { precision: 4, scale: 1 }).default('0'),
-    sick_days_used: integer('sick_days_used').default(0),
+    // Emergency Contact
+    emergency_contact_name: varchar('emergency_contact_name', { length: 200 }),
+    emergency_contact_phone: varchar('emergency_contact_phone', { length: 50 }),
 
-    // Compliance
-    health_safety_training_date: timestamp('health_safety_training_date', { withTimezone: true }),
-    work_permit_number_encrypted: text('work_permit_number_encrypted'),
-    work_permit_expiry: timestamp('work_permit_expiry', { withTimezone: true }),
-
-    // GDPR
-    gdpr_consent_date: timestamp('gdpr_consent_date', { withTimezone: true }),
-    data_processing_consent: boolean('data_processing_consent').default(false),
+    // Notes & Status
+    notes: text('notes'),
+    is_active: boolean('is_active').default(true),
+    metadata: text('metadata'), // JSON string
 
     // Metadata
     created_at: timestamp('created_at', { withTimezone: true })
@@ -713,7 +707,7 @@ export const employee_profiles = pgTable(
       table.organization_id
     ),
     org_idx: index('employee_profiles_org_idx').on(table.organization_id),
-    dni_idx: index('employee_profiles_dni_idx').on(table.dni_nie_encrypted),
+    dni_idx: index('employee_profiles_dni_idx').on(table.dni_nie),
   })
 );
 
