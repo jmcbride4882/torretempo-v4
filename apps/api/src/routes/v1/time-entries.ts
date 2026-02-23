@@ -228,17 +228,16 @@ async function handleClockOut(req: Request, res: Response) {
     // 7. Check for manager override
     const isOverride = override && isManager;
 
-    if (criticalViolations.length > 0 && !isOverride) {
-      // Block clock-out
-      return res.status(400).json({
-        message: 'Clock-out blocked due to compliance violations',
-        violations: criticalViolations.map(v => ({
-          message: v.message,
-          severity: v.severity,
-          rule_reference: v.ruleReference,
-          recommended_action: v.recommendedAction,
-        })),
-        can_override: isManager,
+    // Note: Clock-out should NEVER be blocked by compliance violations.
+    // Blocking clock-out only makes violations worse (employee stays clocked in longer).
+    // Violations are recorded in compliance_checks table for audit purposes.
+    if (criticalViolations.length > 0) {
+      logger.warn('Clock-out with compliance violations', {
+        organizationId,
+        userId: actor.id,
+        timeEntryId: entry.id,
+        violationCount: criticalViolations.length,
+        violations: criticalViolations.map(v => v.message),
       });
     }
 

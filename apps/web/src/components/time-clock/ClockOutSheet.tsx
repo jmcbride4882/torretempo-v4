@@ -52,13 +52,17 @@ function formatDuration(
   const mins = minutes % 60;
 
   if (hours === 0) {
-    return { hours, mins, text: t('clock.durationMinutes', { count: mins }) };
+    return { hours, mins, text: t('clock.durationMin', { count: mins }) };
+  }
+
+  if (mins === 0) {
+    return { hours, mins, text: t('clock.durationHour', { hours }) };
   }
 
   return {
     hours,
     mins,
-    text: `${t('clock.durationHours', { count: hours })} ${t('clock.durationMinutes', { count: mins })}`
+    text: t('clock.durationHourMin', { hours, mins })
   };
 }
 
@@ -312,7 +316,7 @@ export function ClockOutSheet({ isOpen, onClose, organizationSlug, activeEntry }
                 <div className="h-8 w-8 rounded-full bg-emerald-50 flex items-center justify-center">
                   <Clock className="h-4 w-4 text-emerald-600" />
                 </div>
-                <span className="text-sm text-kresna-gray">{t('clock.clockedInAt')}</span>
+                <span className="text-sm text-kresna-gray">{t('clock.clockedInAt', { time: formatTime(activeEntry.clock_in) })}</span>
               </div>
               <span className="text-sm font-medium text-charcoal">
                 {formatTime(activeEntry.clock_in)}
@@ -543,7 +547,7 @@ export function ClockOutSheet({ isOpen, onClose, organizationSlug, activeEntry }
           <div className="flex flex-col gap-3 pt-2">
             <Button
               onClick={handleClockOut}
-              disabled={!canClockOut || !position}
+              disabled={!canClockOut}
               variant="destructive"
               size="xl"
               className="w-full"
