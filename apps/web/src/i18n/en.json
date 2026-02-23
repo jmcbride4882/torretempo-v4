@@ -790,6 +790,9 @@
     "durationHourMin": "{{hours}}h {{mins}}m",
     "durationHour": "{{hours}}h",
     "toasts": {
+      "clockedIn": "Clocked in",
+      "clockedOut": "Clocked out",
+      "error": "Clock error",
       "clockInSuccess": "Clocked in successfully",
       "clockOutSuccess": "Clocked out successfully",
       "clockInFailed": "Failed to clock in",
@@ -2593,6 +2596,7 @@
       "create": "Create Broadcast",
       "message": "Message",
       "severity": "Severity",
+      "expiresAt": "Expires",
       "target": "Target Audience",
       "allOrgs": "All Organizations",
       "specificOrg": "Specific Organization",
@@ -2606,6 +2610,7 @@
       "severities": {
         "info": "Info",
         "warning": "Warning",
+        "error": "Error",
         "critical": "Critical"
       }
     },
@@ -2717,6 +2722,8 @@
       "searchPlaceholder": "Search...",
       "dateFrom": "From",
       "dateTo": "To",
+      "status": "Status",
+      "role": "Role",
       "statusFilter": "Status",
       "roleFilter": "Role",
       "dateFilter": "Date range",
