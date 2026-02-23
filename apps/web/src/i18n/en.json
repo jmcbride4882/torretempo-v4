@@ -90,6 +90,14 @@
     "spanish": "Spanish",
     "english": "English",
     "tryAgain": "Try again",
+    "dateRange": "Date range",
+    "quickSelect": "Quick select",
+    "customRange": "Custom range",
+    "clearDates": "Clear dates",
+    "until": "Until",
+    "last7Days": "Last 7 days",
+    "last30Days": "Last 30 days",
+    "last90Days": "Last 90 days",
     "months": {
       "january": "January",
       "february": "February",
@@ -376,6 +384,7 @@
       "subtitle": "Choose the plan that fits your team. No hidden costs.",
       "badge": "Pricing",
       "trialNote": "14-day free trial on all plans. No credit card required.",
+      "trialDays": "day free trial on all plans",
       "perMonth": "/month",
       "employees": "employees",
       "unlimited": "unlimited",
@@ -505,7 +514,8 @@
       "title1": "Clock in, in",
       "title2": "2 seconds",
       "subtitle": "Digital time tracking for hospitality, retail and services. Automatic compliance with Spanish labor law.",
-      "trustSignals": "Used by 500+ Spanish businesses"
+      "trustSignals": "Used by 500+ Spanish businesses",
+      "trialBadge": "day free trial"
     },
     "nav": {
       "features": "Features",

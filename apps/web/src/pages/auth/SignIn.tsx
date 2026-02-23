@@ -80,8 +80,8 @@ export default function SignIn() {
               {/* Header */}
               <div className="flex items-center justify-between py-3 mb-4">
                 <div>
-                  <p className="text-[10px] text-kresna-gray">Buenos dias</p>
-                  <p className="text-sm font-bold text-charcoal">Maria Garcia</p>
+                  <p className="text-[10px] text-kresna-gray">Buenos días</p>
+                  <p className="text-sm font-bold text-charcoal">María García</p>
                 </div>
                 <div className="h-8 w-8 rounded-full bg-gradient-primary flex items-center justify-center">
                   <span className="text-xs font-bold text-white">M</span>

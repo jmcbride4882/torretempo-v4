@@ -6,18 +6,11 @@
 
 import * as React from 'react';
 import { useState, useRef, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Calendar, X, ChevronRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { cn } from '@/lib/utils';
-
-// Quick preset ranges
-const PRESETS = [
-  { label: 'Today', days: 0 },
-  { label: 'Last 7 days', days: 7 },
-  { label: 'Last 30 days', days: 30 },
-  { label: 'Last 90 days', days: 90 },
-] as const;
 
 function formatDateForInput(date: Date): string {
   const year = date.getFullYear();
@@ -26,10 +19,10 @@ function formatDateForInput(date: Date): string {
   return `${year}-${month}-${day}`;
 }
 
-function formatDisplayDate(dateStr: string): string {
+function formatDisplayDate(dateStr: string, locale: string): string {
   if (!dateStr) return '';
   const date = new Date(dateStr + 'T00:00:00');
-  return date.toLocaleDateString('en-GB', {
+  return date.toLocaleDateString(locale === 'es' ? 'es-ES' : 'en-GB', {
     day: 'numeric',
     month: 'short',
     year: 'numeric',
@@ -53,19 +46,28 @@ export function DateRangePicker({
   onClear,
   className,
 }: DateRangePickerProps) {
+  const { t, i18n } = useTranslation();
   const [open, setOpen] = useState(false);
   const startRef = useRef<HTMLInputElement>(null);
   const hasRange = !!startDate || !!endDate;
+  const locale = i18n.language;
+
+  const PRESETS = React.useMemo(() => [
+    { label: t('common.today', 'Today'), days: 0 },
+    { label: t('common.last7Days', 'Last 7 days'), days: 7 },
+    { label: t('common.last30Days', 'Last 30 days'), days: 30 },
+    { label: t('common.last90Days', 'Last 90 days'), days: 90 },
+  ], [t]);
 
   // Display text for the trigger button
   const displayText = React.useMemo(() => {
     if (startDate && endDate) {
-      return `${formatDisplayDate(startDate)} - ${formatDisplayDate(endDate)}`;
+      return `${formatDisplayDate(startDate, locale)} - ${formatDisplayDate(endDate, locale)}`;
     }
-    if (startDate) return `From ${formatDisplayDate(startDate)}`;
-    if (endDate) return `Until ${formatDisplayDate(endDate)}`;
-    return 'Date range';
-  }, [startDate, endDate]);
+    if (startDate) return `${t('common.from', 'From')} ${formatDisplayDate(startDate, locale)}`;
+    if (endDate) return `${t('common.until', 'Until')} ${formatDisplayDate(endDate, locale)}`;
+    return t('common.dateRange', 'Date range');
+  }, [startDate, endDate, locale, t]);
 
   // Focus start input when opened
   useEffect(() => {
@@ -139,7 +141,7 @@ export function DateRangePicker({
         {/* Presets */}
         <div className="border-b border-kresna-border px-3 py-2.5 dark:border-kresna-border">
           <p className="mb-2 text-[11px] font-medium uppercase tracking-wider text-kresna-gray dark:text-kresna-gray">
-            Quick select
+            {t('common.quickSelect', 'Quick select')}
           </p>
           <div className="flex flex-wrap gap-1.5">
             {PRESETS.map((preset) => (
@@ -165,11 +167,11 @@ export function DateRangePicker({
         {/* Custom range inputs */}
         <div className="p-3">
           <p className="mb-2.5 text-[11px] font-medium uppercase tracking-wider text-kresna-gray dark:text-kresna-gray">
-            Custom range
+            {t('common.customRange', 'Custom range')}
           </p>
           <div className="flex items-center gap-2">
             <div className="flex-1">
-              <label className="mb-1 block text-[10px] font-medium text-kresna-gray dark:text-kresna-gray">From</label>
+              <label className="mb-1 block text-[10px] font-medium text-kresna-gray dark:text-kresna-gray">{t('common.from', 'From')}</label>
               <input
                 ref={startRef}
                 type="date"
@@ -187,7 +189,7 @@ export function DateRangePicker({
             </div>
             <ChevronRight className="mt-4 h-3.5 w-3.5 shrink-0 text-kresna-gray dark:text-kresna-gray" />
             <div className="flex-1">
-              <label className="mb-1 block text-[10px] font-medium text-kresna-gray dark:text-kresna-gray">To</label>
+              <label className="mb-1 block text-[10px] font-medium text-kresna-gray dark:text-kresna-gray">{t('common.to', 'To')}</label>
               <input
                 type="date"
                 value={endDate}
@@ -213,7 +215,7 @@ export function DateRangePicker({
               onClick={handleClear}
               className="text-xs text-kresna-gray hover:text-kresna-gray-dark transition-colors dark:text-kresna-gray dark:hover:text-kresna-gray"
             >
-              Clear dates
+              {t('common.clearDates', 'Clear dates')}
             </button>
             <button
               type="button"

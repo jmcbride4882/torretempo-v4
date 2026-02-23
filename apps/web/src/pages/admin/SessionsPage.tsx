@@ -83,17 +83,17 @@ function isMobileAgent(ua: string | null): boolean {
 /**
  * Format a relative time string from a date
  */
-function formatRelativeTime(dateStr: string): string {
+function formatRelativeTime(dateStr: string, t: (key: string, options?: Record<string, unknown>) => string): string {
   const diff = Date.now() - new Date(dateStr).getTime();
   const seconds = Math.floor(diff / 1000);
   const minutes = Math.floor(seconds / 60);
   const hours = Math.floor(minutes / 60);
   const days = Math.floor(hours / 24);
 
-  if (days > 0) return `${days}d ago`;
-  if (hours > 0) return `${hours}h ago`;
-  if (minutes > 0) return `${minutes}m ago`;
-  return 'Just now';
+  if (days > 0) return t('common.timeAgo.daysAgo', { count: days });
+  if (hours > 0) return t('common.timeAgo.hoursAgo', { count: hours });
+  if (minutes > 0) return t('common.timeAgo.minutesAgo', { count: minutes });
+  return t('common.timeAgo.justNow');
 }
 
 export default function SessionsPage() {
@@ -495,13 +495,13 @@ function SessionCard({ session, onRevoke }: SessionCardProps) {
               {t('admin.sessions.created')}
             </span>
             <span className="text-kresna-gray-dark" title={new Date(session.createdAt).toLocaleString()}>
-              {formatRelativeTime(session.createdAt)}
+              {formatRelativeTime(session.createdAt, t)}
             </span>
           </div>
           <div className="flex items-center justify-between">
             <span className="text-kresna-gray">{t('admin.sessions.lastActive')}</span>
             <span className="text-kresna-gray-dark" title={new Date(session.updatedAt).toLocaleString()}>
-              {formatRelativeTime(session.updatedAt)}
+              {formatRelativeTime(session.updatedAt, t)}
             </span>
           </div>
           <div className="flex items-center justify-between">
@@ -515,8 +515,9 @@ function SessionCard({ session, onRevoke }: SessionCardProps) {
               {expired
                 ? new Date(session.expiresAt).toLocaleString()
                 : formatRelativeTime(
-                    new Date(Date.now() - (Date.now() - new Date(session.expiresAt).getTime())).toISOString()
-                  ).replace(' ago', '')
+                    new Date(Date.now() - (Date.now() - new Date(session.expiresAt).getTime())).toISOString(),
+                    t
+                  )
               }
             </span>
           </div>

@@ -90,6 +90,14 @@
     "spanish": "Español",
     "english": "Inglés",
     "tryAgain": "Reintentar",
+    "dateRange": "Rango de fechas",
+    "quickSelect": "Selección rápida",
+    "customRange": "Rango personalizado",
+    "clearDates": "Limpiar fechas",
+    "until": "Hasta",
+    "last7Days": "Últimos 7 días",
+    "last30Days": "Últimos 30 días",
+    "last90Days": "Últimos 90 días",
     "months": {
       "january": "Enero",
       "february": "Febrero",
@@ -203,7 +211,7 @@
     "email": "Correo electrónico",
     "password": "Contraseña",
     "confirmPassword": "Confirmar contraseña",
-    "forgotPassword": "Olvidaste tu contraseña?",
+    "forgotPassword": "¿Olvidaste tu contraseña?",
     "resetPassword": "Restablecer contraseña",
     "newPassword": "Nueva contraseña",
     "currentPassword": "Contraseña actual",
@@ -211,8 +219,8 @@
     "firstName": "Nombre",
     "lastName": "Apellidos",
     "rememberMe": "Recordarme",
-    "noAccount": "No tienes cuenta?",
-    "hasAccount": "Ya tienes cuenta?",
+    "noAccount": "¿No tienes cuenta?",
+    "hasAccount": "¿Ya tienes cuenta?",
     "createAccount": "Crear cuenta",
     "welcomeBack": "Bienvenido de nuevo",
     "signInSubtitle": "Inicia sesión para acceder a tu cuenta",
@@ -227,9 +235,9 @@
     "emailVerifiedMessage": "Tu correo ha sido verificado correctamente",
     "invalidCredentials": "Correo o contraseña incorrectos",
     "accountLocked": "Cuenta bloqueada. Contacta con soporte",
-    "passwordRequirements": "Minimo 8 caracteres",
+    "passwordRequirements": "Mínimo 8 caracteres",
     "termsPrefix": "Al crear una cuenta, aceptas los",
-    "termsLink": "terminos de servicio",
+    "termsLink": "términos de servicio",
     "privacyLink": "política de privacidad",
     "continueWith": "Continuar con",
     "orContinueWith": "O continua con",
@@ -237,7 +245,7 @@
     "emailPlaceholder": "tu@ejemplo.com",
     "fullName": "Nombre completo",
     "getStarted": "Empieza ahora",
-    "minChars": "Minimo 8 caracteres",
+    "minChars": "Mínimo 8 caracteres",
     "namePlaceholder": "Juan Garcia",
     "subtitle": "Tu equipo te espera",
     "signInContinue": "Inicia sesión para continuar",
@@ -364,7 +372,7 @@
     "personaHRDesc": "Exporta nóminas, gestiona contratos y cumplimiento multi-centro.",
     "personaInspector": "Inspector",
     "personaInspectorDesc": "Acceso de solo lectura a registros verificables con cadena SHA-256.",
-    "howItWorks": "Como funciona",
+    "howItWorks": "Cómo funciona",
     "step1Title": "Instala",
     "step1Desc": "Crea tu organización en 2 minutos. Añade ubicaciones y empleados.",
     "step2Title": "Ficha",
@@ -376,6 +384,7 @@
       "subtitle": "Elige el plan que mejor se adapte a tu equipo. Sin costes ocultos.",
       "badge": "Precios",
       "trialNote": "14 días de prueba gratis en todos los planes. Sin tarjeta de crédito.",
+      "trialDays": "días de prueba gratis en todos los planes",
       "perMonth": "/mes",
       "employees": "empleados",
       "unlimited": "ilimitados",
@@ -441,31 +450,31 @@
     },
     "faqItems": [
       {
-        "q": "Es obligatorio el registro horario digital?",
+        "q": "¿Es obligatorio el registro horario digital?",
         "a": "Sí. Desde 2019, el Real Decreto-ley 8/2019 obliga a todas las empresas a registrar la jornada de sus empleados. Torre Tempo cumple con todos los requisitos legales."
       },
       {
-        "q": "Funciona sin conexión?",
+        "q": "¿Funciona sin conexión?",
         "a": "Sí. La app funciona offline y sincroniza los fichajes cuando recupera la conexión. Ningún fichaje se pierde."
       },
       {
-        "q": "Puedo exportar los datos para mi gestoría?",
+        "q": "¿Puedo exportar los datos para mi gestoría?",
         "a": "Sí. Exporta en formato CSV compatible con Sage, A3, Meta4 y otros sistemas de nóminas."
       },
       {
-        "q": "Como funciona el geofence?",
+        "q": "¿Cómo funciona el geofence?",
         "a": "Configuras un radio alrededor de cada ubicación. Los empleados solo pueden fichar cuando están dentro del área."
       },
       {
-        "q": "Que pasa si un inspector de trabajo pide los registros?",
+        "q": "¿Qué pasa si un inspector de trabajo pide los registros?",
         "a": "Torre Tempo genera tokens de acceso de solo lectura para inspectores ITSS. Cada registro tiene verificación SHA-256."
       },
       {
-        "q": "Cuanto tarda la implementacion?",
+        "q": "¿Cuánto tarda la implementación?",
         "a": "Puedes estar funcionando en menos de 10 minutos. Crea la organización, añade empleados y empezad a fichar."
       },
       {
-        "q": "Hay compromiso de permanencia?",
+        "q": "¿Hay compromiso de permanencia?",
         "a": "No. Planes desde €29/mes sin permanencia. Puedes cancelar cuando quieras."
       },
       {
@@ -473,7 +482,7 @@
         "a": "Ofrecemos 3 planes de tarifa plana mensual: Starter (€29/mes, hasta 10 empleados), Growth (€69/mes, hasta 30 empleados) y Business (€149/mes, empleados ilimitados). Todos incluyen prueba gratuita de 14 días."
       },
       {
-        "q": "Cumple con la RGPD?",
+        "q": "¿Cumple con la RGPD?",
         "a": "Sí. Los datos personales se cifran con AES-256-GCM. Cumplimos con la Ley Orgánica 3/2018 de Protección de Datos."
       }
     ],
@@ -485,7 +494,7 @@
       "pricing": "Precios",
       "demo": "Demo",
       "legal": "Legal",
-      "terms": "Terminos de servicio",
+      "terms": "Términos de servicio",
       "privacy": "Política de privacidad",
       "cookies": "Política de cookies",
       "company": "Empresa",
@@ -497,7 +506,7 @@
       "aboutUs": "Sobre nosotros",
       "support": "Soporte",
       "gdpr": "Protección de datos",
-      "madeIn": "Hecho en Espana"
+      "madeIn": "Hecho en España"
     },
     "brandSubtitle": "Control horario digital para empresas españolas",
     "hero": {
@@ -505,14 +514,15 @@
       "title1": "Fichaje en",
       "title2": "2 segundos",
       "subtitle": "Control horario digital para hostelería, comercio y servicios. Cumplimiento automático con el Estatuto de los Trabajadores.",
-      "trustSignals": "Usado por +500 empresas españolas"
+      "trustSignals": "Usado por +500 empresas españolas",
+      "trialBadge": "días de prueba gratis"
     },
     "nav": {
       "features": "Funcionalidades",
-      "howItWorks": "Como funciona",
+      "howItWorks": "Cómo funciona",
       "pricing": "Precios",
       "faq": "FAQ",
-      "menu": "Menu"
+      "menu": "Menú"
     },
     "metrics": {
       "clockIn": "Fichaje en 2s",
@@ -631,7 +641,7 @@
         "steps": [
           {
             "title": "Revisa informes",
-            "detail": "Resumenes mensuales por empleado"
+            "detail": "Resúmenes mensuales por empleado"
           },
           {
             "title": "Exporta nóminas",
@@ -689,7 +699,7 @@
     "clockedOut": "Sin fichar",
     "weekHours": "Horas esta semana",
     "weekLimit": "de 40h",
-    "nextShifts": "Proximos turnos",
+    "nextShifts": "Próximos turnos",
     "noUpcoming": "No hay turnos próximos",
     "liveAttendance": "Asistencia en vivo",
     "clockedInAt": "Fichado a las {{time}}",
@@ -733,7 +743,7 @@
     "teamOverview": "Vista del equipo",
     "today": "Hoy",
     "unread": "No leídas",
-    "upcomingShifts": "Proximos turnos",
+    "upcomingShifts": "Próximos turnos",
     "viewRoster": "Ver horario",
     "waitingForEvents": "Esperando eventos...",
     "subscription": {
@@ -890,8 +900,8 @@
     "acknowledge": "Confirmar",
     "acknowledged": "Confirmado",
     "pendingAck": "Pendiente de confirmar",
-    "publishConfirm": "Publicar horario de la semana?",
-    "publishConfirmDesc": "Se notificara a {{count}} empleados de sus {{shifts}} turnos asignados.",
+    "publishConfirm": "¿Publicar horario de la semana?",
+    "publishConfirmDesc": "Se notificará a {{count}} empleados de sus {{shifts}} turnos asignados.",
     "shiftCount": "{{count}} turno",
     "shiftCount_other": "{{count}} turnos",
     "timeHeader": "Hora",
@@ -1132,7 +1142,7 @@
     "noRequestsDesc": "No hay solicitudes de intercambio",
     "noSwapsDesc": "No hay intercambios para mostrar",
     "pending": "Pendiente",
-    "pendingForMe": "Pendientes para mi",
+    "pendingForMe": "Pendientes para mí",
     "pendingManager": "Pendientes de gerente",
     "pendingPeer": "Pendientes de compañero",
     "refresh": "Actualizar",
@@ -1210,7 +1220,7 @@
     "memberCount": "{{count}} miembros",
     "changeRole": "Cambiar rol",
     "removeMember": "Eliminar miembro",
-    "removeConfirm": "Seguro que quieres eliminar a {{name}}?",
+    "removeConfirm": "¿Seguro que quieres eliminar a {{name}}?",
     "pin": "PIN",
     "setPin": "Establecer PIN",
     "removePin": "Eliminar PIN",
@@ -1225,7 +1235,7 @@
     "noMembersDesc": "Los miembros del equipo aparecerán aquí una vez que se añadan a tu organización",
     "unknownUser": "Usuario desconocido",
     "noEmail": "Sin correo",
-    "joined": "Se unio el {{date}}",
+    "joined": "Se unió el {{date}}",
     "inviteInfoTitle": "Invitar miembros del equipo por correo",
     "inviteInfoDesc": "Haz clic en \"Invitar miembro\" para enviar una invitación por correo. Los nuevos miembros recibirán un enlace para unirse a tu organización.",
     "inviteTeamMember": "Invitar miembro del equipo",
@@ -1352,7 +1362,7 @@
   },
   "reports": {
     "title": "Informes",
-    "subtitle": "Resumenes mensuales e informes de cumplimiento",
+    "subtitle": "Resúmenes mensuales e informes de cumplimiento",
     "generate": "Generar informe",
     "refresh": "Actualizar",
     "searchPlaceholder": "Buscar informes...",
@@ -1415,11 +1425,11 @@
     "payrollDesc": "Desglose de compensación y deducciones",
     "complianceReport": "Informe de cumplimiento",
     "complianceDesc": "Violaciones laborales y auditoría",
-    "year": "Ano",
+    "year": "Año",
     "month": "Mes",
     "teamMember": "Miembro del equipo (Opcional)",
     "allMembers": "Todos los miembros",
-    "leaveEmpty": "Deja vacio para generar informes para todos los miembros",
+    "leaveEmpty": "Deja vacío para generar informes para todos los miembros",
     "futureWarning": "Período futuro seleccionado",
     "futureWarningDesc": "Has seleccionado un mes futuro. El informe puede tener datos incompletos.",
     "preview": "Vista previa del informe",
@@ -1444,7 +1454,7 @@
     "allMonths": "Todos los meses",
     "allTeamMembers": "Todos los miembros",
     "filters": "Filtros",
-    "yearLabel": "Ano",
+    "yearLabel": "Año",
     "monthLabel": "Mes",
     "teamMemberLabel": "Miembro del equipo",
     "earnings": "Ingresos",
@@ -1511,7 +1521,7 @@
     "rules": {
       "maxDailyHours": "Maximo 9h/dia (Art. 34.1 ET)",
       "maxWeeklyHours": "Maximo 40h/semana (Art. 34.1 ET)",
-      "minRestBetweenShifts": "Minimo 12h entre turnos (Art. 34.3 ET)",
+      "minRestBetweenShifts": "Mínimo 12h entre turnos (Art. 34.3 ET)",
       "breakAfter6h": "Descanso de 15min tras 6h continuas (Art. 34.4 ET)",
       "weeklyRest": "35h de descanso semanal continuo (Art. 37.1 ET)",
       "rightToDisconnect": "Derecho a la desconexión digital (LO 3/2018, Art. 88)"
@@ -1645,7 +1655,7 @@
       "noLocations": "No hay ubicaciones configuradas",
       "qrCode": "Código QR",
       "generateQR": "Generar QR",
-      "deleteConfirm": "Seguro que quieres eliminar esta ubicación?",
+      "deleteConfirm": "¿Seguro que quieres eliminar esta ubicación?",
       "subtitle": "Gestiona centros de trabajo y geofencing para fichajes",
       "newLocation": "Nueva ubicación",
       "editTitle": "Editar ubicación",
@@ -1905,7 +1915,7 @@
     "templateCreated": "Plantilla creada",
     "templateUpdated": "Plantilla actualizada",
     "templateDeleted": "Plantilla eliminada",
-    "deleteConfirm": "Seguro que quieres eliminar esta plantilla?",
+    "deleteConfirm": "¿Seguro que quieres eliminar esta plantilla?",
     "subtitle": "Definiciones de turno reutilizables para programación rápida",
     "newTemplate": "Nueva plantilla",
     "editTitle": "Editar plantilla de turno",
@@ -1996,7 +2006,7 @@
       "featureFlags": "Feature Flags",
       "notifications": "Notificaciones",
       "audit": "Auditoría",
-      "analytics": "Analiticas",
+      "analytics": "Analíticas",
       "settings": "Configuración",
       "broadcasts": "Notificaciones"
     },
@@ -2143,7 +2153,7 @@
         "mustBePositive": "Debe ser un número positivo",
         "wholeCents": "Debe ser un número entero (céntimos)",
         "descriptionRequired": "La descripción es obligatoria",
-        "minTenChars": "Minimo 10 caracteres",
+        "minTenChars": "Mínimo 10 caracteres",
         "paymentIntentIdRequired": "El ID de pago es obligatorio",
         "paymentIntentIdPrefix": "El ID debe empezar con pi_",
         "reasonRequired": "El motivo es obligatorio"
@@ -2374,7 +2384,7 @@
       "tokenPrefix": "Token: ",
       "daysRemaining": "{{count}} días restantes",
       "expiresSoon": "Caduca pronto",
-      "lastUsed": "Ultimo uso",
+      "lastUsed": "Último uso",
       "today": "hoy",
       "totalLabel": "total"
     },
@@ -2514,7 +2524,7 @@
       "inspectorTokenTarget": "Token Inspector"
     },
     "analytics": {
-      "title": "Analiticas",
+      "title": "Analíticas",
       "totalTenants": "Total organizaciones",
       "totalUsers": "Total usuarios",
       "totalTimeEntries": "Total fichajes",
@@ -2690,7 +2700,7 @@
       "failedLoadAudit": "Error al cargar registros de auditoría",
       "auditExportSuccess": "Registro de auditoría exportado",
       "failedExportAudit": "Error al exportar registro de auditoría",
-      "analyticsRefreshed": "Analiticas actualizadas",
+      "analyticsRefreshed": "Analíticas actualizadas",
       "failedLoadAnalytics": "Error al cargar analiticas",
       "confirmationMismatch": "El texto de confirmación no coincide",
       "failedDeleteTenants": "Error al eliminar tenants",
@@ -2701,7 +2711,7 @@
       "emailVerified": "Email verificado manualmente"
     },
     "confirm": {
-      "areYouSure": "¿Estas seguro?",
+      "areYouSure": "¿Estás seguro?",
       "cannotUndo": "Esta acción no se puede deshacer.",
       "typeToConfirm": "Escribe {{value}} para confirmar",
       "suspendTitle": "Suspender organización",
@@ -2754,7 +2764,7 @@
       "free": "Gratis",
       "pastDue": "Vencido",
       "pro": "Profesional",
-      "starter": "Basico",
+      "starter": "Básico",
       "suspended": "Suspendido"
     },
     "bulkBan": {
