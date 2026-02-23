@@ -186,7 +186,7 @@ export function ClockOutSheet({ isOpen, onClose, organizationSlug, activeEntry }
 
   // Handle clock out submission
   const handleClockOut = async () => {
-    if (!organizationSlug || !activeEntry || !position) return;
+    if (!organizationSlug || !activeEntry) return;
 
     // Light haptic feedback on button press
     haptic.light();
@@ -195,9 +195,9 @@ export function ClockOutSheet({ isOpen, onClose, organizationSlug, activeEntry }
     setError(null);
 
     const clockOutData = {
-      latitude: position.coords.latitude,
-      longitude: position.coords.longitude,
-      accuracy: position.coords.accuracy,
+      latitude: position?.coords.latitude,
+      longitude: position?.coords.longitude,
+      accuracy: position?.coords.accuracy,
       method: 'tap' as const,
       notes: notes.trim() || undefined,
     };

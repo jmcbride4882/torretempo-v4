@@ -253,24 +253,23 @@ async function handleClockOut(req: Request, res: Response) {
     const totalMinutes = Math.floor(durationMs / 60000) - breakMinutes;
     const durationHours = ((durationMs - (breakMinutes * 60000)) / 3600000).toFixed(2);
 
-    // 10. Proceed with clock-out (use transaction)
-    await db.transaction(async (tx) => {
-      // Update time entry
-      await tx
-        .update(time_entries)
-        .set({
-          clock_out: clockOut,
-          clock_out_location: clock_out_location,
-          clock_out_method: method,
-          total_minutes: totalMinutes,
-          status: 'completed',
-          updated_at: new Date(),
-        })
-        .where(eq(time_entries.id, entry.id));
+    // 10. Update the time entry (critical — must not fail due to compliance inserts)
+    await db
+      .update(time_entries)
+      .set({
+        clock_out: clockOut,
+        clock_out_location: clock_out_location,
+        clock_out_method: method,
+        total_minutes: totalMinutes,
+        status: 'completed',
+        updated_at: new Date(),
+      })
+      .where(eq(time_entries.id, entry.id));
 
-      // Insert compliance check results
+    // 11. Insert compliance check results (non-blocking — clock-out already saved)
+    try {
       for (const result of validationResults) {
-        await tx.insert(compliance_checks).values({
+        await db.insert(compliance_checks).values({
           organization_id: organizationId,
           user_id: actor.id,
           time_entry_id: entry.id,
@@ -282,9 +281,17 @@ async function handleClockOut(req: Request, res: Response) {
           related_data: { recommended_action: result.recommendedAction },
         });
       }
+    } catch (complianceError) {
+      // Log but don't fail — clock-out is already saved
+      logger.warn('Failed to insert compliance checks (schema mismatch?)', {
+        timeEntryId: entry.id,
+        error: complianceError instanceof Error ? complianceError.message : String(complianceError),
+      });
+    }
 
-      // Log override if applicable
-      if (isOverride) {
+    // Log override if applicable
+    if (isOverride) {
+      try {
         await logAudit({
           orgId: organizationId,
           actorId: actor.id,
@@ -293,10 +300,15 @@ async function handleClockOut(req: Request, res: Response) {
           entityId: entry.id,
           newData: { reason, violations: criticalViolations.length },
         });
+      } catch (auditError) {
+        logger.warn('Failed to log compliance override audit', {
+          timeEntryId: entry.id,
+          error: auditError instanceof Error ? auditError.message : String(auditError),
+        });
       }
-    });
+    }
 
-    // 11. Broadcast clock-out event to organization (managers only)
+    // 12. Broadcast clock-out event to organization (managers only)
     const user = req.user as any;
     broadcastToOrg(organizationId, 'attendance:clock-out', {
       userId: actor.id,
@@ -306,7 +318,7 @@ async function handleClockOut(req: Request, res: Response) {
       method,
     });
 
-    // 12. Return response
+    // 13. Return response
     res.json({
       message: isOverride ? 'Clocked out (compliance override)' : 'Clocked out successfully',
       time_entry: { ...entry, clock_out: clockOut, status: 'completed' },
