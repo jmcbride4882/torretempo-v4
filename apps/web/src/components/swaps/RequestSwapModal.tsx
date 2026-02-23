@@ -344,9 +344,9 @@ export function RequestSwapModal({
                         <SelectItem key={member.id} value={member.id} className="text-charcoal">
                           <div className="flex items-center gap-2">
                             <div className="flex h-5 w-5 items-center justify-center rounded-full bg-primary-100 text-[10px] text-primary-600">
-                              {member.name.charAt(0).toUpperCase()}
+                              {(member.name || '?').charAt(0).toUpperCase()}
                             </div>
-                            <span>{member.name}</span>
+                            <span>{member.name || t('common.unknown')}</span>
                           </div>
                         </SelectItem>
                       ))}

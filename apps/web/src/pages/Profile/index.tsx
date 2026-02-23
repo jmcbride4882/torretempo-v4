@@ -355,10 +355,10 @@ function EmploymentDetailsSection({ slug }: { slug: string }) {
   const details: { label: string; value: string }[] = [
     { label: t('team.jobTitle'), value: emp.job_title },
     { label: t('team.contractType'), value: emp.employment_type },
-    { label: t('team.contractStart'), value: emp.contract_start_date },
+    { label: t('team.contractStart'), value: emp.contract_start_date ? new Date(emp.contract_start_date).toLocaleDateString() : '-' },
     {
       label: t('team.contractEnd') || 'Contract End',
-      value: emp.contract_end_date || '-',
+      value: emp.contract_end_date ? new Date(emp.contract_end_date).toLocaleDateString() : '-',
     },
     {
       label: t('team.hoursPerWeek'),

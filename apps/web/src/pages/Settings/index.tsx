@@ -39,10 +39,10 @@ export default function SettingsPage() {
   }
 
   const tabs: { id: SettingsTab; label: string; icon: React.ComponentType<{ className?: string }>; description: string }[] = [
-    { id: 'locations', label: t('settings.locations'), icon: MapPin, description: t('settings.locationsDesc') },
-    { id: 'team', label: t('settings.team'), icon: Users, description: t('settings.teamDesc') },
-    { id: 'notifications', label: t('nav.notifications'), icon: Bell, description: t('settings.notificationsDesc') },
-    { id: 'security', label: t('settings.security'), icon: Lock, description: t('settings.securityDesc') },
+    { id: 'locations', label: t('settings.tabs.locations'), icon: MapPin, description: t('settings.locationsDesc') },
+    { id: 'team', label: t('settings.tabs.team'), icon: Users, description: t('settings.teamDesc') },
+    { id: 'notifications', label: t('settings.tabs.notifications'), icon: Bell, description: t('settings.notificationsDesc') },
+    { id: 'security', label: t('settings.tabs.security'), icon: Lock, description: t('settings.securityDesc') },
   ];
 
   return (

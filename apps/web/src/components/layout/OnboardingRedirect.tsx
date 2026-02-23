@@ -64,14 +64,18 @@ export function OnboardingRedirect() {
       // Check if user has any organizations
       try {
         const orgs = await listUserOrganizations();
-        
-        if (orgs.length === 0) {
+
+        if (!orgs || orgs.length === 0) {
           // No orgs - go to onboarding hub
           setRedirectState('to-hub');
         } else if (orgs.length === 1 && orgs[0]) {
           // Exactly one org - auto-select it and go
           const singleOrg = orgs[0];
-          await setActiveOrganization(singleOrg.id);
+          try {
+            await setActiveOrganization(singleOrg.id);
+          } catch {
+            // setActive may fail if already active; ignore and proceed
+          }
           setTargetSlug(singleOrg.slug);
           setRedirectState('to-org');
         } else {
@@ -80,8 +84,8 @@ export function OnboardingRedirect() {
         }
       } catch (error) {
         console.error('Failed to fetch organizations:', error);
-        // On error, default to create flow
-        setRedirectState('to-create');
+        // On error, default to hub (not create - user may already have orgs)
+        setRedirectState('to-hub');
       }
     };
 

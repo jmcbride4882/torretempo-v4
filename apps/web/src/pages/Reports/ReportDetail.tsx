@@ -100,7 +100,16 @@ export default function ReportDetailPage() {
     return null;
   }
 
-  const { report, variance, payroll, compliance } = reportData;
+  const { report: rawReport, variance, payroll, compliance } = reportData;
+  // Ensure numeric fields are actually numbers (API may return strings from DB)
+  const report = {
+    ...rawReport,
+    totalHours: Number(rawReport.totalHours) || 0,
+    totalDays: Number(rawReport.totalDays) || 0,
+    overtimeHours: Number(rawReport.overtimeHours) || 0,
+    month: Number(rawReport.month) || 1,
+    year: Number(rawReport.year) || new Date().getFullYear(),
+  };
   const monthName = t(`common.months.${MONTH_KEYS[report.month - 1]}`) || t('common.unknown');
 
   const tabItems: { id: ReportTab; labelKey: string; icon: typeof BarChart3 }[] = [

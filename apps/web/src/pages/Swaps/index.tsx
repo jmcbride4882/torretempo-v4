@@ -162,7 +162,15 @@ export default function SwapsPage() {
 
       if (response.ok) {
         const data = await response.json();
-        setTeamMembers(data.members || []);
+        // Map API response (which has nested user object) to flat TeamMember shape
+        const mapped = (data.members || []).map((m: any) => ({
+          id: m.userId || m.id,
+          name: m.user?.name || m.name || 'Unknown',
+          email: m.user?.email || m.email || '',
+          image: m.user?.image || null,
+          role: m.role || 'member',
+        }));
+        setTeamMembers(mapped);
       }
     } catch (error) {
       console.error('Error fetching team members:', error);

@@ -192,7 +192,7 @@ export function Sidebar({ collapsed: externalCollapsed, onToggle }: { collapsed?
         {!collapsed && (
           <div className="flex-1 overflow-hidden">
             <p className="truncate text-body-sm font-semibold text-charcoal">
-              {organization?.name || 'Loading...'}
+              {organization?.name || 'Torre Tempo'}
             </p>
             <p className="truncate text-caption text-kresna-gray">Torre Tempo</p>
           </div>
