@@ -239,7 +239,7 @@ function SummaryTab({ report }: { report: MonthlyReport }) {
           </div>
           <p className="text-3xl font-bold text-charcoal">{formatHours(report.totalHours)}</p>
           <p className="mt-1 text-xs text-kresna-gray">
-            {t('reports.averagePerDay', { hours: (report.totalHours / report.totalDays).toFixed(1) })}
+            {t('reports.averagePerDay', { hours: report.totalDays > 0 ? (report.totalHours / report.totalDays).toFixed(1) : '0.0' })}
           </p>
         </div>
 
@@ -271,7 +271,7 @@ function SummaryTab({ report }: { report: MonthlyReport }) {
           </p>
           <p className="mt-1 text-xs text-kresna-gray">
             {hasOvertime
-              ? t('reports.ofTotal', { percent: ((report.overtimeHours / report.totalHours) * 100).toFixed(0) })
+              ? t('reports.ofTotal', { percent: report.totalHours > 0 ? ((report.overtimeHours / report.totalHours) * 100).toFixed(0) : '0' })
               : t('reports.noOvertimeRecorded')}
           </p>
         </div>
